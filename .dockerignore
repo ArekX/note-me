@@ -1,4 +1,8 @@
-../docker
-../.vscode
-../.gitignore
-../README.md
+.vscode
+.gitignore
+README.md
+database.sqlite
+database2.sqlite
+.env
+env.example
+Dockerfile
