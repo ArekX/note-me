@@ -1,8 +1,10 @@
-export interface UserState {
-  username: string;
-  displayName: string;
+import { SessionState } from "$backend/session/mod.ts";
+import { User } from "$backend/user/user.ts";
+
+export interface AppSessionData {
+  user?: User;
 }
 
 export interface AppState {
-  user?: UserState;
+  session?: SessionState<AppSessionData> | null;
 }

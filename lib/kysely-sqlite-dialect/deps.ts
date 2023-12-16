@@ -14,6 +14,7 @@ export {
   Kysely,
   type QueryCompiler,
   type QueryResult,
+  sql,
   SqliteAdapter,
   SqliteIntrospector,
   SqliteQueryCompiler,

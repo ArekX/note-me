@@ -2,14 +2,14 @@
   "lock": true,
   "tasks": {
     "install": "deno cache --lock=deno.lock main.ts",
-    "cli": "deno run -A cli.ts",
+    "cli": "deno run -A cli/cli.ts",
     "check": "deno fmt --check && deno lint && deno check **/*.ts && deno check **/*.tsx",
     "fresh-cli": "echo \"import '\\$fresh/src/dev/cli.ts'\" | deno run --unstable -A -",
     "manifest": "deno task fresh-cli manifest $(pwd)",
     "dev": "deno run -A --watch=static/,routes/ dev.ts",
     "production": "deno run -A main.ts",
     "update": "deno run -A -r https://fresh.deno.dev/update .",
-    "build": "deno run -A build.ts build && docker build --build-arg GIT_REVISION=$(git rev-parse HEAD) . -t arekx/noteme:1.0.0"
+    "build": "deno run -A build.ts build && docker build --build-arg GIT_REVISION=$(git rev-parse HEAD) . -t arekx/noteme:$(git describe --tags --abbrev=0)"
   },
   "lint": { "rules": { "tags": ["fresh", "recommended"] } },
   "exclude": ["**/_fresh/*"],
@@ -22,8 +22,9 @@
     "tailwindcss": "npm:tailwindcss@3.3.5",
     "tailwindcss/": "npm:/tailwindcss@3.3.5/",
     "tailwindcss/plugin": "npm:/tailwindcss@3.3.5/plugin.js",
-    "$std/": "https://deno.land/std@0.208.0/",
+    "$std/": "https://deno.land/std@0.209.0/",
     "$vendor": "./deps.ts",
+    "$components/": "./components/",
     "$islands/": "./islands/",
     "$backend/": "./backend/",
     "$lib/": "./lib/",
