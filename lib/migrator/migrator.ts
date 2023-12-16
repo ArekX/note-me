@@ -104,6 +104,7 @@ export class KyselyMigrationManager<T> {
       const { error } = await migrator.migrateDown();
 
       if (error) {
+        console.log(error);
         const migrationError = new Error("Migration failed.", error);
         this.logger?.error(migrationError, "Error when migrating down.");
         throw migrationError;

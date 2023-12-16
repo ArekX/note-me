@@ -7,5 +7,8 @@ Deno 1.39.0
 # Start
 
 ```
-deno task start
+deno task dev
 ```
+
+# Build
+

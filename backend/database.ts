@@ -1,19 +1,8 @@
-import {
-  Generated,
-  Kysely,
-  SqliteDialect,
-} from "$lib/kysely-sqlite-dialect/mod.ts";
+import { Kysely, SqliteDialect } from "$lib/kysely-sqlite-dialect/mod.ts";
 
-interface Person {
-  id: Generated<number>;
-  first_name: string;
-  last_name: string | null;
-}
+import type { Tables } from "$types/tables.ts";
+import { joinPath } from "$vendor";
 
-interface Database {
-  person: Person;
-}
-
-export const db = new Kysely<Database>({
-  dialect: new SqliteDialect("./database.sqlite"),
+export const db = new Kysely<Tables>({
+  dialect: new SqliteDialect(":memory:"), //joinPath(Deno.cwd(), "database.sqlite")),
 });
