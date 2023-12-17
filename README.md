@@ -12,3 +12,11 @@ deno task dev
 
 # Build
 
+Requirements:
+
+- Docker
+
+Steps:
+
+1. Tag a release with `git tag`.
+2. Run `deno task build`
