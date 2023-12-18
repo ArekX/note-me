@@ -6,3 +6,4 @@ database2.sqlite
 .env
 env.example
 Dockerfile
+.dvmrc

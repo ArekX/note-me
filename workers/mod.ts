@@ -1,9 +1,10 @@
 import { BackgroundService } from "./background-service.ts";
+import { WebSocketMessage } from "./services/websocket-server.ts";
 
 export interface BackgroundServices {
   services: {
-    websocketServer: BackgroundService;
-    timingService: BackgroundService;
+    websocketServer: BackgroundService<WebSocketMessage>;
+    timingService: BackgroundService<unknown>;
   };
   startAll(): void;
 }

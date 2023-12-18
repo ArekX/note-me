@@ -1,11 +1,13 @@
 import { FreshContext } from "$fresh/server.ts";
 import { backgroundServices } from "../../workers/mod.ts";
-import { NotificationMessages } from "../../workers/websocket-handlers/notifications.ts";
 
 export const handler = (_req: Request, _ctx: FreshContext): Response => {
-  backgroundServices.services.websocketServer.send<NotificationMessages>({
-    toUserId: 1,
-    message: "Hello from the API!",
+  backgroundServices.services.websocketServer.send({
+    type: "notification",
+    data: {
+      toUserId: 1,
+      message: "Hello from the API!",
+    },
   });
   return new Response("ok");
 };

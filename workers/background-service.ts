@@ -3,14 +3,14 @@ export interface BackgroundServiceWorker {
   stop(): void;
 }
 
-export class BackgroundService {
+export class BackgroundService<MessageType> {
   #worker: Worker | null = null;
 
   constructor(
     private readonly serviceName: string,
   ) {}
 
-  send<T>(message: T) {
+  send(message: MessageType) {
     this.#worker?.postMessage(JSON.stringify(message));
   }
 

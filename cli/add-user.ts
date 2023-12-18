@@ -1,5 +1,5 @@
 import { Command } from "https://deno.land/x/cliffy@v1.0.0-rc.3/command/mod.ts";
-import { createUser } from "$backend/user/user.ts";
+import { createUserRecord } from "$repository";
 
 export const addUser = new Command()
   .description("Add a user")
@@ -12,7 +12,7 @@ export const addUser = new Command()
       password: string,
     ) => {
       console.log("Creating user...");
-      await createUser(name, username, password);
+      await createUserRecord(name, username, password);
       console.log("User created!");
     },
   );

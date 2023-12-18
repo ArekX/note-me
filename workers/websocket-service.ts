@@ -55,7 +55,7 @@ export class WebSocketService {
     const { socket, response } = Deno.upgradeWebSocket(request);
 
     const clientId = crypto.randomUUID();
-    const userId = session.data.user.userId;
+    const userId = session.data.user.id;
 
     socket.addEventListener("open", () => {
       const client = { clientId, socket, userId };

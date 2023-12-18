@@ -28,7 +28,8 @@
     "$islands/": "./islands/",
     "$backend/": "./backend/",
     "$lib/": "./lib/",
-    "$types/": "./types/"
+    "$types/": "./types/",
+    "$repository": "./repository/mod.ts"
   },
   "compilerOptions": { "jsx": "react-jsx", "jsxImportSource": "preact" },
   "nodeModulesDir": true

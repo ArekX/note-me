@@ -1,6 +1,4 @@
-import { JSX } from "preact";
 import { Logo } from "../components/Logo.tsx";
-import { getUser } from "$backend/user/mod.ts";
 import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
 import {
   createSessionState,
@@ -9,6 +7,7 @@ import {
 import { AppSessionData, AppState } from "$types/app-state.ts";
 import { Alert } from "$components/Alert.tsx";
 import { Icon } from "$components/Icon.tsx";
+import { getUserByLogin } from "$repository";
 
 interface LoginResult {
   username: string;
@@ -19,7 +18,7 @@ export const handler: Handlers<LoginResult> = {
   async POST(req, ctx: FreshContext<AppState>) {
     const form = await req.formData();
 
-    const user = await getUser(
+    const user = await getUserByLogin(
       form.get("username")?.toString() ?? "",
       form.get("password")?.toString() ?? "",
     );

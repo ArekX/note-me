@@ -1,8 +1,8 @@
 import { SessionState } from "$backend/session/mod.ts";
-import { User } from "$backend/user/user.ts";
+import { UserRecord } from "$repository";
 
 export interface AppSessionData {
-  user?: User;
+  user?: UserRecord;
 }
 
 export interface AppState {

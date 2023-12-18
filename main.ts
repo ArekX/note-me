@@ -9,7 +9,9 @@ import "$std/dotenv/load.ts";
 import { start } from "$fresh/server.ts";
 import manifest from "./fresh.gen.ts";
 import config from "./fresh.config.ts";
-import { initialize } from "./initializer.ts";
+import { migrator } from "$backend/migration-manager.ts";
+import { backgroundServices } from "./workers/mod.ts";
 
-await initialize();
+backgroundServices.startAll();
+await migrator.migrateUp();
 await start(manifest, config);

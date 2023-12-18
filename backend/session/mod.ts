@@ -7,4 +7,3 @@ export interface SessionState<T> {
 
 export * from "./cookie.ts";
 export * from "./session.ts";
-export * from "./middleware.ts";
