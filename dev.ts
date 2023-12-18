@@ -4,7 +4,7 @@ import dev from "$fresh/dev.ts";
 import config from "./fresh.config.ts";
 
 import "$std/dotenv/load.ts";
-import { startBackgroundServices } from "./workers/mod.ts";
+import { backgroundServices } from "./workers/mod.ts";
 
-startBackgroundServices();
+backgroundServices.startAll();
 await dev(import.meta.url, "./main.ts", config);

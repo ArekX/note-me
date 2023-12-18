@@ -1,17 +1,22 @@
 import { BackgroundService } from "./background-service.ts";
 
-export const webSocketBackgroundService = new BackgroundService(
-  "websocket-server",
-);
-
-export function startBackgroundServices() {
-  console.log("Starting background services...");
-
-  console.log("Starting WebSocket Server...");
-  webSocketBackgroundService.start();
-
-  console.log("Starting Timing service...");
-  new BackgroundService("timing-worker").start();
-
-  console.log("Background services started.");
+export interface BackgroundServices {
+  services: {
+    websocketServer: BackgroundService;
+    timingService: BackgroundService;
+  };
+  startAll(): void;
 }
+
+export const backgroundServices: BackgroundServices = {
+  services: {
+    websocketServer: new BackgroundService("websocket-server"),
+    timingService: new BackgroundService("timing-worker"),
+  },
+  startAll(): void {
+    for (const [serviceName, service] of Object.entries(this.services)) {
+      console.log(`Starting '${serviceName}' service.`);
+      service.start();
+    }
+  },
+};
