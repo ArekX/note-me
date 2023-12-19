@@ -1,3 +1,4 @@
+import { eventBus } from "$backend/event-bus/mod.ts";
 import { BackgroundService } from "./background-service.ts";
 import { WebSocketMessage } from "./services/websocket-server.ts";
 
@@ -18,6 +19,7 @@ export const backgroundServices: BackgroundServices = {
     for (const [serviceName, service] of Object.entries(this.services)) {
       console.log(`Starting '${serviceName}' service.`);
       service.start();
+      service.onMessage((message) => eventBus.emit(message));
     }
   },
 };

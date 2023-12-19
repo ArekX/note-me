@@ -1,6 +1,9 @@
+import { BusEvents } from "$backend/event-bus/bus-events.ts";
+
 export interface TimingHandler {
   triggerEveryMinutes: number;
   trigger: () => Promise<void>;
+  onRegister(service: TimingService): void;
 }
 
 interface RegisteredTimingHandler {
@@ -12,7 +15,8 @@ export class TimingService {
   #handlers: Set<RegisteredTimingHandler> = new Set();
 
   constructor(
-    private readonly triggerTimeout: number = 10 * 1000,
+    private readonly triggerTimeout: number = 60 * 1000,
+    private readonly worker: DedicatedWorkerGlobalScope,
   ) {}
 
   registerHandler(handler: TimingHandler) {
@@ -20,6 +24,7 @@ export class TimingService {
       leftMinutes: handler.triggerEveryMinutes,
       handler,
     });
+    handler.onRegister(this);
   }
 
   async *#triggerNextPeriod() {
@@ -27,6 +32,10 @@ export class TimingService {
       await new Promise((resolve) => setTimeout(resolve, this.triggerTimeout));
       yield;
     }
+  }
+
+  sendMessage(message: BusEvents) {
+    this.worker.postMessage(JSON.stringify(message));
   }
 
   async start() {

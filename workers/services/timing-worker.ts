@@ -6,9 +6,11 @@ import "$std/dotenv/load.ts";
 import { checkReminders } from "../timing-handlers/check-reminders.ts";
 import { TimingService } from "../timing-service.ts";
 
-const timingService = new TimingService();
+const timingService = new TimingService(60 * 1000, self);
 
 timingService.registerHandler(checkReminders);
 
-console.log("Timing worker started.");
-timingService.start();
+if (import.meta.main) {
+  console.log("Timing worker started.");
+  timingService.start();
+}

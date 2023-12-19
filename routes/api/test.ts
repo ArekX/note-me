@@ -1,13 +1,14 @@
 import { FreshContext } from "$fresh/server.ts";
-import { backgroundServices } from "../../workers/mod.ts";
+import { eventBus } from "$backend/event-bus/mod.ts";
 
 export const handler = (_req: Request, _ctx: FreshContext): Response => {
-  backgroundServices.services.websocketServer.send({
-    type: "notification",
-    data: {
+  eventBus.emit({
+    type: "notification-received",
+    payload: {
       toUserId: 1,
       message: "Hello from the API!",
     },
   });
+
   return new Response("ok");
 };

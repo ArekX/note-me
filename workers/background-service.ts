@@ -1,3 +1,5 @@
+import { BusEvents } from "$backend/event-bus/bus-events.ts";
+
 export interface BackgroundServiceWorker {
   start(): void;
   stop(): void;
@@ -27,7 +29,7 @@ export class BackgroundService<MessageType> {
     );
   }
 
-  onMessage<T>(callback: (message: T) => void) {
+  onMessage(callback: (message: BusEvents) => void) {
     this.#worker?.addEventListener("message", (event) => {
       callback(JSON.parse(event.data));
     });
