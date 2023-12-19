@@ -31,9 +31,24 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     .addColumn("data", "text", (col) => col.notNull())
     .addColumn("expires_at", "int8", (col) => col.notNull())
     .execute();
+
+  await db.schema.createTable("notification")
+    .ifNotExists()
+    .addColumn("id", "integer", (col) => col.autoIncrement().primaryKey())
+    .addColumn("data", "text", (col) => col.notNull())
+    .addColumn("created_at", "int8", (col) => col.notNull())
+    .addColumn("is_read", "boolean", (col) => col.notNull().defaultTo(false))
+    .addColumn("is_deleted", "boolean", (col) => col.notNull().defaultTo(false))
+    .addColumn(
+      "user_id",
+      "integer",
+      (col) => col.notNull().references("user.id"),
+    )
+    .execute();
 }
 
 export async function down(db: Kysely<unknown>): Promise<void> {
   await db.schema.dropTable("note").execute();
+  await db.schema.dropTable("notification").execute();
   await db.schema.dropTable("user").execute();
 }

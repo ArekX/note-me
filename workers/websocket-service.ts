@@ -1,16 +1,16 @@
 import { resolveCookies } from "$backend/session/cookie.ts";
 import { loadSessionState } from "$backend/session/session.ts";
 import { AppSessionData } from "$types/app-state.ts";
+import { WebSocketMessage } from "./services/websocket-server.ts";
 
 export interface WebSocketHandler<
-  WorkerMessages = unknown,
   ClientMessages = unknown,
 > {
-  onRegister(service: WebSocketService): void;
-  onOpen(client: WebSocketClient): void;
-  onClose(client: WebSocketClient): void;
-  onWorkerRequest(data: WorkerMessages): Promise<void>;
-  onClientMessage(data: ClientMessages): void;
+  onRegister?(service: WebSocketService): void;
+  onOpen?(client: WebSocketClient): void;
+  onClose?(client: WebSocketClient): void;
+  onWorkerRequest?(data: WebSocketMessage): Promise<void>;
+  onClientMessage?(client: WebSocketClient, data: ClientMessages): void;
 }
 
 export type WebSocketClientList = { [key: string]: WebSocketClient };
@@ -19,6 +19,7 @@ export interface WebSocketClient {
   clientId: string;
   userId: number;
   socket: WebSocket;
+  send<T>(data: T): void;
 }
 
 export class WebSocketService {
@@ -33,7 +34,7 @@ export class WebSocketService {
 
   registerHandler(handler: WebSocketHandler) {
     this.#handler.add(handler);
-    handler.onRegister(this);
+    handler.onRegister?.(this);
   }
 
   getClient(clientId: string): WebSocketClient | null {
@@ -58,11 +59,18 @@ export class WebSocketService {
     const userId = session.data.user.id;
 
     socket.addEventListener("open", () => {
-      const client = { clientId, socket, userId };
+      const client = {
+        clientId,
+        socket,
+        userId,
+        send: <T>(data: T) => {
+          socket.send(JSON.stringify(data));
+        },
+      };
       this.#clients[clientId] = client;
 
       for (const handler of this.#handler) {
-        handler.onOpen(client);
+        handler.onOpen?.(client);
       }
     });
 
@@ -70,15 +78,16 @@ export class WebSocketService {
       const client = this.getClient(clientId)!;
 
       for (const handler of this.#handler) {
-        handler.onClose(client);
+        handler.onClose?.(client);
       }
 
       delete this.#clients[clientId];
     });
 
     socket.addEventListener("message", (event) => {
+      const client = this.getClient(clientId)!;
       for (const handler of this.#handler) {
-        handler.onClientMessage(JSON.parse(event.data));
+        handler.onClientMessage?.(client, JSON.parse(event.data));
       }
     });
 
@@ -102,9 +111,9 @@ export class WebSocketService {
     }
   }
 
-  async handleWorkerMessage<T>(data: T): Promise<void> {
+  async handleWorkerMessage(data: WebSocketMessage): Promise<void> {
     for (const handler of this.#handler) {
-      await handler.onWorkerRequest(data);
+      await handler.onWorkerRequest?.(data);
     }
   }
 

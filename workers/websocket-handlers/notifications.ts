@@ -1,36 +1,65 @@
 import {
+  getUserNotifications,
+  NotificationRecord,
+} from "../../repository/notification-repository.ts";
+import { Payload } from "$types/payload.ts";
+import {
+  WebSocketClient,
   WebSocketClientList,
   WebSocketHandler,
-  WebSocketService,
 } from "../websocket-service.ts";
+import { WebSocketMessage } from "../services/websocket-server.ts";
 
-let service: WebSocketService | null = null;
-
-interface SendNotificationRequest {
+export interface SendNotificationRequest {
   toUserId: number;
-  message: string;
+  data: NotificationRecord;
 }
 
-export type NotificationMessages = SendNotificationRequest;
+export type WorkerNotificationRequests = SendNotificationRequest;
+
+export type ClientNotificationRequests = Payload<"getMyNotifications", null>;
+
+export type NotificationResponses =
+  | Payload<
+    "notifications-list",
+    NotificationRecord[]
+  >
+  | Payload<
+    "notification-added",
+    NotificationRecord
+  >;
 
 const clients: WebSocketClientList = {};
 
-export const notificationsHandler: WebSocketHandler<NotificationMessages> = {
-  onRegister: (parentService) => service = parentService,
+export const notificationsHandler: WebSocketHandler = {
   onOpen: (client) => clients[client.userId] = client,
   onClose: (client) => delete clients[client.userId],
-  onWorkerRequest: (data: NotificationMessages): Promise<void> => {
-    const client = clients[data.toUserId];
-    if (client) {
-      service?.sendTo(client.clientId, {
-        type: "notification",
-        payload: {
-          message: data.message,
-        },
-      });
-    }
+  onWorkerRequest: (data: WebSocketMessage): Promise<void> => {
+    const client = clients[data.payload.toUserId];
+
+    client?.send<NotificationResponses>({
+      type: "notification-added",
+      payload: data.payload.data,
+    });
 
     return Promise.resolve();
   },
-  onClientMessage: () => {},
+  onClientMessage: async (
+    client: WebSocketClient,
+    message: ClientNotificationRequests,
+  ): Promise<void> => {
+    await clientMessageActions[message.type]?.(client);
+  },
+};
+
+const getMyNotifications = async (client: WebSocketClient) => {
+  const results = await getUserNotifications(client.userId);
+  client.send<NotificationResponses>({
+    type: "notifications-list",
+    payload: results,
+  });
+};
+
+const clientMessageActions = {
+  getMyNotifications,
 };

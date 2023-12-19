@@ -24,7 +24,6 @@ export class EventBus {
   }
 
   emit(event: BusEvents) {
-    console.log("got", event);
     for (const handler of this.#handlers) {
       if (handler.eventTypes.includes(event.type)) {
         handler.handle(event);

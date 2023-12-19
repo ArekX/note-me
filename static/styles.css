@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.notification-badge {
+    @apply bg-red-500;
+    border-radius: 100%;
+    padding: 0 0.3rem 0.2rem 0.3rem;
+    font-size: 0.7rem;
+    right: .5rem;
+    top: -.5rem;
+    position: absolute;
+    height: 1.3rem;
+    text-align: center;
+    width: 1.5rem;
+}

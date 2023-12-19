@@ -5,18 +5,18 @@ declare const self: DedicatedWorkerGlobalScope;
 import "$std/dotenv/load.ts";
 import { WebSocketService } from "../websocket-service.ts";
 import {
-  NotificationMessages,
   notificationsHandler,
+  WorkerNotificationRequests,
 } from "../websocket-handlers/notifications.ts";
+import { Payload } from "$types/payload.ts";
 
-export type WebSocketMessage = WebSocketNotificationMessage;
+export type WebSocketMessage = Payload<
+  "notification",
+  WorkerNotificationRequests
+>;
 
 const service = new WebSocketService();
 
-export interface WebSocketNotificationMessage {
-  type: "notification";
-  data: NotificationMessages;
-}
 service.registerHandler(notificationsHandler);
 
 if (import.meta.main) {

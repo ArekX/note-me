@@ -27,6 +27,7 @@
     "$components/": "./components/",
     "$islands/": "./islands/",
     "$backend/": "./backend/",
+    "$frontend/": "./frontend/",
     "$lib/": "./lib/",
     "$types/": "./types/",
     "$repository": "./repository/mod.ts"

@@ -1,39 +1,43 @@
-import { type Signal, useSignal } from "@preact/signals";
-import { useEffect } from "preact/hooks";
+import { useSignal } from "@preact/signals";
+import { Icon } from "$components/Icon.tsx";
+import { socketManager } from "$frontend/socket-manager.ts";
+import { useScriptsReadyEffect } from "../frontend/hooks/use-scripts-ready.ts";
+import {
+  ClientNotificationRequests,
+  NotificationResponses,
+} from "../workers/websocket-handlers/notifications.ts";
+import { NotificationRecord } from "../repository/notification-repository.ts";
 
 interface NotificationsProps {
-  count?: Signal<number>;
-}
-
-type Notification = string;
-
-function connect() {
-  console.log("component connected");
-  const socket = new WebSocket("ws://localhost:8080");
-  socket.addEventListener("open", () => {
-    console.log("connected");
-  });
-  socket.addEventListener("message", (event) => {
-    console.log("message received", event.data);
-  });
-  socket.addEventListener("close", () => {
-    console.log("disconnected");
-  });
+  initialNotifications: NotificationRecord[];
 }
 
 export default function Notifications(props: NotificationsProps) {
-  const notifications = useSignal<Notification[]>([]);
+  const notifications = useSignal<NotificationRecord[]>(
+    props.initialNotifications,
+  );
 
-  useEffect(() => {
-    connect();
-  }, []);
+  useScriptsReadyEffect(() => {
+    socketManager.onMessage<NotificationResponses>((data) => {
+      if (data.type == "notifications-list") {
+        notifications.value = data.payload;
+      } else if (data.type == "notification-added") {
+        notifications.value = [...notifications.value, data.payload];
+      }
+    });
+
+    socketManager.send<ClientNotificationRequests>({
+      type: "getMyNotifications",
+      payload: null,
+    });
+  });
 
   return (
-    <div class="flex gap-8 py-6">
-      Notifications:
-      <ul>
-        {notifications.value.map((notification) => <li>{notification}</li>)}
-      </ul>
+    <div class="text-right pr-5 -mb-6 cursor-pointer relative">
+      <span class="notification-badge">
+        {notifications.value.length}
+      </span>
+      <Icon name="notifications" />
     </div>
   );
 }

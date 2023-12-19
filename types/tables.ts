@@ -24,8 +24,18 @@ export interface SessionTable {
   expires_at: number;
 }
 
+export interface NotificationTable {
+  id: Generated<number>;
+  data: string;
+  created_at: number;
+  is_read: boolean;
+  is_deleted: boolean;
+  user_id: number;
+}
+
 export interface Tables {
   user: UserTable;
   note: NoteTable;
   session: SessionTable;
+  notification: NotificationTable;
 }
