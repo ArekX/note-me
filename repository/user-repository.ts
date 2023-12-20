@@ -8,6 +8,19 @@ export type UserRecord =
   & Pick<UserTable, "name" | "username" | "password">
   & UserId;
 
+export const checkIfUserExists = async (username: string): Promise<boolean> => {
+  if (
+    await db.selectFrom("user")
+      .select(["id"])
+      .where("username", "=", username)
+      .executeTakeFirst()
+  ) {
+    return true;
+  }
+
+  return false;
+};
+
 export const getUserByLogin = async (
   username: string,
   password: string,
@@ -24,15 +37,14 @@ export const getUserByLogin = async (
   return user ?? null;
 };
 
-export const createUserRecord = async (
-  username: string,
-  password: string,
-  name: string,
-): Promise<UserId> => {
+export const createUserRecord = async (user: {
+  name: string;
+  username: string;
+  password: string;
+}): Promise<UserId> => {
   const userRecord = {
-    username,
-    password: bcrypt.hashSync(password),
-    name,
+    ...user,
+    password: bcrypt.hashSync(user.password),
     created_at: (new Date()).getTime(),
     updated_at: (new Date()).getTime(),
   };
