@@ -1,6 +1,7 @@
 import { db } from "$backend/database.ts";
 import { UserTable } from "$types/tables.ts";
 import { bcrypt } from "$vendor";
+import { getCurrentUnixTimestamp } from "$backend/time.ts";
 
 type UserId = { id: number };
 
@@ -45,8 +46,8 @@ export const createUserRecord = async (user: {
   const userRecord = {
     ...user,
     password: bcrypt.hashSync(user.password),
-    created_at: (new Date()).getTime(),
-    updated_at: (new Date()).getTime(),
+    created_at: getCurrentUnixTimestamp(),
+    updated_at: getCurrentUnixTimestamp(),
   };
   const result = await db.insertInto("user")
     .values(userRecord)

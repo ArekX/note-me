@@ -1,6 +1,7 @@
 import { db } from "$backend/database.ts";
 import { NotificationTable } from "$types/tables.ts";
 import { Payload } from "$types/payload.ts";
+import { getCurrentUnixTimestamp } from "$backend/time.ts";
 
 export interface NoteReminder {
   noteId: number;
@@ -41,7 +42,7 @@ export const createNotification = async (
   const record = {
     ...notification,
     data: JSON.stringify(notification.data),
-    created_at: new Date().getTime(),
+    created_at: getCurrentUnixTimestamp(),
     is_read: false,
     is_deleted: false,
   };

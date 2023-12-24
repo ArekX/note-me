@@ -1,9 +1,14 @@
 import { Panel } from "$components/Panel.tsx";
+import NewNote from "$islands/NewNote.tsx";
+import NoteList from "$islands/NoteList.tsx";
 
 export default function Page() {
   return (
-    <Panel>
-      App data
-    </Panel>
+    <div>
+      <Panel>
+        <NewNote />
+      </Panel>
+      <NoteList />
+    </div>
   );
 }

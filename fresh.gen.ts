@@ -4,6 +4,9 @@
 
 import * as $_404 from "./routes/_404.tsx";
 import * as $_app from "./routes/_app.tsx";
+import * as $api_middleware from "./routes/api/_middleware.ts";
+import * as $api_add_note from "./routes/api/add-note.ts";
+import * as $api_find_notes from "./routes/api/find-notes.ts";
 import * as $api_joke from "./routes/api/joke.ts";
 import * as $api_test from "./routes/api/test.ts";
 import * as $app_layout from "./routes/app/_layout.tsx";
@@ -15,15 +18,24 @@ import * as $app_sockets from "./routes/app/sockets.tsx";
 import * as $app_users from "./routes/app/users.tsx";
 import * as $greet_name_ from "./routes/greet/[name].tsx";
 import * as $index from "./routes/index.tsx";
+import * as $Button from "./islands/Button.tsx";
 import * as $Counter from "./islands/Counter.tsx";
+import * as $Loader from "./islands/Loader.tsx";
+import * as $NewNote from "./islands/NewNote.tsx";
+import * as $Note from "./islands/Note.tsx";
+import * as $NoteList from "./islands/NoteList.tsx";
 import * as $Notifications from "./islands/Notifications.tsx";
 import * as $Scripts from "./islands/Scripts.tsx";
+import * as $Viewer from "./islands/Viewer.tsx";
 import { type Manifest } from "$fresh/server.ts";
 
 const manifest = {
   routes: {
     "./routes/_404.tsx": $_404,
     "./routes/_app.tsx": $_app,
+    "./routes/api/_middleware.ts": $api_middleware,
+    "./routes/api/add-note.ts": $api_add_note,
+    "./routes/api/find-notes.ts": $api_find_notes,
     "./routes/api/joke.ts": $api_joke,
     "./routes/api/test.ts": $api_test,
     "./routes/app/_layout.tsx": $app_layout,
@@ -37,9 +49,15 @@ const manifest = {
     "./routes/index.tsx": $index,
   },
   islands: {
+    "./islands/Button.tsx": $Button,
     "./islands/Counter.tsx": $Counter,
+    "./islands/Loader.tsx": $Loader,
+    "./islands/NewNote.tsx": $NewNote,
+    "./islands/Note.tsx": $Note,
+    "./islands/NoteList.tsx": $NoteList,
     "./islands/Notifications.tsx": $Notifications,
     "./islands/Scripts.tsx": $Scripts,
+    "./islands/Viewer.tsx": $Viewer,
   },
   baseUrl: import.meta.url,
 } satisfies Manifest;

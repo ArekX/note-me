@@ -8,13 +8,13 @@ export const checkReminders: TimingHandler = {
     service = parentService;
   },
   trigger(): Promise<void> {
-    service?.sendMessage({
-      type: "note-reminder-received",
-      payload: {
-        noteId: 1,
-        remindUserIds: [1],
-      },
-    });
+    // service?.sendMessage({
+    //   type: "note-reminder-received",
+    //   payload: {
+    //     noteId: 1,
+    //     remindUserIds: [1],
+    //   },
+    // });
     // TODO: Check reminder notes and send notifications.
     return Promise.resolve();
   },
