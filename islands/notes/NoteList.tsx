@@ -1,0 +1,48 @@
+import { type Signal, useSignal } from "@preact/signals";
+import Loader from "$islands/Loader.tsx";
+import { Note } from "./Note.tsx";
+import { NoteRecord } from "../../repository/note-repository.ts";
+import { useEffect, useRef } from "preact/hooks";
+import { findNotes } from "$frontend/api.ts";
+import { Panel } from "$components/Panel.tsx";
+import NewNote from "$islands/notes/NewNote.tsx";
+import { useLoadMore } from "$frontend/hooks/use-load-more.ts";
+
+export default function NoteList() {
+  const notes = useSignal<NoteRecord[]>([]);
+  const showLoader = useSignal(false);
+  const noteDiv = useRef(null);
+
+  const loadMore = async () => {
+    showLoader.value = true;
+
+    const loadedNotes = await findNotes({});
+
+    notes.value = [...notes.value, ...loadedNotes.data];
+    showLoader.value = false;
+  };
+
+  useLoadMore(loadMore, noteDiv);
+
+  const processNoteAdded = (note: NoteRecord) => {
+    notes.value = [note, ...notes.value];
+  };
+
+  useEffect(() => {
+    loadMore();
+  }, []);
+
+  return (
+    <div ref={noteDiv} class="overflow-auto">
+      <Panel>
+        <NewNote onNewNoteAdded={processNoteAdded} />
+      </Panel>
+      <div>
+        {notes.value.map((note) => <Note record={note} />)}
+        <Loader visible={showLoader.value}>
+          Enriching your notes with another one...
+        </Loader>
+      </div>
+    </div>
+  );
+}

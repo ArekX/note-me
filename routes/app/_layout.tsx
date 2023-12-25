@@ -52,6 +52,7 @@ export default async function Layout(
         <Nav items={navItems} activeRoute={ctx.route} />
       </div>
       <div className="w-4/5 bg-gray-900 overflow-auto">
+        {/* needs fixing to allow load more */}
         <ctx.Component />
       </div>
       <Scripts socketHost={socketHost} />

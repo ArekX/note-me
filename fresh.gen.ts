@@ -21,12 +21,12 @@ import * as $index from "./routes/index.tsx";
 import * as $Button from "./islands/Button.tsx";
 import * as $Counter from "./islands/Counter.tsx";
 import * as $Loader from "./islands/Loader.tsx";
-import * as $NewNote from "./islands/NewNote.tsx";
-import * as $Note from "./islands/Note.tsx";
-import * as $NoteList from "./islands/NoteList.tsx";
 import * as $Notifications from "./islands/Notifications.tsx";
 import * as $Scripts from "./islands/Scripts.tsx";
 import * as $Viewer from "./islands/Viewer.tsx";
+import * as $notes_NewNote from "./islands/notes/NewNote.tsx";
+import * as $notes_Note from "./islands/notes/Note.tsx";
+import * as $notes_NoteList from "./islands/notes/NoteList.tsx";
 import { type Manifest } from "$fresh/server.ts";
 
 const manifest = {
@@ -52,12 +52,12 @@ const manifest = {
     "./islands/Button.tsx": $Button,
     "./islands/Counter.tsx": $Counter,
     "./islands/Loader.tsx": $Loader,
-    "./islands/NewNote.tsx": $NewNote,
-    "./islands/Note.tsx": $Note,
-    "./islands/NoteList.tsx": $NoteList,
     "./islands/Notifications.tsx": $Notifications,
     "./islands/Scripts.tsx": $Scripts,
     "./islands/Viewer.tsx": $Viewer,
+    "./islands/notes/NewNote.tsx": $notes_NewNote,
+    "./islands/notes/Note.tsx": $notes_Note,
+    "./islands/notes/NoteList.tsx": $notes_NoteList,
   },
   baseUrl: import.meta.url,
 } satisfies Manifest;
