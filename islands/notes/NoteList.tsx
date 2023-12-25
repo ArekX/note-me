@@ -11,6 +11,7 @@ import { useLoadMore } from "$frontend/hooks/use-load-more.ts";
 export default function NoteList() {
   const notes = useSignal<NoteRecord[]>([]);
   const showLoader = useSignal(false);
+  const hasMoreData = useSignal(true);
   const noteDiv = useRef(null);
 
   const loadMore = async () => {
@@ -20,9 +21,10 @@ export default function NoteList() {
 
     notes.value = [...notes.value, ...loadedNotes.data];
     showLoader.value = false;
+    hasMoreData.value = false; // TODO: fix this
   };
 
-  useLoadMore(loadMore, noteDiv);
+  useLoadMore(loadMore, hasMoreData, noteDiv);
 
   const processNoteAdded = (note: NoteRecord) => {
     notes.value = [note, ...notes.value];
@@ -33,7 +35,7 @@ export default function NoteList() {
   }, []);
 
   return (
-    <div ref={noteDiv} class="overflow-auto">
+    <div className="w-4/5 bg-gray-900 overflow-auto" ref={noteDiv}>
       <Panel>
         <NewNote onNewNoteAdded={processNoteAdded} />
       </Panel>

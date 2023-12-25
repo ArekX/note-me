@@ -1,11 +1,20 @@
-import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
+import {
+  FreshContext,
+  Handlers,
+  LayoutConfig,
+  PageProps,
+} from "$fresh/server.ts";
 import { Logo } from "$components/Logo.tsx";
 import { MenuItem, Nav } from "$components/Nav.tsx";
 import { AppState } from "$types/app-state.ts";
 import Notifications from "$islands/Notifications.tsx";
 import Scripts from "$islands/Scripts.tsx";
-import { getUserNotifications } from "../../repository/notification-repository.ts";
+import { getUserNotifications } from "$repository";
 import { Sidebar } from "$components/Sidebar.tsx";
+
+export const config: LayoutConfig = {
+  skipInheritedLayouts: true, // Skip already inherited layouts
+};
 
 export default async function Layout(
   // { Component, route, state }: PageProps<unknown, AppState>,
@@ -48,10 +57,7 @@ export default async function Layout(
         route={ctx.route}
         navItems={navItems}
       />
-      <div className="w-4/5 bg-gray-900 overflow-auto">
-        {/* needs fixing to allow load more */}
-        <ctx.Component />
-      </div>
+      <ctx.Component />
       <Scripts socketHost={socketHost} />
     </div>
   );

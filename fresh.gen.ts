@@ -13,6 +13,8 @@ import * as $app_layout from "./routes/app/_layout.tsx";
 import * as $app_middleware from "./routes/app/_middleware.ts";
 import * as $app_index from "./routes/app/index.tsx";
 import * as $app_logout from "./routes/app/logout.tsx";
+import * as $app_note_layout from "./routes/app/note/_layout.tsx";
+import * as $app_note_index from "./routes/app/note/index.tsx";
 import * as $app_profile from "./routes/app/profile.tsx";
 import * as $app_sockets from "./routes/app/sockets.tsx";
 import * as $app_users from "./routes/app/users.tsx";
@@ -42,6 +44,8 @@ const manifest = {
     "./routes/app/_middleware.ts": $app_middleware,
     "./routes/app/index.tsx": $app_index,
     "./routes/app/logout.tsx": $app_logout,
+    "./routes/app/note/_layout.tsx": $app_note_layout,
+    "./routes/app/note/index.tsx": $app_note_index,
     "./routes/app/profile.tsx": $app_profile,
     "./routes/app/sockets.tsx": $app_sockets,
     "./routes/app/users.tsx": $app_users,
