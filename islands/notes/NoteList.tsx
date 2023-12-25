@@ -15,6 +15,10 @@ export default function NoteList() {
   const noteDiv = useRef(null);
 
   const loadMore = async () => {
+    if (showLoader.value || !hasMoreData.value) {
+      return;
+    }
+
     showLoader.value = true;
 
     const loadedNotes = await findNotes({});
