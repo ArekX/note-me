@@ -1,2 +1,5 @@
-export { default as markdownit } from "npm:markdown-it@14.0.0";
-export { type AxiosResponse, default as axios } from "npm:axios@1.6.2";
+export { Marked } from "npm:@ts-stack/markdown@1.5.0";
+export { default as axiod } from "https://deno.land/x/axiod@0.26.2/mod.ts";
+export {
+  type IAxiodResponse,
+} from "https://deno.land/x/axiod@0.26.2/interfaces.ts";

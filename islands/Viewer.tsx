@@ -1,21 +1,29 @@
-import { markdownit } from "../deps.frontend.ts";
+import { Marked } from "../deps.frontend.ts";
 
-const markdownRenderer = markdownit({
-  html: false,
-  xhtmlOut: false,
-  breaks: true,
-  langPrefix: "language-",
-  linkify: true,
-  typographer: false,
-  quotes: "“”‘’",
-});
+// Marked.setOptions({
+//   sanitize: true,
+// });
+
+// // const markdownRenderer = markdownit({
+// //   html: false,
+// //   xhtmlOut: false,
+// //   breaks: true,
+// //   langPrefix: "language-",
+// //   linkify: false,
+// //   typographer: false,
+// //   quotes: "“”‘’",
+// // });
 
 export type ViewerProps = {
   markdownText: string;
 };
 
 export default function Viewer({ markdownText = "" }: ViewerProps) {
-  const result = markdownRenderer.render(markdownText);
+  const result = Marked.parse(markdownText, {
+    sanitize: true,
+    tables: true,
+
+  });
 
   return (
     <div
