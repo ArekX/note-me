@@ -1,6 +1,6 @@
 import { eventBus } from "$backend/event-bus/mod.ts";
 import { BackgroundService } from "./background-service.ts";
-import { WebSocketMessage } from "./services/websocket-server.ts";
+import { WebSocketMessage } from "./webworkers/websocket-worker.ts";
 
 export interface BackgroundServices {
   services: {
@@ -12,7 +12,7 @@ export interface BackgroundServices {
 
 export const backgroundServices: BackgroundServices = {
   services: {
-    websocketServer: new BackgroundService("websocket-server"),
+    websocketServer: new BackgroundService("websocket-worker"),
     timingService: new BackgroundService("timing-worker"),
   },
   startAll(): void {

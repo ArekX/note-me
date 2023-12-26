@@ -1,7 +1,7 @@
 import { resolveCookies } from "$backend/session/cookie.ts";
 import { loadSessionState } from "$backend/session/session.ts";
 import { AppSessionData } from "$types";
-import { WebSocketMessage } from "./services/websocket-server.ts";
+import { WebSocketMessage } from "./webworkers/websocket-worker.ts";
 
 export interface WebSocketHandler<
   ClientMessages = unknown,
@@ -128,7 +128,9 @@ export class WebSocketService {
       handler: (request) => this.#handleRequest(request),
       signal: this.#abortController.signal,
       onListen({ port, hostname }) {
-        console.log(`WebSocket Server started at http://${hostname}:${port}`);
+        console.log(
+          `WebSocket Worker started at http://${hostname}:${port}`,
+        );
       },
     });
   }

@@ -8,7 +8,7 @@ import {
   WebSocketClientList,
   WebSocketHandler,
 } from "../websocket-service.ts";
-import { WebSocketMessage } from "../services/websocket-server.ts";
+import { WebSocketMessage } from "../webworkers/websocket-worker.ts";
 
 export interface SendNotificationRequest {
   toUserId: number;

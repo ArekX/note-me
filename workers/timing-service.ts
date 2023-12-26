@@ -39,6 +39,7 @@ export class TimingService {
   }
 
   async start() {
+    console.log("Timing worker started.");
     for await (const _ of this.#triggerNextPeriod()) {
       for (const handler of this.#handlers) {
         handler.leftMinutes--;
