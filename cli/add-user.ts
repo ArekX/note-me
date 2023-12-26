@@ -1,5 +1,8 @@
-import { Command } from "https://deno.land/x/cliffy@v1.0.0-rc.3/command/mod.ts";
-import { checkIfUserExists, createUserRecord } from "../backend/repository/mod.ts";
+import { Command } from "$cli/deps.ts";
+import {
+  checkIfUserExists,
+  createUserRecord,
+} from "$backend/repository/user-repository.ts";
 
 export const addUser = new Command()
   .description("Add a user")

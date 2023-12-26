@@ -1,4 +1,4 @@
-import { Command } from "./deps.ts";
+import { Command } from "$cli/deps.ts";
 import { migrator } from "$backend/migration-manager.ts";
 
 export const migrateUpCommand = new Command()

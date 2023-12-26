@@ -1,6 +1,6 @@
 import "$std/dotenv/load.ts";
 
-import { Command } from "./deps.ts";
+import { Command } from "$cli/deps.ts";
 
 import { newMigrationCommand } from "./new-migration.ts";
 import { migrateDownCommand } from "./migrate-down.ts";
