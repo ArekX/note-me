@@ -8,13 +8,15 @@ interface ScriptsProps {
   userData: FrontendUserData;
 }
 
-export default function Scripts(props: ScriptsProps) {
-  useEffect(() => {
-    setUserData(props.userData);
+export default function ScriptLoader(props: ScriptsProps) {
+  setUserData(props.userData);
 
-    Promise.all([
-      socketManager.connect(props.socketHost),
-    ]).then(() => scriptsReady.value = true);
+  const waitFor = [
+    socketManager.connect(props.socketHost),
+  ];
+
+  useEffect(() => {
+    Promise.all(waitFor).then(() => scriptsReady.value = true);
   }, []);
 
   return null;

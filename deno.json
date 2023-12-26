@@ -1,6 +1,6 @@
 {
   "lock": true,
-  
+
   "tasks": {
     "cli": "deno run -A cli/mod.ts",
     "cache": "deno cache --lock deno.lock main.ts cli/mod.ts",
@@ -9,7 +9,8 @@
     "manifest": "deno task fresh-cli manifest $(pwd)",
     "dev": "deno run -A --watch=static/,routes/ dev.ts",
     "update": "deno run -A -r https://fresh.deno.dev/update .",
-    "build": "deno run -A build.ts build && docker build --build-arg GIT_REVISION=$(git rev-parse HEAD) . -t arekxv/note-me:$(git describe --tags --abbrev=0)",
+    "build": "deno task build-assets && docker build --build-arg GIT_REVISION=$(git rev-parse HEAD) . -t arekxv/note-me:$(git describe --tags --abbrev=0)",
+    "build-assets": "deno run -A build.ts build",
     "production": "deno run -A main.ts"
   },
   "lint": { "rules": { "tags": ["fresh", "recommended"] } },

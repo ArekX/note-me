@@ -9,6 +9,7 @@ export interface NoteProps {
 
 export function Note({ record }: NoteProps) {
   const time = getUserData().formatDateTime(new Date(record.created_at * 1000));
+
   return (
     <Panel>
       <div>At: {time}</div>

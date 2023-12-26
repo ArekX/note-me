@@ -1742,6 +1742,7 @@
     "https://esm.sh/*preact-render-to-string@6.3.1": "07807f027acf54b994b630bbb2a923f5a835f9544e01144f67ab292e90a431e4",
     "https://esm.sh/@babel/helper-validator-identifier@7.22.20": "daace34e028130297fddf97f3ef6deb4b05ec3eb46f5c5cacd6eaa43d6323b0a",
     "https://esm.sh/preact@10.19.2": "41f31ba8eecf666f08289f2205f57c45f74baba5be815a55c15c4cc61086143c",
+    "https://esm.sh/preact@10.19.2/": "41f31ba8eecf666f08289f2205f57c45f74baba5be815a55c15c4cc61086143c",
     "https://esm.sh/preact@10.19.2/debug": "e1434406abe1f663b8992a77100a3491142ef22032405ea96a4a8ee5f58795d1",
     "https://esm.sh/preact@10.19.2/hooks": "725034ea48c9ad8aa8d9919bc3c1afaf469cee10fb815ac372d318043a5688d6",
     "https://esm.sh/preact@10.19.2/jsx-runtime": "2a4111d9aa667a3e3776ffd9082d00d63f6960c038d01620d79f80645ecc049d",

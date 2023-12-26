@@ -23,7 +23,7 @@ import * as $Button from "./islands/Button.tsx";
 import * as $Counter from "./islands/Counter.tsx";
 import * as $Loader from "./islands/Loader.tsx";
 import * as $Notifications from "./islands/Notifications.tsx";
-import * as $Scripts from "./islands/Scripts.tsx";
+import * as $ScriptLoader from "./islands/ScriptLoader.tsx";
 import * as $Viewer from "./islands/Viewer.tsx";
 import * as $notes_NewNote from "./islands/notes/NewNote.tsx";
 import * as $notes_Note from "./islands/notes/Note.tsx";
@@ -55,7 +55,7 @@ const manifest = {
     "./islands/Counter.tsx": $Counter,
     "./islands/Loader.tsx": $Loader,
     "./islands/Notifications.tsx": $Notifications,
-    "./islands/Scripts.tsx": $Scripts,
+    "./islands/ScriptLoader.tsx": $ScriptLoader,
     "./islands/Viewer.tsx": $Viewer,
     "./islands/notes/NewNote.tsx": $notes_NewNote,
     "./islands/notes/Note.tsx": $notes_Note,

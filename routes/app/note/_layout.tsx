@@ -1,6 +1,6 @@
 import { FreshContext, LayoutConfig } from "$fresh/server.ts";
 import { AppState } from "$types";
-import Scripts from "$islands/Scripts.tsx";
+import ScriptLoader from "../../../islands/ScriptLoader.tsx";
 import { getUserNotifications } from "$backend/repository/notification-repository.ts";
 import { Sidebar } from "$components/Sidebar.tsx";
 
@@ -25,8 +25,7 @@ export default async function Layout(
         userDisplayName={name || ""}
         route={ctx.route}
       />
-      <ctx.Component />
-      <Scripts
+      <ScriptLoader
         socketHost={socketHost}
         userData={{
           name,
@@ -34,6 +33,7 @@ export default async function Layout(
           timezone,
         }}
       />
+      <ctx.Component />
     </div>
   );
 }
