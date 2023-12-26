@@ -8,6 +8,4 @@ COPY . /app
 WORKDIR /app
 RUN deno task cache
 
-EXPOSE 8000
-
-CMD ["run", "-A", "main.ts"]
+CMD ["task", "production"]
