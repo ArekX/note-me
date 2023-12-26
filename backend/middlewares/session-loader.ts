@@ -1,5 +1,5 @@
 import { FreshContext } from "$fresh/server.ts";
-import { AppSessionData, AppState } from "$types/app-state.ts";
+import { AppSessionData, AppState } from "$types";
 import { resolveCookies } from "../session/cookie.ts";
 import { loadSessionState } from "../session/session.ts";
 

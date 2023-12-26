@@ -4,7 +4,7 @@ import {
   createSessionState,
   writeSessionCookie,
 } from "$backend/session/mod.ts";
-import { AppSessionData, AppState } from "$types/app-state.ts";
+import { AppSessionData, AppState } from "$types";
 import { Alert } from "$components/Alert.tsx";
 import { Icon } from "$components/Icon.tsx";
 import { getUserByLogin } from "$repository";

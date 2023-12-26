@@ -29,7 +29,7 @@
     "$backend/": "./backend/",
     "$frontend/": "./frontend/",
     "$lib/": "./lib/",
-    "$types/": "./types/",
+    "$types": "./types/mod.ts",
     "$repository": "./repository/mod.ts"
   },
   "compilerOptions": { "jsx": "react-jsx", "jsxImportSource": "preact" },

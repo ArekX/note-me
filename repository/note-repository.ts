@@ -1,4 +1,4 @@
-import { NoteTable } from "$types/tables.ts";
+import { NoteTable } from "$types";
 import { db } from "$backend/database.ts";
 import { getCurrentUnixTimestamp } from "$backend/time.ts";
 

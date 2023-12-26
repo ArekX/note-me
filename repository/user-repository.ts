@@ -1,5 +1,5 @@
 import { db } from "$backend/database.ts";
-import { UserTable } from "$types/tables.ts";
+import { UserTable } from "$types";
 import { bcrypt } from "$vendor";
 import { getCurrentUnixTimestamp } from "$backend/time.ts";
 

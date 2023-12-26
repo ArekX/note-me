@@ -8,7 +8,7 @@ import {
   notificationsHandler,
   WorkerNotificationRequests,
 } from "../websocket-handlers/notifications.ts";
-import { Payload } from "$types/payload.ts";
+import { Payload } from "$types";
 
 export type WebSocketMessage = Payload<
   "notification",

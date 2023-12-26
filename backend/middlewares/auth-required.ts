@@ -1,5 +1,5 @@
 import { FreshContext } from "$fresh/server.ts";
-import { AppState } from "$types/app-state.ts";
+import { AppState } from "$types";
 
 export const authRequired = (
   _req: Request,

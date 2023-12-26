@@ -33,9 +33,26 @@ export interface NotificationTable {
   user_id: number;
 }
 
+export interface GroupTable {
+  id: Generated<number>;
+  name: string;
+  created_at: number;
+  user_id: number;
+  parent_id: number;
+}
+
+export interface GroupNoteTable {
+  id: Generated<number>;
+  group_id: number;
+  note_id: number;
+  user_id: number;
+}
+
 export interface Tables {
-  user: UserTable;
   note: NoteTable;
-  session: SessionTable;
   notification: NotificationTable;
+  group: GroupTable;
+  session: SessionTable;
+  group_note: GroupNoteTable;
+  user: UserTable;
 }

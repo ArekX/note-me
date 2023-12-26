@@ -1,6 +1,6 @@
 import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
 import { destroySession } from "$backend/session/mod.ts";
-import { AppState } from "$types/app-state.ts";
+import { AppState } from "$types";
 
 export const handler: Handlers<string> = {
   async GET(_req, ctx: FreshContext<AppState>) {

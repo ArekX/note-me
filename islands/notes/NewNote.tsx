@@ -6,7 +6,7 @@ import { createNote } from "$frontend/api.ts";
 import { NoteRecord } from "$repository";
 import { zod } from "$vendor";
 import { ErrorDisplay } from "$components/ErrorDisplay.tsx";
-import { SchemaErrors } from "$types/zod.ts";
+import { SchemaErrors } from "$types";
 
 interface NewNoteProps {
   onNewNoteAdded?: (note: NoteRecord) => void;

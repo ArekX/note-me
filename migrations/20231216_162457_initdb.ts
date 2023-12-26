@@ -49,6 +49,7 @@ export async function up(db: Kysely<unknown>): Promise<void> {
   await db.schema.createTable("group")
     .ifNotExists()
     .addColumn("id", "integer", (col) => col.autoIncrement().primaryKey())
+    .addColumn("name", "varchar(255)", (col) => col.notNull())
     .addColumn("created_at", "int8", (col) => col.notNull())
     .addColumn(
       "user_id",
@@ -70,6 +71,11 @@ export async function up(db: Kysely<unknown>): Promise<void> {
       "note_id",
       "integer",
       (col) => col.notNull().references("note.id"),
+    )
+    .addColumn(
+      "user_id",
+      "integer",
+      (col) => col.notNull().references("user.id"),
     )
     .execute();
 }

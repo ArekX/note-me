@@ -1,6 +1,6 @@
 import { resolveCookies } from "$backend/session/cookie.ts";
 import { loadSessionState } from "$backend/session/session.ts";
-import { AppSessionData } from "$types/app-state.ts";
+import { AppSessionData } from "$types";
 import { WebSocketMessage } from "./services/websocket-server.ts";
 
 export interface WebSocketHandler<

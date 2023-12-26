@@ -1,13 +1,6 @@
-import {
-  FreshContext,
-  Handlers,
-  LayoutConfig,
-  PageProps,
-} from "$fresh/server.ts";
-import { Logo } from "$components/Logo.tsx";
-import { MenuItem, Nav } from "$components/Nav.tsx";
-import { AppState } from "$types/app-state.ts";
-import Notifications from "$islands/Notifications.tsx";
+import { FreshContext, LayoutConfig } from "$fresh/server.ts";
+import { MenuItem } from "$components/Nav.tsx";
+import { AppState } from "$types";
 import Scripts from "$islands/Scripts.tsx";
 import { getUserNotifications } from "$repository";
 import { Sidebar } from "$components/Sidebar.tsx";

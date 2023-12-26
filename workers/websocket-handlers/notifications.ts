@@ -2,7 +2,7 @@ import {
   getUserNotifications,
   NotificationRecord,
 } from "../../repository/notification-repository.ts";
-import { Payload } from "$types/payload.ts";
+import { Payload } from "$types";
 import {
   WebSocketClient,
   WebSocketClientList,

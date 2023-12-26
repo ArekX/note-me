@@ -1,6 +1,6 @@
 import { Kysely, SqliteDialect } from "$lib/kysely-sqlite-dialect/mod.ts";
 
-import type { Tables } from "$types/tables.ts";
+import type { Tables } from "$types";
 
 export const db = new Kysely<Tables>({
   dialect: new SqliteDialect(
