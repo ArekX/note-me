@@ -6,13 +6,35 @@ import { NotificationRecord } from "$repository";
 export interface SidebarProps {
   route: string;
   userDisplayName: string;
-  navItems: MenuItem[];
   initialNotifications: NotificationRecord[];
 }
 
 export function Sidebar(
-  { route, navItems, initialNotifications, userDisplayName }: SidebarProps,
+  { route, initialNotifications, userDisplayName }: SidebarProps,
 ) {
+  const navItems: MenuItem[] = [
+    {
+      icon: "note",
+      name: "Notes",
+      link: "/app/note",
+    },
+    {
+      icon: "person",
+      name: "Profile",
+      link: "/app/profile",
+    },
+    {
+      icon: "group",
+      name: "Users",
+      link: "/app/users",
+    },
+    {
+      icon: "logout",
+      name: `Logout`,
+      link: "/app/logout",
+    },
+  ];
+
   return (
     <div className="w-1/5 bg-gray-800 text-white">
       <div class="text-center mt-5 mb-5">

@@ -23,6 +23,7 @@ export default function App({ Component }: PageProps) {
         />
         <style>{MATERIAL_STYLE}</style>
         <link rel="stylesheet" href="/styles.css" />
+        <link rel="icon" href="logo.svg"></link>
       </head>
       <body class="bg-gray-900">
         <Component />

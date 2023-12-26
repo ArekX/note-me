@@ -14,33 +14,10 @@ export default async function Layout(
   req: Request,
   ctx: FreshContext<AppState>,
 ) {
-  const { username, name, id } = ctx.state.session?.data.user ?? {};
+  const { name, id } = ctx.state.session?.data.user ?? {};
 
   const socketHost = Deno.env.get("SOCKET_HOSTNAME") ?? "ws://localhost:8080";
   const initialNotifications = await getUserNotifications(id!);
-
-  const navItems: MenuItem[] = [
-    {
-      icon: "note",
-      name: "Notes",
-      link: "/app",
-    },
-    {
-      icon: "person",
-      name: "Profile",
-      link: "/app/profile",
-    },
-    {
-      icon: "group",
-      name: "Users",
-      link: "/app/users",
-    },
-    {
-      icon: "logout",
-      name: `Logout (${username})`,
-      link: "/app/logout",
-    },
-  ];
 
   return (
     <div className="flex h-screen">
@@ -48,7 +25,6 @@ export default async function Layout(
         initialNotifications={initialNotifications}
         userDisplayName={name || ""}
         route={ctx.route}
-        navItems={navItems}
       />
       <ctx.Component />
       <Scripts socketHost={socketHost} />
