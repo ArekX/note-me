@@ -6,8 +6,8 @@ ENV DENO_DEPLOYMENT_ID=${GIT_REVISION}
 COPY . /app
 
 WORKDIR /app
-RUN deno cache --lock deno.lock main.ts
+RUN deno task cache
 
 EXPOSE 8000
 
-CMD ["run", "--node-modules-dir", "-A", "main.ts"]
+CMD ["run", "-A", "main.ts"]
