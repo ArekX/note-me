@@ -1,10 +1,14 @@
-# Note Taking App
+# Note Me
+
+NoteMe is a self-hosted powerful note-taking app designed for enhanced
+productivity. It includes features like note history, reminders, and support for
+multiple users as well as note tagging and adding attachments.
+
+# Development
 
 Requirements:
 
 - [Deno 1.39.1](https://docs.deno.com/runtime/manual/getting_started/installation)
-
-# Start
 
 ```
 cp env.example .env
