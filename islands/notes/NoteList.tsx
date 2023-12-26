@@ -45,7 +45,7 @@ export default function NoteList() {
       <div>
         {notes.value.map((note) => <Note record={note} />)}
         <Loader visible={showLoader.value}>
-          Enriching your notes with another one...
+          Enriching your note list with more notes...
         </Loader>
       </div>
     </div>
