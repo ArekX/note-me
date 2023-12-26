@@ -4,27 +4,23 @@ import Button from "$islands/Button.tsx";
 import Loader from "$islands/Loader.tsx";
 import { createNote } from "$frontend/api.ts";
 import { NoteRecord } from "$backend/repository/note-repository.ts";
-import { zod } from "$backend/deps.ts";
 import { ErrorDisplay } from "$components/ErrorDisplay.tsx";
 import { SchemaErrors } from "$types";
+import { createNoteSchema } from "$backend/schemas.ts";
 
 interface NewNoteProps {
   onNewNoteAdded?: (note: NoteRecord) => void;
 }
 
-const newNoteSchema = zod.object({
-  text: zod.string().min(1, "Note must have at least one character"),
-});
-
 export default function NewNote({ onNewNoteAdded }: NewNoteProps = {}) {
   const text = useSignal("");
   const showLoader = useSignal(false);
   const schemaErrors = useSignal<
-    SchemaErrors<typeof newNoteSchema>
+    SchemaErrors<typeof createNoteSchema>
   >(null);
 
   const addNewNote = async () => {
-    const result = newNoteSchema.safeParse({ text: text.value });
+    const result = createNoteSchema.safeParse({ text: text.value });
 
     if (!result.success) {
       schemaErrors.value = result.error.format();

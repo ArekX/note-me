@@ -6,7 +6,10 @@ import { getCurrentUnixTimestamp } from "$backend/time.ts";
 type UserId = { id: number };
 
 export type UserRecord =
-  & Pick<UserTable, "name" | "username" | "password">
+  & Pick<
+    UserTable,
+    "name" | "username" | "password" | "default_group_id" | "timezone"
+  >
   & UserId;
 
 export const checkIfUserExists = async (username: string): Promise<boolean> => {
@@ -27,7 +30,14 @@ export const getUserByLogin = async (
   password: string,
 ): Promise<UserRecord | null> => {
   const user = await db.selectFrom("user")
-    .select(["id", "name", "username", "password"])
+    .select([
+      "id",
+      "name",
+      "username",
+      "password",
+      "default_group_id",
+      "timezone",
+    ])
     .where("username", "=", username)
     .executeTakeFirst();
 
@@ -48,6 +58,8 @@ export const createUserRecord = async (user: {
     password: bcrypt.hashSync(user.password),
     created_at: getCurrentUnixTimestamp(),
     updated_at: getCurrentUnixTimestamp(),
+    default_group_id: 0,
+    timezone: "UTC",
   };
   const result = await db.insertInto("user")
     .values(userRecord)

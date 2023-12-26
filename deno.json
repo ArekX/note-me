@@ -1,5 +1,6 @@
 {
   "lock": true,
+  
   "tasks": {
     "cli": "deno run -A cli/mod.ts",
     "cache": "deno cache --lock deno.lock main.ts cli/mod.ts",

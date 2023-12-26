@@ -10,12 +10,10 @@ Requirements:
 
 - [Deno 1.39.1](https://docs.deno.com/runtime/manual/getting_started/installation)
 
-```
-cp env.example .env
-deno task cli migrate-up
-deno task cli add-user "Demo user" demo demo
-deno task dev
-```
+1. Copy the environment example file: `cp env.example .env`
+2. Run migrations: `deno task cli migrate-up`
+3. Add a demo user: `deno task cli add-user "Demo user" demo demo`
+4. Start the development server: `deno task dev`
 
 Then log in with `demo` as username and password.
 
@@ -58,7 +56,8 @@ Requirements:
 1. Set environment variables (see env.example)
 2. Add DENO_DEPLOYMENT_ID environment variable. Should be
    `export DENO_DEPLOYMENT_ID=$(git rev-parse HEAD)`
-3. Run migrations `deno task cli migrate-up`
-4. Run `deno task cli add-user "Administrator" admin admin` to create a login
+3. Run `deno task cache` to pre-install all dependencies.
+4. Run migrations `deno task cli migrate-up`
+5. Run `deno task cli add-user "Administrator" admin admin` to create a login
    for yourself.
-5. Run `deno task production`
+6. Run `deno task production`

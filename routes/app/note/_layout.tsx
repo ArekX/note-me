@@ -9,10 +9,11 @@ export const config: LayoutConfig = {
 };
 
 export default async function Layout(
-  req: Request,
+  _req: Request,
   ctx: FreshContext<AppState>,
 ) {
-  const { name, id } = ctx.state.session?.data.user ?? {};
+  const { name = "", id, default_group_id = 0, timezone = "" } =
+    ctx.state.session?.data.user ?? {};
 
   const socketHost = Deno.env.get("SOCKET_HOSTNAME") ?? "ws://localhost:8080";
   const initialNotifications = await getUserNotifications(id!);
@@ -25,7 +26,14 @@ export default async function Layout(
         route={ctx.route}
       />
       <ctx.Component />
-      <Scripts socketHost={socketHost} />
+      <Scripts
+        socketHost={socketHost}
+        userData={{
+          name,
+          default_group_id,
+          timezone,
+        }}
+      />
     </div>
   );
 }

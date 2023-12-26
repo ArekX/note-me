@@ -5,6 +5,8 @@ export interface UserTable {
   name: string;
   username: string;
   password: string;
+  default_group_id: number;
+  timezone: string;
   created_at: number;
   updated_at: number;
 }

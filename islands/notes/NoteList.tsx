@@ -7,6 +7,7 @@ import { findNotes } from "$frontend/api.ts";
 import { Panel } from "$components/Panel.tsx";
 import NewNote from "$islands/notes/NewNote.tsx";
 import { useLoadMore } from "$frontend/hooks/use-load-more.ts";
+import { useScriptsReadyEffect } from "$frontend/hooks/use-scripts-ready.ts";
 
 export default function NoteList() {
   const notes = useSignal<NoteRecord[]>([]);
@@ -14,7 +15,7 @@ export default function NoteList() {
   const hasMoreData = useSignal(true);
   const noteDiv = useRef(null);
 
-  const loadMore = async () => {
+  const loadMore = async (): Promise<void> => {
     if (showLoader.value || !hasMoreData.value) {
       return;
     }
@@ -34,9 +35,7 @@ export default function NoteList() {
     notes.value = [note, ...notes.value];
   };
 
-  useEffect(() => {
-    loadMore();
-  }, []);
+  useScriptsReadyEffect(loadMore);
 
   return (
     <div className="w-4/5 bg-gray-900 overflow-auto" ref={noteDiv}>
