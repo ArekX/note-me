@@ -1,5 +1,5 @@
 import { BusEvent, EventHandler } from "$backend/event-bus/event-bus.ts";
-import { createNotification } from "$repository";
+import { createNotification } from "$backend/repository/notification-repository.ts";
 import { eventBus } from "$backend/event-bus/mod.ts";
 
 export type NoteReminderEvent = BusEvent<

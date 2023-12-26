@@ -10,7 +10,7 @@ import { start } from "$fresh/server.ts";
 import manifest from "./fresh.gen.ts";
 import config from "./fresh.config.ts";
 import { migrator } from "$backend/migration-manager.ts";
-import { backgroundServices } from "./workers/mod.ts";
+import { backgroundServices } from "./backend/workers/mod.ts";
 
 backgroundServices.startAll();
 await migrator.migrateUp();

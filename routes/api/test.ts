@@ -1,6 +1,6 @@
 import { FreshContext } from "$fresh/server.ts";
 import { eventBus } from "$backend/event-bus/mod.ts";
-import { createNotification } from "../../repository/notification-repository.ts";
+import { createNotification } from "$backend/repository/notification-repository.ts";
 
 export const handler = async (
   _req: Request,

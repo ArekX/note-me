@@ -1,7 +1,7 @@
 import { FreshContext } from "$fresh/server.ts";
 import { AppSessionData, AppState } from "$types";
-import { resolveCookies } from "../session/cookie.ts";
-import { loadSessionState } from "../session/session.ts";
+import { resolveCookies } from "$backend/session/cookie.ts";
+import { loadSessionState } from "$backend/session/session.ts";
 
 export const sessionLoader = async (
   req: Request,

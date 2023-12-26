@@ -1,5 +1,5 @@
-import { axiod, IAxiodResponse } from "../deps.frontend.ts";
-import { NoteRecord } from "../repository/note-repository.ts";
+import { axiod, IAxiodResponse } from "./deps.ts";
+import { NoteRecord } from "$backend/repository/note-repository.ts";
 
 const apiInterface = axiod.create({
   withCredentials: true,

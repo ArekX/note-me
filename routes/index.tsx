@@ -7,7 +7,7 @@ import {
 import { AppSessionData, AppState } from "$types";
 import { Alert } from "$components/Alert.tsx";
 import { Icon } from "$components/Icon.tsx";
-import { getUserByLogin } from "$repository";
+import { getUserByLogin } from "$backend/repository/user-repository.ts";
 
 interface LoginResult {
   username: string;

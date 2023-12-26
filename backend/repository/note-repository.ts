@@ -4,7 +4,10 @@ import { getCurrentUnixTimestamp } from "$backend/time.ts";
 
 type NoteId = { id: number };
 
-export type NewNote = Omit<NoteTable, "id" | "created_at" | "updated_at">;
+export type NewNote = Omit<
+  NoteTable,
+  "id" | "created_at" | "updated_at" | "is_deleted"
+>;
 export type NoteRecord = Omit<NoteTable, "id"> & NoteId;
 
 export const createNote = async (note: NewNote): Promise<NoteRecord> => {

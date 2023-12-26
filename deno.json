@@ -22,15 +22,14 @@
     "tailwindcss": "npm:tailwindcss@3.3.5",
     "tailwindcss/": "npm:/tailwindcss@3.3.5/",
     "tailwindcss/plugin": "npm:/tailwindcss@3.3.5/plugin.js",
-    "$std/": "https://deno.land/std@0.209.0/",
-    "$vendor": "./deps.ts",
+    "$std/": "https://deno.land/std@0.210.0/",
     "$components/": "./components/",
     "$islands/": "./islands/",
     "$backend/": "./backend/",
     "$frontend/": "./frontend/",
-    "$lib/": "./lib/",
-    "$types": "./types/mod.ts",
-    "$repository": "./repository/mod.ts"
+    "$cli/": "./cli/",
+    "$lib/": "./backend/lib/",
+    "$types": "./types/mod.ts"
   },
   "compilerOptions": { "jsx": "react-jsx", "jsxImportSource": "preact" },
   "nodeModulesDir": true

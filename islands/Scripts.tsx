@@ -1,6 +1,6 @@
 import { useEffect } from "preact/hooks";
 import { socketManager } from "$frontend/socket-manager.ts";
-import { scriptsReady } from "../frontend/hooks/use-scripts-ready.ts";
+import { scriptsReady } from "$frontend/hooks/use-scripts-ready.ts";
 
 interface ScriptsProps {
   socketHost: string;

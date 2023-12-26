@@ -1,5 +1,3 @@
-import type { Signal } from "@preact/signals";
-
 interface ButtonProps {
   name: string;
   onClick?: () => void;

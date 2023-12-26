@@ -1,5 +1,5 @@
 import { FreshContext, Handlers } from "$fresh/server.ts";
-import { createNote, NoteRecord } from "../../repository/note-repository.ts";
+import { createNote, NoteRecord } from "$backend/repository/note-repository.ts";
 import { AppState } from "$types";
 import { CreateNoteRequest } from "$frontend/api.ts";
 

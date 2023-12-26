@@ -1,6 +1,6 @@
 import { BusEvent, EventHandler } from "$backend/event-bus/event-bus.ts";
-import { backgroundServices } from "../../../workers/mod.ts";
-import { SendNotificationRequest } from "../../../workers/websocket-handlers/notifications.ts";
+import { backgroundServices } from "$backend/workers/mod.ts";
+import { SendNotificationRequest } from "$backend/workers/websocket-handlers/notifications.ts";
 
 export type NotificationReceivedEvent = BusEvent<
   "notification-received",

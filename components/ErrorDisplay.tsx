@@ -1,4 +1,4 @@
-import { zod } from "$vendor";
+import { zod } from "../backend/deps.ts";
 
 interface ErrorDisplayProps<T> {
   label?: string;

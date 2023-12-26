@@ -1,7 +1,7 @@
 import { Panel } from "$components/Panel.tsx";
-import { NoteRecord } from "../../repository/note-repository.ts";
+import { NoteRecord } from "$backend/repository/note-repository.ts";
 import Viewer from "$islands/Viewer.tsx";
-import { formatDate } from "$vendor";
+import { formatDate } from "$backend/deps.ts";
 
 export interface NoteProps {
   record: NoteRecord;

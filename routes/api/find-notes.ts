@@ -1,5 +1,5 @@
 import { FreshContext, Handlers } from "$fresh/server.ts";
-import { listNotes, NoteRecord } from "../../repository/note-repository.ts";
+import { listNotes, NoteRecord } from "$backend/repository/note-repository.ts";
 import { AppState } from "$types";
 
 const findNotes = async (

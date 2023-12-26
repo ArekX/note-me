@@ -1,4 +1,4 @@
-import { Generated } from "$lib/kysely-sqlite-dialect/deps.ts";
+import { Generated } from "../backend/lib/kysely-sqlite-dialect/deps.ts";
 
 export interface UserTable {
   id: Generated<number>;
@@ -15,7 +15,7 @@ export interface NoteTable {
   user_id: number;
   created_at: number;
   updated_at: number;
-  is_deleted: boolean;
+  is_deleted?: boolean;
 }
 
 export interface NoteReminderTable {

@@ -1,8 +1,7 @@
 import { FreshContext } from "$fresh/server.ts";
-import { MenuItem } from "$components/Nav.tsx";
 import { AppState } from "$types";
 import Scripts from "$islands/Scripts.tsx";
-import { getUserNotifications } from "../../repository/notification-repository.ts";
+import { getUserNotifications } from "$backend/repository/notification-repository.ts";
 import { Sidebar } from "$components/Sidebar.tsx";
 
 export default async function Layout(

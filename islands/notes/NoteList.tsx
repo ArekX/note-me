@@ -1,7 +1,7 @@
-import { type Signal, useSignal } from "@preact/signals";
+import { useSignal } from "@preact/signals";
 import Loader from "$islands/Loader.tsx";
 import { Note } from "./Note.tsx";
-import { NoteRecord } from "../../repository/note-repository.ts";
+import { NoteRecord } from "$backend/repository/note-repository.ts";
 import { useEffect, useRef } from "preact/hooks";
 import { findNotes } from "$frontend/api.ts";
 import { Panel } from "$components/Panel.tsx";

@@ -1,16 +1,14 @@
 import { FreshContext, LayoutConfig } from "$fresh/server.ts";
-import { MenuItem } from "$components/Nav.tsx";
 import { AppState } from "$types";
 import Scripts from "$islands/Scripts.tsx";
-import { getUserNotifications } from "$repository";
+import { getUserNotifications } from "$backend/repository/notification-repository.ts";
 import { Sidebar } from "$components/Sidebar.tsx";
 
 export const config: LayoutConfig = {
-  skipInheritedLayouts: true, // Skip already inherited layouts
+  skipInheritedLayouts: true,
 };
 
 export default async function Layout(
-  // { Component, route, state }: PageProps<unknown, AppState>,
   req: Request,
   ctx: FreshContext<AppState>,
 ) {

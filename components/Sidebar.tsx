@@ -1,7 +1,7 @@
 import Notifications from "$islands/Notifications.tsx";
 import { Logo } from "$components/Logo.tsx";
 import { MenuItem, Nav } from "$components/Nav.tsx";
-import { NotificationRecord } from "$repository";
+import { NotificationRecord } from "$backend/repository/notification-repository.ts";
 
 export interface SidebarProps {
   route: string;

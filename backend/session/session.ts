@@ -1,6 +1,6 @@
 import { db } from "$backend/database.ts";
 import { SessionState } from "$backend/session/mod.ts";
-import { sql } from "$lib/kysely-sqlite-dialect/deps.ts";
+import { sql } from "$backend/lib/kysely-sqlite-dialect/deps.ts";
 
 export const loadSessionState = async <T>(
   sessionId: string,

@@ -1,6 +1,6 @@
 import { db } from "$backend/database.ts";
 import { UserTable } from "$types";
-import { bcrypt } from "$vendor";
+import { bcrypt } from "$backend/deps.ts";
 import { getCurrentUnixTimestamp } from "$backend/time.ts";
 
 type UserId = { id: number };

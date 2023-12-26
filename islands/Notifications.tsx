@@ -5,8 +5,8 @@ import { useScriptsReadyEffect } from "../frontend/hooks/use-scripts-ready.ts";
 import {
   ClientNotificationRequests,
   NotificationResponses,
-} from "../workers/websocket-handlers/notifications.ts";
-import { NotificationRecord } from "../repository/notification-repository.ts";
+} from "$backend/workers/websocket-handlers/notifications.ts";
+import { NotificationRecord } from "$backend/repository/notification-repository.ts";
 
 interface NotificationsProps {
   initialNotifications: NotificationRecord[];

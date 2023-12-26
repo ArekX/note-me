@@ -3,8 +3,8 @@ import Viewer from "$islands/Viewer.tsx";
 import Button from "$islands/Button.tsx";
 import Loader from "$islands/Loader.tsx";
 import { createNote } from "$frontend/api.ts";
-import { NoteRecord } from "$repository";
-import { zod } from "$vendor";
+import { NoteRecord } from "$backend/repository/note-repository.ts";
+import { zod } from "$backend/deps.ts";
 import { ErrorDisplay } from "$components/ErrorDisplay.tsx";
 import { SchemaErrors } from "$types";
 
