@@ -1,4 +1,3 @@
-import type { Signal } from "@preact/signals";
 import { markdownit } from "../deps.frontend.ts";
 
 const markdownRenderer = markdownit({

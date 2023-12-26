@@ -1,10 +1,9 @@
 import { FreshContext, Handlers } from "$fresh/server.ts";
 import { listNotes, NoteRecord } from "../../repository/note-repository.ts";
 import { AppState } from "$types";
-import { ListNotesRequest } from "$frontend/api.ts";
 
 const findNotes = async (
-  req: Request,
+  _req: Request,
   ctx: FreshContext<AppState>,
 ): Promise<Response> => {
   const results = await listNotes({
