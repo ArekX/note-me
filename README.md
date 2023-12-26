@@ -2,7 +2,7 @@
 
 # Requirements
 
-Deno 1.39.0
+Deno 1.39.1
 
 # Start
 
@@ -12,6 +12,8 @@ deno task cli migrate-up
 deno task cli add-user "Demo user" demo demo
 deno task dev
 ```
+
+Then log in with `demo` as username and password.
 
 # Build
 
