@@ -22,6 +22,86 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     )
     .addColumn("created_at", "int8", (col) => col.notNull())
     .addColumn("updated_at", "int8", (col) => col.notNull())
+    .addColumn("is_deleted", "boolean", (col) => col.notNull().defaultTo(false))
+    .execute();
+
+  await db.schema.createTable("note_reminder")
+    .ifNotExists()
+    .addColumn("id", "integer", (col) => col.autoIncrement().primaryKey())
+    .addColumn(
+      "note_id",
+      "integer",
+      (col) => col.notNull().references("note.id"),
+    )
+    .addColumn(
+      "user_id",
+      "integer",
+      (col) => col.notNull().references("user.id"),
+    )
+    .addColumn("remind_at", "int8", (col) => col.notNull())
+    .execute();
+
+  await db.schema.createTable("note_attachment")
+    .ifNotExists()
+    .addColumn("id", "integer", (col) => col.autoIncrement().primaryKey())
+    .addColumn(
+      "note_id",
+      "integer",
+      (col) => col.notNull().references("note.id"),
+    )
+    .addColumn(
+      "user_id",
+      "integer",
+      (col) => col.notNull().references("user.id"),
+    )
+    .addColumn("data", "blob", (col) => col.notNull())
+    .addColumn("mime_type", "varchar(255)", (col) => col.notNull())
+    .addColumn("created_at", "int8", (col) => col.notNull())
+    .execute();
+
+  await db.schema.createTable("note_history")
+    .ifNotExists()
+    .addColumn("id", "integer", (col) => col.autoIncrement().primaryKey())
+    .addColumn(
+      "note_id",
+      "integer",
+      (col) => col.notNull().references("note.id"),
+    )
+    .addColumn(
+      "user_id",
+      "integer",
+      (col) => col.notNull().references("user.id"),
+    )
+    .addColumn("note", "text", (col) => col.notNull())
+    .addColumn("created_at", "int8", (col) => col.notNull())
+    .execute();
+
+  await db.schema.createTable("note_tag")
+    .ifNotExists()
+    .addColumn("id", "integer", (col) => col.autoIncrement().primaryKey())
+    .addColumn("name", "varchar(255)", (col) => col.notNull())
+    .addColumn(
+      "user_id",
+      "integer",
+      (col) => col.notNull().references("user.id"),
+    )
+    .addColumn("created_at", "int8", (col) => col.notNull())
+    .execute();
+
+  await db.schema.createTable("note_tag_note")
+    .ifNotExists()
+    .addColumn("id", "integer", (col) => col.autoIncrement().primaryKey())
+    .addColumn(
+      "tag_id",
+      "integer",
+      (col) => col.notNull().references("note_tag.id"),
+    )
+    .addColumn(
+      "note_id",
+      "integer",
+      (col) => col.notNull().references("note.id"),
+    )
+    .addColumn("created_at", "int8", (col) => col.notNull())
     .execute();
 
   await db.schema.createTable("session")
@@ -81,6 +161,11 @@ export async function up(db: Kysely<unknown>): Promise<void> {
 }
 
 export async function down(db: Kysely<unknown>): Promise<void> {
+  await db.schema.dropTable("note_reminder").execute();
+  await db.schema.dropTable("note_attachment").execute();
+  await db.schema.dropTable("note_history").execute();
+  await db.schema.dropTable("note_tag").execute();
+  await db.schema.dropTable("note_tag_note").execute();
   await db.schema.dropTable("note").execute();
   await db.schema.dropTable("notification").execute();
   await db.schema.dropTable("group").execute();

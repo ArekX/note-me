@@ -15,6 +15,45 @@ export interface NoteTable {
   user_id: number;
   created_at: number;
   updated_at: number;
+  is_deleted: boolean;
+}
+
+export interface NoteReminderTable {
+  id: Generated<number>;
+  note_id: number;
+  user_id: number;
+  remind_at: number;
+}
+
+export interface NoteAttachmentTable {
+  id: Generated<number>;
+  note_id: number;
+  user_id: number;
+  data: string;
+  mime_type: string;
+  created_at: number;
+}
+
+export interface NoteHistoryTable {
+  id: Generated<number>;
+  note_id: number;
+  user_id: number;
+  note: string;
+  created_at: number;
+}
+
+export interface NoteTagTable {
+  id: Generated<number>;
+  name: string;
+  user_id: number;
+  created_at: number;
+}
+
+export interface NoteTagNoteTable {
+  id: Generated<number>;
+  note_id: number;
+  user_id: number;
+  created_at: number;
 }
 
 export interface SessionTable {
@@ -50,6 +89,11 @@ export interface GroupNoteTable {
 
 export interface Tables {
   note: NoteTable;
+  note_reminder: NoteReminderTable;
+  note_attachment: NoteAttachmentTable;
+  note_history: NoteHistoryTable;
+  note_tag: NoteTagTable;
+  note_tag_note: NoteTagNoteTable;
   notification: NotificationTable;
   group: GroupTable;
   session: SessionTable;
