@@ -7,7 +7,6 @@ import * as $_app from "./routes/_app.tsx";
 import * as $api_middleware from "./routes/api/_middleware.ts";
 import * as $api_add_note from "./routes/api/add-note.ts";
 import * as $api_find_notes from "./routes/api/find-notes.ts";
-import * as $api_test from "./routes/api/test.ts";
 import * as $app_layout from "./routes/app/_layout.tsx";
 import * as $app_middleware from "./routes/app/_middleware.ts";
 import * as $app_index from "./routes/app/index.tsx";
@@ -15,7 +14,6 @@ import * as $app_logout from "./routes/app/logout.tsx";
 import * as $app_note_layout from "./routes/app/note/_layout.tsx";
 import * as $app_note_index from "./routes/app/note/index.tsx";
 import * as $app_profile from "./routes/app/profile.tsx";
-import * as $app_sockets from "./routes/app/sockets.tsx";
 import * as $app_users from "./routes/app/users.tsx";
 import * as $greet_name_ from "./routes/greet/[name].tsx";
 import * as $index from "./routes/index.tsx";
@@ -37,7 +35,6 @@ const manifest = {
     "./routes/api/_middleware.ts": $api_middleware,
     "./routes/api/add-note.ts": $api_add_note,
     "./routes/api/find-notes.ts": $api_find_notes,
-    "./routes/api/test.ts": $api_test,
     "./routes/app/_layout.tsx": $app_layout,
     "./routes/app/_middleware.ts": $app_middleware,
     "./routes/app/index.tsx": $app_index,
@@ -45,7 +42,6 @@ const manifest = {
     "./routes/app/note/_layout.tsx": $app_note_layout,
     "./routes/app/note/index.tsx": $app_note_index,
     "./routes/app/profile.tsx": $app_profile,
-    "./routes/app/sockets.tsx": $app_sockets,
     "./routes/app/users.tsx": $app_users,
     "./routes/greet/[name].tsx": $greet_name_,
     "./routes/index.tsx": $index,

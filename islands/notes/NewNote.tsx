@@ -29,6 +29,8 @@ export default function NewNote({ onNewNoteAdded }: NewNoteProps = {}) {
 
     showLoader.value = true;
     const record = await createNote({
+      group_id: null,
+      tags: [],
       text: text.value,
     });
 

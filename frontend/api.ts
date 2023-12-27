@@ -7,6 +7,8 @@ const apiInterface = axiod.create({
 });
 
 export interface CreateNoteRequest {
+  group_id: number | null;
+  tags: string[];
   text: string;
 }
 

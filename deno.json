@@ -11,7 +11,8 @@
     "update": "deno run -A -r https://fresh.deno.dev/update .",
     "build": "deno task build-assets && docker build --build-arg GIT_REVISION=$(git rev-parse HEAD) . -t arekxv/note-me:$(git describe --tags --abbrev=0)",
     "build-assets": "deno run -A build.ts build",
-    "production": "deno run -A main.ts"
+    "production": "deno run -A main.ts",
+    "test": "deno test -A"
   },
   "lint": { "rules": { "tags": ["fresh", "recommended"] } },
   "exclude": ["**/_fresh/*"],
