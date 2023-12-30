@@ -5,7 +5,9 @@ import manifest from "../fresh.gen.ts";
 import { setupTestDatabase } from "$backend/database.ts";
 import { migrator, setupTestMigrator } from "$backend/migration-manager.ts";
 
-await load({ envPath: ".env.test", export: true });
+
+
+await load({ envPath: "/tests/.env.test", export: true });
 
 export const url = "http://127.0.0.1:8000";
 
