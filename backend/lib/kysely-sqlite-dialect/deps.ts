@@ -18,6 +18,7 @@ export {
   SqliteAdapter,
   SqliteIntrospector,
   SqliteQueryCompiler,
+  Transaction,
   type TransactionSettings,
 } from "npm:kysely@0.26.3";
 

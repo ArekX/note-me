@@ -1,6 +1,8 @@
 import { db } from "$backend/database.ts";
-import { NoteTagTable, RecordId } from "$types";
+import { NoteTagTable, RecordId, Tables } from "$types";
 import { getCurrentUnixTimestamp } from "$backend/time.ts";
+import { Kysely } from "$backend/deps.ts";
+import { Transaction } from "$lib/kysely-sqlite-dialect/deps.ts";
 
 export type TagRecord =
   & Pick<
@@ -10,9 +12,14 @@ export type TagRecord =
   & RecordId;
 
 export const resolveTags = async (
+  db: Transaction<Tables>,
   userId: number,
   tags: string[],
 ): Promise<TagRecord[]> => {
+  if (tags.length == 0) {
+    return [];
+  }
+
   const existingTags = await db.selectFrom("note_tag")
     .select(["id", "name"])
     .where("name", "in", tags)
@@ -42,15 +49,19 @@ export const resolveTags = async (
   return existingTags;
 };
 
-export const linkNoteWithTags = async (
+export const linkNoteWithTags = (
   note_id: number,
   user_id: number,
   tags: string[],
 ): Promise<boolean> => {
-  return await db.transaction().execute(async () => {
-    const tagRecords = await resolveTags(note_id, tags);
+  return db.transaction().execute(async (trx) => {
+    const tagRecords = await resolveTags(trx, note_id, tags);
 
-    const results = await db.insertInto("note_tag_note")
+    if (tagRecords.length == 0) {
+      return true;
+    }
+
+    const results = await trx.insertInto("note_tag_note")
       .values(tagRecords.map((tagRecord) => ({
         note_id,
         user_id,
