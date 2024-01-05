@@ -24,9 +24,9 @@ export function Sidebar(
       link: "/app/profile",
     },
     {
-      icon: "group",
-      name: "Users",
-      link: "/app/users",
+      icon: "manufacturing",
+      name: "Settings",
+      link: "/app/settings",
     },
     {
       icon: "logout",

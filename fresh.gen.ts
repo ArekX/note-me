@@ -14,7 +14,10 @@ import * as $app_logout from "./routes/app/logout.tsx";
 import * as $app_note_layout from "./routes/app/note/_layout.tsx";
 import * as $app_note_index from "./routes/app/note/index.tsx";
 import * as $app_profile from "./routes/app/profile.tsx";
-import * as $app_users from "./routes/app/users.tsx";
+import * as $app_settings_layout from "./routes/app/settings/_layout.tsx";
+import * as $app_settings_index from "./routes/app/settings/index.tsx";
+import * as $app_settings_tags from "./routes/app/settings/tags.tsx";
+import * as $app_settings_users from "./routes/app/settings/users.tsx";
 import * as $greet_name_ from "./routes/greet/[name].tsx";
 import * as $index from "./routes/index.tsx";
 import * as $Button from "./islands/Button.tsx";
@@ -42,7 +45,10 @@ const manifest = {
     "./routes/app/note/_layout.tsx": $app_note_layout,
     "./routes/app/note/index.tsx": $app_note_index,
     "./routes/app/profile.tsx": $app_profile,
-    "./routes/app/users.tsx": $app_users,
+    "./routes/app/settings/_layout.tsx": $app_settings_layout,
+    "./routes/app/settings/index.tsx": $app_settings_index,
+    "./routes/app/settings/tags.tsx": $app_settings_tags,
+    "./routes/app/settings/users.tsx": $app_settings_users,
     "./routes/greet/[name].tsx": $greet_name_,
     "./routes/index.tsx": $index,
   },
