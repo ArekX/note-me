@@ -12,7 +12,6 @@ export type TagRecord =
   & RecordId;
 
 export const resolveTags = async (
-  db: Transaction<Tables>,
   userId: number,
   tags: string[],
 ): Promise<TagRecord[]> => {
@@ -49,30 +48,28 @@ export const resolveTags = async (
   return existingTags;
 };
 
-export const linkNoteWithTags = (
+export const linkNoteWithTags = async (
   note_id: number,
   user_id: number,
   tags: string[],
 ): Promise<boolean> => {
-  return db.transaction().execute(async (trx) => {
-    const tagRecords = await resolveTags(trx, note_id, tags);
+  const tagRecords = await resolveTags(note_id, tags);
 
-    if (tagRecords.length == 0) {
-      return true;
-    }
-
-    const results = await trx.insertInto("note_tag_note")
-      .values(tagRecords.map((tagRecord) => ({
-        note_id,
-        user_id,
-        tag_id: tagRecord.id,
-        created_at: getCurrentUnixTimestamp(),
-      })))
-      .execute();
-
-    if (results.length !== tagRecords.length) {
-      throw new Error("Could not link note with tags!");
-    }
+  if (tagRecords.length == 0) {
     return true;
-  });
+  }
+
+  const results = await db.insertInto("note_tag_note")
+    .values(tagRecords.map((tagRecord) => ({
+      note_id,
+      user_id,
+      tag_id: tagRecord.id,
+      created_at: getCurrentUnixTimestamp(),
+    })))
+    .execute();
+
+  if (results.length !== tagRecords.length) {
+    throw new Error("Could not link note with tags!");
+  }
+  return true;
 };

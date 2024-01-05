@@ -4,6 +4,17 @@ NoteMe is a self-hosted powerful note-taking app designed for enhanced
 productivity. It includes features like note history, reminders, and support for
 multiple users as well as note tagging and adding attachments.
 
+# V1 TODO
+
+- [x] Login
+- [x] Note creation with tags and groups
+- [ ] Group management
+- [ ] User profile management
+- [ ] Backup
+- [ ] Tags management
+- [ ] Note reminders
+- [ ] Share notes?
+
 # Development
 
 Requirements:

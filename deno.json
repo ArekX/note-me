@@ -31,7 +31,8 @@
     "$frontend/": "./frontend/",
     "$cli/": "./cli/",
     "$lib/": "./backend/lib/",
-    "$types": "./types/mod.ts"
+    "$types": "./types/mod.ts",
+    "$tests/": "./tests/"
   },
   "compilerOptions": { "jsx": "react-jsx", "jsxImportSource": "preact" },
   "nodeModulesDir": true

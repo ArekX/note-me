@@ -6,6 +6,7 @@ import {
   defineTest,
   sendRequest,
 } from "../setup.ts";
+import { assertTextContent } from "$tests/asserts.ts";
 
 defineTest("Home page", async (addStep, client) => {
   await addStep(
@@ -15,7 +16,11 @@ defineTest("Home page", async (addStep, client) => {
       const result = await response.text();
       const { status } = response;
       assertEquals(status, 200);
-      assertStringIncludes(result, "Please login.");
+      assertTextContent(
+        result,
+        "h1",
+        "Welcome to NoteMe! Please login.",
+      );
     },
   );
 

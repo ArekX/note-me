@@ -1,39 +1,36 @@
 import { FreshContext, Handlers } from "$fresh/server.ts";
-import { createNote, NoteRecord } from "$backend/repository/note-repository.ts";
+import { NoteRecord } from "$backend/repository/note-repository.ts";
 import { AppState } from "$types";
-import { CreateNoteRequest } from "$frontend/api.ts";
-import { createNoteSchema, validateSchema } from "$backend/schemas.ts";
+import { zod } from "$backend/deps.ts";
 import {
-  linkNoteWithTags,
-} from "$backend/repository/note-tags-repository.ts";
+  createNoteAggregate,
+  noteAggregateSchema,
+} from "$backend/aggregates/note.aggregate.ts";
 
-const handleNoteCreation = async (
-  req: Request,
-  ctx: FreshContext<AppState>,
-): Promise<Response> => {
-  const body = await (req.json()) as CreateNoteRequest;
+export const noteRequestSchema = zod.object({
+  text: noteAggregateSchema.shape.text,
+  tags: noteAggregateSchema.shape.tags,
+  group_id: noteAggregateSchema.shape.group_id,
+});
 
-  await validateSchema(createNoteSchema, body);
-
-  const { id: userId = -1 } = ctx.state.session?.data.user ?? {};
-
-  // TODO: transaction
-  const record = await createNote({
-    note: body.text,
-    user_id: ctx.state.session?.data.user?.id ?? -1,
-  });
-
-  await linkNoteWithTags(userId, record.id, body.tags);
-
-  // if (body.group_id !== null) {
-  //   await assignNoteToGroup(body.group_id, record.id, userId);
-  // }
-
-  return new Response(JSON.stringify(record), {
-    status: 201,
-  });
-};
+export type AddNoteRequest = zod.infer<typeof noteRequestSchema>;
 
 export const handler: Handlers<NoteRecord | null> = {
-  POST: handleNoteCreation,
+  async POST(
+    req: Request,
+    ctx: FreshContext<AppState>,
+  ): Promise<Response> {
+    const body: AddNoteRequest = await (req.json());
+
+    const { id: userId = -1 } = ctx.state.session?.data.user ?? {};
+
+    const result = await createNoteAggregate({
+      ...body,
+      user_id: userId,
+    });
+
+    return new Response(JSON.stringify(result), {
+      status: 201,
+    });
+  },
 };

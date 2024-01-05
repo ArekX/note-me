@@ -1,19 +1,14 @@
 import { axiod, IAxiodResponse } from "./deps.ts";
 import { NoteRecord } from "$backend/repository/note-repository.ts";
+import { AddNoteRequest } from "../routes/api/add-note.ts";
 
 const apiInterface = axiod.create({
   withCredentials: true,
   baseURL: "/api",
 });
 
-export interface CreateNoteRequest {
-  group_id: number | null;
-  tags: string[];
-  text: string;
-}
-
 export const createNote = (
-  note: CreateNoteRequest,
+  note: AddNoteRequest,
 ): Promise<IAxiodResponse<NoteRecord>> => apiInterface.post("/add-note", note);
 
 export interface ListNotesRequest {
