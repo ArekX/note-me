@@ -13,8 +13,9 @@ import * as $app_layout from "./routes/app/_layout.tsx";
 import * as $app_middleware from "./routes/app/_middleware.ts";
 import * as $app_index from "./routes/app/index.tsx";
 import * as $app_logout from "./routes/app/logout.tsx";
-import * as $app_note_layout from "./routes/app/note/_layout.tsx";
 import * as $app_note_index from "./routes/app/note/index.tsx";
+import * as $app_notess_layout from "./routes/app/notess/_layout.tsx";
+import * as $app_notess_index from "./routes/app/notess/index.tsx";
 import * as $app_profile from "./routes/app/profile.tsx";
 import * as $app_settings_layout from "./routes/app/settings/_layout.tsx";
 import * as $app_settings_index from "./routes/app/settings/index.tsx";
@@ -28,6 +29,7 @@ import * as $Loader from "./islands/Loader.tsx";
 import * as $Notifications from "./islands/Notifications.tsx";
 import * as $ScriptLoader from "./islands/ScriptLoader.tsx";
 import * as $Viewer from "./islands/Viewer.tsx";
+import * as $groups_GroupItem from "./islands/groups/GroupItem.tsx";
 import * as $groups_GroupList from "./islands/groups/GroupList.tsx";
 import * as $groups_SearchBar from "./islands/groups/SearchBar.tsx";
 import * as $notes_NewNote from "./islands/notes/NewNote.tsx";
@@ -48,8 +50,9 @@ const manifest = {
     "./routes/app/_middleware.ts": $app_middleware,
     "./routes/app/index.tsx": $app_index,
     "./routes/app/logout.tsx": $app_logout,
-    "./routes/app/note/_layout.tsx": $app_note_layout,
     "./routes/app/note/index.tsx": $app_note_index,
+    "./routes/app/notess/_layout.tsx": $app_notess_layout,
+    "./routes/app/notess/index.tsx": $app_notess_index,
     "./routes/app/profile.tsx": $app_profile,
     "./routes/app/settings/_layout.tsx": $app_settings_layout,
     "./routes/app/settings/index.tsx": $app_settings_index,
@@ -65,6 +68,7 @@ const manifest = {
     "./islands/Notifications.tsx": $Notifications,
     "./islands/ScriptLoader.tsx": $ScriptLoader,
     "./islands/Viewer.tsx": $Viewer,
+    "./islands/groups/GroupItem.tsx": $groups_GroupItem,
     "./islands/groups/GroupList.tsx": $groups_GroupList,
     "./islands/groups/SearchBar.tsx": $groups_SearchBar,
     "./islands/notes/NewNote.tsx": $notes_NewNote,

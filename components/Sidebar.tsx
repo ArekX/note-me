@@ -47,14 +47,22 @@ export function Sidebar(
             </a>
           </div>
           <div class="flex-1 text-center">
-            <a href="/app/settings" class="hover:text-gray-300">
+            <a
+              href="/app/settings"
+              class="hover:text-gray-300"
+              title="Administration settings"
+            >
               <Icon name="cog" />
             </a>
             <Notifications initialNotifications={initialNotifications} />
-            <a href="/app/profile" class="hover:text-gray-300">
+            <a
+              href="/app/profile"
+              class="hover:text-gray-300"
+              title="Your account"
+            >
               <Icon name="user" />
             </a>
-            <a href="/app/logout" class="hover:text-gray-300">
+            <a href="/app/logout" class="hover:text-gray-300" title="Log out">
               <Icon name="log-out" />
             </a>
           </div>

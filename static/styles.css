@@ -22,3 +22,31 @@
 .notification-menu:hover .notification-badge {
     @apply text-white
 }
+
+.group-item {
+    height: 2.2rem;
+}
+
+.group-item .group-item-name {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: block;
+    position: absolute;
+    left: 0;
+    right: .3rem;
+    top: 0.1rem;
+}
+
+.group-item .group-item-actions {
+    visibility: hidden;
+    padding-top: .12rem;
+}
+
+.group-item:hover .group-item-name {
+    right: 5rem;
+}
+
+.group-item:hover .group-item-actions {
+    visibility: visible;
+}

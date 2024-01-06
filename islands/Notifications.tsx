@@ -33,11 +33,19 @@ export default function Notifications(props: NotificationsProps) {
   });
 
   return (
-    <div class="text-right pl-1 pr-1 -mb-6 cursor-pointer inline-block relative notification-menu">
-      <span class="notification-badge">
-        {notifications.value.length}
-      </span>
-      <Icon name="bell" type="solid" />
+    <div
+      class="text-right pl-1 pr-1 -mb-6 cursor-pointer inline-block relative notification-menu"
+      title="Notifications"
+    >
+      {notifications.value.length > 0 && (
+        <span class="notification-badge">
+          {notifications.value.length}
+        </span>
+      )}
+      <Icon
+        name="bell"
+        type={notifications.value.length > 0 ? "solid" : "regular"}
+      />
     </div>
   );
 }

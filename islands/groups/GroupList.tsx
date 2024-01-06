@@ -5,6 +5,8 @@ import { findGroups } from "$frontend/api.ts";
 import { GroupRecord } from "$backend/repository/group-repository.ts";
 import { useEffect } from "preact/hooks";
 import { FindGroupsRequest } from "../../routes/api/find-groups.ts";
+import { Icon } from "$components/Icon.tsx";
+import GroupItem from "$islands/groups/GroupItem.tsx";
 
 export default function GroupList() {
   const isLoading = useSignal(true);
@@ -34,8 +36,35 @@ export default function GroupList() {
   return (
     <div class="mt-3">
       <SearchBar onSearch={searchNotesAndGroups} />
-      <div className="p-4">
-        <Loader color="white" visible={isLoading.value} />
+      <div class="flex pl-2 pr-">
+        <div class="flex-1 pt-1 text-sm">
+          Notes
+        </div>
+        <div class="flex-1 text-right opacity-30 hover:opacity-100 pr-1">
+          <span class="cursor-pointer hover:text-gray-300" title="Add Note">
+            <Icon name="plus" />
+          </span>
+          <span class="cursor-pointer hover:text-gray-300" title="Add Group">
+            <Icon name="folder-plus" />
+          </span>
+        </div>
+      </div>
+      <div>
+        <Loader
+          color="white"
+          visible={isLoading.value}
+          displayType="center-block"
+        >
+          Loading notes and groups...
+        </Loader>
+        <GroupItem
+          record={{
+            id: 0,
+            name: "Group item",
+            parent_id: null,
+          }}
+          onSave={() => {}}
+        />
       </div>
     </div>
   );

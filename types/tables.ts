@@ -81,7 +81,7 @@ export interface GroupTable {
   name: string;
   created_at: number;
   user_id: number;
-  parent_id: number;
+  parent_id: number | null;
 }
 
 export interface GroupNoteTable {
