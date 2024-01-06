@@ -50,3 +50,19 @@
 .group-item:hover .group-item-actions {
     visibility: visible;
 }
+
+dialog {
+  pointer-events: none;
+  opacity: 0;
+  display: block;
+  margin-top: -2em;
+}
+dialog[open] {
+  opacity: 1;
+  pointer-events: inherit;
+  margin-top: initial;
+  transition: all 1s;
+}
+dialog::backdrop {
+  background-color: rgba(0,0,255, 0.2);
+}
