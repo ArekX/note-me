@@ -8,6 +8,7 @@ import {
 } from "$backend/aggregates/note.aggregate.ts";
 
 export const noteRequestSchema = zod.object({
+  title: noteAggregateSchema.shape.title,
   text: noteAggregateSchema.shape.text,
   tags: noteAggregateSchema.shape.tags,
   group_id: noteAggregateSchema.shape.group_id,

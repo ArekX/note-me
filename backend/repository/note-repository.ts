@@ -40,7 +40,7 @@ export const listNotes = async (filter: NoteFilters): Promise<NoteRecord[]> => {
   const results = await db.selectFrom("note")
     .where("user_id", "=", filter.user_id)
     .orderBy("created_at", "desc")
-    .select(["id", "note", "created_at", "updated_at", "user_id"])
+    .select(["id", "title", "note", "created_at", "updated_at", "user_id"])
     .execute();
 
   return results;

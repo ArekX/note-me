@@ -9,8 +9,6 @@ export const apiErrorHandler = async (
     const response = await ctx.next();
     return response;
   } catch (e) {
-    console.log("idemo error", e);
-
     if (e instanceof Deno.errors.InvalidData) {
       return new Response(e.message, {
         status: 422,

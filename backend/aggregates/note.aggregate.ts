@@ -10,6 +10,7 @@ import { linkNoteWithTags } from "$backend/repository/note-tags-repository.ts";
 import { assignNoteToGroup } from "$backend/repository/group-repository.ts";
 
 export const noteAggregateSchema = zod.object({
+  title: zod.string().min(1, "Note Title must have at least one character"),
   text: zod.string().min(1, "Note must have at least one character"),
   user_id: zod.number(),
   tags: zod.array(zod.string()),
@@ -25,6 +26,7 @@ export const createNoteAggregate = async (note: NoteAggregate) => {
 
   try {
     const record = await createNote({
+      title: note.title,
       note: note.text,
       user_id: note.user_id,
     });

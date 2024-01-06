@@ -4,8 +4,10 @@
 
 import * as $_404 from "./routes/_404.tsx";
 import * as $_app from "./routes/_app.tsx";
+import * as $_middleware from "./routes/_middleware.ts";
 import * as $api_middleware from "./routes/api/_middleware.ts";
 import * as $api_add_note from "./routes/api/add-note.ts";
+import * as $api_find_groups from "./routes/api/find-groups.ts";
 import * as $api_find_notes from "./routes/api/find-notes.ts";
 import * as $app_layout from "./routes/app/_layout.tsx";
 import * as $app_middleware from "./routes/app/_middleware.ts";
@@ -26,6 +28,8 @@ import * as $Loader from "./islands/Loader.tsx";
 import * as $Notifications from "./islands/Notifications.tsx";
 import * as $ScriptLoader from "./islands/ScriptLoader.tsx";
 import * as $Viewer from "./islands/Viewer.tsx";
+import * as $groups_GroupList from "./islands/groups/GroupList.tsx";
+import * as $groups_SearchBar from "./islands/groups/SearchBar.tsx";
 import * as $notes_NewNote from "./islands/notes/NewNote.tsx";
 import * as $notes_Note from "./islands/notes/Note.tsx";
 import * as $notes_NoteList from "./islands/notes/NoteList.tsx";
@@ -35,8 +39,10 @@ const manifest = {
   routes: {
     "./routes/_404.tsx": $_404,
     "./routes/_app.tsx": $_app,
+    "./routes/_middleware.ts": $_middleware,
     "./routes/api/_middleware.ts": $api_middleware,
     "./routes/api/add-note.ts": $api_add_note,
+    "./routes/api/find-groups.ts": $api_find_groups,
     "./routes/api/find-notes.ts": $api_find_notes,
     "./routes/app/_layout.tsx": $app_layout,
     "./routes/app/_middleware.ts": $app_middleware,
@@ -59,6 +65,8 @@ const manifest = {
     "./islands/Notifications.tsx": $Notifications,
     "./islands/ScriptLoader.tsx": $ScriptLoader,
     "./islands/Viewer.tsx": $Viewer,
+    "./islands/groups/GroupList.tsx": $groups_GroupList,
+    "./islands/groups/SearchBar.tsx": $groups_SearchBar,
     "./islands/notes/NewNote.tsx": $notes_NewNote,
     "./islands/notes/Note.tsx": $notes_Note,
     "./islands/notes/NoteList.tsx": $notes_NoteList,

@@ -16,6 +16,7 @@ export async function up(db: Kysely<unknown>): Promise<void> {
   await db.schema.createTable("note")
     .ifNotExists()
     .addColumn("id", "integer", (col) => col.autoIncrement().primaryKey())
+    .addColumn("title", "varchar(255)", (col) => col.notNull())
     .addColumn("note", "text", (col) => col.notNull())
     .addColumn(
       "user_id",

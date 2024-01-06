@@ -37,7 +37,10 @@ export const handler: Handlers<LoginResult> = {
 
     writeSessionCookie(
       response.headers,
-      await createSessionState<AppSessionData>({ user }),
+      await createSessionState<AppSessionData>({
+        user,
+        storedCsrfToken: ctx.state.newCsrfToken ?? "",
+      }),
     );
 
     return response;
@@ -92,7 +95,7 @@ export default function Page(props: PageProps<LoginResult>) {
               class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="submit"
             >
-              <Icon name="login" /> Log Me In
+              <Icon name="log-in" /> Log Me In
             </button>
           </div>
         </form>

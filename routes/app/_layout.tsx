@@ -29,6 +29,7 @@ export default async function Layout(
             name,
             default_group_id,
             timezone,
+            csrfToken: ctx.state.newCsrfToken ?? "",
           }}
         />
         <ctx.Component />

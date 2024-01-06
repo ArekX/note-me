@@ -9,5 +9,6 @@ export const sessionLoader = async (
 ) => {
   const cookies = resolveCookies(req);
   ctx.state.session = await loadSessionState<AppSessionData>(cookies.session);
+
   return ctx.next();
 };

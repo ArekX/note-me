@@ -1,9 +1,13 @@
 import { UserRecord } from "$backend/repository/user-repository.ts";
 
-export type FrontendUserData = Pick<
-  UserRecord,
-  "name" | "default_group_id" | "timezone"
->;
+export type FrontendUserData =
+  & Pick<
+    UserRecord,
+    "name" | "default_group_id" | "timezone"
+  >
+  & {
+    csrfToken: string;
+  };
 
 class UserData {
   #data: FrontendUserData;
@@ -38,6 +42,10 @@ class UserData {
 
   formatDateTime(date: Date): string {
     return this.#intlDateTime.format(date);
+  }
+
+  get csrfToken(): string {
+    return this.#data.csrfToken;
   }
 }
 

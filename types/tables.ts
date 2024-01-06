@@ -13,6 +13,7 @@ export interface UserTable {
 
 export interface NoteTable {
   id: Generated<number>;
+  title: string;
   note: string;
   user_id: number;
   created_at: number;

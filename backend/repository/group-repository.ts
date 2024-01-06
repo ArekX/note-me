@@ -1,4 +1,27 @@
 import { db } from "$backend/database.ts";
+import { RecordId } from "../../types/repository.ts";
+import { GroupTable } from "../../types/tables.ts";
+
+export type GroupRecord =
+  & Pick<GroupTable, "name" | "parent_id">
+  & RecordId;
+
+export const getUserGroups = async (
+  parent_id: string | null,
+  user_id: number,
+): Promise<GroupRecord[]> => {
+  const query = db.selectFrom("group")
+    .select(["id", "name", "parent_id"])
+    .where("user_id", "=", user_id);
+
+  if (parent_id) {
+    query.where("parent_id", "=", +parent_id);
+  } else {
+    query.where("parent_id", "is", null);
+  }
+
+  return await query.execute();
+};
 
 export const groupExists = async (
   id: number,

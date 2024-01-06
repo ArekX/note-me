@@ -30,6 +30,7 @@ export default async function Layout(
         userData={{
           name,
           default_group_id,
+          csrfToken: ctx.state.newCsrfToken ?? "",
           timezone,
         }}
       />
