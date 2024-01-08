@@ -89,6 +89,11 @@ export default function GroupList() {
     groups.value = [...groups.value];
   };
 
+  const reloadEverything = () => {
+    groups.value = [];
+    loadGroups();
+  }
+
   return (
     <div class="mt-3">
       <SearchBar onSearch={searchNotesAndGroups} />
@@ -102,6 +107,9 @@ export default function GroupList() {
           </span>
           <span class="cursor-pointer hover:text-gray-300" title="Add Group" onClick={addRootGroup}>
             <Icon name="folder-plus" />
+          </span>
+          <span class="cursor-pointer hover:text-gray-300" title="Reload" onClick={reloadEverything}>
+            <Icon name="refresh" />
           </span>
         </div>
       </div>

@@ -59,6 +59,15 @@ export default function GroupItem({ parent, container, onAccept, onAddNote, onAd
           <span class="hover:text-gray-300 cursor-pointer" title="Rename" onClick={() => onRename(container)}>
             <Icon name="edit" />
           </span>
+          <span class="hover:text-gray-300 cursor-pointer" title="Refresh" onClick={() => { }}>
+            <Icon name="refresh" />
+          </span>
+          <span class="hover:text-gray-300 cursor-pointer" title="Delete" onClick={() => { }}>
+            <Icon name="minus-circle" />
+          </span>
+          <span class="hover:text-gray-300 cursor-pointer" title="Delete" onClick={() => { }}>
+            <Icon name="dots-horizontal-rounded" />
+          </span>
         </div>}
         {container.edit_mode ?
           <div class="group-item-editor relative flex">
