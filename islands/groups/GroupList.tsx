@@ -54,6 +54,8 @@ export default function GroupList() {
         name: "",
         created_at: 0,
         parent_id: null,
+        has_notes: null,
+        has_subgroups: null,
       },
       children: []
     }];
@@ -113,14 +115,20 @@ export default function GroupList() {
         </Loader>
         {groups.value.map((group) => <GroupItem
           container={group}
+          parent={null}
           onAccept={(group, newName) => {
             group.name = newName;
             saveGroup(group);
           }}
-          onCancel={() => {
-            if (group.is_new_record) {
-              // TODO: This check needs to be nested
-              groups.value = groups.value.filter(g => g !== group);
+          onCancel={(container, parent) => {
+            if (container.is_new_record) {
+              if (parent === null) {
+                groups.value = groups.value.filter(g => g !== container);
+              } else {
+                parent.children = parent.children.filter(g => g !== container);
+                groups.value = [...groups.value];
+              }
+
               return;
             }
 
@@ -128,7 +136,25 @@ export default function GroupList() {
             groups.value = [...groups.value];
           }}
           onAddNote={() => { }}
-          onAddGroup={() => { }}
+          onAddGroup={(container) => {
+            container.children.push({
+              is_new_record: true,
+              is_processing: false,
+              name: "",
+              type: "group",
+              edit_mode: true,
+              record: {
+                id: 0,
+                name: "",
+                created_at: 0,
+                parent_id: container.record.id,
+                has_notes: null,
+                has_subgroups: null,
+              },
+              children: []
+            });
+            groups.value = [...groups.value];
+          }}
           onRename={(group) => {
             group.edit_mode = true;
             groups.value = [...groups.value];

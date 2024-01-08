@@ -2,17 +2,35 @@ import { db } from "$backend/database.ts";
 import { RecordId } from "../../types/repository.ts";
 import { GroupTable } from "../../types/tables.ts";
 import { getCurrentUnixTimestamp } from "$backend/time.ts";
+import { sql } from "$lib/kysely-sqlite-dialect/deps.ts";
 
 export type GroupRecord =
   & Pick<GroupTable, "name" | "parent_id" | "created_at">
-  & RecordId;
+  & RecordId
+  & {
+    has_subgroups: number | null;
+    has_notes: number | null;
+  };
 
 export const getUserGroups = async (
   parent_id: string | null,
   user_id: number,
 ): Promise<GroupRecord[]> => {
   const query = db.selectFrom("group")
-    .select(["id", "name", "parent_id", "created_at"])
+    .select([
+      "id",
+      "name",
+      "parent_id",
+      "created_at",
+      sql<
+        number
+      >`(SELECT 1 FROM "group" "gc" WHERE "gc"."parent_id" = "group"."id" LIMIT 1)`
+        .as("has_subgroups"),
+      sql<
+        number
+      >`(SELECT 1 FROM "group_note" "gn" WHERE "gn"."group_id" = "group"."id" LIMIT 1)`
+        .as("has_notes"),
+    ])
     .where("user_id", "=", user_id);
 
   if (parent_id) {
@@ -72,6 +90,8 @@ export const createGroup = async (
   return {
     id: Number(result.insertId),
     ...insertData,
+    has_notes: null,
+    has_subgroups: null,
   };
 };
 

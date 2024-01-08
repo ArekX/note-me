@@ -38,6 +38,10 @@
     top: 1.5px;
 }
 
+.group-item-children {
+    padding-left: 1rem;
+}
+
 .group-item .group-item-name {
     white-space: nowrap;
     text-overflow: ellipsis;
