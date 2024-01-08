@@ -1,9 +1,10 @@
 import { db } from "$backend/database.ts";
 import { RecordId } from "../../types/repository.ts";
 import { GroupTable } from "../../types/tables.ts";
+import { getCurrentUnixTimestamp } from "$backend/time.ts";
 
 export type GroupRecord =
-  & Pick<GroupTable, "name" | "parent_id">
+  & Pick<GroupTable, "name" | "parent_id" | "created_at">
   & RecordId;
 
 export const getUserGroups = async (
@@ -11,7 +12,7 @@ export const getUserGroups = async (
   user_id: number,
 ): Promise<GroupRecord[]> => {
   const query = db.selectFrom("group")
-    .select(["id", "name", "parent_id"])
+    .select(["id", "name", "parent_id", "created_at"])
     .where("user_id", "=", user_id);
 
   if (parent_id) {
@@ -50,4 +51,48 @@ export const assignNoteToGroup = async (
       user_id,
     })
     .execute();
+};
+
+export type NewGroupRecord = Omit<
+  GroupTable,
+  "id" | "created_at" | "updated_at"
+>;
+
+export const createGroup = async (
+  record: NewGroupRecord,
+): Promise<GroupRecord> => {
+  const insertData = {
+    ...record,
+    created_at: getCurrentUnixTimestamp(),
+  };
+  const result = await db.insertInto("group")
+    .values(insertData)
+    .executeTakeFirst();
+
+  return {
+    id: Number(result.insertId),
+    ...insertData,
+  };
+};
+
+export type UpdateGroupRecord =
+  & Omit<
+    GroupTable,
+    "id" | "created_at" | "updated_at"
+  >
+  & RecordId;
+
+export const updateGroup = async (
+  record: UpdateGroupRecord,
+): Promise<boolean> => {
+  const result = await db.updateTable("group")
+    .set({
+      parent_id: record.parent_id,
+      name: record.name,
+    })
+    .where("id", "=", record.id)
+    .where("user_id", "=", record.user_id)
+    .executeTakeFirst();
+
+  return result.numUpdatedRows > 0;
 };

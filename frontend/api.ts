@@ -5,6 +5,8 @@ import { FindGroupsRequest } from "../routes/api/find-groups.ts";
 import { FindNotesRequest } from "../routes/api/find-notes.ts";
 import { GroupRecord } from "$backend/repository/group-repository.ts";
 import { getUserData } from "$frontend/user-data.ts";
+import { AddGroupRequest } from "../routes/api/add-group.ts";
+import { UpdateGroupRequest } from "../routes/api/update-group.ts";
 
 const apiInterface = axiod.create({
   withCredentials: true,
@@ -20,6 +22,28 @@ export const createNote = (
 ): Promise<IAxiodResponse<NoteRecord>> =>
   apiInterface.post("/add-note", {
     ...note,
+  }, {
+    params: {
+      csrf: getUserData().csrfToken,
+    },
+  });
+
+export const createGroup = (
+  group: AddGroupRequest,
+): Promise<IAxiodResponse<GroupRecord>> =>
+  apiInterface.post("/add-group", {
+    ...group,
+  }, {
+    params: {
+      csrf: getUserData().csrfToken,
+    },
+  });
+
+export const updateGroup = (
+  group: UpdateGroupRequest,
+): Promise<IAxiodResponse<{ success: boolean }>> =>
+  apiInterface.post("/update-group", {
+    ...group,
   }, {
     params: {
       csrf: getUserData().csrfToken,

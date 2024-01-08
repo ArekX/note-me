@@ -24,7 +24,18 @@
 }
 
 .group-item {
-    height: 2.2rem;
+    height: 2.5rem;
+}
+
+.group-item i {
+    line-height: 2.5rem;
+    margin-top: -3px;
+}
+
+.group-item .name-text {
+    display: inline-block;
+    position: relative;
+    top: 1.5px;
 }
 
 .group-item .group-item-name {
@@ -55,14 +66,18 @@ dialog {
   pointer-events: none;
   opacity: 0;
   display: block;
-  margin-top: -2em;
+  border-radius: 1em;
+  padding: 2em;
+    @apply bg-gray-800;
+    @apply text-white;
+
 }
 dialog[open] {
   opacity: 1;
   pointer-events: inherit;
-  margin-top: initial;
   transition: all 1s;
 }
 dialog::backdrop {
-  background-color: rgba(0,0,255, 0.2);
+  @apply bg-gray-950;
+  @apply opacity-50;
 }
