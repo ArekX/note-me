@@ -14,10 +14,8 @@ export const antiCsrfTokenValidator = (
   if (req.method == "POST") {
     const params = parseQueryParams<AntiCsrfToken>(req.url);
 
-    console.log(params.csrf, storedToken);
-
     if (params.csrf != storedToken) {
-      return new Response("Invalid CSRF token", {
+      return new Response("Invalid or missing CSRF token", {
         status: 403,
       });
     }

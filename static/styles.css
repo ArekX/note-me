@@ -62,7 +62,8 @@
     right: 5rem;
 }
 
-.group-item:hover .group-item-actions {
+.group-item:hover .group-item-actions,
+.group-item.opened-menu .group-item-actions {
     visibility: visible;
 }
 
@@ -84,4 +85,12 @@ dialog[open] {
 dialog::backdrop {
   @apply bg-gray-950;
   @apply opacity-50;
+}
+
+.icon-menu .icon-menu-items {
+    display: none;
+}
+
+.icon-menu.show-items .icon-menu-items {
+    display: block;
 }

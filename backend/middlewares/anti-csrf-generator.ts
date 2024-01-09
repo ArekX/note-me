@@ -1,11 +1,10 @@
 import { FreshContext } from "$fresh/server.ts";
 import { AppState } from "$types";
-import { generateAntiCsrfToken } from "$backend/csrf-token.ts";
 
 export const antiCsrfTokenGenerator = (
   _req: Request,
   ctx: FreshContext<AppState>,
 ) => {
-  ctx.state.newCsrfToken = generateAntiCsrfToken();
+  ctx.state.newCsrfToken = crypto.randomUUID();
   return ctx.next();
 };

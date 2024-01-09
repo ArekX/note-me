@@ -16,8 +16,6 @@ import * as $app_middleware from "./routes/app/_middleware.ts";
 import * as $app_index from "./routes/app/index.tsx";
 import * as $app_logout from "./routes/app/logout.tsx";
 import * as $app_note_index from "./routes/app/note/index.tsx";
-import * as $app_notess_layout from "./routes/app/notess/_layout.tsx";
-import * as $app_notess_index from "./routes/app/notess/index.tsx";
 import * as $app_profile from "./routes/app/profile.tsx";
 import * as $app_settings_layout from "./routes/app/settings/_layout.tsx";
 import * as $app_settings_index from "./routes/app/settings/index.tsx";
@@ -26,7 +24,7 @@ import * as $app_settings_users from "./routes/app/settings/users.tsx";
 import * as $greet_name_ from "./routes/greet/[name].tsx";
 import * as $index from "./routes/index.tsx";
 import * as $Button from "./islands/Button.tsx";
-import * as $Counter from "./islands/Counter.tsx";
+import * as $IconMenu from "./islands/IconMenu.tsx";
 import * as $Loader from "./islands/Loader.tsx";
 import * as $Notifications from "./islands/Notifications.tsx";
 import * as $ScriptLoader from "./islands/ScriptLoader.tsx";
@@ -55,8 +53,6 @@ const manifest = {
     "./routes/app/index.tsx": $app_index,
     "./routes/app/logout.tsx": $app_logout,
     "./routes/app/note/index.tsx": $app_note_index,
-    "./routes/app/notess/_layout.tsx": $app_notess_layout,
-    "./routes/app/notess/index.tsx": $app_notess_index,
     "./routes/app/profile.tsx": $app_profile,
     "./routes/app/settings/_layout.tsx": $app_settings_layout,
     "./routes/app/settings/index.tsx": $app_settings_index,
@@ -67,7 +63,7 @@ const manifest = {
   },
   islands: {
     "./islands/Button.tsx": $Button,
-    "./islands/Counter.tsx": $Counter,
+    "./islands/IconMenu.tsx": $IconMenu,
     "./islands/Loader.tsx": $Loader,
     "./islands/Notifications.tsx": $Notifications,
     "./islands/ScriptLoader.tsx": $ScriptLoader,

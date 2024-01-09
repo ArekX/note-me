@@ -6,7 +6,7 @@ import { useEffect } from "preact/hooks";
 import { FindGroupsRequest } from "../../routes/api/find-groups.ts";
 import { Icon } from "$components/Icon.tsx";
 import GroupItem, { ContainerGroupRecord } from "$islands/groups/GroupItem.tsx";
-import { record } from "https://deno.land/x/zod@v3.22.4/types.ts";
+import { clearPopupOwner } from "$frontend/stores/active-sidebar-item.ts";
 
 export default function GroupList() {
   const isLoading = useSignal(true);
@@ -15,31 +15,48 @@ export default function GroupList() {
   const searchNotesAndGroups = async (query: string) => {
   };
 
-  const loadGroups = async (parent_id?: string) => {
-    isLoading.value = true;
-    const request = {} as FindGroupsRequest;
-
-    if (parent_id) {
-      request.parent_id = parent_id;
+  const loadGroups = async (parent?: ContainerGroupRecord) => {
+    if (!parent) {
+      isLoading.value = true;
+    } else {
+      parent.is_processing = true;
     }
 
-    const result = await findGroups(request);
+    const request = {} as FindGroupsRequest;
 
-    // TODO: Need to add to PARENT record.
-    groups.value = result.data.map(record => ({
+    if (parent) {
+      request.parent_id = parent.record.id.toString();
+    }
+
+    const result = (await findGroups(request)).data.map(record => ({
       is_new_record: false,
       is_processing: false,
       name: record.name,
       type: "group",
       edit_mode: false,
+      parent: parent ?? null,
       record,
       children: []
-    }));
-    isLoading.value = false;
+    } as ContainerGroupRecord));
+
+
+    if (!parent) {
+      groups.value = result;
+    } else {
+      parent.children = result;
+      groups.value = [...groups.value];
+    }
+
+    if (!parent) {
+      isLoading.value = false;
+    } else {
+      parent.is_processing = false;
+    }
   };
 
   useEffect(() => {
     loadGroups();
+    clearPopupOwner();
   }, []);
 
   const addRootGroup = () => {
@@ -49,6 +66,7 @@ export default function GroupList() {
       name: "",
       type: "group",
       edit_mode: true,
+      parent: null,
       record: {
         id: 0,
         name: "",
@@ -86,6 +104,16 @@ export default function GroupList() {
       container.record.name = container.name;
     }
     container.is_processing = false;
+    groups.value = [...groups.value];
+  };
+
+  const updateToRoot = (container: ContainerGroupRecord) => {
+    container.children = [...container.children];
+    let parent = container.parent;
+    while (parent) {
+      parent.children = [...parent.children];
+      parent = parent.parent;
+    }
     groups.value = [...groups.value];
   };
 
@@ -151,6 +179,7 @@ export default function GroupList() {
               name: "",
               type: "group",
               edit_mode: true,
+              parent: container,
               record: {
                 id: 0,
                 name: "",
@@ -161,13 +190,18 @@ export default function GroupList() {
               },
               children: []
             });
-            groups.value = [...groups.value];
+            updateToRoot(container);
           }}
           onRename={(group) => {
             group.edit_mode = true;
             groups.value = [...groups.value];
 
           }}
+          onLoadChildren={(container) => {
+            loadGroups(container);
+          }}
+          onRefresh={() => { }}
+          onDelete={() => { }}
         />)}
         {groups.value.length === 0 && !isLoading.value && <div class="text-center text-gray-400 pt-14">
           <div><Icon name="note" size="5xl" /></div>
