@@ -5,8 +5,9 @@ import { createGroup, findGroups, updateGroup } from "$frontend/api.ts";
 import { useEffect } from "preact/hooks";
 import { FindGroupsRequest } from "../../routes/api/find-groups.ts";
 import { Icon } from "$components/Icon.tsx";
-import GroupItem, { ContainerGroupRecord } from "$islands/groups/GroupItem.tsx";
+import GroupItem, { ContainerGroupRecord, createContainer, createNewContainerRecord } from "$islands/groups/GroupItem.tsx";
 import { clearPopupOwner } from "$frontend/stores/active-sidebar-item.ts";
+import { GroupRecord } from "$backend/repository/group-repository.ts";
 
 export default function GroupList() {
   const isLoading = useSignal(true);
@@ -28,16 +29,10 @@ export default function GroupList() {
       request.parent_id = parent.record.id.toString();
     }
 
-    const result = (await findGroups(request)).data.map(record => ({
-      is_new_record: false,
-      is_processing: false,
-      name: record.name,
+    const result = (await findGroups(request)).data.map(record => createContainer({
       type: "group",
-      edit_mode: false,
-      parent: parent ?? null,
-      record,
-      children: []
-    } as ContainerGroupRecord));
+      record: record as GroupRecord
+    }, parent ?? null));
 
 
     if (!parent) {
@@ -60,51 +55,38 @@ export default function GroupList() {
   }, []);
 
   const addRootGroup = () => {
-    groups.value = [...groups.value, {
-      is_new_record: true,
-      is_processing: false,
-      name: "",
-      type: "group",
-      edit_mode: true,
-      parent: null,
-      record: {
-        id: 0,
-        name: "",
-        created_at: 0,
-        parent_id: null,
-        has_notes: null,
-        has_subgroups: null,
-      },
-      children: []
-    }];
+    groups.value = [...groups.value, createNewContainerRecord("group", null, null)];
   };
 
   const saveGroup = async (container: ContainerGroupRecord) => {
     container.is_processing = true;
-    if (container.is_new_record && container.type === "group") {
 
-      const result = await createGroup({
-        name: container.name,
-        parent_id: container.record.parent_id,
-      });
+    const { is_new_record, name, type, record } = container;
 
-      container.record = result.data;
-      container.edit_mode = false;
+    if (type !== "group") {
+      return;
+    }
+
+    container.is_processing = true;
+
+    if (is_new_record) {
+      container.record = (await createGroup({
+        name,
+        parent_id: record.parent_id,
+      })).data;
       container.is_new_record = false;
-
-    } else if (!container.is_new_record && container.type == "group") {
-      container.is_processing = true;
+    } else {
       await updateGroup({
-        id: container.record.id,
-        name: container.name,
+        id: record.id,
+        name,
         parent_id: container.record.parent_id,
       });
-
-      container.edit_mode = false;
       container.record.name = container.name;
     }
+
+    container.edit_mode = false;
     container.is_processing = false;
-    groups.value = [...groups.value];
+    updateToRoot(container);
   };
 
   const updateToRoot = (container: ContainerGroupRecord) => {
@@ -125,7 +107,7 @@ export default function GroupList() {
   return (
     <div class="mt-3">
       <SearchBar onSearch={searchNotesAndGroups} />
-      <div class="flex pl-2">
+      <div class="flex pl-2 select-none">
         <div class="flex-1 pt-1 text-sm">
           Notes
         </div>
@@ -152,58 +134,40 @@ export default function GroupList() {
         {groups.value.map((group) => <GroupItem
           container={group}
           parent={null}
-          onAccept={(group, newName) => {
+          onAccept={(group: ContainerGroupRecord, newName: string) => {
             group.name = newName;
             saveGroup(group);
           }}
           onCancel={(container, parent) => {
+
+            container.edit_mode = false;
+
             if (container.is_new_record) {
               if (parent === null) {
                 groups.value = groups.value.filter(g => g !== container);
               } else {
                 parent.children = parent.children.filter(g => g !== container);
-                groups.value = [...groups.value];
               }
-
-              return;
             }
 
-            group.edit_mode = false;
-            groups.value = [...groups.value];
+            if (container) {
+              updateToRoot(container);
+            }
+
           }}
           onAddNote={() => { }}
           onAddGroup={(container) => {
-            container.children.push({
-              is_new_record: true,
-              is_processing: false,
-              name: "",
-              type: "group",
-              edit_mode: true,
-              parent: container,
-              record: {
-                id: 0,
-                name: "",
-                created_at: 0,
-                parent_id: container.record.id,
-                has_notes: null,
-                has_subgroups: null,
-              },
-              children: []
-            });
+            container.children.push(createNewContainerRecord("group", container.record.id, container));
             updateToRoot(container);
           }}
-          onRename={(group) => {
+          onRename={(container) => {
             group.edit_mode = true;
-            groups.value = [...groups.value];
+            updateToRoot(container);
 
           }}
           onLoadChildren={(container) => {
-            if (container.children.length > 0) {
-              return;
-            }
             loadGroups(container);
           }}
-          onRefresh={() => { }}
           onDelete={() => { }}
         />)}
         {groups.value.length === 0 && !isLoading.value && <div class="text-center text-gray-400 pt-14">

@@ -1,12 +1,28 @@
-import { JSX } from "preact";
+import { ComponentChildren, JSX } from "preact";
 import { IS_BROWSER } from "$fresh/runtime.ts";
 
-export function Button(props: JSX.HTMLAttributes<HTMLButtonElement>) {
+interface ButtonProps {
+  disabled?: boolean;
+  setAsDefault?: boolean;
+  children?: ComponentChildren;
+  color?: ButtonColors;
+  onClick?: () => void;
+};
+
+const buttonColors = {
+  primary: "bg-gray-500 hover:bg-gray-600 text-white",
+  danger: "bg-red-500 hover:bg-red-600 text-white",
+};
+
+export type ButtonColors = keyof typeof buttonColors;
+
+export function Button({ disabled, setAsDefault, children, color = "primary", onClick }: ButtonProps) {
   return (
     <button
-      {...props}
-      disabled={!IS_BROWSER || props.disabled}
-      class="px-2 py-1 border-gray-500 border-2 rounded bg-white hover:bg-gray-200 transition-colors"
-    />
+      default={setAsDefault}
+      disabled={!IS_BROWSER || disabled}
+      onClick={onClick}
+      class={`px-3 py-2 ${buttonColors[color]} transition-colors`}
+    >{children}</button>
   );
 }

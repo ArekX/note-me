@@ -23,7 +23,7 @@ import * as $app_settings_tags from "./routes/app/settings/tags.tsx";
 import * as $app_settings_users from "./routes/app/settings/users.tsx";
 import * as $greet_name_ from "./routes/greet/[name].tsx";
 import * as $index from "./routes/index.tsx";
-import * as $Button from "./islands/Button.tsx";
+import * as $ConfirmDialog from "./islands/ConfirmDialog.tsx";
 import * as $IconMenu from "./islands/IconMenu.tsx";
 import * as $Loader from "./islands/Loader.tsx";
 import * as $Notifications from "./islands/Notifications.tsx";
@@ -62,7 +62,7 @@ const manifest = {
     "./routes/index.tsx": $index,
   },
   islands: {
-    "./islands/Button.tsx": $Button,
+    "./islands/ConfirmDialog.tsx": $ConfirmDialog,
     "./islands/IconMenu.tsx": $IconMenu,
     "./islands/Loader.tsx": $Loader,
     "./islands/Notifications.tsx": $Notifications,

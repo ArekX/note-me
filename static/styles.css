@@ -77,14 +77,13 @@ dialog {
   display: block;
   border-radius: 1em;
   padding: 2em;
-    @apply bg-gray-800;
-    @apply text-white;
-
+  @apply bg-gray-800;
+  @apply text-white;
 }
 dialog[open] {
   opacity: 1;
   pointer-events: inherit;
-  transition: all 1s;
+  transition: all .5s;
 }
 dialog::backdrop {
   @apply bg-gray-950;

@@ -1,12 +1,13 @@
 import { type Signal, useSignal } from "@preact/signals";
 import Viewer from "$islands/Viewer.tsx";
-import Button from "$islands/Button.tsx";
+
 import Loader from "$islands/Loader.tsx";
 import { createNote } from "$frontend/api.ts";
 import { NoteRecord } from "$backend/repository/note-repository.ts";
 import { ErrorDisplay } from "$components/ErrorDisplay.tsx";
 import { SchemaErrors } from "$types";
 import { createNoteSchema } from "$backend/schemas.ts";
+import { Button } from "$components/Button.tsx";
 
 interface NewNoteProps {
   onNewNoteAdded?: (note: NoteRecord) => void;
@@ -56,7 +57,7 @@ export default function NewNote({ onNewNoteAdded }: NewNoteProps = {}) {
       <div>
         <Viewer markdownText={text.value} />
       </div>
-      <Button name="Post" onClick={addNewNote} />
+      <Button onClick={addNewNote}>Post</Button>
       <Loader visible={showLoader.value}>
         Enriching your notes with another one...
       </Loader>

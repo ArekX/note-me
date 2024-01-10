@@ -3,7 +3,6 @@ import { useEffect } from "preact/hooks";
 import { activeMenuRecordId, clearPopupOwner, setPopupOwner, windowSize } from "../frontend/stores/active-sidebar-item.ts";
 import { createRef } from "preact";
 import { createPortal } from "preact/compat";
-import { ContainerGroupRecord } from "$islands/groups/GroupItem.tsx";
 
 export interface MenuItem {
     icon: string;

@@ -5,8 +5,9 @@ import { useEffect } from "preact/hooks";
 import { NoteRecord } from "$backend/repository/note-repository.ts";
 import IconMenu from "$islands/IconMenu.tsx";
 import { activeMenuRecordId, clearPopupOwner } from "$frontend/stores/active-sidebar-item.ts";
+import ConfirmDialog from "$islands/ConfirmDialog.tsx";
 
-export type ContainerGroupRecord = GroupItem | NoteItem;
+export type ContainerGroupRecord = GroupItemRecord | NoteItemRecord;
 
 interface ContainerRecordBase {
   is_new_record: boolean;
@@ -17,12 +18,12 @@ interface ContainerRecordBase {
   children: ContainerGroupRecord[];
 }
 
-interface GroupItem extends ContainerRecordBase {
+export interface GroupItemRecord extends ContainerRecordBase {
   type: "group",
   record: GroupRecord;
 }
 
-interface NoteItem extends ContainerRecordBase {
+export interface NoteItemRecord extends ContainerRecordBase {
   type: "note",
   record: NoteRecord;
 }
@@ -35,10 +36,83 @@ interface GroupItemProps {
   onAddNote: (container: ContainerGroupRecord, parent: ContainerGroupRecord | null) => void;
   onAddGroup: (container: ContainerGroupRecord, parent: ContainerGroupRecord | null) => void;
   onRename: (container: ContainerGroupRecord) => void;
-  onRefresh: (container: ContainerGroupRecord) => void;
   onDelete: (container: ContainerGroupRecord) => void;
   onLoadChildren: (container: ContainerGroupRecord) => void;
 }
+
+export type RecordItem = { type: "group", record: GroupRecord } | { type: "note", record: NoteRecord };
+
+export const createNewContainerRecord = (type: "group" | "note", parent_id: number | null, parent: ContainerGroupRecord | null): ContainerGroupRecord => {
+
+  const newRecordFields = {
+    is_new_record: true,
+  };
+
+  if (type == "group") {
+    const record: GroupRecord = {
+      id: 0,
+      name: "",
+      created_at: 0,
+      parent_id,
+      has_notes: null,
+      has_subgroups: null,
+    };
+
+    return {
+      ...createContainer({
+        type,
+        record,
+      }, parent),
+      ...newRecordFields,
+      edit_mode: true
+    };
+  }
+
+  const record: NoteRecord = {
+    id: 0,
+    title: "",
+    note: "",
+    created_at: 0,
+    user_id: 0,
+    updated_at: 0
+  };
+
+  return {
+    ...createContainer({
+      type,
+      record,
+    }, parent),
+    ...newRecordFields,
+    edit_mode: true
+  };
+};
+
+export const createContainer = (item: RecordItem, parent: ContainerGroupRecord | null): ContainerGroupRecord => {
+  const { type, record } = item;
+  const containerProps = {
+    is_new_record: false,
+    is_processing: false,
+    edit_mode: false,
+    type,
+    parent,
+    children: []
+  };
+
+
+  if (type === "note") {
+    return {
+      ...containerProps,
+      name: record.title,
+      record,
+    } as ContainerGroupRecord;
+  }
+
+  return {
+    ...containerProps,
+    name: record.name,
+    record,
+  } as ContainerGroupRecord;
+};
 
 export default function GroupItem({
   parent,
@@ -48,12 +122,12 @@ export default function GroupItem({
   onAddGroup,
   onCancel,
   onRename,
-  onRefresh,
   onDelete,
   onLoadChildren
 }: GroupItemProps) {
   const name = useSignal(container.name);
   const isOpen = useSignal(false);
+  const isConfirmingDelete = useSignal(false);
   const areChildrenLoaded = useSignal(false);
 
   const handleCancel = () => {
@@ -69,9 +143,12 @@ export default function GroupItem({
 
   const handleOpenFolder = () => {
 
+    const { edit_mode, type, record, children } = container;
+
     if (
-      (container.type == "note") ||
-      (container.type == "group" && (!container.record.has_notes && !container.record.has_subgroups && container.children.length == 0))
+      edit_mode ||
+      (type == "note") ||
+      (type == "group" && (!record.has_notes && !record.has_subgroups && children.length == 0))
     ) {
       return;
     }
@@ -122,19 +199,23 @@ export default function GroupItem({
                 }
               },
               {
+                name: "Refresh",
+                icon: "refresh",
+                onClick: () => {
+                  container.children = [];
+                  areChildrenLoaded.value = false;
+                  onLoadChildren(container);
+                }
+              },
+              {
                 name: "Rename",
                 icon: "edit",
                 onClick: () => onRename(container)
               },
               {
-                name: "Refresh",
-                icon: "refresh",
-                onClick: () => onRefresh(container)
-              },
-              {
                 name: "Delete",
                 icon: "minus-circle",
-                onClick: () => onDelete(container)
+                onClick: () => isConfirmingDelete.value = true
               }
             ]} />
         </div>}
@@ -193,10 +274,22 @@ export default function GroupItem({
           onAddGroup={onAddGroup}
           onRename={onRename}
           onDelete={onDelete}
-          onRefresh={onRefresh}
           onLoadChildren={onLoadChildren}
         />)}
       </div>}
+      <ConfirmDialog
+        prompt={`Are you sure that you want to delete this ${container.type}?`}
+        onConfirm={() => {
+          isConfirmingDelete.value = false;
+          onDelete(container);
+        }}
+        confirmColor="danger"
+        confirmText={`Delete ${container.type}`}
+        onCancel={() => {
+          isConfirmingDelete.value = false;
+        }}
+        visible={isConfirmingDelete.value}
+      />
     </div>
   );
 }
