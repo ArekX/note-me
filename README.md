@@ -8,12 +8,13 @@ multiple users as well as note tagging and adding attachments.
 
 - [x] Login
 - [x] Note creation with tags and groups
-- [ ] Group management
+- [x] Group management
 - [ ] User profile management
 - [ ] Backup
 - [ ] Tags management
 - [ ] Note reminders
 - [ ] Share notes?
+- [ ] Public notes
 
 # Development
 
