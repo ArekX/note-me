@@ -4,7 +4,7 @@ import { useSignal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
 import { NoteRecord } from "$backend/repository/note-repository.ts";
 import IconMenu from "$islands/IconMenu.tsx";
-import { activeMenuRecordId } from "$frontend/stores/active-sidebar-item.ts";
+import { activeMenuRecordId, clearPopupOwner } from "$frontend/stores/active-sidebar-item.ts";
 
 export type ContainerGroupRecord = GroupItem | NoteItem;
 
@@ -88,13 +88,18 @@ export default function GroupItem({
   }, [container.name]);
 
   return (
-    <div class="group-item-container" onClick={(e) => {
+    <div class="group-item-container select-none" onClick={(e) => {
+      clearPopupOwner();
       handleOpenFolder();
       e.stopPropagation();
     }}>
-      <div class={`relative group-item hover:bg-gray-600 ${activeMenuRecordId.value == container.record.id ? 'opened-menu' : ''}`}>
-        {!container.edit_mode && <div class="absolute right-0 flex items-center group-item-actions pr-1">
-          <span class="hover:text-gray-300 cursor-pointer" title="Add Note" onClick={() => onAddNote(container, parent)}>
+      <div class={`relative group-item hover:bg-gray-600 ${activeMenuRecordId.value == container.record.id ? 'opened-menu' : ''}`} title={container.name}>
+        {!container.edit_mode && !container.is_processing && <div class="absolute right-0 flex items-center group-item-actions pr-1">
+          <span class="hover:text-gray-300 cursor-pointer" title="Add Note" onClick={(e) => {
+            onAddNote(container, parent);
+            clearPopupOwner();
+            e.stopPropagation();
+          }}>
             <Icon name="plus" />
           </span>
           <IconMenu iconName="dots-horizontal-rounded"
@@ -133,24 +138,26 @@ export default function GroupItem({
               }
             ]} />
         </div>}
+        {container.is_processing && <div class="absolute inset-y-0 right-0 flex items-center pl-2 pr-2 text-gray-400">
+          <Icon name="loader-alt" animation="spin" />
+        </div>}
+
         {container.edit_mode ?
           <div class="group-item-editor relative flex">
 
-            <div
+            {!container.is_processing && <div
               class="absolute inset-y-0 right-0 flex items-center pr-2 text-gray-400"
             >
-              {!container.is_processing && <span>
-                <span class="hover:text-white cursor-pointer" title="Accept" onClick={(e) => {
-                  onAccept(container, name.value);
-                  e.stopPropagation();
-                }}><Icon name="check" /></span>
-                <span class="hover:text-white cursor-pointer" title="Cancel" onClick={(e) => {
-                  handleCancel();
-                  e.stopPropagation();
-                }}><Icon name="block" /></span>
-              </span>}
-              {container.is_processing && <Icon name="loader-alt" animation="spin" />}
-            </div>
+              <span class="hover:text-white cursor-pointer" title="Accept" onClick={(e) => {
+                onAccept(container, name.value);
+                e.stopPropagation();
+              }}><Icon name="check" /></span>
+              <span class="hover:text-white cursor-pointer" title="Cancel" onClick={(e) => {
+                handleCancel();
+                e.stopPropagation();
+              }}><Icon name="block" /></span>
+
+            </div>}
             <div class="absolute inset-y-0 left-0 flex items-center pl-2 text-gray-400">
               <Icon name="folder" />
             </div>
@@ -165,7 +172,7 @@ export default function GroupItem({
             />
           </div>
           :
-          <span class="group-item-name pl-2">
+          <span class="group-item-name pl-2 pr-2">
             <Icon name={container.type == "group" ? (isOpen.value ? "folder-open" : "folder") : "file"} type={
               container.type == "group" && (container.record.has_notes || container.record.has_subgroups || container.children.length > 0)
                 ? "solid"

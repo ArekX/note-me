@@ -23,6 +23,10 @@
     @apply text-white
 }
 
+.group-list {
+    height: calc(100vh - 8.5rem);
+}
+
 .group-item {
     height: 2.5rem;
 }
@@ -33,7 +37,6 @@
 }
 
 .group-item .name-text {
-    display: inline-block;
     position: relative;
     top: 1.5px;
 }
@@ -59,7 +62,8 @@
 }
 
 .group-item:hover .group-item-name {
-    right: 5rem;
+    right: 3.5rem;
+    padding-right: 0 !important;
 }
 
 .group-item:hover .group-item-actions,

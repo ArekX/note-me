@@ -10,20 +10,12 @@ export const activeMenuRecordId = signal<number | null>(null);
 export const windowSize = signal<[number, number]>([0, 0]);
 
 if (IS_BROWSER) {
-  document.body.addEventListener("click", (e) => {
+  document.body.addEventListener("click", () => {
     if (!activeMenuRecordId.value) {
       return;
     }
 
-    if (e.target instanceof HTMLElement) {
-      const targetIconId = e.target.dataset.iconMenuId ?? -1;
-
-      if (activeMenuRecordId.value == targetIconId) {
-        return;
-      }
-
-      clearPopupOwner();
-    }
+    clearPopupOwner();
   });
 
   addEventListener("resize", () => {

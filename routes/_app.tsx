@@ -27,6 +27,7 @@ export default function App({ Component }: PageProps) {
       </head>
       <body class="bg-gray-900">
         <Component />
+        <div id="icon-menu"></div>
       </body>
     </html>
   );

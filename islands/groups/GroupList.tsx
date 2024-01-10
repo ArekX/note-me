@@ -44,7 +44,7 @@ export default function GroupList() {
       groups.value = result;
     } else {
       parent.children = result;
-      groups.value = [...groups.value];
+      updateToRoot(parent);
     }
 
     if (!parent) {
@@ -125,7 +125,7 @@ export default function GroupList() {
   return (
     <div class="mt-3">
       <SearchBar onSearch={searchNotesAndGroups} />
-      <div class="flex pl-2 pr-">
+      <div class="flex pl-2">
         <div class="flex-1 pt-1 text-sm">
           Notes
         </div>
@@ -141,7 +141,7 @@ export default function GroupList() {
           </span>
         </div>
       </div>
-      <div>
+      <div class="overflow-auto group-list">
         <Loader
           color="white"
           visible={isLoading.value}
@@ -198,6 +198,9 @@ export default function GroupList() {
 
           }}
           onLoadChildren={(container) => {
+            if (container.children.length > 0) {
+              return;
+            }
             loadGroups(container);
           }}
           onRefresh={() => { }}

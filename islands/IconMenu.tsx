@@ -2,6 +2,8 @@ import { Icon } from "$components/Icon.tsx";
 import { useEffect } from "preact/hooks";
 import { activeMenuRecordId, clearPopupOwner, setPopupOwner, windowSize } from "../frontend/stores/active-sidebar-item.ts";
 import { createRef } from "preact";
+import { createPortal } from "preact/compat";
+import { ContainerGroupRecord } from "$islands/groups/GroupItem.tsx";
 
 export interface MenuItem {
     icon: string;
@@ -16,24 +18,25 @@ interface IconMenuProps {
     showDirection?: "right" | "bottom"
 }
 
-export default function IconMenu({ recordId, iconName = "dots-horizontal-rounded", menuItems, showDirection = "right" }: IconMenuProps) {
+export default function IconMenu({ recordId, iconName = "dots-horizontal-rounded", menuItems }: IconMenuProps) {
     const menuRef = createRef<HTMLDivElement>();
+    const iconRef = createRef<HTMLSpanElement>();
 
     const repositionMenu = () => {
-        if (!menuRef.current) {
+        if (!menuRef.current || !iconRef.current) {
             return;
         }
 
         const [_, height] = windowSize.value;
         const rect = menuRef.current.getBoundingClientRect();
+        const iconRefRect = iconRef.current!.getBoundingClientRect();
 
-        const bottomPosition = rect.top + rect.height;
 
-        if (bottomPosition > height) {
-            menuRef.current.style.top = `-${bottomPosition - height + 20}px`;
-        } else {
-            menuRef.current.style.top = '0';
-        }
+
+        const diff = Math.max(0, iconRefRect.top + rect.height - height);
+
+        menuRef.current.style.top = `${iconRefRect.top - diff}px`;
+        menuRef.current.style.left = `${iconRefRect.left + iconRefRect.width}px`;
     };
 
     useEffect(() => {
@@ -49,8 +52,8 @@ export default function IconMenu({ recordId, iconName = "dots-horizontal-rounded
             e.stopPropagation();
             repositionMenu();
         }}>
-            <Icon name={iconName} />
-            <div ref={menuRef} class={`icon-menu-items drop-shadow-lg absolute ${showDirection === "right" ? "top-2 left-full" : "top-0"} bg-gray-800 rounded-lg shadow-lg p-2 whitespace-nowrap break-keep`}>
+            <span ref={iconRef}><Icon name={iconName} /></span>
+            {activeMenuRecordId.value === recordId && createPortal(<div ref={menuRef} class={`text-white icon-menu-items drop-shadow-lg fixed bg-gray-800 rounded-lg shadow-lg p-2 whitespace-nowrap break-keep`}>
                 {menuItems.map((item) => (
                     <div class="hover:bg-gray-700 cursor-pointer pr-2 pl-2" onClick={(e) => {
                         item.onClick();
@@ -58,7 +61,7 @@ export default function IconMenu({ recordId, iconName = "dots-horizontal-rounded
                         e.stopPropagation();
                     }}><Icon name={item.icon} /> {item.name}</div>
                 ))}
-            </div>
+            </div>, document.getElementById("icon-menu")!)}
         </div>
     );
 }
