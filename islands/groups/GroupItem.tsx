@@ -31,8 +31,8 @@ export interface NoteItemRecord extends ContainerRecordBase {
 interface GroupItemProps {
   parent: ContainerGroupRecord | null;
   container: ContainerGroupRecord;
-  onAccept: (container: ContainerGroupRecord, newName: string) => void;
-  onCancel: (container: ContainerGroupRecord, parent: ContainerGroupRecord | null) => void;
+  onAcceptEdit: (container: ContainerGroupRecord, newName: string) => void;
+  onCancelEdit: (container: ContainerGroupRecord, parent: ContainerGroupRecord | null) => void;
   onAddNote: (container: ContainerGroupRecord, parent: ContainerGroupRecord | null) => void;
   onAddGroup: (container: ContainerGroupRecord, parent: ContainerGroupRecord | null) => void;
   onRename: (container: ContainerGroupRecord) => void;
@@ -117,10 +117,10 @@ export const createContainer = (item: RecordItem, parent: ContainerGroupRecord |
 export default function GroupItem({
   parent,
   container,
-  onAccept,
+  onAcceptEdit,
   onAddNote,
   onAddGroup,
-  onCancel,
+  onCancelEdit,
   onRename,
   onDelete,
   onLoadChildren
@@ -138,7 +138,7 @@ export default function GroupItem({
     }
 
     name.value = container.name;
-    onCancel(container, parent);
+    onCancelEdit(container, parent);
   };
 
   const handleOpenFolder = () => {
@@ -230,7 +230,7 @@ export default function GroupItem({
               class="absolute inset-y-0 right-0 flex items-center pr-2 text-gray-400"
             >
               <span class="hover:text-white cursor-pointer" title="Accept" onClick={(e) => {
-                onAccept(container, name.value);
+                onAcceptEdit(container, name.value);
                 e.stopPropagation();
               }}><Icon name="check" /></span>
               <span class="hover:text-white cursor-pointer" title="Cancel" onClick={(e) => {
@@ -268,8 +268,8 @@ export default function GroupItem({
         {container.children.map((child) => <GroupItem
           container={child}
           parent={container}
-          onAccept={onAccept}
-          onCancel={onCancel}
+          onAcceptEdit={onAcceptEdit}
+          onCancelEdit={onCancelEdit}
           onAddNote={onAddNote}
           onAddGroup={onAddGroup}
           onRename={onRename}

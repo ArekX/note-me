@@ -49,11 +49,6 @@ export default function GroupList() {
     }
   };
 
-  useEffect(() => {
-    loadGroups();
-    clearPopupOwner();
-  }, []);
-
   const addRootGroup = () => {
     groups.value = [...groups.value, createNewContainerRecord("group", null, null)];
   };
@@ -102,7 +97,53 @@ export default function GroupList() {
   const reloadEverything = () => {
     groups.value = [];
     loadGroups();
-  }
+  };
+
+  const handleCancelEdit = (container: ContainerGroupRecord, parent: ContainerGroupRecord | null) => {
+
+    if (container.is_new_record) {
+      if (parent === null) {
+        groups.value = groups.value.filter(g => g !== container);
+      } else {
+        parent.children = parent.children.filter(g => g !== container);
+      }
+    }
+
+    container.edit_mode = false;
+
+    if (container) {
+      updateToRoot(container);
+    }
+
+  };
+
+  const handleAcceptEdit = (group: ContainerGroupRecord, newName: string) => {
+    group.name = newName;
+    saveGroup(group);
+  };
+
+  const handleAddGroup = (container: ContainerGroupRecord) => {
+    container.children.push(createNewContainerRecord("group", container.record.id, container));
+    updateToRoot(container);
+  };
+
+  const handleRename = (container: ContainerGroupRecord) => {
+    container.edit_mode = true;
+    updateToRoot(container);
+  };
+
+  const handleLoadchildren = (container: ContainerGroupRecord) => {
+    loadGroups(container);
+  };
+
+  const handleAddNote = (container: ContainerGroupRecord) => { };
+
+  const handleDelete = (container: ContainerGroupRecord) => { };
+
+  useEffect(() => {
+    loadGroups();
+    clearPopupOwner();
+  }, []);
 
   return (
     <div class="mt-3">
@@ -134,41 +175,13 @@ export default function GroupList() {
         {groups.value.map((group) => <GroupItem
           container={group}
           parent={null}
-          onAccept={(group: ContainerGroupRecord, newName: string) => {
-            group.name = newName;
-            saveGroup(group);
-          }}
-          onCancel={(container, parent) => {
-
-            container.edit_mode = false;
-
-            if (container.is_new_record) {
-              if (parent === null) {
-                groups.value = groups.value.filter(g => g !== container);
-              } else {
-                parent.children = parent.children.filter(g => g !== container);
-              }
-            }
-
-            if (container) {
-              updateToRoot(container);
-            }
-
-          }}
-          onAddNote={() => { }}
-          onAddGroup={(container) => {
-            container.children.push(createNewContainerRecord("group", container.record.id, container));
-            updateToRoot(container);
-          }}
-          onRename={(container) => {
-            group.edit_mode = true;
-            updateToRoot(container);
-
-          }}
-          onLoadChildren={(container) => {
-            loadGroups(container);
-          }}
-          onDelete={() => { }}
+          onAcceptEdit={handleAcceptEdit}
+          onCancelEdit={handleCancelEdit}
+          onAddNote={handleAddNote}
+          onAddGroup={handleAddGroup}
+          onRename={handleRename}
+          onLoadChildren={handleLoadchildren}
+          onDelete={handleDelete}
         />)}
         {groups.value.length === 0 && !isLoading.value && <div class="text-center text-gray-400 pt-14">
           <div><Icon name="note" size="5xl" /></div>
