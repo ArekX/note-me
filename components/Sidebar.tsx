@@ -12,31 +12,8 @@ export interface SidebarProps {
 }
 
 export function Sidebar(
-  { route, initialNotifications, userDisplayName }: SidebarProps,
+  { initialNotifications }: SidebarProps,
 ) {
-  const navItems: MenuItem[] = [
-    {
-      icon: "note",
-      name: "Notes",
-      link: "/app/note",
-    },
-    {
-      icon: "user",
-      name: "Profile",
-      link: "/app/profile",
-    },
-    {
-      icon: "cog",
-      name: "Settings",
-      link: "/app/settings",
-    },
-    {
-      icon: "log-out",
-      name: `Logout`,
-      link: "/app/logout",
-    },
-  ];
-
   return (
     <div class="w-1/5 bg-gray-800 text-white bg-opacity-95">
       <div class="mt-5">
