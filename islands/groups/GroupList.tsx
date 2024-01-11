@@ -23,15 +23,15 @@ export default function GroupList() {
       parent.is_processing = true;
     }
 
-    const request = {} as FindGroupsRequest;
+    const request: FindGroupsRequest = {};
 
     if (parent) {
       request.parent_id = parent.record.id.toString();
     }
 
-    const result = (await findGroups(request)).data.map(record => createContainer({
+    const result = (await findGroups(request)).data.map((record: GroupRecord) => createContainer({
       type: "group",
-      record: record as GroupRecord
+      record
     }, parent ?? null));
 
 

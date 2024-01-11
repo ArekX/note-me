@@ -38,7 +38,7 @@ export function Sidebar(
   ];
 
   return (
-    <div class="w-1/5 bg-gray-800 text-white">
+    <div class="w-1/5 bg-gray-800 text-white bg-opacity-95">
       <div class="mt-5">
         <div class="flex">
           <div class="flex-1 w-1/3 text-center">

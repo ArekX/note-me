@@ -8,6 +8,8 @@ import { AppSessionData, AppState } from "$types";
 import { Alert } from "$components/Alert.tsx";
 import { Icon } from "$components/Icon.tsx";
 import { getUserByLogin } from "$backend/repository/user-repository.ts";
+import { Button } from "$components/Button.tsx";
+import { Input } from "$components/Input.tsx";
 
 interface LoginResult {
   username: string;
@@ -49,10 +51,10 @@ export const handler: Handlers<LoginResult> = {
 
 export default function Page(props: PageProps<LoginResult>) {
   return (
-    <div class="flex items-center justify-center h-screen">
-      <div class="bg-white shadow-md rounded px-10 pt-6 pb-8 mb-4">
+    <div class="flex items-center xl:justify-end justify-center h-screen">
+      <div class="bg-gray-800 text-white drop-shadow-lg rounded-xl px-10 pt-6 pb-8 mb-4 xl:mr-20 bg-opacity-95">
         <div class="text-center mb-5">
-          <Logo />
+          <Logo white={true} />
         </div>
         <form method="POST" action="/">
           <h1 class="mb-5 text-lg text-center">
@@ -60,43 +62,27 @@ export default function Page(props: PageProps<LoginResult>) {
           </h1>
           <Alert message={props.data?.message} />
           <div class="mb-5">
-            <label
-              class="block text-gray-700 text-sm font-bold mb-2"
-              for="username"
-            >
-              Username
-            </label>
-            <input
-              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="username"
-              type="text"
-              name="username"
+            <Input
+              label="Username"
+              icon="user"
               placeholder="Username"
+              name="username"
               value={props.data?.username}
             />
           </div>
           <div class="mb-5">
-            <label
-              class="block text-gray-700 text-sm font-bold mb-2"
-              for="password"
-            >
-              Password
-            </label>
-            <input
-              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-              id="password"
+            <Input
+              label="Password"
+              icon="key"
+              placeholder="Password"
               type="password"
               name="password"
-              placeholder="Password"
             />
           </div>
-          <div class="flex items-center justify-center">
-            <button
-              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              type="submit"
-            >
-              <Icon name="log-in" /> Log Me In
-            </button>
+          <div class="flex items-center justify-center mt-8s\">
+            <Button type="submit" color="success">
+              <span class="pr-2"><Icon name="log-in" /></span> Log Me In
+            </Button>
           </div>
         </form>
       </div>
