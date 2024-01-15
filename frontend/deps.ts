@@ -1,4 +1,4 @@
-export { Marked } from "npm:@ts-stack/markdown@1.5.0";
+export { Marked } from "https://dev.jspm.io/@ts-stack/markdown@1.5.0";
 export { default as axiod } from "https://deno.land/x/axiod@0.26.2/mod.ts";
 export {
   type IAxiodResponse,

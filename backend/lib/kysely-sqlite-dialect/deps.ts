@@ -20,6 +20,6 @@ export {
   SqliteQueryCompiler,
   Transaction,
   type TransactionSettings,
-} from "npm:kysely@0.26.3";
+} from "https://cdn.jsdelivr.net/npm/kysely@0.26.3/dist/esm/index.js";
 
 export { Semaphore } from "https://deno.land/x/semaphore@v1.1.1/mod.ts";
