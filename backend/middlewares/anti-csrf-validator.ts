@@ -6,13 +6,18 @@ interface AntiCsrfToken {
   csrf: string;
 }
 
+const validatedMethods = ["POST", "PUT", "DELETE"];
+
 export const antiCsrfTokenValidator = (
   req: Request,
   ctx: FreshContext<AppState>,
 ) => {
   const storedToken = ctx.state.session?.data.storedCsrfToken;
-  if (req.method == "POST") {
-    const params = parseQueryParams<AntiCsrfToken>(req.url);
+
+  if (validatedMethods.includes(req.method)) {
+    const params = parseQueryParams<AntiCsrfToken>(req.url, {
+      csrf: { type: "string" },
+    });
 
     if (params.csrf != storedToken) {
       return new Response("Invalid or missing CSRF token", {

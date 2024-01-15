@@ -12,7 +12,9 @@ export const handler: Handlers = {
     req,
     ctx: FreshContext<AppState>,
   ): Promise<Response> {
-    const params = parseQueryParams<FindGroupsRequest>(req.url);
+    const params = parseQueryParams<FindGroupsRequest>(req.url, {
+      parent_id: { type: "number", optional: true },
+    });
 
     const results = await getUserGroups(
       params.parent_id ?? null,

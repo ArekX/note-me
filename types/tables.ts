@@ -9,6 +9,7 @@ export interface UserTable {
   timezone: string;
   created_at: number;
   updated_at: number;
+  is_deleted?: boolean;
 }
 
 export interface NoteTable {
@@ -82,6 +83,7 @@ export interface GroupTable {
   created_at: number;
   user_id: number;
   parent_id: number | null;
+  is_deleted?: boolean;
 }
 
 export interface GroupNoteTable {

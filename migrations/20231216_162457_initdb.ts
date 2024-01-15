@@ -11,6 +11,7 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     .addColumn("timezone", "varchar(255)")
     .addColumn("created_at", "int8", (col) => col.notNull())
     .addColumn("updated_at", "int8", (col) => col.notNull())
+    .addColumn("is_deleted", "boolean", (col) => col.notNull().defaultTo(false))
     .execute();
 
   await db.schema.createTable("note")
@@ -140,6 +141,7 @@ export async function up(db: Kysely<unknown>): Promise<void> {
       (col) => col.notNull().references("user.id"),
     )
     .addColumn("parent_id", "integer", (col) => col.references("group.id"))
+    .addColumn("is_deleted", "boolean", (col) => col.notNull().defaultTo(false))
     .execute();
 
   await db.schema.createTable("group_note")

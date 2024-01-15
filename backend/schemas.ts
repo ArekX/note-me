@@ -16,3 +16,18 @@ export const validateSchema = async <T extends zod.ZodRawShape, V>(
     }
   }
 };
+
+export const validateClientSchema = async <T extends zod.ZodRawShape, V>(
+  schema: zod.ZodObject<T>,
+  object: V,
+) => {
+  try {
+    await schema.parseAsync(object);
+    return null;
+  } catch (err) {
+    if (err instanceof zod.ZodError) {
+      return err.errors;
+    }
+    throw err;
+  }
+};

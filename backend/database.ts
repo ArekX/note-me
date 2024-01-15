@@ -1,4 +1,4 @@
-import { Kysely, sql, SqliteDialect } from "./lib/kysely-sqlite-dialect/mod.ts";
+import { Kysely, sql, SqliteDialect } from "$lib/kysely-sqlite-dialect/mod.ts";
 
 import type { Tables } from "$types";
 

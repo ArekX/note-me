@@ -31,7 +31,8 @@ export const getUserGroups = async (
       >`(SELECT 1 FROM "group_note" "gn" WHERE "gn"."group_id" = "group"."id" LIMIT 1)`
         .as("has_notes"),
     ])
-    .where("user_id", "=", user_id);
+    .where("user_id", "=", user_id)
+    .where("is_deleted", "=", false);
 
   if (parent_id) {
     query = query.where("parent_id", "=", +parent_id);
@@ -112,6 +113,21 @@ export const updateGroup = async (
     })
     .where("id", "=", record.id)
     .where("user_id", "=", record.user_id)
+    .executeTakeFirst();
+
+  return result.numUpdatedRows > 0;
+};
+
+export const deleteGroup = async (
+  id: number,
+  user_id: number,
+): Promise<boolean> => {
+  const result = await db.updateTable("group")
+    .set({
+      is_deleted: true,
+    })
+    .where("id", "=", id)
+    .where("user_id", "=", user_id)
     .executeTakeFirst();
 
   return result.numUpdatedRows > 0;

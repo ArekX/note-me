@@ -63,3 +63,13 @@ export const findGroups = (
   apiInterface.get("/find-groups", {
     params: filter as QueryParams,
   });
+
+export const deleteGroup = (
+  id: number,
+): Promise<IAxiodResponse<GroupRecord[]>> =>
+  apiInterface.delete("/delete-group", {}, {
+    params: {
+      id,
+      csrf: getUserData().csrfToken,
+    },
+  });

@@ -8,6 +8,7 @@ import { Icon } from "$components/Icon.tsx";
 import GroupItem, { ContainerGroupRecord, createContainer, createNewContainerRecord } from "$islands/groups/GroupItem.tsx";
 import { clearPopupOwner } from "$frontend/stores/active-sidebar-item.ts";
 import { GroupRecord } from "$backend/repository/group-repository.ts";
+import { deleteGroup } from "$frontend/api.ts";
 
 export default function GroupList() {
   const isLoading = useSignal(true);
@@ -117,9 +118,14 @@ export default function GroupList() {
 
   };
 
-  const handleAcceptEdit = (group: ContainerGroupRecord, newName: string) => {
-    group.name = newName;
-    saveGroup(group);
+  const handleAcceptEdit = async (container: ContainerGroupRecord, newName: string) => {
+
+    // TODO: Needs fixing
+
+
+    container.name = newName;
+    await saveGroup(container);
+    updateToRoot(container);
   };
 
   const handleAddGroup = (container: ContainerGroupRecord) => {
@@ -138,7 +144,18 @@ export default function GroupList() {
 
   const handleAddNote = (container: ContainerGroupRecord) => { };
 
-  const handleDelete = (container: ContainerGroupRecord) => { };
+  const handleDelete = async (container: ContainerGroupRecord, parent?: ContainerGroupRecord) => {
+    container.is_processing = true;
+    await deleteGroup(container.record.id);
+
+    if (parent) {
+      parent.children = parent.children.filter(g => g !== container);
+      updateToRoot(parent);
+      return;
+    }
+
+    groups.value = groups.value.filter(g => g !== container);
+  };
 
   useEffect(() => {
     loadGroups();

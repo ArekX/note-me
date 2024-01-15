@@ -8,6 +8,7 @@ import * as $_middleware from "./routes/_middleware.ts";
 import * as $api_middleware from "./routes/api/_middleware.ts";
 import * as $api_add_group from "./routes/api/add-group.ts";
 import * as $api_add_note from "./routes/api/add-note.ts";
+import * as $api_delete_group from "./routes/api/delete-group.ts";
 import * as $api_find_groups from "./routes/api/find-groups.ts";
 import * as $api_find_notes from "./routes/api/find-notes.ts";
 import * as $api_update_group from "./routes/api/update-group.ts";
@@ -45,6 +46,7 @@ const manifest = {
     "./routes/api/_middleware.ts": $api_middleware,
     "./routes/api/add-group.ts": $api_add_group,
     "./routes/api/add-note.ts": $api_add_note,
+    "./routes/api/delete-group.ts": $api_delete_group,
     "./routes/api/find-groups.ts": $api_find_groups,
     "./routes/api/find-notes.ts": $api_find_notes,
     "./routes/api/update-group.ts": $api_update_group,

@@ -2,31 +2,33 @@ import { FreshContext, Handlers } from "$fresh/server.ts";
 import { NoteRecord } from "$backend/repository/note-repository.ts";
 import { AppState } from "$types";
 import { zod } from "$backend/deps.ts";
-import { createGroup } from "$backend/repository/group-repository.ts";
+import { deleteGroup } from "$backend/repository/group-repository.ts";
+import { parseQueryParams } from "$backend/parse-query-params.ts";
 import { validateSchema } from "$backend/schemas.ts";
 
-export const addGroupRequestSchema = zod.object({
-  name: zod.string().min(1).max(255),
-  parent_id: zod.number().nullable(),
+export const deleteRequestSchema = zod.object({
+  id: zod.number(),
 });
 
-export type AddGroupRequest = zod.infer<typeof addGroupRequestSchema>;
+export type DeleteGroupRequest = zod.infer<typeof deleteRequestSchema>;
 
 export const handler: Handlers<NoteRecord | null> = {
-  async POST(
+  async DELETE(
     req: Request,
     ctx: FreshContext<AppState>,
   ): Promise<Response> {
-    const body: AddGroupRequest = await (req.json());
+    const body: DeleteGroupRequest = parseQueryParams<DeleteGroupRequest>(
+      req.url,
+      {
+        id: { type: "number" },
+      },
+    );
+
+    await validateSchema(deleteRequestSchema, body);
 
     const { id: userId = -1 } = ctx.state.session?.data.user ?? {};
 
-    await validateSchema(addGroupRequestSchema, body);
-
-    const result = await createGroup({
-      ...body,
-      user_id: userId,
-    });
+    const result = await deleteGroup(body.id, userId);
 
     return new Response(JSON.stringify(result), {
       status: 201,
