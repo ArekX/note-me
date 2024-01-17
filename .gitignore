@@ -13,3 +13,4 @@ _fresh/
 node_modules/
 database.sqlite
 database2.sqlite
+temp

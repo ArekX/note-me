@@ -9,6 +9,9 @@ import GroupItem, { ContainerGroupRecord, createContainer, createNewContainerRec
 import { clearPopupOwner } from "$frontend/stores/active-sidebar-item.ts";
 import { GroupRecord } from "$backend/repository/group-repository.ts";
 import { deleteGroup } from "$frontend/api.ts";
+import { validateClientSchema } from "$backend/schemas.ts";
+import { deleteRequestSchema } from "../../routes/api/delete-group.ts";
+import { addGroupRequestSchema } from "../../routes/api/add-group.ts";
 
 export default function GroupList() {
   const isLoading = useSignal(true);
@@ -121,6 +124,7 @@ export default function GroupList() {
   const handleAcceptEdit = async (container: ContainerGroupRecord, newName: string) => {
 
     // TODO: Needs fixing
+    await validateClientSchema(addGroupRequestSchema, { name: newName });
 
 
     container.name = newName;
