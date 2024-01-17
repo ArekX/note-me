@@ -1,12 +1,12 @@
-import { FreshContext, Handlers } from "$fresh/server.ts";
-import { listNotes, NoteRecord } from "$backend/repository/note-repository.ts";
+import { FreshContext } from "$fresh/server.ts";
+import { listNotes } from "$backend/repository/note-repository.ts";
 import { AppState } from "$types";
 
 export interface FindNotesRequest {
   search?: string;
 }
 
-const findNotes = async (
+export const handleFindNotes = async (
   _req: Request,
   ctx: FreshContext<AppState>,
 ): Promise<Response> => {
@@ -15,8 +15,4 @@ const findNotes = async (
   });
 
   return new Response(JSON.stringify(results));
-};
-
-export const handler: Handlers<NoteRecord[]> = {
-  GET: findNotes,
 };

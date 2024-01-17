@@ -2,6 +2,8 @@
   "version": "3",
   "packages": {
     "specifiers": {
+      "npm:@shopify/draggable": "npm:@shopify/draggable@1.1.3",
+      "npm:@shopify/draggable@1.1.3": "npm:@shopify/draggable@1.1.3",
       "npm:autoprefixer@10.4.16": "npm:autoprefixer@10.4.16_postcss@8.4.31",
       "npm:cssnano@6.0.1": "npm:cssnano@6.0.1_postcss@8.4.31",
       "npm:kysely@0.26.3": "npm:kysely@0.26.3",
@@ -71,6 +73,10 @@
       },
       "@pkgjs/parseargs@0.11.0": {
         "integrity": "sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==",
+        "dependencies": {}
+      },
+      "@shopify/draggable@1.1.3": {
+        "integrity": "sha512-okZG6FTOX1HpfToN2uFVXTicum+NtHFGEY+0MFkZsdChP5qvLSlkffQormMxoDQVIDsK+jso3yz03tteIJ/A0w==",
         "dependencies": {}
       },
       "@trysound/sax@0.2.0": {
@@ -1066,6 +1072,7 @@
     "https://esm.sh/v135/@types/babel__helper-validator-identifier@^7/index.d.ts": "https://esm.sh/v135/@types/babel__helper-validator-identifier@7.15.2/index.d.ts"
   },
   "remote": {
+    "https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.11/lib/swappable.js": "5716673935226f4b93ac79429632d7e8e15433c2e62f74db465dc3ae90d071e2",
     "https://cdn.jsdelivr.net/npm/kysely@0.26.3": "c10ad676e9e5958dea14662194893a6a507ec5f8d1e90ec3597b1e4bd4064600",
     "https://cdn.jsdelivr.net/npm/kysely@0.26.3/dist/cjs/dialect/database-introspector.js": "d43aa81f5bc89faa359e0f97c814ba25155591ff078fbb9bfd40f8c7c9683230",
     "https://cdn.jsdelivr.net/npm/kysely@0.26.3/dist/cjs/dialect/dialect-adapter-base.js": "4ed5ae16e8e3679b89a2a7e399ee9c7d81c22c4d0d7998cc4575a6c718e27a37",
@@ -1487,6 +1494,18 @@
     "https://cdn.jsdelivr.net/npm/kysely@0.26.3/dist/esm/util/streamable.js": "01d42c3c7407a23c9b818e5a33d961b60785b94f00b4ddb7d77c9ff80c388b08",
     "https://cdn.jsdelivr.net/npm/kysely@0.26.3/dist/esm/util/type-error.js": "9c32a4302c237198448fc0acd25c44daa2edea4844fe6da02c3d3f14c532d3b1",
     "https://cdn.jsdelivr.net/npm/kysely@0.26.3/dist/esm/util/type-utils.js": "87458a2f28a5d816954f1e6f27f2ee302d142822cd56dca2e9600eb68fc50601",
+    "https://cdn.skypack.dev/-/axios@v1.6.5-2On1E9HB9x6qruQJyo7T/dist=es2019,mode=imports/optimized/axios.js": "4e87429e28343e28ff133f8c987a8a8adbd758a72396321069489b2dfe8d10de",
+    "https://cdn.skypack.dev/-/axios@v1.6.5-2On1E9HB9x6qruQJyo7T/dist=es2019,mode=imports/optimized/axios/lib/adapters/http.js": "c4c738b042d3cb04c1c809da222e07cfcfee421f949b8beac53a823659c6d0da",
+    "https://cdn.skypack.dev/-/axios@v1.6.5-2On1E9HB9x6qruQJyo7T/dist=es2019,mode=imports/optimized/axios/unsafe/axios.js": "fb764fa84dfa14de49e1dd748ede790a35850a614637957d51abf9c1dfca4821",
+    "https://cdn.skypack.dev/-/axios@v1.6.5-2On1E9HB9x6qruQJyo7T/dist=es2019,mode=imports/optimized/axios/unsafe/core/buildFullPath.js": "860edf269ea59de15121ca054aae0be6d323d54fabe4a6ab06b64983d8997f4b",
+    "https://cdn.skypack.dev/-/axios@v1.6.5-2On1E9HB9x6qruQJyo7T/dist=es2019,mode=imports/optimized/axios/unsafe/core/settle.js": "96c11db05e22954ecf014d2f62f88873b616677ab589f566620f861d8eaa4aaa",
+    "https://cdn.skypack.dev/-/axios@v1.6.5-2On1E9HB9x6qruQJyo7T/dist=es2019,mode=imports/optimized/axios/unsafe/helpers/combineURLs.js": "a9c8e23319c41428ea902926ec9e2bc2c9b1ce0ddf0689fcd8b4323d652fff5a",
+    "https://cdn.skypack.dev/-/axios@v1.6.5-2On1E9HB9x6qruQJyo7T/dist=es2019,mode=imports/optimized/axios/unsafe/helpers/isAbsoluteURL.js": "55fe29d03f51b2afee61d15026932f0c0e6436852b638561298e4b2d5111b6a6",
+    "https://cdn.skypack.dev/-/axios@v1.6.5-2On1E9HB9x6qruQJyo7T/dist=es2019,mode=imports/optimized/common/AxiosError-6f8307ba.js": "b421080b828750a35f8fd7d0b3eeaeb86b60d0948fc98e7cd3193b5056afc761",
+    "https://cdn.skypack.dev/-/axios@v1.6.5-2On1E9HB9x6qruQJyo7T/dist=es2019,mode=imports/optimized/common/buildURL-f28f9684.js": "1717beea5842e9dcae4adb36375a51a4f422a8c61a1fa155fb94bfc6bf7efb3e",
+    "https://cdn.skypack.dev/-/axios@v1.6.5-2On1E9HB9x6qruQJyo7T/dist=es2019,mode=imports/optimized/common/utils-c29b9d50.js": "879c5989b7f449731dd955abf66e1e31ab45654251c430cb64e6409ab5417b8f",
+    "https://cdn.skypack.dev/-/axios@v1.6.5-2On1E9HB9x6qruQJyo7T/dist=es2019,mode=imports/optimized/common/xhr-a3e87f7f.js": "6a2d84f518ba1ea64ae91dedebbefde2fb5c5ab85baeafc12709456e04ca0e7a",
+    "https://cdn.skypack.dev/axios": "64fb7ca5841fe69f7b688a1b020ce6766dba8255c2a4ffba9061308009d0a808",
     "https://deno.land/std@0.140.0/_util/assert.ts": "e94f2eb37cebd7f199952e242c77654e43333c1ac4c5c700e929ea3aa5489f74",
     "https://deno.land/std@0.140.0/_util/os.ts": "3b4c6e27febd119d36a416d7a97bd3b0251b77c88942c8f16ee5953ea13e2e49",
     "https://deno.land/std@0.140.0/bytes/bytes_list.ts": "67eb118e0b7891d2f389dad4add35856f4ad5faab46318ff99653456c23b025d",

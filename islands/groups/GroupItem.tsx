@@ -249,6 +249,11 @@ export default function GroupItem({
               autoFocus={true}
               disabled={container.is_processing}
               value={name.value}
+              onKeyPress={(e) => {
+                if (e.key == "Enter") {
+                  onAcceptEdit(container, name.value);
+                }
+              }}
               onInput={(e) => name.value = (e.target as HTMLInputElement).value}
             />
           </div>

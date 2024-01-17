@@ -3,15 +3,18 @@ import SearchBar from "./SearchBar.tsx";
 import Loader from "$islands/Loader.tsx";
 import { createGroup, findGroups, updateGroup } from "$frontend/api.ts";
 import { useEffect } from "preact/hooks";
-import { FindGroupsRequest } from "../../routes/api/find-groups.ts";
+import { FindGroupsRequest } from "../../backend/api-handlers/groups/find-groups.ts";
 import { Icon } from "$components/Icon.tsx";
 import GroupItem, { ContainerGroupRecord, createContainer, createNewContainerRecord } from "$islands/groups/GroupItem.tsx";
 import { clearPopupOwner } from "$frontend/stores/active-sidebar-item.ts";
 import { GroupRecord } from "$backend/repository/group-repository.ts";
 import { deleteGroup } from "$frontend/api.ts";
-import { validateClientSchema } from "$backend/schemas.ts";
-import { deleteRequestSchema } from "../../routes/api/delete-group.ts";
-import { addGroupRequestSchema } from "../../routes/api/add-group.ts";
+import { IS_BROWSER } from "$fresh/runtime.ts";
+
+
+if (IS_BROWSER) {
+  await import("npm:@shopify/draggable@1.1.3");
+}
 
 export default function GroupList() {
   const isLoading = useSignal(true);
@@ -75,11 +78,13 @@ export default function GroupList() {
       })).data;
       container.is_new_record = false;
     } else {
-      await updateGroup({
-        id: record.id,
-        name,
-        parent_id: container.record.parent_id,
-      });
+      await updateGroup(
+        record.id,
+        {
+          name,
+          parent_id: container.record.parent_id,
+        }
+      );
       container.record.name = container.name;
     }
 
@@ -124,7 +129,7 @@ export default function GroupList() {
   const handleAcceptEdit = async (container: ContainerGroupRecord, newName: string) => {
 
     // TODO: Needs fixing
-    await validateClientSchema(addGroupRequestSchema, { name: newName });
+    // await validateClientSchema(addGroupRequestSchema, { name: newName });
 
 
     container.name = newName;
