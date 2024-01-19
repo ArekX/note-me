@@ -1,14 +1,8 @@
 import { FreshContext } from "$fresh/server.ts";
 import { AppState } from "$types";
-import { zod } from "$backend/deps.ts";
+import { DeleteGroupRequest, deleteRequestSchema } from "$schemas/groups.ts";
+import { validateRequest } from "$schemas/mod.ts";
 import { deleteGroup } from "$backend/repository/group-repository.ts";
-import { validateSchema } from "$backend/schemas.ts";
-
-export const deleteRequestSchema = zod.object({
-  id: zod.number(),
-});
-
-export type DeleteGroupRequest = zod.infer<typeof deleteRequestSchema>;
 
 export const handleDeleteGroup = async (
   _req: Request,
@@ -18,7 +12,7 @@ export const handleDeleteGroup = async (
     id: +ctx.params.id,
   };
 
-  await validateSchema(deleteRequestSchema, body);
+  await validateRequest(deleteRequestSchema, body);
 
   const { id: userId = -1 } = ctx.state.session?.data.user ?? {};
 

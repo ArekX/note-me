@@ -10,6 +10,9 @@ import { clearPopupOwner } from "$frontend/stores/active-sidebar-item.ts";
 import { GroupRecord } from "$backend/repository/group-repository.ts";
 import { deleteGroup } from "$frontend/api.ts";
 import { IS_BROWSER } from "$fresh/runtime.ts";
+import { validateSchema } from "$schemas/mod.ts";
+import { addGroupRequestSchema } from "$schemas/groups.ts";
+
 
 
 if (IS_BROWSER) {
@@ -128,8 +131,12 @@ export default function GroupList() {
 
   const handleAcceptEdit = async (container: ContainerGroupRecord, newName: string) => {
 
-    // TODO: Needs fixing
-    // await validateClientSchema(addGroupRequestSchema, { name: newName });
+    const errors = await validateSchema(addGroupRequestSchema, { name: newName });
+
+    if (errors && errors.length > 0) {
+      // TODO: Output error
+      return;
+    }
 
 
     container.name = newName;

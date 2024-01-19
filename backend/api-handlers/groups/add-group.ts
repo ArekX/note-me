@@ -1,15 +1,9 @@
 import { FreshContext } from "$fresh/server.ts";
 import { AppState } from "$types";
-import { zod } from "$backend/deps.ts";
 import { createGroup } from "$backend/repository/group-repository.ts";
-import { validateSchema } from "$backend/schemas.ts";
-
-export const addGroupRequestSchema = zod.object({
-  name: zod.string().min(1).max(255),
-  parent_id: zod.number().nullable(),
-});
-
-export type AddGroupRequest = zod.infer<typeof addGroupRequestSchema>;
+import { validateRequest } from "$schemas/mod.ts";
+import { AddGroupRequest } from "$schemas/groups.ts";
+import { addGroupRequestSchema } from "$schemas/groups.ts";
 
 export const handleAddGroup = async (
   req: Request,
@@ -19,7 +13,7 @@ export const handleAddGroup = async (
 
   const { id: userId = -1 } = ctx.state.session?.data.user ?? {};
 
-  await validateSchema(addGroupRequestSchema, body);
+  await validateRequest(addGroupRequestSchema, body);
 
   const result = await createGroup({
     ...body,

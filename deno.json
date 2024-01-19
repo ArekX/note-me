@@ -29,6 +29,7 @@
     "$components/": "./components/",
     "$islands/": "./islands/",
     "$backend/": "./backend/",
+    "$schemas/": "./schemas/",
     "$frontend/": "./frontend/",
     "$cli/": "./cli/",
     "$lib/": "./backend/lib/",

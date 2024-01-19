@@ -1,5 +1,3 @@
-import { zod } from "$backend/deps.ts";
-import { validateSchema } from "$backend/schemas.ts";
 import {
   beginTransaction,
   commitTransaction,
@@ -8,19 +6,11 @@ import {
 import { createNote } from "$backend/repository/note-repository.ts";
 import { linkNoteWithTags } from "$backend/repository/note-tags-repository.ts";
 import { assignNoteToGroup } from "$backend/repository/group-repository.ts";
+import { validateRequest } from "$schemas/mod.ts";
+import { AddNoteAggregate, addNoteAggregateSchema } from "$schemas/notes.ts";
 
-export const noteAggregateSchema = zod.object({
-  title: zod.string().min(1, "Note Title must have at least one character"),
-  text: zod.string().min(1, "Note must have at least one character"),
-  user_id: zod.number(),
-  tags: zod.array(zod.string()),
-  group_id: zod.number().nullable(),
-});
-
-export type NoteAggregate = zod.infer<typeof noteAggregateSchema>;
-
-export const createNoteAggregate = async (note: NoteAggregate) => {
-  await validateSchema(noteAggregateSchema, note);
+export const createNoteAggregate = async (note: AddNoteAggregate) => {
+  await validateRequest(addNoteAggregateSchema, note);
 
   await beginTransaction();
 

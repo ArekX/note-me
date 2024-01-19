@@ -1,20 +1,7 @@
 import { FreshContext, Handlers } from "$fresh/server.ts";
-import { NoteRecord } from "$backend/repository/note-repository.ts";
 import { AppState } from "$types";
-import { zod } from "$backend/deps.ts";
-import {
-  createNoteAggregate,
-  noteAggregateSchema,
-} from "$backend/aggregates/note.aggregate.ts";
-
-export const noteRequestSchema = zod.object({
-  title: noteAggregateSchema.shape.title,
-  text: noteAggregateSchema.shape.text,
-  tags: noteAggregateSchema.shape.tags,
-  group_id: noteAggregateSchema.shape.group_id,
-});
-
-export type AddNoteRequest = zod.infer<typeof noteRequestSchema>;
+import { AddNoteRequest } from "$schemas/notes.ts";
+import { createNoteAggregate } from "$backend/aggregates/note.aggregate.ts";
 
 export const handleAddNote = async (
   req: Request,

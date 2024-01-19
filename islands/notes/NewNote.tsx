@@ -1,4 +1,4 @@
-import { type Signal, useSignal } from "@preact/signals";
+import { useSignal } from "@preact/signals";
 import Viewer from "$islands/Viewer.tsx";
 
 import Loader from "$islands/Loader.tsx";
@@ -6,8 +6,9 @@ import { createNote } from "$frontend/api.ts";
 import { NoteRecord } from "$backend/repository/note-repository.ts";
 import { ErrorDisplay } from "$components/ErrorDisplay.tsx";
 import { SchemaErrors } from "$types";
-import { createNoteSchema } from "$backend/schemas.ts";
 import { Button } from "$components/Button.tsx";
+import { addNoteRequestSchema } from "$schemas/notes.ts";
+import { AddNoteRequest } from "$schemas/notes.ts";
 
 interface NewNoteProps {
   onNewNoteAdded?: (note: NoteRecord) => void;
@@ -17,11 +18,11 @@ export default function NewNote({ onNewNoteAdded }: NewNoteProps = {}) {
   const text = useSignal("");
   const showLoader = useSignal(false);
   const schemaErrors = useSignal<
-    SchemaErrors<typeof createNoteSchema>
+    SchemaErrors<AddNoteRequest>
   >(null);
 
   const addNewNote = async () => {
-    const result = createNoteSchema.safeParse({ text: text.value });
+    const result = addNoteRequestSchema.safeParse({ text: text.value });
 
     if (!result.success) {
       schemaErrors.value = result.error.format();
