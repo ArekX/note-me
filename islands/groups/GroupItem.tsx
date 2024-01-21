@@ -1,6 +1,6 @@
 import { GroupRecord } from "$backend/repository/group-repository.ts";
 import { Icon } from "$components/Icon.tsx";
-import { useSignal } from "@preact/signals";
+import { Signal, signal, useSignal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
 import { NoteRecord } from "$backend/repository/note-repository.ts";
 import IconMenu from "$islands/IconMenu.tsx";
@@ -37,6 +37,9 @@ interface GroupItemProps {
   onAddGroup: (container: ContainerGroupRecord, parent: ContainerGroupRecord | null) => void;
   onRename: (container: ContainerGroupRecord) => void;
   onDelete: (container: ContainerGroupRecord) => void;
+  onSwap: (container: ContainerGroupRecord, withContainer: ContainerGroupRecord) => void;
+  onDraggingStart: (container: ContainerGroupRecord) => void;
+  onDraggingEnd: (container: ContainerGroupRecord) => void;
   onLoadChildren: (container: ContainerGroupRecord) => void;
 }
 
@@ -114,6 +117,9 @@ export const createContainer = (item: RecordItem, parent: ContainerGroupRecord |
   } as ContainerGroupRecord;
 };
 
+const draggedContainer: Signal<ContainerGroupRecord | null> = signal(null);
+const selectedTo: Signal<ContainerGroupRecord | null> = signal(null);
+
 export default function GroupItem({
   parent,
   container,
@@ -123,7 +129,10 @@ export default function GroupItem({
   onCancelEdit,
   onRename,
   onDelete,
-  onLoadChildren
+  onLoadChildren,
+  onDraggingStart,
+  onDraggingEnd,
+  onSwap
 }: GroupItemProps) {
   const name = useSignal(container.name);
   const isOpen = useSignal(false);
@@ -160,17 +169,66 @@ export default function GroupItem({
     }
   };
 
+  const handleDragOver = (e: DragEvent) => {
+    if (
+      draggedContainer.value === container
+      || draggedContainer.value?.parent === container
+      || draggedContainer.value?.children.includes(container)
+    ) {
+      selectedTo.value = null;
+      e.stopPropagation();
+      return;
+    }
+
+    selectedTo.value = container;
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = () => {
+    if (!selectedTo.value || !draggedContainer.value) {
+      return;
+    }
+
+    onSwap(selectedTo.value, draggedContainer.value);
+    draggedContainer.value = null;
+    selectedTo.value = null;
+  };
+
+  const handleDragStart = (e: DragEvent) => {
+    draggedContainer.value = container;
+    onDraggingStart(container);
+    e.stopPropagation();
+  };
+
+  const handleDragEnd = () => {
+    console.log(selectedTo.value);
+    onDraggingEnd(draggedContainer.value!);
+    draggedContainer.value = null;
+    selectedTo.value = null;
+
+  };
+
   useEffect(() => {
     name.value = container.name;
   }, [container.name]);
 
   return (
-    <div class="group-item-container select-none" onClick={(e) => {
+    <div class={`group-item-container select-none ${selectedTo.value === container ? 'bg-red-600' : ''}`} onClick={(e) => {
       clearPopupOwner();
       handleOpenFolder();
       e.stopPropagation();
     }}>
-      <div class={`relative group-item hover:bg-gray-600 ${activeMenuRecordId.value == container.record.id ? 'opened-menu' : ''}`} title={container.name}>
+      <div
+        draggable={true}
+        onDragStart={handleDragStart}
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        onDragLeave={() => selectedTo.value = null}
+        onDragEnd={handleDragEnd}
+        class={`relative group-item hover:bg-gray-600 ${activeMenuRecordId.value == container.record.id ? 'opened-menu' : ''}`}
+        title={container.name}
+      >
         {!container.edit_mode && !container.is_processing && <div class="absolute right-0 flex items-center group-item-actions pr-1">
           <span class="hover:text-gray-300 cursor-pointer" title="Add Note" onClick={(e) => {
             onAddNote(container, parent);
@@ -280,6 +338,9 @@ export default function GroupItem({
           onRename={onRename}
           onDelete={onDelete}
           onLoadChildren={onLoadChildren}
+          onDraggingStart={onDraggingStart}
+          onDraggingEnd={onDraggingEnd}
+          onSwap={onSwap}
         />)}
       </div>}
       <ConfirmDialog

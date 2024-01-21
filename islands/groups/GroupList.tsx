@@ -9,19 +9,15 @@ import GroupItem, { ContainerGroupRecord, createContainer, createNewContainerRec
 import { clearPopupOwner } from "$frontend/stores/active-sidebar-item.ts";
 import { GroupRecord } from "$backend/repository/group-repository.ts";
 import { deleteGroup } from "$frontend/api.ts";
-import { IS_BROWSER } from "$fresh/runtime.ts";
 import { validateSchema } from "$schemas/mod.ts";
 import { addGroupRequestSchema } from "$schemas/groups.ts";
-
-
-
-if (IS_BROWSER) {
-  await import("npm:@shopify/draggable@1.1.3");
-}
 
 export default function GroupList() {
   const isLoading = useSignal(true);
   const groups: Signal<ContainerGroupRecord[]> = useSignal([]);
+  const notesText = useSignal("Notes");
+  const rootDraggedOver = useSignal(false);
+
 
   const searchNotesAndGroups = async (query: string) => {
   };
@@ -133,10 +129,10 @@ export default function GroupList() {
 
     const errors = await validateSchema(addGroupRequestSchema, { name: newName });
 
-    if (errors && errors.length > 0) {
-      // TODO: Output error
-      return;
-    }
+    // if (errors && errors.length > 0) {
+    //   // TODO: Output error
+    //   return;
+    // }
 
 
     container.name = newName;
@@ -181,9 +177,16 @@ export default function GroupList() {
   return (
     <div class="mt-3">
       <SearchBar onSearch={searchNotesAndGroups} />
-      <div class="flex pl-2 select-none">
-        <div class="flex-1 pt-1 text-sm">
-          Notes
+      <div class={`flex pl-2 select-none  ${rootDraggedOver.value ? 'bg-red-500' : ''}`}>
+        <div class={`flex-1 pt-1 text-sm`} onDrop={() => {
+
+        }} onDragOver={e => {
+          rootDraggedOver.value = true;
+          e.preventDefault();
+        }} onDragLeave={() => {
+          rootDraggedOver.value = false;
+        }}>
+          {notesText.value}
         </div>
         <div class="flex-1 text-right opacity-30 hover:opacity-100 pr-1">
           <span class="cursor-pointer hover:text-gray-300" title="Add Note">
@@ -208,6 +211,9 @@ export default function GroupList() {
         {groups.value.map((group) => <GroupItem
           container={group}
           parent={null}
+          onSwap={(f, t) => {
+            console.log(f.record.id, t.record.id)
+          }}
           onAcceptEdit={handleAcceptEdit}
           onCancelEdit={handleCancelEdit}
           onAddNote={handleAddNote}
@@ -215,6 +221,14 @@ export default function GroupList() {
           onRename={handleRename}
           onLoadChildren={handleLoadchildren}
           onDelete={handleDelete}
+          onDraggingEnd={() => {
+            console.log(rootDraggedOver.value);
+            notesText.value = "Notes";
+            rootDraggedOver.value = false;
+          }}
+          onDraggingStart={() => {
+            notesText.value = "Drop here for Top Level";
+          }}
         />)}
         {groups.value.length === 0 && !isLoading.value && <div class="text-center text-gray-400 pt-14">
           <div><Icon name="note" size="5xl" /></div>

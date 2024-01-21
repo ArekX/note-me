@@ -58,7 +58,7 @@ export default function NewNote({ onNewNoteAdded }: NewNoteProps = {}) {
       <div>
         <Viewer markdownText={text.value} />
       </div>
-      <Button onClick={addNewNote}>Post</Button>
+      <Button type="button" onClick={addNewNote}>Post</Button>
       <Loader visible={showLoader.value}>
         Enriching your notes with another one...
       </Loader>
