@@ -17,7 +17,7 @@ export default function GroupList() {
   const groups: Signal<ContainerGroupRecord[]> = useSignal([]);
   const notesText = useSignal("Notes");
   const rootDraggedOver = useSignal(false);
-
+  const containerDraggedOver = useSignal<ContainerGroupRecord | null>(null);
 
   const searchNotesAndGroups = async (query: string) => {
   };
@@ -181,6 +181,9 @@ export default function GroupList() {
         <div class={`flex-1 pt-1 text-sm`} onDrop={() => {
 
         }} onDragOver={e => {
+          if (containerDraggedOver.value?.parent === null) {
+            return;
+          }
           rootDraggedOver.value = true;
           e.preventDefault();
         }} onDragLeave={() => {
@@ -223,10 +226,12 @@ export default function GroupList() {
           onDelete={handleDelete}
           onDraggingEnd={() => {
             console.log(rootDraggedOver.value);
+            containerDraggedOver.value = null;
             notesText.value = "Notes";
             rootDraggedOver.value = false;
           }}
-          onDraggingStart={() => {
+          onDraggingStart={(container) => {
+            containerDraggedOver.value = container;
             notesText.value = "Drop here for Top Level";
           }}
         />)}
