@@ -1,0 +1,63 @@
+import { Icon } from "$components/Icon.tsx";
+import { ContainerGroupRecord } from "$islands/groups/GroupItem.tsx";
+import { useSignal } from "@preact/signals";
+
+interface RootGroupBarProps {
+    containerDraggedOver: ContainerGroupRecord | null;
+    onDropped: (e: DragEvent) => void;
+    onAddRootGroup: () => void;
+    onReloadEverything: () => void;
+    onAddNote: () => void;
+}
+
+const RootGroupBar = ({
+    containerDraggedOver,
+    onDropped,
+    onAddRootGroup,
+    onReloadEverything,
+    onAddNote
+}: RootGroupBarProps) => {
+
+    const rootDraggedOver = useSignal(false);
+
+    const handleDrop = (e: DragEvent) => {
+        rootDraggedOver.value = false;
+        onDropped(e);
+    };
+
+    const handleDragOver = (e: DragEvent) => {
+        if (containerDraggedOver?.parent === null) {
+            return;
+        }
+        rootDraggedOver.value = true;
+        e.preventDefault();
+
+    };
+
+    const handleDragLeave = () => {
+        rootDraggedOver.value = false;
+    };
+
+    return <div class={`flex pl-2 select-none  ${rootDraggedOver.value ? 'bg-red-500' : ''}`}>
+        <div class={`flex-1 pt-1 text-sm`}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+        >
+            {containerDraggedOver ? "Drop here to move to top level" : "Notes"}
+        </div>
+        <div class="flex-1 text-right opacity-30 hover:opacity-100 pr-1">
+            <span class="cursor-pointer hover:text-gray-300" title="Add Note" onClick={onAddNote}>
+                <Icon name="plus" />
+            </span>
+            <span class="cursor-pointer hover:text-gray-300" title="Add Group" onClick={onAddRootGroup}>
+                <Icon name="folder-plus" />
+            </span>
+            <span class="cursor-pointer hover:text-gray-300" title="Reload" onClick={onReloadEverything}>
+                <Icon name="refresh" />
+            </span>
+        </div>
+    </div>
+}
+
+export default RootGroupBar;

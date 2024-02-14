@@ -1,5 +1,6 @@
 import { Signal, useSignal } from "@preact/signals";
 import SearchBar from "./SearchBar.tsx";
+import RootGroupBar from "./RootGroupBar.tsx";
 import Loader from "$islands/Loader.tsx";
 import { createGroup, findGroups, updateGroup } from "$frontend/api.ts";
 import { useEffect } from "preact/hooks";
@@ -11,12 +12,12 @@ import { GroupRecord } from "$backend/repository/group-repository.ts";
 import { deleteGroup } from "$frontend/api.ts";
 import { validateSchema } from "$schemas/mod.ts";
 import { addGroupRequestSchema } from "$schemas/groups.ts";
+import { getDisplayMessage } from "$frontend/error-messages.ts";
+import { up } from "../../migrations/20231216_162457_initdb.ts";
 
 export default function GroupList() {
   const isLoading = useSignal(true);
   const groups: Signal<ContainerGroupRecord[]> = useSignal([]);
-  const notesText = useSignal("Notes");
-  const rootDraggedOver = useSignal(false);
   const containerDraggedOver = useSignal<ContainerGroupRecord | null>(null);
 
   const searchNotesAndGroups = async (query: string) => {
@@ -102,7 +103,7 @@ export default function GroupList() {
     groups.value = [...groups.value];
   };
 
-  const reloadEverything = () => {
+  const handleReloadEverything = () => {
     groups.value = [];
     loadGroups();
   };
@@ -126,13 +127,18 @@ export default function GroupList() {
   };
 
   const handleAcceptEdit = async (container: ContainerGroupRecord, newName: string) => {
+    container.error_message = '';
 
-    const errors = await validateSchema(addGroupRequestSchema, { name: newName });
+    const errors = await validateSchema(addGroupRequestSchema, {
+      name: newName,
+      parent_id: container.parent ? container.parent.record.id : null
+    });
 
-    // if (errors && errors.length > 0) {
-    //   // TODO: Output error
-    //   return;
-    // }
+    if (errors && errors.length > 0) {
+      container.error_message = getDisplayMessage(errors);
+      updateToRoot(container);
+      return;
+    }
 
 
     container.name = newName;
@@ -169,6 +175,46 @@ export default function GroupList() {
     groups.value = groups.value.filter(g => g !== container);
   };
 
+  const handleSwap = async (container: ContainerGroupRecord, newParent?: ContainerGroupRecord) => {
+    if (container === null) {
+      return;
+    }
+
+    container.is_processing = true;
+    updateToRoot(container);
+    if (newParent) {
+      newParent.is_processing = true;
+      updateToRoot(newParent);
+    }
+
+
+    await updateGroup(container.record.id, {
+      parent_id: newParent ? newParent.record.id : null
+    });
+
+    container.is_processing = false;
+
+    if (container.parent) {
+      container.parent.children = container.parent.children.filter(g => g !== container);
+    } else {
+      groups.value = groups.value.filter(g => g !== container);
+    }
+
+    if (newParent) {
+      newParent.is_processing = false;
+      newParent.children = [...newParent.children, container].toSorted((a, b) => a.record.id - b.record.id);
+      container.parent = newParent;
+
+      if (container.type === "group") {
+        container.record.parent_id = newParent.record.id;
+      }
+    } else {
+      groups.value = [...groups.value, container].toSorted((a, b) => a.record.id - b.record.id);
+    }
+
+    updateToRoot(container);
+  };
+
   useEffect(() => {
     loadGroups();
     clearPopupOwner();
@@ -177,32 +223,13 @@ export default function GroupList() {
   return (
     <div class="mt-3">
       <SearchBar onSearch={searchNotesAndGroups} />
-      <div class={`flex pl-2 select-none  ${rootDraggedOver.value ? 'bg-red-500' : ''}`}>
-        <div class={`flex-1 pt-1 text-sm`} onDrop={() => {
-
-        }} onDragOver={e => {
-          if (containerDraggedOver.value?.parent === null) {
-            return;
-          }
-          rootDraggedOver.value = true;
-          e.preventDefault();
-        }} onDragLeave={() => {
-          rootDraggedOver.value = false;
-        }}>
-          {notesText.value}
-        </div>
-        <div class="flex-1 text-right opacity-30 hover:opacity-100 pr-1">
-          <span class="cursor-pointer hover:text-gray-300" title="Add Note">
-            <Icon name="plus" />
-          </span>
-          <span class="cursor-pointer hover:text-gray-300" title="Add Group" onClick={addRootGroup}>
-            <Icon name="folder-plus" />
-          </span>
-          <span class="cursor-pointer hover:text-gray-300" title="Reload" onClick={reloadEverything}>
-            <Icon name="refresh" />
-          </span>
-        </div>
-      </div>
+      <RootGroupBar
+        onAddNote={() => { }}
+        onAddRootGroup={addRootGroup}
+        onReloadEverything={handleReloadEverything}
+        onDropped={(e) => handleSwap(containerDraggedOver.value!)}
+        containerDraggedOver={containerDraggedOver.value}
+      />
       <div class="overflow-auto group-list">
         <Loader
           color="white"
@@ -214,9 +241,7 @@ export default function GroupList() {
         {groups.value.map((group) => <GroupItem
           container={group}
           parent={null}
-          onSwap={(f, t) => {
-            console.log(f.record.id, t.record.id)
-          }}
+          onDrop={(toContainer) => handleSwap(containerDraggedOver.value!, toContainer)}
           onAcceptEdit={handleAcceptEdit}
           onCancelEdit={handleCancelEdit}
           onAddNote={handleAddNote}
@@ -225,14 +250,10 @@ export default function GroupList() {
           onLoadChildren={handleLoadchildren}
           onDelete={handleDelete}
           onDraggingEnd={() => {
-            console.log(rootDraggedOver.value);
             containerDraggedOver.value = null;
-            notesText.value = "Notes";
-            rootDraggedOver.value = false;
           }}
           onDraggingStart={(container) => {
             containerDraggedOver.value = container;
-            notesText.value = "Drop here for Top Level";
           }}
         />)}
         {groups.value.length === 0 && !isLoading.value && <div class="text-center text-gray-400 pt-14">

@@ -32,7 +32,8 @@ export const getUserGroups = async (
         .as("has_notes"),
     ])
     .where("user_id", "=", user_id)
-    .where("is_deleted", "=", false);
+    .where("is_deleted", "=", false)
+    .orderBy("id", "asc");
 
   if (parent_id) {
     query = query.where("parent_id", "=", +parent_id);
@@ -97,22 +98,29 @@ export const createGroup = async (
 };
 
 export type UpdateGroupRecord =
-  & Omit<
-    GroupTable,
-    "id" | "created_at" | "updated_at"
+  & Partial<
+    Pick<GroupTable, "name" | "parent_id">
   >
   & RecordId;
 
 export const updateGroup = async (
+  user_id: number,
   record: UpdateGroupRecord,
 ): Promise<boolean> => {
+  const valuesToChange = {} as Partial<UpdateGroupRecord>;
+
+  if (record.name) {
+    valuesToChange.name = record.name;
+  }
+
+  if (record.parent_id !== undefined) {
+    valuesToChange.parent_id = record.parent_id;
+  }
+
   const result = await db.updateTable("group")
-    .set({
-      parent_id: record.parent_id,
-      name: record.name,
-    })
+    .set(valuesToChange)
     .where("id", "=", record.id)
-    .where("user_id", "=", record.user_id)
+    .where("user_id", "=", user_id)
     .executeTakeFirst();
 
   return result.numUpdatedRows > 0;

@@ -13,6 +13,7 @@ interface ContainerRecordBase {
   is_new_record: boolean;
   is_processing: boolean;
   edit_mode: boolean;
+  error_message: string;
   name: string;
   parent: ContainerGroupRecord | null;
   children: ContainerGroupRecord[];
@@ -37,7 +38,7 @@ interface GroupItemProps {
   onAddGroup: (container: ContainerGroupRecord, parent: ContainerGroupRecord | null) => void;
   onRename: (container: ContainerGroupRecord) => void;
   onDelete: (container: ContainerGroupRecord) => void;
-  onSwap: (container: ContainerGroupRecord, withContainer: ContainerGroupRecord) => void;
+  onDrop: (toContainer: ContainerGroupRecord) => void;
   onDraggingStart: (container: ContainerGroupRecord) => void;
   onDraggingEnd: (container: ContainerGroupRecord) => void;
   onLoadChildren: (container: ContainerGroupRecord) => void;
@@ -96,6 +97,7 @@ export const createContainer = (item: RecordItem, parent: ContainerGroupRecord |
     is_new_record: false,
     is_processing: false,
     edit_mode: false,
+    error_message: '',
     type,
     parent,
     children: []
@@ -132,7 +134,7 @@ export default function GroupItem({
   onLoadChildren,
   onDraggingStart,
   onDraggingEnd,
-  onSwap
+  onDrop
 }: GroupItemProps) {
   const name = useSignal(container.name);
   const isOpen = useSignal(false);
@@ -190,7 +192,7 @@ export default function GroupItem({
       return;
     }
 
-    onSwap(selectedTo.value, draggedContainer.value);
+    onDrop(selectedTo.value);
     draggedContainer.value = null;
     selectedTo.value = null;
   };
@@ -202,7 +204,6 @@ export default function GroupItem({
   };
 
   const handleDragEnd = () => {
-    console.log(selectedTo.value);
     onDraggingEnd(draggedContainer.value!);
     draggedContainer.value = null;
     selectedTo.value = null;
@@ -212,6 +213,13 @@ export default function GroupItem({
   useEffect(() => {
     name.value = container.name;
   }, [container.name]);
+
+  useEffect(() => {
+    if (container.children.length == 0) {
+      isOpen.value = false;
+      areChildrenLoaded.value = false;
+    }
+  }, [container.children]);
 
   return (
     <div class={`group-item-container select-none ${selectedTo.value === container ? 'bg-red-600' : ''}`} onClick={(e) => {
@@ -314,6 +322,9 @@ export default function GroupItem({
               }}
               onInput={(e) => name.value = (e.target as HTMLInputElement).value}
             />
+            {container.error_message.length > 0 && <div class="text-red-900 right-0 absolute bottom-10 left-0 z-50 border-1 border-solid bg-red-400">
+              {container.error_message}
+            </div>}
           </div>
           :
           <span class="group-item-name pl-2 pr-2">
@@ -340,7 +351,7 @@ export default function GroupItem({
           onLoadChildren={onLoadChildren}
           onDraggingStart={onDraggingStart}
           onDraggingEnd={onDraggingEnd}
-          onSwap={onSwap}
+          onDrop={onDrop}
         />)}
       </div>}
       <ConfirmDialog

@@ -29,6 +29,7 @@ import * as $ScriptLoader from "./islands/ScriptLoader.tsx";
 import * as $Viewer from "./islands/Viewer.tsx";
 import * as $groups_GroupItem from "./islands/groups/GroupItem.tsx";
 import * as $groups_GroupList from "./islands/groups/GroupList.tsx";
+import * as $groups_RootGroupBar from "./islands/groups/RootGroupBar.tsx";
 import * as $groups_SearchBar from "./islands/groups/SearchBar.tsx";
 import * as $notes_NewNote from "./islands/notes/NewNote.tsx";
 import * as $notes_Note from "./islands/notes/Note.tsx";
@@ -66,6 +67,7 @@ const manifest = {
     "./islands/Viewer.tsx": $Viewer,
     "./islands/groups/GroupItem.tsx": $groups_GroupItem,
     "./islands/groups/GroupList.tsx": $groups_GroupList,
+    "./islands/groups/RootGroupBar.tsx": $groups_RootGroupBar,
     "./islands/groups/SearchBar.tsx": $groups_SearchBar,
     "./islands/notes/NewNote.tsx": $notes_NewNote,
     "./islands/notes/Note.tsx": $notes_Note,

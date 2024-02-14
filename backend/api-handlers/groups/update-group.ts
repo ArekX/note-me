@@ -15,10 +15,9 @@ export const handleUpdateGroup = async (
 
   await validateRequest(updateGroupRequestSchema, body);
 
-  const result = await updateGroup({
+  const result = await updateGroup(userId, {
     id: +ctx.params.id,
     ...body,
-    user_id: userId,
   });
 
   return new Response(
