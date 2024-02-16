@@ -2201,5 +2201,10 @@
     "https://esm.sh/v135/@preact/signals-core@1.5.0/X-ZS8q/denonext/signals-core.mjs": "69a658490da1b25f2f8d4476c45e7f1f45e08a04a0418119ab3d3b574d77b96a",
     "https://esm.sh/v135/@preact/signals@1.2.1/X-ZS8q/denonext/signals.mjs": "90531451d474fa35205f5f54e512ed566093722cb2a004316dc7b8d4b8122961",
     "https://esm.sh/v135/preact-render-to-string@6.3.1/X-ZS8q/denonext/preact-render-to-string.mjs": "bcaceb8c3938310aee3dd4f7b6f2136cf0b2b890988c2e6679485e052e76e920"
+  },
+  "workspace": {
+    "dependencies": [
+      "npm:tailwindcss@3.3.5"
+    ]
   }
 }
