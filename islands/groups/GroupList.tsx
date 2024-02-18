@@ -187,7 +187,6 @@ export default function GroupList() {
       updateToRoot(newParent);
     }
 
-
     await updateGroup(container.record.id, {
       parent_id: newParent ? newParent.record.id : null
     });
@@ -196,6 +195,7 @@ export default function GroupList() {
 
     if (container.parent) {
       container.parent.children = container.parent.children.filter(g => g !== container);
+      updateToRoot(container.parent);
     } else {
       groups.value = groups.value.filter(g => g !== container);
     }
@@ -209,6 +209,7 @@ export default function GroupList() {
         container.record.parent_id = newParent.record.id;
       }
     } else {
+      container.parent = null;
       groups.value = [...groups.value, container].toSorted((a, b) => a.record.id - b.record.id);
     }
 
