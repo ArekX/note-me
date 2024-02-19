@@ -26,7 +26,9 @@ export interface NoteReminderTable {
   id: Generated<number>;
   note_id: number;
   user_id: number;
+  target_notification_id?: number | null;
   remind_at: number;
+  repeat_amount: number;
 }
 
 export interface NoteAttachmentTable {
@@ -88,7 +90,7 @@ export interface GroupTable {
 
 export interface GroupNoteTable {
   id: Generated<number>;
-  group_id: number;
+  group_id?: number | null;
   note_id: number;
   user_id: number;
 }
