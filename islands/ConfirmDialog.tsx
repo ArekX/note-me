@@ -47,7 +47,9 @@ export default function ConfirmDialog({
     <dialog ref={dialogRef} onClick={e => e.stopPropagation()} class="select-none">
       <div class="p-2">{prompt}</div>
       <div class="text-center p-2">
-        <span class="pr-4"><Button color={confirmColor} setAsDefault={true} onClick={handleConfirm}>{confirmText}</Button></span>
+        <span class="pr-4">
+          <Button color={confirmColor} setAsDefault={true} onClick={handleConfirm}>{confirmText}</Button>
+        </span>
         <Button color={cancelColor} onClick={handleCancel}>{cancelText}</Button>
       </div>
     </dialog>

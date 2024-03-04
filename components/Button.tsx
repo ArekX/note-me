@@ -6,7 +6,7 @@ interface ButtonProps {
   setAsDefault?: boolean;
   children?: ComponentChildren;
   color?: ButtonColors;
-  type: "button" | "submit";
+  type?: "button" | "submit";
   onClick?: () => void;
 };
 
