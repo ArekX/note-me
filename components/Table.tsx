@@ -1,34 +1,75 @@
 import { ComponentChildren } from "preact";
 
+type RowCallback<RowType, OutputType> =
+    (row: RowType, rowIndex: number, column: Column<RowType>, colIndex: number) => OutputType;
+
+type RowContents = string | null | ComponentChildren;
+
 interface Column<T> {
-    name: string;
+    name: RowContents;
+    headerCellProps?: object | ((column: Column<T>, colIndex: number) => object);
+    cellProps?: object | RowCallback<T, object>;
     key?: keyof T;
-    render?: (row: T, rowIndex: number, column: Column<T>, colIndex: number) => string | null | ComponentChildren;
+    render?: RowCallback<T, RowContents>;
 }
 
 interface TableProps<T extends object> {
     columns: Column<T>[];
-    rows: T[]
+    rows: T[];
+    headerRowProps?: object;
+    bodyProps?: object;
+    headerProps?: object;
+    tableProps?: object;
+    bodyRowProps?: object | ((row: T, rowIndex: number) => object);
 }
 
 export function Table<T extends object>(
     {
         columns,
-        rows
+        rows,
+        headerRowProps,
+        bodyRowProps,
+        bodyProps,
+        headerProps,
+        tableProps = { class: "w-full" }
     }: TableProps<T>
 ) {
-    return <table class="w-full">
-        <thead>
-            <tr>
-                {columns.map((column, index) => <th key={index}>{column.name}</th>)}
+    return <table {...tableProps}>
+        <thead {...headerProps}>
+            <tr {...headerRowProps}>
+                {columns.map((column, index) =>
+                    <th
+                        key={index}
+                        {...(
+                            typeof column.headerCellProps === "function"
+                                ? column.headerCellProps(column, index)
+                                : column.headerCellProps
+                        )}
+                    >
+                        {column.name}
+                    </th>
+                )}
             </tr>
         </thead>
-        <tbody>
+        <tbody {...bodyProps}>
             {rows.map((row, rowIndex) =>
-                <tr key={rowIndex}>
+                <tr
+                    key={rowIndex}
+                    {...(
+                        typeof bodyRowProps === "function"
+                            ? bodyRowProps(row, rowIndex)
+                            : bodyRowProps
+                    )}
+                >
                     {columns.map((column, columnIndex) => (
-                        <td key={columnIndex} class="text-center">
-                            {column.key ? row[column.key] as string : column.render?.(
+                        <td
+                            key={columnIndex}
+                            {...(
+                                typeof column.cellProps === "function"
+                                    ? column.cellProps(row, rowIndex, column, columnIndex)
+                                    : column.cellProps
+                            )}>
+                            {column.key ? row[column.key] as RowContents : column.render?.(
                                 row,
                                 rowIndex,
                                 column,

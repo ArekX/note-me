@@ -25,6 +25,7 @@ import * as $ConfirmDialog from "./islands/ConfirmDialog.tsx";
 import * as $IconMenu from "./islands/IconMenu.tsx";
 import * as $Loader from "./islands/Loader.tsx";
 import * as $Notifications from "./islands/Notifications.tsx";
+import * as $Pagination from "./islands/Pagination.tsx";
 import * as $ScriptLoader from "./islands/ScriptLoader.tsx";
 import * as $Viewer from "./islands/Viewer.tsx";
 import * as $groups_GroupItem from "./islands/groups/GroupItem.tsx";
@@ -64,6 +65,7 @@ const manifest = {
     "./islands/IconMenu.tsx": $IconMenu,
     "./islands/Loader.tsx": $Loader,
     "./islands/Notifications.tsx": $Notifications,
+    "./islands/Pagination.tsx": $Pagination,
     "./islands/ScriptLoader.tsx": $ScriptLoader,
     "./islands/Viewer.tsx": $Viewer,
     "./islands/groups/GroupItem.tsx": $groups_GroupItem,

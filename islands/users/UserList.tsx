@@ -3,6 +3,7 @@ import ConfirmDialog from "$islands/ConfirmDialog.tsx";
 import { useSignal } from "@preact/signals";
 import { Button } from "$components/Button.tsx";
 import { Icon } from "$components/Icon.tsx";
+import { Pagination } from "$islands/Pagination.tsx";
 
 interface User {
     name: string;
@@ -15,13 +16,15 @@ export function UserList() {
 
     const selectedUser = useSignal<User | null>(null);
 
+    const currentPage = useSignal(1);
+
     return <div>
         <div class="p-4 w-full text-right">
             <Button color="success"><Icon name="plus" /> Add User</Button>
         </div>
         <Table<User>
             columns={[
-                { name: "Name", key: "name" },
+                { name: <strong>Name</strong>, key: "name" },
                 { name: "Email", key: "email" },
                 { name: "Role", key: "role" },
                 { name: "Status", key: "status" },
@@ -34,6 +37,9 @@ export function UserList() {
                     </div>
                 }
             ]}
+            bodyRowProps={{
+                class: "text-center"
+            }}
             rows={[
                 {
                     name: "John Doe",
@@ -42,6 +48,12 @@ export function UserList() {
                     status: "Active"
                 }
             ]}
+        />
+        <Pagination
+            total={80}
+            perPage={5}
+            currentPage={currentPage.value}
+            onChange={(page) => currentPage.value = page}
         />
         <ConfirmDialog
             visible={selectedUser.value !== null}
