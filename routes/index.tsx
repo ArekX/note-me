@@ -18,7 +18,7 @@ interface LoginResult {
 
 export const handler: Handlers<LoginResult> = {
   GET(_req, ctx: FreshContext<AppState>) {
-    if (ctx.state.session) {
+    if (ctx.state.session?.data) {
       return new Response("", {
         status: 302,
         headers: { Location: "/app" },
