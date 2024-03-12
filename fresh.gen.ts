@@ -17,7 +17,7 @@ import * as $app_note_index from "./routes/app/note/index.tsx";
 import * as $app_profile from "./routes/app/profile.tsx";
 import * as $app_settings_layout from "./routes/app/settings/_layout.tsx";
 import * as $app_settings_index from "./routes/app/settings/index.tsx";
-import * as $app_settings_tags from "./routes/app/settings/tags.tsx";
+import * as $app_settings_tags_index from "./routes/app/settings/tags/index.tsx";
 import * as $app_settings_users_index from "./routes/app/settings/users/index.tsx";
 import * as $greet_name_ from "./routes/greet/[name].tsx";
 import * as $index from "./routes/index.tsx";
@@ -35,6 +35,7 @@ import * as $groups_SearchBar from "./islands/groups/SearchBar.tsx";
 import * as $notes_NewNote from "./islands/notes/NewNote.tsx";
 import * as $notes_Note from "./islands/notes/Note.tsx";
 import * as $notes_NoteList from "./islands/notes/NoteList.tsx";
+import * as $tags_TagsList from "./islands/tags/TagsList.tsx";
 import * as $users_UserList from "./islands/users/UserList.tsx";
 import { type Manifest } from "$fresh/server.ts";
 
@@ -55,7 +56,7 @@ const manifest = {
     "./routes/app/profile.tsx": $app_profile,
     "./routes/app/settings/_layout.tsx": $app_settings_layout,
     "./routes/app/settings/index.tsx": $app_settings_index,
-    "./routes/app/settings/tags.tsx": $app_settings_tags,
+    "./routes/app/settings/tags/index.tsx": $app_settings_tags_index,
     "./routes/app/settings/users/index.tsx": $app_settings_users_index,
     "./routes/greet/[name].tsx": $greet_name_,
     "./routes/index.tsx": $index,
@@ -75,6 +76,7 @@ const manifest = {
     "./islands/notes/NewNote.tsx": $notes_NewNote,
     "./islands/notes/Note.tsx": $notes_Note,
     "./islands/notes/NoteList.tsx": $notes_NoteList,
+    "./islands/tags/TagsList.tsx": $tags_TagsList,
     "./islands/users/UserList.tsx": $users_UserList,
   },
   baseUrl: import.meta.url,

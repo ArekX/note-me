@@ -17,6 +17,16 @@ interface LoginResult {
 }
 
 export const handler: Handlers<LoginResult> = {
+  GET(_req, ctx: FreshContext<AppState>) {
+    if (ctx.state.session) {
+      return new Response("", {
+        status: 302,
+        headers: { Location: "/app" },
+      });
+    }
+
+    return ctx.render({ username: "", message: "" });
+  },
   async POST(req, ctx: FreshContext<AppState>) {
     const form = await req.formData();
 
