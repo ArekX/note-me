@@ -1,10 +1,12 @@
 import { Generated } from "../backend/lib/kysely-sqlite-dialect/deps.ts";
+import { Roles } from "$backend/rbac/role-definitions.ts";
 
 export interface UserTable {
   id: Generated<number>;
   name: string;
   username: string;
   password: string;
+  role: Roles;
   default_group_id: number;
   timezone: string;
   created_at: number;

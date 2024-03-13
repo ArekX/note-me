@@ -3,12 +3,14 @@
 // This file is automatically updated during development when running `dev.ts`.
 
 import * as $_404 from "./routes/_404.tsx";
+import * as $_500 from "./routes/_500.tsx";
 import * as $_app from "./routes/_app.tsx";
 import * as $_middleware from "./routes/_middleware.ts";
 import * as $api_middleware from "./routes/api/_middleware.ts";
 import * as $api_groups_id_ from "./routes/api/groups/[id].ts";
 import * as $api_groups_index from "./routes/api/groups/index.ts";
 import * as $api_notes_index from "./routes/api/notes/index.ts";
+import * as $api_users_index from "./routes/api/users/index.ts";
 import * as $app_layout from "./routes/app/_layout.tsx";
 import * as $app_middleware from "./routes/app/_middleware.ts";
 import * as $app_index from "./routes/app/index.tsx";
@@ -42,12 +44,14 @@ import { type Manifest } from "$fresh/server.ts";
 const manifest = {
   routes: {
     "./routes/_404.tsx": $_404,
+    "./routes/_500.tsx": $_500,
     "./routes/_app.tsx": $_app,
     "./routes/_middleware.ts": $_middleware,
     "./routes/api/_middleware.ts": $api_middleware,
     "./routes/api/groups/[id].ts": $api_groups_id_,
     "./routes/api/groups/index.ts": $api_groups_index,
     "./routes/api/notes/index.ts": $api_notes_index,
+    "./routes/api/users/index.ts": $api_users_index,
     "./routes/app/_layout.tsx": $app_layout,
     "./routes/app/_middleware.ts": $app_middleware,
     "./routes/app/index.tsx": $app_index,

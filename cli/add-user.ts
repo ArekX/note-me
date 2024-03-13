@@ -23,7 +23,8 @@ export const addUser = new Command()
       console.log("Name:", name);
       console.log("Username:", username);
       console.log("Password:", password);
-      await createUserRecord({ name, username, password });
+      console.log("Role: admin");
+      await createUserRecord({ name, username, password, role: "admin" });
       console.log("User created!");
     },
   );

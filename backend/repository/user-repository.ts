@@ -2,13 +2,14 @@ import { db } from "$backend/database.ts";
 import { UserTable } from "$types";
 import { bcrypt } from "$backend/deps.ts";
 import { getCurrentUnixTimestamp } from "$backend/time.ts";
+import { Roles } from "$backend/rbac/role-definitions.ts";
 
 type UserId = { id: number };
 
 export type UserRecord =
   & Pick<
     UserTable,
-    "name" | "username" | "password" | "default_group_id" | "timezone"
+    "name" | "username" | "password" | "default_group_id" | "timezone" | "role"
   >
   & UserId;
 
@@ -37,6 +38,7 @@ export const getUserByLogin = async (
       "password",
       "default_group_id",
       "timezone",
+      "role",
     ])
     .where("username", "=", username)
     .executeTakeFirst();
@@ -52,6 +54,7 @@ export const createUserRecord = async (user: {
   name: string;
   username: string;
   password: string;
+  role: Roles;
 }): Promise<UserId> => {
   const userRecord = {
     ...user,
@@ -72,4 +75,22 @@ export const createUserRecord = async (user: {
   return {
     id: Number(result.insertId),
   };
+};
+
+interface Filters {
+}
+
+export const findUsers = async (
+  filters: Filters,
+): Promise<UserRecord[]> => {
+  return await db.selectFrom("user")
+    .select([
+      "id",
+      "name",
+      "username",
+      "default_group_id",
+      "timezone",
+      "role",
+    ])
+    .execute() as UserRecord[];
 };

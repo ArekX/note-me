@@ -9,6 +9,7 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     .addColumn("password", "varchar(60)", (col) => col.notNull())
     .addColumn("default_group_id", "integer")
     .addColumn("timezone", "varchar(255)")
+    .addColumn("role", "varchar(255)", (col) => col.notNull())
     .addColumn("created_at", "int8", (col) => col.notNull())
     .addColumn("updated_at", "int8", (col) => col.notNull())
     .addColumn("is_deleted", "boolean", (col) => col.notNull().defaultTo(false))
