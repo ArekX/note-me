@@ -25,7 +25,7 @@ export const handleUpdateGroup = async (
       success: result,
     }),
     {
-      status: 201,
+      status: 200,
     },
   );
 };

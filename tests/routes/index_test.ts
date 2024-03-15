@@ -34,6 +34,8 @@ defineTest("Home page", async (addStep, client) => {
       name: "Test user",
       username: "test",
       password: "user",
+      role: "user",
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     });
 
     const response = await sendRequest(client, request);

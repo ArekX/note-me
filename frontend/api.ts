@@ -1,12 +1,12 @@
 import { axiod, IAxiodResponse } from "./deps.ts";
 import { NoteRecord } from "$backend/repository/note-repository.ts";
-import { AddNoteRequest } from "$backend/api-handlers/notes/add-note.ts";
 import { FindGroupsRequest } from "$backend/api-handlers/groups/find-groups.ts";
 import { FindNotesRequest } from "$backend/api-handlers/notes/find-notes.ts";
 import { GroupRecord } from "$backend/repository/group-repository.ts";
 import { getUserData } from "$frontend/user-data.ts";
-import { AddGroupRequest } from "$backend/api-handlers/groups/add-group.ts";
-import { UpdateGroupRequest } from "$backend/api-handlers/groups/update-group.ts";
+import { AddNoteRequest } from "$schemas/notes.ts";
+import { AddGroupRequest, UpdateGroupRequest } from "$schemas/groups.ts";
+import { UserProfile } from "$schemas/users.ts";
 
 const apiInterface = axiod.create({
   withCredentials: true,
@@ -69,6 +69,17 @@ export const deleteGroup = (
   id: number,
 ): Promise<IAxiodResponse<GroupRecord[]>> =>
   apiInterface.delete(`/groups/${id}`, {}, {
+    params: {
+      csrf: getUserData().csrfToken,
+    },
+  });
+
+export const updateProfile = (
+  profile: UserProfile,
+): Promise<IAxiodResponse<{ success: boolean }>> =>
+  apiInterface.put(`/profile`, {
+    ...profile,
+  }, {
     params: {
       csrf: getUserData().csrfToken,
     },

@@ -7,7 +7,6 @@ export interface UserTable {
   username: string;
   password: string;
   role: Roles;
-  default_group_id: number;
   timezone: string;
   created_at: number;
   updated_at: number;

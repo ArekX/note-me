@@ -28,3 +28,5 @@ export const roleDefinitions = {
 } satisfies RoleDefinitionMap;
 
 export type Roles = keyof typeof roleDefinitions;
+
+export const roleNames = Object.keys(roleDefinitions) as Roles[];

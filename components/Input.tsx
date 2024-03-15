@@ -13,9 +13,9 @@ interface InputProps {
 
 export function Input({ icon, label, name, type, value, onInput, placeholder }: InputProps) {
     return (
-        <div class={`${icon ? 'relative' : ''}`}>
+        <div class={`${icon ? 'relative' : ''} text-white`}>
             {label && <label
-                class="bloc text-sm font-bold mb-2"
+                class="bloc text-sm font-bold mb-2 text-black"
                 for={name}
             >
                 {label}

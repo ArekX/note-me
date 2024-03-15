@@ -24,7 +24,15 @@ export const addUser = new Command()
       console.log("Username:", username);
       console.log("Password:", password);
       console.log("Role: admin");
-      await createUserRecord({ name, username, password, role: "admin" });
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      console.log("Timezone:", timezone);
+      await createUserRecord({
+        name,
+        username,
+        password,
+        role: "admin",
+        timezone,
+      });
       console.log("User created!");
     },
   );

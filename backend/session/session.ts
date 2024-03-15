@@ -82,12 +82,12 @@ const createSessionStateObject = <T>(
     getId() {
       return sessionId;
     },
-    patch(state: Partial<T>): void {
+    async patch(state: Partial<T>) {
       data = { ...data, ...state };
-      setSession(sessionId, data);
+      await setSession(sessionId, data);
     },
-    set(state: T) {
-      setSession(sessionId, state);
+    async set(state: T) {
+      await setSession(sessionId, state);
       data = state;
     },
   };

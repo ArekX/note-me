@@ -1,4 +1,4 @@
-import { FreshContext, Handlers } from "$fresh/server.ts";
+import { FreshContext } from "$fresh/server.ts";
 import { AppState } from "$types";
 import { AddNoteRequest } from "$schemas/notes.ts";
 import { createNoteAggregate } from "$backend/aggregates/note.aggregate.ts";

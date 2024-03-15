@@ -1,12 +1,12 @@
 import { FreshContext } from "$fresh/server.ts";
 import { AppState } from "$types";
 
-export const antiCsrfSession = (
+export const antiCsrfSession = async (
   _req: Request,
   ctx: FreshContext<AppState>,
 ) => {
   if (ctx.state.session) {
-    ctx.state.session.patch({
+    await ctx.state.session.patch({
       storedCsrfToken: ctx.state.newCsrfToken ?? "",
     });
   }

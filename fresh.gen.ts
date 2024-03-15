@@ -10,6 +10,7 @@ import * as $api_middleware from "./routes/api/_middleware.ts";
 import * as $api_groups_id_ from "./routes/api/groups/[id].ts";
 import * as $api_groups_index from "./routes/api/groups/index.ts";
 import * as $api_notes_index from "./routes/api/notes/index.ts";
+import * as $api_profile from "./routes/api/profile.ts";
 import * as $api_users_index from "./routes/api/users/index.ts";
 import * as $app_layout from "./routes/app/_layout.tsx";
 import * as $app_middleware from "./routes/app/_middleware.ts";
@@ -21,7 +22,6 @@ import * as $app_settings_layout from "./routes/app/settings/_layout.tsx";
 import * as $app_settings_index from "./routes/app/settings/index.tsx";
 import * as $app_settings_tags_index from "./routes/app/settings/tags/index.tsx";
 import * as $app_settings_users_index from "./routes/app/settings/users/index.tsx";
-import * as $greet_name_ from "./routes/greet/[name].tsx";
 import * as $index from "./routes/index.tsx";
 import * as $ConfirmDialog from "./islands/ConfirmDialog.tsx";
 import * as $IconMenu from "./islands/IconMenu.tsx";
@@ -37,6 +37,7 @@ import * as $groups_SearchBar from "./islands/groups/SearchBar.tsx";
 import * as $notes_NewNote from "./islands/notes/NewNote.tsx";
 import * as $notes_Note from "./islands/notes/Note.tsx";
 import * as $notes_NoteList from "./islands/notes/NoteList.tsx";
+import * as $profile_UserProfile from "./islands/profile/UserProfile.tsx";
 import * as $tags_TagsList from "./islands/tags/TagsList.tsx";
 import * as $users_UserList from "./islands/users/UserList.tsx";
 import { type Manifest } from "$fresh/server.ts";
@@ -51,6 +52,7 @@ const manifest = {
     "./routes/api/groups/[id].ts": $api_groups_id_,
     "./routes/api/groups/index.ts": $api_groups_index,
     "./routes/api/notes/index.ts": $api_notes_index,
+    "./routes/api/profile.ts": $api_profile,
     "./routes/api/users/index.ts": $api_users_index,
     "./routes/app/_layout.tsx": $app_layout,
     "./routes/app/_middleware.ts": $app_middleware,
@@ -62,7 +64,6 @@ const manifest = {
     "./routes/app/settings/index.tsx": $app_settings_index,
     "./routes/app/settings/tags/index.tsx": $app_settings_tags_index,
     "./routes/app/settings/users/index.tsx": $app_settings_users_index,
-    "./routes/greet/[name].tsx": $greet_name_,
     "./routes/index.tsx": $index,
   },
   islands: {
@@ -80,6 +81,7 @@ const manifest = {
     "./islands/notes/NewNote.tsx": $notes_NewNote,
     "./islands/notes/Note.tsx": $notes_Note,
     "./islands/notes/NoteList.tsx": $notes_NoteList,
+    "./islands/profile/UserProfile.tsx": $profile_UserProfile,
     "./islands/tags/TagsList.tsx": $tags_TagsList,
     "./islands/users/UserList.tsx": $users_UserList,
   },
