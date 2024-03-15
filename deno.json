@@ -2,7 +2,7 @@
   "lock": true,
   "tasks": {
     "cli": "deno run -A cli/mod.ts",
-    "cache": "deno cache --lock deno.lock main.ts cli/mod.ts frontend/deps.ts",
+    "cache": "deno cache -r --lock deno.lock main.ts cli/mod.ts frontend/deps.ts",
     "check": "deno fmt --check && deno lint && deno check **/*.ts && deno check **/*.tsx",
     "fresh-cli": "echo \"import '\\$fresh/src/dev/cli.ts'\" | deno run --unstable -A -",
     "manifest": "deno task fresh-cli manifest $(pwd)",

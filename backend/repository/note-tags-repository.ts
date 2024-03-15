@@ -1,8 +1,6 @@
 import { db } from "$backend/database.ts";
-import { NoteTagTable, RecordId, Tables } from "$types";
+import { NoteTagTable, RecordId } from "$types";
 import { getCurrentUnixTimestamp } from "$backend/time.ts";
-import { Kysely } from "$backend/deps.ts";
-import { Transaction } from "$lib/kysely-sqlite-dialect/deps.ts";
 
 export type TagRecord =
   & Pick<

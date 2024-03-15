@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-window
 import { signal } from "@preact/signals";
 import { IS_BROWSER } from "$fresh/runtime.ts";
 
