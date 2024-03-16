@@ -7,14 +7,14 @@ import { FreshContext } from "$fresh/server.ts";
 import { AppState } from "../../types/app-state.ts";
 
 export const handler = [
-  apiErrorHandler,
-  sessionLoader,
-  authRequired,
-  antiCsrfTokenValidator,
-  loadPermissions,
-  async (_req: Request, ctx: FreshContext<AppState>) => {
-    const response = await ctx.next();
-    response.headers.set("Content-Type", "application/json");
-    return response;
-  },
+    apiErrorHandler,
+    sessionLoader,
+    authRequired,
+    antiCsrfTokenValidator,
+    loadPermissions,
+    async (_req: Request, ctx: FreshContext<AppState>) => {
+        const response = await ctx.next();
+        response.headers.set("Content-Type", "application/json");
+        return response;
+    },
 ];

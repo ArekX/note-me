@@ -3,6 +3,6 @@ import { notificationReceivedHandler } from "$backend/event-bus/handlers/notific
 import { noteReminderHandler } from "$backend/event-bus/handlers/note-reminder-handler.ts";
 
 export const eventBus = new EventBus([
-  notificationReceivedHandler,
-  noteReminderHandler,
+    notificationReceivedHandler,
+    noteReminderHandler,
 ]);

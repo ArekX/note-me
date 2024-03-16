@@ -5,14 +5,13 @@ interface PaginationProps {
     perPage: number;
     currentPage: number;
     onChange: (page: number) => void;
-};
-
+}
 
 export function Pagination({
     total,
     perPage,
     currentPage,
-    onChange
+    onChange,
 }: PaginationProps) {
     const pages = Math.ceil(total / perPage);
 
@@ -29,51 +28,64 @@ export function Pagination({
         startPageStride += currentPage + 4 - endPage;
     }
 
-    const startPage = Math.min(Math.max(1, currentPage - startPageStride), pages);
-
+    const startPage = Math.min(
+        Math.max(1, currentPage - startPageStride),
+        pages,
+    );
 
     return (
-        <div className="flex justify-center">
-            <button
-                className="p-2"
-                disabled={currentPage === 1}
-                onClick={() => onChange(currentPage - 1)}
-            >
-                <Icon name="chevron-left" />
-            </button>
-            <button
-                className="p-2"
-                disabled={currentPage === 1}
-                onClick={() => onChange(1)}
-            >
-                <Icon name="chevrons-left" />
-            </button>
+        <>
+            {total > perPage && (
+                <div className="flex justify-center">
+                    <button
+                        className="p-2"
+                        disabled={currentPage === 1}
+                        onClick={() => onChange(currentPage - 1)}
+                    >
+                        <Icon name="chevron-left" />
+                    </button>
+                    <button
+                        className="p-2"
+                        disabled={currentPage === 1}
+                        onClick={() => onChange(1)}
+                    >
+                        <Icon name="chevrons-left" />
+                    </button>
 
-            {Array.from({ length: endPage - startPage + 1 }, (_, index) => startPage + index).map(page => (
-                <button
-                    key={page}
-                    className={`p-2 ${currentPage === page ? 'bg-blue-500 text-white' : ''}`}
-                    onClick={() => onChange(page)}
-                >
-                    {page.toString().padStart(amountOfZeroes, '0')}
-                </button>
-            ))}
+                    {Array.from(
+                        { length: endPage - startPage + 1 },
+                        (_, index) => startPage + index,
+                    ).map((page) => (
+                        <button
+                            key={page}
+                            className={`p-2 ${
+                                currentPage === page
+                                    ? "bg-blue-500 text-white"
+                                    : ""
+                            }`}
+                            onClick={() => onChange(page)}
+                        >
+                            {page.toString().padStart(amountOfZeroes, "0")}
+                        </button>
+                    ))}
 
-            <button
-                className="p-2"
-                disabled={currentPage === pages}
-                onClick={() => onChange(pages)}
-            >
-                <Icon name="chevrons-right" />
-            </button>
+                    <button
+                        className="p-2"
+                        disabled={currentPage === pages}
+                        onClick={() => onChange(pages)}
+                    >
+                        <Icon name="chevrons-right" />
+                    </button>
 
-            <button
-                className="p-2"
-                disabled={currentPage === pages}
-                onClick={() => onChange(currentPage + 1)}
-            >
-                <Icon name="chevron-right" />
-            </button>
-        </div>
+                    <button
+                        className="p-2"
+                        disabled={currentPage === pages}
+                        onClick={() => onChange(currentPage + 1)}
+                    >
+                        <Icon name="chevron-right" />
+                    </button>
+                </div>
+            )}
+        </>
     );
-};
+}

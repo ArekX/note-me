@@ -24,6 +24,7 @@ import * as $app_settings_tags_index from "./routes/app/settings/tags/index.tsx"
 import * as $app_settings_users_index from "./routes/app/settings/users/index.tsx";
 import * as $index from "./routes/index.tsx";
 import * as $ConfirmDialog from "./islands/ConfirmDialog.tsx";
+import * as $Dialog from "./islands/Dialog.tsx";
 import * as $IconMenu from "./islands/IconMenu.tsx";
 import * as $Loader from "./islands/Loader.tsx";
 import * as $Notifications from "./islands/Notifications.tsx";
@@ -39,53 +40,56 @@ import * as $notes_Note from "./islands/notes/Note.tsx";
 import * as $notes_NoteList from "./islands/notes/NoteList.tsx";
 import * as $profile_UserProfile from "./islands/profile/UserProfile.tsx";
 import * as $tags_TagsList from "./islands/tags/TagsList.tsx";
+import * as $users_EditUserForm from "./islands/users/EditUserForm.tsx";
 import * as $users_UserList from "./islands/users/UserList.tsx";
 import { type Manifest } from "$fresh/server.ts";
 
 const manifest = {
-  routes: {
-    "./routes/_404.tsx": $_404,
-    "./routes/_500.tsx": $_500,
-    "./routes/_app.tsx": $_app,
-    "./routes/_middleware.ts": $_middleware,
-    "./routes/api/_middleware.ts": $api_middleware,
-    "./routes/api/groups/[id].ts": $api_groups_id_,
-    "./routes/api/groups/index.ts": $api_groups_index,
-    "./routes/api/notes/index.ts": $api_notes_index,
-    "./routes/api/profile.ts": $api_profile,
-    "./routes/api/users/index.ts": $api_users_index,
-    "./routes/app/_layout.tsx": $app_layout,
-    "./routes/app/_middleware.ts": $app_middleware,
-    "./routes/app/index.tsx": $app_index,
-    "./routes/app/logout.tsx": $app_logout,
-    "./routes/app/note/index.tsx": $app_note_index,
-    "./routes/app/profile.tsx": $app_profile,
-    "./routes/app/settings/_layout.tsx": $app_settings_layout,
-    "./routes/app/settings/index.tsx": $app_settings_index,
-    "./routes/app/settings/tags/index.tsx": $app_settings_tags_index,
-    "./routes/app/settings/users/index.tsx": $app_settings_users_index,
-    "./routes/index.tsx": $index,
-  },
-  islands: {
-    "./islands/ConfirmDialog.tsx": $ConfirmDialog,
-    "./islands/IconMenu.tsx": $IconMenu,
-    "./islands/Loader.tsx": $Loader,
-    "./islands/Notifications.tsx": $Notifications,
-    "./islands/Pagination.tsx": $Pagination,
-    "./islands/ScriptLoader.tsx": $ScriptLoader,
-    "./islands/Viewer.tsx": $Viewer,
-    "./islands/groups/GroupItem.tsx": $groups_GroupItem,
-    "./islands/groups/GroupList.tsx": $groups_GroupList,
-    "./islands/groups/RootGroupBar.tsx": $groups_RootGroupBar,
-    "./islands/groups/SearchBar.tsx": $groups_SearchBar,
-    "./islands/notes/NewNote.tsx": $notes_NewNote,
-    "./islands/notes/Note.tsx": $notes_Note,
-    "./islands/notes/NoteList.tsx": $notes_NoteList,
-    "./islands/profile/UserProfile.tsx": $profile_UserProfile,
-    "./islands/tags/TagsList.tsx": $tags_TagsList,
-    "./islands/users/UserList.tsx": $users_UserList,
-  },
-  baseUrl: import.meta.url,
+    routes: {
+        "./routes/_404.tsx": $_404,
+        "./routes/_500.tsx": $_500,
+        "./routes/_app.tsx": $_app,
+        "./routes/_middleware.ts": $_middleware,
+        "./routes/api/_middleware.ts": $api_middleware,
+        "./routes/api/groups/[id].ts": $api_groups_id_,
+        "./routes/api/groups/index.ts": $api_groups_index,
+        "./routes/api/notes/index.ts": $api_notes_index,
+        "./routes/api/profile.ts": $api_profile,
+        "./routes/api/users/index.ts": $api_users_index,
+        "./routes/app/_layout.tsx": $app_layout,
+        "./routes/app/_middleware.ts": $app_middleware,
+        "./routes/app/index.tsx": $app_index,
+        "./routes/app/logout.tsx": $app_logout,
+        "./routes/app/note/index.tsx": $app_note_index,
+        "./routes/app/profile.tsx": $app_profile,
+        "./routes/app/settings/_layout.tsx": $app_settings_layout,
+        "./routes/app/settings/index.tsx": $app_settings_index,
+        "./routes/app/settings/tags/index.tsx": $app_settings_tags_index,
+        "./routes/app/settings/users/index.tsx": $app_settings_users_index,
+        "./routes/index.tsx": $index,
+    },
+    islands: {
+        "./islands/ConfirmDialog.tsx": $ConfirmDialog,
+        "./islands/Dialog.tsx": $Dialog,
+        "./islands/IconMenu.tsx": $IconMenu,
+        "./islands/Loader.tsx": $Loader,
+        "./islands/Notifications.tsx": $Notifications,
+        "./islands/Pagination.tsx": $Pagination,
+        "./islands/ScriptLoader.tsx": $ScriptLoader,
+        "./islands/Viewer.tsx": $Viewer,
+        "./islands/groups/GroupItem.tsx": $groups_GroupItem,
+        "./islands/groups/GroupList.tsx": $groups_GroupList,
+        "./islands/groups/RootGroupBar.tsx": $groups_RootGroupBar,
+        "./islands/groups/SearchBar.tsx": $groups_SearchBar,
+        "./islands/notes/NewNote.tsx": $notes_NewNote,
+        "./islands/notes/Note.tsx": $notes_Note,
+        "./islands/notes/NoteList.tsx": $notes_NoteList,
+        "./islands/profile/UserProfile.tsx": $profile_UserProfile,
+        "./islands/tags/TagsList.tsx": $tags_TagsList,
+        "./islands/users/EditUserForm.tsx": $users_EditUserForm,
+        "./islands/users/UserList.tsx": $users_UserList,
+    },
+    baseUrl: import.meta.url,
 } satisfies Manifest;
 
 export default manifest;

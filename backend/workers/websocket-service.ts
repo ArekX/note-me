@@ -4,134 +4,134 @@ import { AppSessionData } from "$types";
 import { WebSocketMessage } from "./webworkers/websocket-worker.ts";
 
 export interface WebSocketHandler<
-  ClientMessages = unknown,
+    ClientMessages = unknown,
 > {
-  onRegister?(service: WebSocketService): void;
-  onOpen?(client: WebSocketClient): void;
-  onClose?(client: WebSocketClient): void;
-  onWorkerRequest?(data: WebSocketMessage): Promise<void>;
-  onClientMessage?(client: WebSocketClient, data: ClientMessages): void;
+    onRegister?(service: WebSocketService): void;
+    onOpen?(client: WebSocketClient): void;
+    onClose?(client: WebSocketClient): void;
+    onWorkerRequest?(data: WebSocketMessage): Promise<void>;
+    onClientMessage?(client: WebSocketClient, data: ClientMessages): void;
 }
 
 export type WebSocketClientList = { [key: string]: WebSocketClient };
 
 export interface WebSocketClient {
-  clientId: string;
-  userId: number;
-  socket: WebSocket;
-  send<T>(data: T): void;
+    clientId: string;
+    userId: number;
+    socket: WebSocket;
+    send<T>(data: T): void;
 }
 
 export class WebSocketService {
-  #handler: Set<WebSocketHandler> = new Set();
-  #clients: WebSocketClientList = {};
-  #abortController = new AbortController();
+    #handler: Set<WebSocketHandler> = new Set();
+    #clients: WebSocketClientList = {};
+    #abortController = new AbortController();
 
-  constructor(
-    private readonly port: number = 8080,
-    private readonly hostname: string = "0.0.0.0",
-  ) {}
+    constructor(
+        private readonly port: number = 8080,
+        private readonly hostname: string = "0.0.0.0",
+    ) {}
 
-  registerHandler(handler: WebSocketHandler) {
-    this.#handler.add(handler);
-    handler.onRegister?.(this);
-  }
-
-  getClient(clientId: string): WebSocketClient | null {
-    return this.#clients[clientId] ?? null;
-  }
-
-  async #handleRequest(request: Request): Promise<Response> {
-    if (request.headers.get("upgrade") != "websocket") {
-      return new Response(null, { status: 501 });
+    registerHandler(handler: WebSocketHandler) {
+        this.#handler.add(handler);
+        handler.onRegister?.(this);
     }
 
-    const cookies = resolveCookies(request);
-    const session = await loadSessionState<AppSessionData>(cookies.session);
-
-    if (!session?.data?.user) {
-      return new Response(null, { status: 401 });
+    getClient(clientId: string): WebSocketClient | null {
+        return this.#clients[clientId] ?? null;
     }
 
-    const { socket, response } = Deno.upgradeWebSocket(request);
+    async #handleRequest(request: Request): Promise<Response> {
+        if (request.headers.get("upgrade") != "websocket") {
+            return new Response(null, { status: 501 });
+        }
 
-    const clientId = crypto.randomUUID();
-    const userId = session.data.user.id;
+        const cookies = resolveCookies(request);
+        const session = await loadSessionState<AppSessionData>(cookies.session);
 
-    socket.addEventListener("open", () => {
-      const client = {
-        clientId,
-        socket,
-        userId,
-        send: <T>(data: T) => {
-          socket.send(JSON.stringify(data));
-        },
-      };
-      this.#clients[clientId] = client;
+        if (!session?.data?.user) {
+            return new Response(null, { status: 401 });
+        }
 
-      for (const handler of this.#handler) {
-        handler.onOpen?.(client);
-      }
-    });
+        const { socket, response } = Deno.upgradeWebSocket(request);
 
-    socket.addEventListener("close", () => {
-      const client = this.getClient(clientId)!;
+        const clientId = crypto.randomUUID();
+        const userId = session.data.user.id;
 
-      for (const handler of this.#handler) {
-        handler.onClose?.(client);
-      }
+        socket.addEventListener("open", () => {
+            const client = {
+                clientId,
+                socket,
+                userId,
+                send: <T>(data: T) => {
+                    socket.send(JSON.stringify(data));
+                },
+            };
+            this.#clients[clientId] = client;
 
-      delete this.#clients[clientId];
-    });
+            for (const handler of this.#handler) {
+                handler.onOpen?.(client);
+            }
+        });
 
-    socket.addEventListener("message", (event) => {
-      const client = this.getClient(clientId)!;
-      for (const handler of this.#handler) {
-        handler.onClientMessage?.(client, JSON.parse(event.data));
-      }
-    });
+        socket.addEventListener("close", () => {
+            const client = this.getClient(clientId)!;
 
-    return response;
-  }
+            for (const handler of this.#handler) {
+                handler.onClose?.(client);
+            }
 
-  sendTo<T>(clientId: string, data: T): boolean {
-    const client = this.getClient(clientId);
-    if (!client) {
-      return false;
+            delete this.#clients[clientId];
+        });
+
+        socket.addEventListener("message", (event) => {
+            const client = this.getClient(clientId)!;
+            for (const handler of this.#handler) {
+                handler.onClientMessage?.(client, JSON.parse(event.data));
+            }
+        });
+
+        return response;
     }
 
-    client.socket.send(JSON.stringify(data));
+    sendTo<T>(clientId: string, data: T): boolean {
+        const client = this.getClient(clientId);
+        if (!client) {
+            return false;
+        }
 
-    return true;
-  }
+        client.socket.send(JSON.stringify(data));
 
-  broadcast<T>(data: T): void {
-    for (const client of Object.values(this.#clients)) {
-      client.socket.send(JSON.stringify(data));
+        return true;
     }
-  }
 
-  async handleWorkerMessage(data: WebSocketMessage): Promise<void> {
-    for (const handler of this.#handler) {
-      await handler.onWorkerRequest?.(data);
+    broadcast<T>(data: T): void {
+        for (const client of Object.values(this.#clients)) {
+            client.socket.send(JSON.stringify(data));
+        }
     }
-  }
 
-  stop() {
-    this.#abortController.abort();
-  }
+    async handleWorkerMessage(data: WebSocketMessage): Promise<void> {
+        for (const handler of this.#handler) {
+            await handler.onWorkerRequest?.(data);
+        }
+    }
 
-  start() {
-    Deno.serve({
-      port: this.port,
-      hostname: this.hostname,
-      handler: (request) => this.#handleRequest(request),
-      signal: this.#abortController.signal,
-      onListen({ port, hostname }) {
-        console.log(
-          `WebSocket Worker started at http://${hostname}:${port}`,
-        );
-      },
-    });
-  }
+    stop() {
+        this.#abortController.abort();
+    }
+
+    start() {
+        Deno.serve({
+            port: this.port,
+            hostname: this.hostname,
+            handler: (request) => this.#handleRequest(request),
+            signal: this.#abortController.signal,
+            onListen({ port, hostname }) {
+                console.log(
+                    `WebSocket Worker started at http://${hostname}:${port}`,
+                );
+            },
+        });
+    }
 }

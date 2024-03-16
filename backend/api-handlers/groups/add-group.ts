@@ -6,21 +6,21 @@ import { AddGroupRequest } from "$schemas/groups.ts";
 import { addGroupRequestSchema } from "$schemas/groups.ts";
 
 export const handleAddGroup = async (
-  req: Request,
-  ctx: FreshContext<AppState>,
+    req: Request,
+    ctx: FreshContext<AppState>,
 ): Promise<Response> => {
-  const body: AddGroupRequest = await (req.json());
+    const body: AddGroupRequest = await (req.json());
 
-  const { id: userId = -1 } = ctx.state.session?.data.user ?? {};
+    const { id: userId = -1 } = ctx.state.session?.data.user ?? {};
 
-  await validateRequest(addGroupRequestSchema, body);
+    await validateRequest(addGroupRequestSchema, body);
 
-  const result = await createGroup({
-    ...body,
-    user_id: userId,
-  });
+    const result = await createGroup({
+        ...body,
+        user_id: userId,
+    });
 
-  return new Response(JSON.stringify(result), {
-    status: 201,
-  });
+    return new Response(JSON.stringify(result), {
+        status: 201,
+    });
 };

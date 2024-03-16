@@ -5,9 +5,9 @@ import { antiCsrfSession } from "$backend/middlewares/anti-csrf-session.ts";
 import { loadPermissions } from "$backend/middlewares/load-permissions.ts";
 
 export const handler = [
-  sessionLoader,
-  authRequired,
-  antiCsrfTokenValidator,
-  antiCsrfSession,
-  loadPermissions,
+    sessionLoader,
+    authRequired,
+    antiCsrfTokenValidator,
+    antiCsrfSession,
+    loadPermissions,
 ];

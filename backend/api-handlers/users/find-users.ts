@@ -1,19 +1,29 @@
 import {
-  FindUserFilters,
-  findUsers,
+    FindUserFilters,
+    findUsers,
 } from "$backend/repository/user-repository.ts";
 import { CanManageUsers } from "$backend/rbac/permissions.ts";
 import { parseQueryParams } from "$backend/parse-query-params.ts";
 import { guardHandler } from "$backend/rbac/authorizer.ts";
 
-export const handleFindUsers = guardHandler(CanManageUsers.List, async (
-  req: Request,
-): Promise<Response> => {
-  const results = await findUsers(parseQueryParams<FindUserFilters>(req.url, {
-    name: { type: "string", optional: true },
-    username: { type: "string", optional: true },
-    role: { type: "string", optional: true },
-  }));
+export interface FindUserRequest extends FindUserFilters {
+    page: number;
+}
 
-  return new Response(JSON.stringify(results));
+export const handleFindUsers = guardHandler(CanManageUsers.List, async (
+    req: Request,
+): Promise<Response> => {
+    const data = parseQueryParams<FindUserRequest>(req.url, {
+        name: { type: "string", optional: true },
+        username: { type: "string", optional: true },
+        role: { type: "string", optional: true },
+        page: { type: "number", optional: true, default: "1" },
+    });
+    const results = await findUsers({
+        name: data.name,
+        username: data.username,
+        role: data.role,
+    }, data.page);
+
+    return new Response(JSON.stringify(results));
 });

@@ -11,5 +11,5 @@ const timingService = new TimingService(60 * 1000, self);
 timingService.registerHandler(checkReminders);
 
 if (import.meta.main) {
-  timingService.start();
+    timingService.start();
 }

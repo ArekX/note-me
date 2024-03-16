@@ -4,11 +4,11 @@ import { resolveCookies } from "$backend/session/cookie.ts";
 import { loadSessionState } from "$backend/session/session.ts";
 
 export const sessionLoader = async (
-  req: Request,
-  ctx: FreshContext<AppState>,
+    req: Request,
+    ctx: FreshContext<AppState>,
 ) => {
-  const cookies = resolveCookies(req);
-  ctx.state.session = await loadSessionState<AppSessionData>(cookies.session);
+    const cookies = resolveCookies(req);
+    ctx.state.session = await loadSessionState<AppSessionData>(cookies.session);
 
-  return ctx.next();
+    return ctx.next();
 };

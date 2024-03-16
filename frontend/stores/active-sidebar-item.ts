@@ -3,38 +3,38 @@ import { signal } from "@preact/signals";
 import { IS_BROWSER } from "$fresh/runtime.ts";
 
 export type MenuItem = {
-  name: string;
-  onClick: () => void;
+    name: string;
+    onClick: () => void;
 };
 
 export const activeMenuRecordId = signal<number | null>(null);
 export const windowSize = signal<[number, number]>([0, 0]);
 
 if (IS_BROWSER) {
-  document.body.addEventListener("click", () => {
-    if (!activeMenuRecordId.value) {
-      return;
-    }
+    document.body.addEventListener("click", () => {
+        if (!activeMenuRecordId.value) {
+            return;
+        }
 
-    clearPopupOwner();
-  });
+        clearPopupOwner();
+    });
 
-  addEventListener("resize", () => {
-    if (!activeMenuRecordId.value) {
-      return;
-    }
+    addEventListener("resize", () => {
+        if (!activeMenuRecordId.value) {
+            return;
+        }
+
+        windowSize.value = [window.innerWidth, window.innerHeight];
+    });
 
     windowSize.value = [window.innerWidth, window.innerHeight];
-  });
-
-  windowSize.value = [window.innerWidth, window.innerHeight];
 }
 
 export const setPopupOwner = (owner: number) => {
-  activeMenuRecordId.value = owner;
-  windowSize.value = [window.innerWidth, window.innerHeight];
+    activeMenuRecordId.value = owner;
+    windowSize.value = [window.innerWidth, window.innerHeight];
 };
 
 export const clearPopupOwner = () => {
-  activeMenuRecordId.value = null;
+    activeMenuRecordId.value = null;
 };

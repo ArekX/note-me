@@ -2,5 +2,5 @@ import { NotificationReceivedEvent } from "$backend/event-bus/handlers/notificat
 import { NoteReminderEvent } from "$backend/event-bus/handlers/note-reminder-handler.ts";
 
 export type BusEvents =
-  | NotificationReceivedEvent
-  | NoteReminderEvent;
+    | NotificationReceivedEvent
+    | NoteReminderEvent;

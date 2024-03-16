@@ -4,9 +4,9 @@ import { useEffect } from "preact/hooks";
 export const scriptsReady = signal(false);
 
 export const useScriptsReadyEffect = (callback: () => void) => {
-  useEffect(() => {
-    if (scriptsReady.value) {
-      callback();
-    }
-  }, [scriptsReady.value]);
+    useEffect(() => {
+        if (scriptsReady.value) {
+            callback();
+        }
+    }, [scriptsReady.value]);
 };

@@ -10,15 +10,14 @@ interface UserProfileProps {
 }
 
 const availableTimezones = Intl.supportedValuesOf("timeZone")
-    .map(zone => ({
+    .map((zone) => ({
         label: zone.replace(/\//g, " - ").replace(/\_/g, " "),
-        value: zone
+        value: zone,
     }));
 
 export function UserProfile({ initialProfileData }: UserProfileProps) {
-
     const userData = useSignal<UserProfile>({
-        ...initialProfileData
+        ...initialProfileData,
     });
 
     const handleSubmit = async (event: Event) => {
@@ -26,25 +25,51 @@ export function UserProfile({ initialProfileData }: UserProfileProps) {
         await updateProfile(userData.value);
     };
 
-    const handlePropertyChange = (propertyName: keyof UserProfile) => (value: string) => {
-        userData.value = {
-            ...userData.value,
-            [propertyName]: value
+    const handlePropertyChange =
+        (propertyName: keyof UserProfile) => (value: string) => {
+            userData.value = {
+                ...userData.value,
+                [propertyName]: value,
+            };
         };
-    };
 
     return (
         <div>
             <form onSubmit={handleSubmit}>
-                <Input label="Name" type="text" value={userData.value.name} onInput={handlePropertyChange('name')} />
+                <Input
+                    label="Name"
+                    type="text"
+                    value={userData.value.name}
+                    onInput={handlePropertyChange("name")}
+                />
                 <br />
-                <DropdownList label="Timezone" items={availableTimezones} value={userData.value.timezone} onInput={handlePropertyChange('timezone')} />
+                <DropdownList
+                    label="Timezone"
+                    items={availableTimezones}
+                    value={userData.value.timezone}
+                    onInput={handlePropertyChange("timezone")}
+                />
                 <br />
-                <Input label="Old Password" type="password" value={userData.value.old_password} onInput={handlePropertyChange('old_password')} />
+                <Input
+                    label="Old Password"
+                    type="password"
+                    value={userData.value.old_password}
+                    onInput={handlePropertyChange("old_password")}
+                />
                 <br />
-                <Input label="New Password" type="password" value={userData.value.new_password} onInput={handlePropertyChange('new_password')} />
+                <Input
+                    label="New Password"
+                    type="password"
+                    value={userData.value.new_password}
+                    onInput={handlePropertyChange("new_password")}
+                />
                 <br />
-                <Input label="Confirm Password" type="password" value={userData.value.confirm_password} onInput={handlePropertyChange('confirm_password')} />
+                <Input
+                    label="Confirm Password"
+                    type="password"
+                    value={userData.value.confirm_password}
+                    onInput={handlePropertyChange("confirm_password")}
+                />
                 <br />
                 <Button type="submit" color="primary">Submit</Button>
             </form>
