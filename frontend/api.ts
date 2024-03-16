@@ -9,7 +9,7 @@ import { AddGroupRequest, UpdateGroupRequest } from "$schemas/groups.ts";
 import { UserProfile } from "$schemas/users.ts";
 import { FindUserRequest } from "$backend/api-handlers/users/find-users.ts";
 import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
-import { AdminUserRecord } from "$backend/repository/user-repository.ts";
+import { UserRecord } from "$backend/repository/user-repository.ts";
 
 const apiInterface = axiod.create({
     withCredentials: true,
@@ -90,7 +90,7 @@ export const updateProfile = (
 
 export const findUsers = (
     request: FindUserRequest,
-): Promise<IAxiodResponse<Paged<AdminUserRecord>>> =>
+): Promise<IAxiodResponse<Paged<UserRecord>>> =>
     apiInterface.get(`/users`, {
         params: {
             ...request,
