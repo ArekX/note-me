@@ -21,7 +21,7 @@ multiple users as well as note tagging and adding attachments.
 
 Requirements:
 
-- [Deno 1.39.4](https://docs.deno.com/runtime/manual/getting_started/installation)
+- [Deno 1.41.3](https://docs.deno.com/runtime/manual/getting_started/installation)
 
 1. Copy the environment example file: `cp env.example .env`
 2. Run migrations: `deno task cli migrate-up`
