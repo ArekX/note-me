@@ -24,8 +24,8 @@ export const getSimpleTotalCount = async <DB, TB extends keyof DB, O>(
 export const pageResults = async <T, DB, TB extends keyof DB, O>(
     query: SelectQueryBuilder<DB, TB, O>,
     page: number,
-    totalCount?: number,
     perPage: number = 20,
+    totalCount?: number,
 ) => {
     const total = totalCount ? totalCount : await getSimpleTotalCount(query);
     const results = await applyPagination(query, page, perPage).execute();

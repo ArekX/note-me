@@ -2,6 +2,7 @@ import { FreshContext } from "$fresh/server.ts";
 import { AppState } from "$types";
 import { AddNoteRequest } from "$schemas/notes.ts";
 import { createNoteAggregate } from "$backend/aggregates/note.aggregate.ts";
+import { toCreated } from "$backend/api-responses.ts";
 
 export const handleAddNote = async (
     req: Request,
@@ -16,7 +17,5 @@ export const handleAddNote = async (
         user_id: userId,
     });
 
-    return new Response(JSON.stringify(result), {
-        status: 201,
-    });
+    return toCreated(result);
 };

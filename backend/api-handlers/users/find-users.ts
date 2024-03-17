@@ -5,6 +5,7 @@ import {
 import { CanManageUsers } from "$backend/rbac/permissions.ts";
 import { parseQueryParams } from "$backend/parse-query-params.ts";
 import { guardHandler } from "$backend/rbac/authorizer.ts";
+import { toPagedList } from "$backend/api-responses.ts";
 
 export interface FindUserRequest extends FindUserFilters {
     page: number;
@@ -13,17 +14,15 @@ export interface FindUserRequest extends FindUserFilters {
 export const handleFindUsers = guardHandler(CanManageUsers.List, async (
     req: Request,
 ): Promise<Response> => {
-    const data = parseQueryParams<FindUserRequest>(req.url, {
-        name: { type: "string", optional: true },
-        username: { type: "string", optional: true },
-        role: { type: "string", optional: true },
-        page: { type: "number", optional: true, default: "1" },
-    });
-    const results = await findUsers({
-        name: data.name,
-        username: data.username,
-        role: data.role,
-    }, data.page);
+    const { name, username, role, page } = parseQueryParams<FindUserRequest>(
+        req.url,
+        {
+            name: { type: "string", optional: true },
+            username: { type: "string", optional: true },
+            role: { type: "string", optional: true },
+            page: { type: "number", optional: true, default: "1" },
+        },
+    );
 
-    return new Response(JSON.stringify(results));
+    return toPagedList(await findUsers({ name, username, role }, page));
 });

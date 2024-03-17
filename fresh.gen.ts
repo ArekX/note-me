@@ -11,6 +11,7 @@ import * as $api_groups_id_ from "./routes/api/groups/[id].ts";
 import * as $api_groups_index from "./routes/api/groups/index.ts";
 import * as $api_notes_index from "./routes/api/notes/index.ts";
 import * as $api_profile from "./routes/api/profile.ts";
+import * as $api_users_id_ from "./routes/api/users/[id].ts";
 import * as $api_users_index from "./routes/api/users/index.ts";
 import * as $app_layout from "./routes/app/_layout.tsx";
 import * as $app_middleware from "./routes/app/_middleware.ts";
@@ -55,6 +56,7 @@ const manifest = {
         "./routes/api/groups/index.ts": $api_groups_index,
         "./routes/api/notes/index.ts": $api_notes_index,
         "./routes/api/profile.ts": $api_profile,
+        "./routes/api/users/[id].ts": $api_users_id_,
         "./routes/api/users/index.ts": $api_users_index,
         "./routes/app/_layout.tsx": $app_layout,
         "./routes/app/_middleware.ts": $app_middleware,

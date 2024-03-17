@@ -4,6 +4,7 @@ import { createGroup } from "$backend/repository/group-repository.ts";
 import { validateRequest } from "$schemas/mod.ts";
 import { AddGroupRequest } from "$schemas/groups.ts";
 import { addGroupRequestSchema } from "$schemas/groups.ts";
+import { toCreated } from "$backend/api-responses.ts";
 
 export const handleAddGroup = async (
     req: Request,
@@ -20,7 +21,5 @@ export const handleAddGroup = async (
         user_id: userId,
     });
 
-    return new Response(JSON.stringify(result), {
-        status: 201,
-    });
+    return toCreated(result);
 };

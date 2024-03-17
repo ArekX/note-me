@@ -10,6 +10,8 @@ import { UserProfile } from "$schemas/users.ts";
 import { FindUserRequest } from "$backend/api-handlers/users/find-users.ts";
 import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
 import { UserRecord } from "$backend/repository/user-repository.ts";
+import { AddUserRequest } from "$schemas/users.ts";
+import { UpdateUserRequest } from "$schemas/users.ts";
 
 const apiInterface = axiod.create({
     withCredentials: true,
@@ -89,11 +91,36 @@ export const updateProfile = (
     });
 
 export const findUsers = (
-    request: FindUserRequest,
+    request?: FindUserRequest,
 ): Promise<IAxiodResponse<Paged<UserRecord>>> =>
     apiInterface.get(`/users`, {
+        params: request as QueryParams,
+    });
+
+export const createUser = (
+    data: AddUserRequest,
+): Promise<IAxiodResponse<UserRecord>> =>
+    apiInterface.post(`/users`, data, {
         params: {
-            ...request,
+            csrf: getUserData().csrfToken,
+        },
+    });
+
+export const updateUser = (
+    id: number,
+    data: UpdateUserRequest,
+): Promise<IAxiodResponse<UserRecord>> =>
+    apiInterface.put(`/users/${id}`, data, {
+        params: {
+            csrf: getUserData().csrfToken,
+        },
+    });
+
+export const deleteUser = (
+    id: number,
+): Promise<IAxiodResponse<boolean>> =>
+    apiInterface.delete(`/users/${id}`, {}, {
+        params: {
             csrf: getUserData().csrfToken,
         },
     });

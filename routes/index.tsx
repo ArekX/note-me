@@ -49,7 +49,7 @@ export const handler: Handlers<LoginResult> = {
 
         writeSessionCookie(
             response.headers,
-            await createSessionState<AppSessionData>({
+            await createSessionState<AppSessionData>(user.id, {
                 user,
                 storedCsrfToken: ctx.state.newCsrfToken ?? "",
             }),

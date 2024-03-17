@@ -16,13 +16,13 @@ export const addNoteAggregateSchema = zod.object({
     user_id: noteSchema.shape.user_id,
     tags: noteSchema.shape.tags,
     group_id: noteSchema.shape.group_id,
-});
+}).strict();
 
 export const addNoteRequestSchema = zod.object({
     title: addNoteAggregateSchema.shape.title,
     text: addNoteAggregateSchema.shape.text,
     tags: addNoteAggregateSchema.shape.tags,
     group_id: addNoteAggregateSchema.shape.group_id,
-});
+}).strict();
 
 export type AddNoteRequest = zod.infer<typeof addNoteRequestSchema>;

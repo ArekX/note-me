@@ -4,16 +4,11 @@ import { Input } from "$components/Input.tsx";
 import { Button } from "$components/Button.tsx";
 import { updateProfile } from "$frontend/api.ts";
 import { DropdownList } from "$components/DropdownList.tsx";
+import { supportedTimezoneList } from "$backend/time.ts";
 
 interface UserProfileProps {
     initialProfileData: UserProfile;
 }
-
-const availableTimezones = Intl.supportedValuesOf("timeZone")
-    .map((zone) => ({
-        label: zone.replace(/\//g, " - ").replace(/\_/g, " "),
-        value: zone,
-    }));
 
 export function UserProfile({ initialProfileData }: UserProfileProps) {
     const userData = useSignal<UserProfile>({
@@ -45,7 +40,7 @@ export function UserProfile({ initialProfileData }: UserProfileProps) {
                 <br />
                 <DropdownList
                     label="Timezone"
-                    items={availableTimezones}
+                    items={supportedTimezoneList}
                     value={userData.value.timezone}
                     onInput={handlePropertyChange("timezone")}
                 />

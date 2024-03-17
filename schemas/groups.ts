@@ -16,17 +16,17 @@ export type AddGroupRequest = zod.infer<typeof addGroupRequestSchema>;
 export const addGroupRequestSchema = zod.object({
     name: groupSchema.shape.name,
     parent_id: groupSchema.shape.parent_id,
-});
+}).strict();
 
 export type DeleteGroupRequest = zod.infer<typeof deleteRequestSchema>;
 
 export const deleteRequestSchema = zod.object({
     id: groupSchema.shape.id,
-});
+}).strict();
 
 export type UpdateGroupRequest = zod.infer<typeof updateGroupRequestSchema>;
 
 export const updateGroupRequestSchema = zod.object({
     name: addGroupRequestSchema.shape.name.optional(),
     parent_id: addGroupRequestSchema.shape.parent_id.optional(),
-});
+}).strict();

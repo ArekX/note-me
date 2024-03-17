@@ -2,6 +2,7 @@ import { FreshContext } from "$fresh/server.ts";
 import { getUserGroups } from "$backend/repository/group-repository.ts";
 import { AppState } from "$types";
 import { parseQueryParams } from "$backend/parse-query-params.ts";
+import { toResultList } from "$backend/api-responses.ts";
 
 export interface FindGroupsRequest {
     parent_id?: string;
@@ -20,5 +21,5 @@ export const handleFindGroups = async (
         ctx.state.session?.data.user?.id ?? -1,
     );
 
-    return new Response(JSON.stringify(results));
+    return toResultList(results);
 };

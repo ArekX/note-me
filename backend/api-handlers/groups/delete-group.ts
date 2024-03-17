@@ -3,6 +3,7 @@ import { AppState } from "$types";
 import { DeleteGroupRequest, deleteRequestSchema } from "$schemas/groups.ts";
 import { validateRequest } from "$schemas/mod.ts";
 import { deleteGroup } from "$backend/repository/group-repository.ts";
+import { toDeleted } from "$backend/api-responses.ts";
 
 export const handleDeleteGroup = async (
     _req: Request,
@@ -16,9 +17,7 @@ export const handleDeleteGroup = async (
 
     const { id: userId = -1 } = ctx.state.session?.data.user ?? {};
 
-    const result = await deleteGroup(body.id, userId);
+    await deleteGroup(body.id, userId);
 
-    return new Response(JSON.stringify(result), {
-        status: 201,
-    });
+    return toDeleted();
 };

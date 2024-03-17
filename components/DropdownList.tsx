@@ -1,21 +1,27 @@
 import { IS_BROWSER } from "$fresh/runtime.ts";
 
+export interface DropDownItem {
+    value: string;
+    label: string;
+}
+
 interface DropDownListProps {
     label?: string;
     name?: string;
     value?: string;
-    items: { value: string; label: string }[];
+    disabled?: boolean;
+    items: DropDownItem[];
     onInput?: (value: string) => void;
 }
 
 export function DropdownList(
-    { label, items, name, value, onInput }: DropDownListProps,
+    { label, items, name, value, onInput, disabled = false }: DropDownListProps,
 ) {
     return (
         <div class="text-white">
             {label && (
                 <label
-                    class="bloc text-sm font-bold mb-2 text-black"
+                    class="bloc text-sm font-bold mb-2 text-white"
                     for={name}
                 >
                     {label}
@@ -24,6 +30,7 @@ export function DropdownList(
             <select
                 name={name}
                 value={value}
+                disabled={disabled}
                 class="outline-none border-1 border-gray-900 bg-gray-700 p-2 w-full rounded-md"
                 onInput={IS_BROWSER
                     ? (e) => onInput?.((e.target as HTMLSelectElement).value)

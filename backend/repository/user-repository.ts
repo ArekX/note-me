@@ -21,6 +21,7 @@ export const checkIfUserExists = async (username: string): Promise<boolean> => {
         await db.selectFrom("user")
             .select(["id"])
             .where("username", "=", username)
+            .where("is_deleted", "=", false)
             .executeTakeFirst()
     ) {
         return true;
@@ -43,6 +44,7 @@ export const getUserByLogin = async (
             "role",
         ])
         .where("username", "=", username)
+        .where("is_deleted", "=", false)
         .executeTakeFirst();
 
     if (!user || !bcrypt.compareSync(password, user.password)) {
@@ -65,23 +67,27 @@ export const getUserById = async (
             "role",
         ])
         .where("id", "=", id)
+        .where("is_deleted", "=", false)
         .executeTakeFirst();
     return user ?? null;
 };
 
-export const createUserRecord = async (user: {
-    name: string;
-    username: string;
-    password: string;
-    role: Roles;
-    timezone: string;
-}): Promise<UserId> => {
+export type CreateUserData = Pick<
+    UserTable,
+    "name" | "username" | "password" | "role" | "timezone"
+>;
+
+export const createUserRecord = async (
+    user: CreateUserData,
+): Promise<UserId> => {
     const userRecord = {
-        ...user,
+        name: user.name,
+        username: user.username,
+        role: user.role,
+        timezone: user.timezone,
         password: bcrypt.hashSync(user.password),
         created_at: getCurrentUnixTimestamp(),
         updated_at: getCurrentUnixTimestamp(),
-        default_group_id: 0,
     };
     const result = await db.insertInto("user")
         .values(userRecord)
@@ -93,13 +99,53 @@ export const createUserRecord = async (user: {
 
     return {
         id: Number(result.insertId),
+        ...userRecord,
     };
+};
+
+export type UpdateUserData =
+    & Pick<
+        UserTable,
+        "name" | "role" | "timezone"
+    >
+    & { new_password?: string | null };
+
+export const updateUserRecord = async (
+    user_id: number,
+    user: UpdateUserData,
+): Promise<boolean> => {
+    const userRecord: Partial<
+        Pick<
+            UserTable,
+            "name" | "password" | "role" | "timezone" | "updated_at"
+        >
+    > = {
+        name: user.name,
+        role: user.role,
+        timezone: user.timezone,
+        updated_at: getCurrentUnixTimestamp(),
+    };
+
+    if (user.new_password) {
+        userRecord.password = bcrypt.hashSync(user.new_password);
+    }
+
+    const result = await db.updateTable("user")
+        .set(userRecord)
+        .where("id", "=", user_id)
+        .executeTakeFirst();
+
+    if (!result) {
+        throw new Error("Could not create user!");
+    }
+
+    return result.numUpdatedRows > 0;
 };
 
 export interface FindUserFilters {
     name?: string;
     username?: string;
-    role?: Roles;
+    role?: Roles | "";
 }
 
 export const findUsers = async (
@@ -113,7 +159,8 @@ export const findUsers = async (
             "username",
             "timezone",
             "role",
-        ]);
+        ])
+        .where("is_deleted", "=", false);
 
     query = applyFilters(query, {
         name: { type: "text", value: filters.name },
@@ -164,6 +211,7 @@ export const validateUserPassword = async (
     const user = await db.selectFrom("user")
         .select(["password"])
         .where("id", "=", user_id)
+        .where("is_deleted", "=", false)
         .executeTakeFirst();
 
     if (!user) {
@@ -171,4 +219,18 @@ export const validateUserPassword = async (
     }
 
     return bcrypt.compareSync(password, user.password);
+};
+
+export const deleteUserRecord = async (
+    id: number,
+): Promise<boolean> => {
+    const result = await db.updateTable("user")
+        .set({
+            is_deleted: true,
+            updated_at: getCurrentUnixTimestamp(),
+        })
+        .where("id", "=", id)
+        .executeTakeFirst();
+
+    return result.numUpdatedRows > 0;
 };

@@ -4,6 +4,7 @@ import { updateGroup } from "$backend/repository/group-repository.ts";
 import { UpdateGroupRequest } from "$schemas/groups.ts";
 import { validateRequest } from "$schemas/mod.ts";
 import { updateGroupRequestSchema } from "$schemas/groups.ts";
+import { toUpdated } from "$backend/api-responses.ts";
 
 export const handleUpdateGroup = async (
     req: Request,
@@ -20,12 +21,5 @@ export const handleUpdateGroup = async (
         ...body,
     });
 
-    return new Response(
-        JSON.stringify({
-            success: result,
-        }),
-        {
-            status: 200,
-        },
-    );
+    return toUpdated(result);
 };

@@ -10,30 +10,37 @@ export const loadSessionState = async <T>(
     }
 
     const result = await db.selectFrom("session")
-        .select("data")
+        .select(["data", "user_id"])
         .where("key", "=", sessionId)
         .where("expires_at", ">", (new Date()).getTime())
+        .orderBy("expires_at", "desc")
         .limit(1)
         .executeTakeFirst();
 
     try {
+        if (!result) {
+            return null;
+        }
+
         const data = result ? JSON.parse(result.data) : null;
-        return createSessionStateObject(sessionId, data);
+        return createSessionStateObject(sessionId, result.user_id, data);
     } catch {
         return null;
     }
 };
 
 export const createSessionState = async <T>(
+    userId: number,
     data: T,
 ): Promise<SessionState<T>> => {
     const sessionId = crypto.randomUUID();
-    await setSession(sessionId, data);
-    return createSessionStateObject(sessionId, data);
+    await setSession(sessionId, userId, data);
+    return createSessionStateObject(sessionId, userId, data);
 };
 
 export const setSession = async <T>(
     sessionId: string,
+    userId: number,
     data: T,
 ): Promise<void> => {
     const existingRow = await db.selectFrom("session")
@@ -56,6 +63,7 @@ export const setSession = async <T>(
             .values({
                 data: dataString,
                 key: sessionId,
+                user_id: userId,
                 expires_at: (new Date()).getTime() +
                     +(Deno.env.get("COOKIE_MAX_AGE_SECONDS") ?? 43200) * 1000,
             })
@@ -67,14 +75,15 @@ export const setSession = async <T>(
         .execute();
 };
 
-export const destroySession = async <T>(session: SessionState<T>) => {
+export const destroySession = async (userId: number) => {
     await db.deleteFrom("session")
-        .where("key", "=", session.getId())
+        .where("user_id", "=", userId)
         .execute();
 };
 
 const createSessionStateObject = <T>(
     sessionId: string,
+    userId: number,
     data: T,
 ): SessionState<T> => {
     return {
@@ -82,12 +91,15 @@ const createSessionStateObject = <T>(
         getId() {
             return sessionId;
         },
+        getUserId() {
+            return userId;
+        },
         async patch(state: Partial<T>) {
             data = { ...data, ...state };
-            await setSession(sessionId, data);
+            await setSession(sessionId, userId, data);
         },
         async set(state: T) {
-            await setSession(sessionId, state);
+            await setSession(sessionId, userId, state);
             data = state;
         },
     };

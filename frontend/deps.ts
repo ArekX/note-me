@@ -4,3 +4,4 @@ export {
     type IAxiodResponse,
 } from "https://deno.land/x/axiod@0.26.2/interfaces.ts";
 export { z } from "npm:zod@3.22.4";
+export { debounce } from "$std/async/debounce.ts";

@@ -1,18 +1,16 @@
 import Notifications from "$islands/Notifications.tsx";
 import { Logo } from "$components/Logo.tsx";
-import { MenuItem, Nav } from "$components/Nav.tsx";
 import { NotificationRecord } from "$backend/repository/notification-repository.ts";
 import { Icon } from "$components/Icon.tsx";
 import GroupList from "../islands/groups/GroupList.tsx";
 
 export interface SidebarProps {
-    route: string;
-    userDisplayName: string;
+    showSettings: boolean;
     initialNotifications: NotificationRecord[];
 }
 
 export function Sidebar(
-    { initialNotifications }: SidebarProps,
+    { initialNotifications, showSettings }: SidebarProps,
 ) {
     return (
         <div class="w-1/5 bg-gray-800 text-white bg-opacity-95">
@@ -24,13 +22,15 @@ export function Sidebar(
                         </a>
                     </div>
                     <div class="flex-1 text-center">
-                        <a
-                            href="/app/settings"
-                            class="hover:text-gray-300"
-                            title="Administration settings"
-                        >
-                            <Icon name="cog" />
-                        </a>
+                        {showSettings && (
+                            <a
+                                href="/app/settings"
+                                class="hover:text-gray-300"
+                                title="Administration settings"
+                            >
+                                <Icon name="cog" />
+                            </a>
+                        )}
                         <Notifications
                             initialNotifications={initialNotifications}
                         />

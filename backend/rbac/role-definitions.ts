@@ -27,6 +27,32 @@ export const roleDefinitions = {
     },
 } satisfies RoleDefinitionMap;
 
+const settingsPermissions = [
+    CanManageUsers.List,
+    CanManageSettings.Update,
+    CanManageTags.List,
+];
+
 export type Roles = keyof typeof roleDefinitions;
+
+export const canAccessSettings = (role: Roles) => {
+    const intersection = roleDefinitions[role].permissions.filter((p) =>
+        settingsPermissions.includes(p)
+    );
+
+    return intersection.length > 0;
+};
+
+export const roleLabelMap = Object.entries(roleDefinitions).reduce(
+    (map, [key, role]) => {
+        map[key as Roles] = role.name;
+        return map;
+    },
+    {} as { [key in Roles]: string },
+);
+
+export const roleDropDownList = Object.entries(roleDefinitions).map(
+    ([value, { name: label }]) => ({ label, value }),
+);
 
 export const roleNames = Object.keys(roleDefinitions) as Roles[];

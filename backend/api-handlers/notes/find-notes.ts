@@ -1,6 +1,7 @@
 import { FreshContext } from "$fresh/server.ts";
 import { listNotes } from "$backend/repository/note-repository.ts";
 import { AppState } from "$types";
+import { toResultList } from "$backend/api-responses.ts";
 
 export interface FindNotesRequest {
     search?: string;
@@ -14,5 +15,5 @@ export const handleFindNotes = async (
         user_id: ctx.state.session?.data.user?.id ?? -1,
     });
 
-    return new Response(JSON.stringify(results));
+    return toResultList(results);
 };

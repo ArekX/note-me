@@ -1,6 +1,7 @@
 export interface SessionState<T> {
     data: T;
     getId(): string;
+    getUserId(): number;
     patch(state: Partial<T>): Promise<void>;
     set(state: T): Promise<void>;
 }

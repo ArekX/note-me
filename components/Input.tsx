@@ -7,12 +7,22 @@ interface InputProps {
     icon?: string;
     name?: string;
     value?: string;
+    disabled?: boolean;
     onInput?: (value: string) => void;
     placeholder?: string;
 }
 
 export function Input(
-    { icon, label, name, type, value, onInput, placeholder }: InputProps,
+    {
+        icon,
+        label,
+        name,
+        type,
+        value,
+        onInput,
+        placeholder,
+        disabled = false,
+    }: InputProps,
 ) {
     return (
         <div class={`${icon ? "relative" : ""} text-white`}>
@@ -32,13 +42,16 @@ export function Input(
             <input
                 type={type}
                 name={name}
+                disabled={disabled}
                 value={value}
                 class={`outline-none border-1 ${
                     icon ? "pl-9" : ""
                 } border-gray-900 bg-gray-700 p-2 w-full rounded-md`}
                 placeholder={placeholder}
                 onInput={IS_BROWSER
-                    ? (e) => onInput?.((e.target as HTMLInputElement).value)
+                    ? (e) =>
+                        !disabled &&
+                        onInput?.((e.target as HTMLInputElement).value)
                     : undefined}
             />
         </div>

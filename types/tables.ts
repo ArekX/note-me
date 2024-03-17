@@ -66,6 +66,7 @@ export interface NoteTagNoteTable {
 
 export interface SessionTable {
     id: Generated<number>;
+    user_id: number;
     key: string;
     data: string;
     expires_at: number;

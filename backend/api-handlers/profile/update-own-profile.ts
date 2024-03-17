@@ -7,6 +7,7 @@ import { UserProfile, userProfileSchema } from "$schemas/users.ts";
 import { FreshContext } from "$fresh/server.ts";
 import { AppState } from "$types";
 import { validateUserPassword } from "$backend/repository/user-repository.ts";
+import { toUpdated } from "$backend/api-responses.ts";
 
 export const updateOwnProfile = async (
     req: Request,
@@ -37,12 +38,5 @@ export const updateOwnProfile = async (
         });
     }
 
-    return new Response(
-        JSON.stringify({
-            success: result,
-        }),
-        {
-            status: 200,
-        },
-    );
+    return toUpdated(result);
 };

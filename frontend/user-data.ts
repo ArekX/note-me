@@ -1,11 +1,14 @@
 import { UserRecord } from "$backend/repository/user-repository.ts";
+import { AppPermissions } from "$backend/rbac/permissions.ts";
 
 export type FrontendUserData =
     & Pick<
         UserRecord,
-        "name" | "default_group_id" | "timezone"
+        "name" | "timezone"
     >
     & {
+        id: number;
+        permissions: AppPermissions[];
         csrfToken: string;
     };
 
@@ -42,6 +45,14 @@ class UserData {
 
     formatDateTime(date: Date): string {
         return this.#intlDateTime.format(date);
+    }
+
+    can(action: AppPermissions): boolean {
+        return this.#data.permissions.includes(action);
+    }
+
+    get userId(): number {
+        return +this.#data.id;
     }
 
     get csrfToken(): string {
