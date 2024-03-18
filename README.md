@@ -9,9 +9,9 @@ multiple users as well as note tagging and adding attachments.
 - [x] Login
 - [x] Note creation with tags and groups
 - [x] Group management
-- [ ] User profile management
+- [x] User profile management
 - [ ] Backup
-- [ ] Tags management
+- [x] Tags management
 - [ ] Note reminders
 - [ ] Share notes?
 - [ ] Recycle bin
