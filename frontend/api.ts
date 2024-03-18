@@ -7,11 +7,14 @@ import { getUserData } from "$frontend/user-data.ts";
 import { AddNoteRequest } from "$schemas/notes.ts";
 import { AddGroupRequest, UpdateGroupRequest } from "$schemas/groups.ts";
 import { UserProfile } from "$schemas/users.ts";
-import { FindUserRequest } from "$backend/api-handlers/users/find-users.ts";
+import { FindTagRequest } from "$backend/api-handlers/tags/find-tags.ts";
 import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
 import { UserRecord } from "$backend/repository/user-repository.ts";
+import { TagRecord } from "$backend/repository/note-tags-repository.ts";
 import { AddUserRequest } from "$schemas/users.ts";
 import { UpdateUserRequest } from "$schemas/users.ts";
+import { AddTagRequest, UpdateTagRequest } from "$schemas/tags.ts";
+import { FindUserRequest } from "$backend/api-handlers/users/find-users.ts";
 
 const apiInterface = axiod.create({
     withCredentials: true,
@@ -120,6 +123,41 @@ export const deleteUser = (
     id: number,
 ): Promise<IAxiodResponse<boolean>> =>
     apiInterface.delete(`/users/${id}`, {}, {
+        params: {
+            csrf: getUserData().csrfToken,
+        },
+    });
+
+export const findTags = (
+    request?: FindTagRequest,
+): Promise<IAxiodResponse<Paged<TagRecord>>> =>
+    apiInterface.get(`/tags`, {
+        params: request as QueryParams,
+    });
+
+export const createTag = (
+    data: AddTagRequest,
+): Promise<IAxiodResponse<TagRecord>> =>
+    apiInterface.post(`/tags`, data, {
+        params: {
+            csrf: getUserData().csrfToken,
+        },
+    });
+
+export const updateTag = (
+    id: number,
+    data: UpdateTagRequest,
+): Promise<IAxiodResponse<UserRecord>> =>
+    apiInterface.put(`/tags/${id}`, data, {
+        params: {
+            csrf: getUserData().csrfToken,
+        },
+    });
+
+export const deleteTag = (
+    id: number,
+): Promise<IAxiodResponse<boolean>> =>
+    apiInterface.delete(`/tags/${id}`, {}, {
         params: {
             csrf: getUserData().csrfToken,
         },

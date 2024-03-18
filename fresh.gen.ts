@@ -11,6 +11,8 @@ import * as $api_groups_id_ from "./routes/api/groups/[id].ts";
 import * as $api_groups_index from "./routes/api/groups/index.ts";
 import * as $api_notes_index from "./routes/api/notes/index.ts";
 import * as $api_profile from "./routes/api/profile.ts";
+import * as $api_tags_id_ from "./routes/api/tags/[id].ts";
+import * as $api_tags_index from "./routes/api/tags/index.ts";
 import * as $api_users_id_ from "./routes/api/users/[id].ts";
 import * as $api_users_index from "./routes/api/users/index.ts";
 import * as $app_layout from "./routes/app/_layout.tsx";
@@ -40,6 +42,7 @@ import * as $notes_NewNote from "./islands/notes/NewNote.tsx";
 import * as $notes_Note from "./islands/notes/Note.tsx";
 import * as $notes_NoteList from "./islands/notes/NoteList.tsx";
 import * as $profile_UserProfile from "./islands/profile/UserProfile.tsx";
+import * as $tags_EditTagForm from "./islands/tags/EditTagForm.tsx";
 import * as $tags_TagsList from "./islands/tags/TagsList.tsx";
 import * as $users_EditUserForm from "./islands/users/EditUserForm.tsx";
 import * as $users_UserList from "./islands/users/UserList.tsx";
@@ -56,6 +59,8 @@ const manifest = {
         "./routes/api/groups/index.ts": $api_groups_index,
         "./routes/api/notes/index.ts": $api_notes_index,
         "./routes/api/profile.ts": $api_profile,
+        "./routes/api/tags/[id].ts": $api_tags_id_,
+        "./routes/api/tags/index.ts": $api_tags_index,
         "./routes/api/users/[id].ts": $api_users_id_,
         "./routes/api/users/index.ts": $api_users_index,
         "./routes/app/_layout.tsx": $app_layout,
@@ -87,6 +92,7 @@ const manifest = {
         "./islands/notes/Note.tsx": $notes_Note,
         "./islands/notes/NoteList.tsx": $notes_NoteList,
         "./islands/profile/UserProfile.tsx": $profile_UserProfile,
+        "./islands/tags/EditTagForm.tsx": $tags_EditTagForm,
         "./islands/tags/TagsList.tsx": $tags_TagsList,
         "./islands/users/EditUserForm.tsx": $users_EditUserForm,
         "./islands/users/UserList.tsx": $users_UserList,

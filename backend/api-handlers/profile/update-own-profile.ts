@@ -15,7 +15,7 @@ export const updateOwnProfile = async (
 ): Promise<Response> => {
     const data: UserProfile = await req.json();
 
-    const { id: userId = -1 } = ctx.state.session?.data.user ?? {};
+    const userId = ctx.state.session?.getUserId()!;
 
     const profileSchema = userProfileSchema.refine(
         async (data) => {

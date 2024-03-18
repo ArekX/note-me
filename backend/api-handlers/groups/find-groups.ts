@@ -18,7 +18,7 @@ export const handleFindGroups = async (
 
     const results = await getUserGroups(
         params.parent_id ?? null,
-        ctx.state.session?.data.user?.id ?? -1,
+        ctx.state.session?.getUserId()!,
     );
 
     return toResultList(results);

@@ -12,7 +12,7 @@ export const handleUpdateGroup = async (
 ): Promise<Response> => {
     const body: UpdateGroupRequest = await (req.json());
 
-    const { id: userId = -1 } = ctx.state.session?.data.user ?? {};
+    const userId = ctx.state.session?.getUserId()!;
 
     await validateRequest(updateGroupRequestSchema, body);
 

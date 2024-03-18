@@ -10,7 +10,7 @@ export const handleAddNote = async (
 ): Promise<Response> => {
     const body: AddNoteRequest = await (req.json());
 
-    const { id: userId = -1 } = ctx.state.session?.data.user ?? {};
+    const userId = ctx.state.session?.getUserId()!;
 
     const result = await createNoteAggregate({
         ...body,

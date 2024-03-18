@@ -12,7 +12,7 @@ export const handleAddGroup = async (
 ): Promise<Response> => {
     const body: AddGroupRequest = await (req.json());
 
-    const { id: userId = -1 } = ctx.state.session?.data.user ?? {};
+    const userId = ctx.state.session?.getUserId()!;
 
     await validateRequest(addGroupRequestSchema, body);
 

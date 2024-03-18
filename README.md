@@ -16,6 +16,7 @@ multiple users as well as note tagging and adding attachments.
 - [ ] Share notes?
 - [ ] Recycle bin
 - [ ] Public notes
+- [ ] Admin: Transfer notes to another user
 
 # Development
 

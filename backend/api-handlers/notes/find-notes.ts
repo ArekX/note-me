@@ -12,7 +12,7 @@ export const handleFindNotes = async (
     ctx: FreshContext<AppState>,
 ): Promise<Response> => {
     const results = await listNotes({
-        user_id: ctx.state.session?.data.user?.id ?? -1,
+        user_id: ctx.state.session?.getUserId()!,
     });
 
     return toResultList(results);

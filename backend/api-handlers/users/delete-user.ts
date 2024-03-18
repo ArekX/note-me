@@ -10,7 +10,7 @@ export const handleDeleteUser = guardHandler(CanManageUsers.Delete, async (
     _req: Request,
     ctx: FreshContext<AppState>,
 ): Promise<Response> => {
-    const { id: sessionUserId = -1 } = ctx.state.session?.data.user ?? {};
+    const sessionUserId = ctx.state.session?.getUserId()!;
     const userId = +ctx.params.id;
 
     if (userId === sessionUserId) {

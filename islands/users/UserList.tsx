@@ -46,8 +46,8 @@ export function UserList() {
     const filterFactory = useFilterFactory(
         filters.value,
         (newFilters: Partial<FindUserRequest>) => {
-            console.log(newFilters);
             filters.value = newFilters;
+            currentPage.value = 1;
             loadUsers();
         },
     );

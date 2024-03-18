@@ -14,7 +14,7 @@ export const handleUpdateUser = guardHandler(CanManageUsers.Update, async (
 ): Promise<Response> => {
     const data = await req.json() as UpdateUserRequest;
 
-    const { id: sessionUserId = -1 } = ctx.state.session?.data.user ?? {};
+    const sessionUserId = ctx.state.session?.getUserId()!;
     const userId = +ctx.params.id;
 
     const schema = updateUserSchema.refine(

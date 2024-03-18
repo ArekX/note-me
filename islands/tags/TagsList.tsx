@@ -1,68 +1,129 @@
-import { Table } from "$components/Table.tsx";
 import ConfirmDialog from "$islands/ConfirmDialog.tsx";
 import { useSignal } from "@preact/signals";
 import { Button } from "$components/Button.tsx";
 import { Icon } from "$components/Icon.tsx";
 import { Pagination } from "$islands/Pagination.tsx";
-
-interface Tag {
-    name: string;
-}
+import { useEffect } from "preact/hooks";
+import { getUserData } from "$frontend/user-data.ts";
+import { CanManageTags } from "$backend/rbac/permissions.ts";
+import { EditableTag, EditTagForm } from "$islands/tags/EditTagForm.tsx";
+import { Input } from "$components/Input.tsx";
+import { deleteTag, findTags } from "$frontend/api.ts";
+import { debounce } from "$frontend/deps.ts";
 
 export function TagsList() {
-    const selectedUser = useSignal<Tag | null>(null);
-
+    const tagToDelete = useSignal<EditableTag | null>(null);
+    const tagToEdit = useSignal<EditableTag | null>(null);
+    const isLoading = useSignal<boolean>(true);
     const currentPage = useSignal(1);
+    const totalTags = useSignal(0);
+    const perPage = useSignal(20);
+    const tagNameFilter = useSignal("");
+
+    const tagList = useSignal<EditableTag[]>([]);
+
+    const loadTags = async () => {
+        isLoading.value = true;
+        const { data } = await findTags({
+            name: tagNameFilter.value,
+            page: currentPage.value,
+        });
+        tagList.value = data.results;
+        totalTags.value = data.total;
+        perPage.value = data.perPage;
+        isLoading.value = false;
+    };
+
+    const handlePageChanged = (page: number) => {
+        currentPage.value = page;
+        loadTags();
+    };
+
+    const handleFormDone = (reason: "ok" | "cancel") => {
+        tagToEdit.value = null;
+        if (reason === "ok") {
+            loadTags();
+        }
+    };
+
+    const handleFilterChanged = debounce((value: string) => {
+        tagNameFilter.value = value;
+        currentPage.value = 1;
+        loadTags();
+    }, 500);
+
+    const handleConfirmDelete = async () => {
+        await deleteTag(tagToDelete.value!.id!);
+        tagToDelete.value = null;
+        await loadTags();
+    };
+
+    useEffect(() => {
+        loadTags();
+    }, []);
+
+    const user = getUserData();
 
     return (
-        <div>
-            <div class="p-4 w-full text-right">
-                <Button color="success">
-                    <Icon name="plus" /> Add
-                </Button>
-            </div>
-            <Table<Tag>
-                columns={[
-                    { name: <strong>Name</strong>, key: "name" },
-                    {
-                        name: "Actions",
-                        render: (value: Tag) => (
-                            <div>
-                                <Button color="success">
-                                    <Icon name="pencil" /> Edit
-                                </Button>{" "}
-                                <Button
-                                    color="danger"
-                                    onClick={() => selectedUser.value = value}
-                                >
-                                    <Icon name="minus" /> Delete
-                                </Button>
-                            </div>
-                        ),
-                    },
-                ]}
-                bodyRowProps={{
-                    class: "text-center",
-                }}
-                rows={[
-                    {
-                        name: "John Doe",
-                    },
-                ]}
+        <div class="p-4">
+            {user.can(CanManageTags.Create) && (
+                <div class="p-4 w-full text-right">
+                    <Button
+                        color="success"
+                        onClick={() => {
+                            tagToEdit.value = {
+                                id: null,
+                                name: "",
+                            };
+                        }}
+                    >
+                        <Icon name="plus" /> Add
+                    </Button>
+                </div>
+            )}
+            <Input
+                label="Tag name"
+                value={tagNameFilter.value}
+                onInput={(value) => handleFilterChanged(value)}
             />
-            <Pagination
-                total={80}
-                perPage={5}
-                currentPage={currentPage.value}
-                onChange={(page) => currentPage.value = page}
-            />
+            {tagList.value.map((tag) => (
+                <div
+                    key={tag.id}
+                    class="inline-block  mr-4 mt-4"
+                >
+                    <span
+                        class="rounded-l-lg bg-gray-900 text-white p-4 cursor-pointer hover:bg-gray-700"
+                        onClick={() => tagToEdit.value = tag}
+                    >
+                        {tag.name}
+                    </span>
+                    <span
+                        class="rounded-r-lg bg-red-900 text-white p-4 cursor-pointer hover:bg-red-700"
+                        onClick={() => tagToDelete.value = tag}
+                    >
+                        x
+                    </span>
+                </div>
+            ))}
+            {!isLoading.value && (
+                <Pagination
+                    total={totalTags.value}
+                    perPage={perPage.value}
+                    currentPage={currentPage.value}
+                    onChange={handlePageChanged}
+                />
+            )}
             <ConfirmDialog
-                visible={selectedUser.value !== null}
-                prompt="Are you sure you want to delete this user? This action cannot be undone."
+                visible={tagToDelete.value !== null}
+                prompt="Are you sure you want to delete this tag? This action cannot be undone."
                 confirmColor="danger"
                 confirmText="Delete user"
-                onConfirm={() => console.log("Deleting user")}
-                onCancel={() => console.log("Cancelled")}
+                onConfirm={handleConfirmDelete}
+                onCancel={() => tagToDelete.value = null}
+            />
+            <EditTagForm
+                editTag={tagToEdit.value}
+                onDone={handleFormDone}
             />
         </div>
     );

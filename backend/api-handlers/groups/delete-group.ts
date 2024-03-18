@@ -15,7 +15,7 @@ export const handleDeleteGroup = async (
 
     await validateRequest(deleteRequestSchema, body);
 
-    const { id: userId = -1 } = ctx.state.session?.data.user ?? {};
+    const userId = ctx.state.session?.getUserId()!;
 
     await deleteGroup(body.id, userId);
 
