@@ -6,7 +6,7 @@ export const scriptsReady = signal(false);
 export const useScriptsReadyEffect = (callback: () => void) => {
     useEffect(() => {
         if (scriptsReady.value) {
-            callback();
+            return callback();
         }
     }, [scriptsReady.value]);
 };

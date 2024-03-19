@@ -1,5 +1,5 @@
 import { db } from "$backend/database.ts";
-import { NotificationTable, Payload } from "$types";
+import { NotificationTable, Payload, RecordId } from "$types";
 import { getCurrentUnixTimestamp } from "$backend/time.ts";
 
 export interface NoteReminder {
@@ -8,11 +8,10 @@ export interface NoteReminder {
 
 export type NotificationDataTypes = Payload<"reminder-received", NoteReminder>;
 
-type NotificationId = { id: number };
 type ParsedNotificationData = { data: NotificationDataTypes };
 export type NotificationRecord =
     & Omit<NotificationTable, "data" | "id" | "is_deleted">
-    & NotificationId
+    & RecordId
     & ParsedNotificationData;
 
 export const getUserNotifications = async (

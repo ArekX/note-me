@@ -2,6 +2,8 @@ interface IconProps {
     name: string;
     type?: "regular" | "solid";
     size?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl";
+    onClick?: () => void;
+    className?: string;
     animation?:
         | "spin"
         | "tada"
@@ -14,13 +16,21 @@ interface IconProps {
 }
 
 export function Icon(
-    { name, type = "regular", size = "2xl", animation }: IconProps,
+    {
+        name,
+        type = "regular",
+        size = "2xl",
+        animation,
+        onClick,
+        className = "",
+    }: IconProps,
 ) {
     return (
         <i
             class={`bx bx${type == "regular" ? "" : "s"}-${name} text-${size} ${
                 animation ? `bx-${animation}` : ""
-            } align-middle`}
+            } align-middle ${className}`}
+            onClick={onClick}
         >
         </i>
     );

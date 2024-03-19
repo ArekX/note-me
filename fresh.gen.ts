@@ -30,7 +30,6 @@ import * as $ConfirmDialog from "./islands/ConfirmDialog.tsx";
 import * as $Dialog from "./islands/Dialog.tsx";
 import * as $IconMenu from "./islands/IconMenu.tsx";
 import * as $Loader from "./islands/Loader.tsx";
-import * as $Notifications from "./islands/Notifications.tsx";
 import * as $Pagination from "./islands/Pagination.tsx";
 import * as $ScriptLoader from "./islands/ScriptLoader.tsx";
 import * as $Viewer from "./islands/Viewer.tsx";
@@ -41,6 +40,8 @@ import * as $groups_SearchBar from "./islands/groups/SearchBar.tsx";
 import * as $notes_NewNote from "./islands/notes/NewNote.tsx";
 import * as $notes_Note from "./islands/notes/Note.tsx";
 import * as $notes_NoteList from "./islands/notes/NoteList.tsx";
+import * as $notifications_NotificationItem from "./islands/notifications/NotificationItem.tsx";
+import * as $notifications_NotificationList from "./islands/notifications/NotificationList.tsx";
 import * as $profile_UserProfile from "./islands/profile/UserProfile.tsx";
 import * as $tags_EditTagForm from "./islands/tags/EditTagForm.tsx";
 import * as $tags_TagsList from "./islands/tags/TagsList.tsx";
@@ -80,7 +81,6 @@ const manifest = {
         "./islands/Dialog.tsx": $Dialog,
         "./islands/IconMenu.tsx": $IconMenu,
         "./islands/Loader.tsx": $Loader,
-        "./islands/Notifications.tsx": $Notifications,
         "./islands/Pagination.tsx": $Pagination,
         "./islands/ScriptLoader.tsx": $ScriptLoader,
         "./islands/Viewer.tsx": $Viewer,
@@ -91,6 +91,10 @@ const manifest = {
         "./islands/notes/NewNote.tsx": $notes_NewNote,
         "./islands/notes/Note.tsx": $notes_Note,
         "./islands/notes/NoteList.tsx": $notes_NoteList,
+        "./islands/notifications/NotificationItem.tsx":
+            $notifications_NotificationItem,
+        "./islands/notifications/NotificationList.tsx":
+            $notifications_NotificationList,
         "./islands/profile/UserProfile.tsx": $profile_UserProfile,
         "./islands/tags/EditTagForm.tsx": $tags_EditTagForm,
         "./islands/tags/TagsList.tsx": $tags_TagsList,
