@@ -1,9 +1,9 @@
-name: Check Main
+name: Check Master
 
 on: 
   push:
     branches:
-      - main
+      - master
 
 permissions:
     contents: read
