@@ -5,7 +5,7 @@ permissions:
 
 env:
   DENO_VERSION: "1.41.3"
-  DENO_DIR: ~/.deno-cache
+  DENO_DIR: /home/runner/.deno-cache
 
 jobs:
     run-check:
