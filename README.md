@@ -30,7 +30,7 @@ Requirements:
 4. Install git hooks by running `setup-githooks.sh`
 5. Start the development server: `deno task dev`
 
-Then log in with `demo` as username and password.
+You should be log in with `demo` as username and password.
 
 # Build
 
