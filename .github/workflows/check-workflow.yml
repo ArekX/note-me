@@ -14,15 +14,11 @@ jobs:
               with:
                 deno-version: v1.41.3
 
-            - name: Cache dependencies
-              id: cache-deno
-              uses: actions/cache@v4
+            - name: Cache Deno dependencies 
+              uses: actions/cache@v3
               with:
-                key: ${{ runner.os }}-deno-${{ hashFiles('**/*') }}
-                restore-keys: ${{ runner.os }}-deno-
-                path: |
-                  /home/runner/.deno
-                  /home/runner/.cache/deno/deps/https/deno.land
+                path: ${{ env.DENO_DIR }}
+                key: ${{ hashFiles('deno.lock') }}
 
             - name: Run checks and tests
 
