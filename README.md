@@ -27,7 +27,8 @@ Requirements:
 1. Copy the environment example file: `cp env.example .env`
 2. Run migrations: `deno task cli migrate-up`
 3. Add a demo user: `deno task cli add-user "Demo user" demo demo`
-4. Start the development server: `deno task dev`
+4. Install git hooks by running `setup-githooks.sh`
+5. Start the development server: `deno task dev`
 
 Then log in with `demo` as username and password.
 
