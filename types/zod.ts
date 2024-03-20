@@ -1,5 +1,5 @@
-import { zod } from "$backend/deps.ts";
+import { zod } from "$schemas/deps.ts";
 
-export type SchemaErrors<T extends zod.ZodType> =
-    | zod.ZodFormattedError<zod.infer<T>>
+export type SchemaErrors<T> =
+    | zod.ZodFormattedError<T>
     | null;

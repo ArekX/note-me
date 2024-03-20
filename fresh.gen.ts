@@ -42,6 +42,7 @@ import * as $notes_Note from "./islands/notes/Note.tsx";
 import * as $notes_NoteList from "./islands/notes/NoteList.tsx";
 import * as $notifications_NotificationItem from "./islands/notifications/NotificationItem.tsx";
 import * as $notifications_NotificationList from "./islands/notifications/NotificationList.tsx";
+import * as $notifications_views_ReminderView from "./islands/notifications/views/ReminderView.tsx";
 import * as $profile_UserProfile from "./islands/profile/UserProfile.tsx";
 import * as $tags_EditTagForm from "./islands/tags/EditTagForm.tsx";
 import * as $tags_TagsList from "./islands/tags/TagsList.tsx";
@@ -95,6 +96,8 @@ const manifest = {
             $notifications_NotificationItem,
         "./islands/notifications/NotificationList.tsx":
             $notifications_NotificationList,
+        "./islands/notifications/views/ReminderView.tsx":
+            $notifications_views_ReminderView,
         "./islands/profile/UserProfile.tsx": $profile_UserProfile,
         "./islands/tags/EditTagForm.tsx": $tags_EditTagForm,
         "./islands/tags/TagsList.tsx": $tags_TagsList,

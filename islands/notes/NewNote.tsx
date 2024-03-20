@@ -18,7 +18,7 @@ export default function NewNote({ onNewNoteAdded }: NewNoteProps = {}) {
     const text = useSignal("");
     const showLoader = useSignal(false);
     const schemaErrors = useSignal<
-        SchemaErrors<AddNoteRequest>
+        SchemaErrors<AddNoteRequest> | null
     >(null);
 
     const addNewNote = async () => {

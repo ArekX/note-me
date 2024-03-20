@@ -6,11 +6,11 @@
         "check": "deno fmt --check && deno lint && deno check **/*.ts && deno check **/*.tsx",
         "fresh-cli": "echo \"import '\\$fresh/src/dev/cli.ts'\" | deno run --unstable -A -",
         "manifest": "deno task fresh-cli manifest $(pwd)",
-        "dev": "deno run -A --watch=static/,routes/ dev.ts",
+        "dev": "deno run -A --watch=static/,routes/ --check dev.ts",
         "update": "deno run -A -r https://fresh.deno.dev/update .",
         "build": "deno task build-assets && docker build --build-arg GIT_REVISION=$(git rev-parse HEAD) . -t arekxv/note-me:$(git describe --tags --abbrev=0)",
         "build-assets": "deno run -A build.ts build",
-        "production": "deno run -A main.ts",
+        "production": "deno run -A --check main.ts",
         "test": "deno test -A",
         "preview": "deno run -A main.ts"
     },
@@ -37,6 +37,9 @@
         "$types": "./types/mod.ts",
         "$tests/": "./tests/"
     },
-    "compilerOptions": { "jsx": "react-jsx", "jsxImportSource": "preact" },
+    "compilerOptions": {
+        "jsx": "react-jsx",
+        "jsxImportSource": "preact"
+    },
     "nodeModulesDir": true
 }

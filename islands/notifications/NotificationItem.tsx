@@ -1,23 +1,45 @@
 import { NotificationRecord } from "$backend/repository/notification-repository.ts";
+import { ReminderView } from "$islands/notifications/views/ReminderView.tsx";
+import { JSX } from "preact/jsx-runtime";
+
+export interface NotificationViewProps<T> {
+    data: T;
+    record: NotificationRecord;
+}
 
 interface NotificationItemProps {
     notification: NotificationRecord;
 }
+
+type NotificationViewMap = {
+    [K in NotificationRecord["data"]["type"]]: (
+        props: NotificationViewProps<
+            Extract<NotificationRecord["data"], { type: K }>["payload"]
+        >,
+    ) => JSX.Element;
+};
+
+const notificationViewComponents: NotificationViewMap = {
+    "reminder-received": ReminderView,
+};
 
 export const NotificationItem = ({
     notification,
 }: NotificationItemProps) => {
     const { data } = notification;
 
-    if (data.type == "reminder-received") {
-        return (
-            <div className=" p-4 rounded-md">
-                <h3 className="text-xl font-bold mb-2">
-                    Reminder for note #{data.payload.noteId}
-                </h3>
-            </div>
-        );
+    const NotificationView = notificationViewComponents[data.type];
+
+    if (!NotificationView) {
+        return <h1>Component not defined for type: {data.type}</h1>;
     }
 
-    return null;
+    return (
+        <NotificationView
+            data={data
+                // deno-lint-ignore no-explicit-any
+                .payload as any}
+            record={notification}
+        />
+    );
 };
