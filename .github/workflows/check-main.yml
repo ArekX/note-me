@@ -1,0 +1,13 @@
+name: Check Main
+
+on: 
+  push:
+    branches:
+      - main
+
+permissions:
+    contents: read
+
+jobs:
+    deploy:
+        uses: ./.github/workflows/check-workflow.yml

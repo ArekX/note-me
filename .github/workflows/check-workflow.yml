@@ -1,0 +1,39 @@
+on: [workflow_call]
+
+permissions:
+    contents: read
+
+concurrency:
+    group: deployment_${{ inputs.environment }}_environment
+    cancel-in-progress: true
+
+jobs:
+    run-check:
+        name: Check Pull Request
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out repository code
+              uses: actions/checkout@v4
+
+            - uses: denoland/setup-deno@v1
+              with:
+                deno-version: v1.41.3
+
+            - name: Cache dependencies
+              id: cache-deno
+              uses: actions/cache@v4
+              with:
+                key: ${{ runner.os }}-deno-${{ hashFiles('**/*') }}
+                restore-keys: ${{ runner.os }}-deno-
+                path: |
+                  /home/runner/.deno
+                  /home/runner/.cache/deno/deps/https/deno.land
+
+            - name: Run checks and tests
+
+              run: |
+                export DENO_INSTALL="/home/runner/.deno"
+                export PATH="$DENO_INSTALL/bin:$PATH"
+                set -e
+                deno task check
+                deno task test
