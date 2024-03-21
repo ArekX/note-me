@@ -18,11 +18,11 @@
     "exclude": ["**/_fresh/*"],
     "fmt": { "indentWidth": 4 },
     "imports": {
-        "$fresh/": "https://deno.land/x/fresh@1.6.5/",
-        "preact": "https://esm.sh/preact@10.19.2",
-        "preact/": "https://esm.sh/preact@10.19.2/",
-        "@preact/signals": "https://esm.sh/@preact/signals@1.2.1",
-        "@preact/signals-core": "https://esm.sh/@preact/signals-core@1.5.0",
+        "$fresh/": "https://deno.land/x/fresh@1.6.6/",
+        "preact": "https://esm.sh/preact@10.19.6",
+        "preact/": "https://esm.sh/preact@10.19.6/",
+        "@preact/signals": "https://esm.sh/@preact/signals@1.2.2",
+        "@preact/signals-core": "https://esm.sh/@preact/signals-core@1.5.1",
         "tailwindcss": "npm:tailwindcss@3.3.5",
         "tailwindcss/": "npm:/tailwindcss@3.3.5/",
         "tailwindcss/plugin": "npm:/tailwindcss@3.3.5/plugin.js",
@@ -37,9 +37,6 @@
         "$types": "./types/mod.ts",
         "$tests/": "./tests/"
     },
-    "compilerOptions": {
-        "jsx": "react-jsx",
-        "jsxImportSource": "preact"
-    },
+    "compilerOptions": { "jsx": "react-jsx", "jsxImportSource": "preact" },
     "nodeModulesDir": true
 }
