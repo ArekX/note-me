@@ -56,3 +56,51 @@ export const createNotification = async (
         created_at: record.created_at,
     };
 };
+
+export const deleteUserNotifications = async (
+    userId: number,
+): Promise<boolean> => {
+    const results = await db.updateTable("notification")
+        .set({ is_deleted: true })
+        .where("user_id", "=", userId)
+        .executeTakeFirst();
+
+    return results.numUpdatedRows > 0;
+};
+
+export const deleteSingleNotification = async (
+    id: number,
+    userId: number,
+): Promise<boolean> => {
+    const results = await db.updateTable("notification")
+        .set({ is_deleted: true })
+        .where("user_id", "=", userId)
+        .where("id", "=", id)
+        .executeTakeFirst();
+
+    return results.numUpdatedRows > 0;
+};
+
+export const markReadUserNotifications = async (
+    userId: number,
+): Promise<boolean> => {
+    const results = await db.updateTable("notification")
+        .set({ is_read: true })
+        .where("user_id", "=", userId)
+        .executeTakeFirst();
+
+    return results.numUpdatedRows > 0;
+};
+
+export const markSingleNotificationRead = async (
+    id: number,
+    userId: number,
+): Promise<boolean> => {
+    const results = await db.updateTable("notification")
+        .set({ is_read: true })
+        .where("user_id", "=", userId)
+        .where("id", "=", id)
+        .executeTakeFirst();
+
+    return results.numUpdatedRows > 0;
+};

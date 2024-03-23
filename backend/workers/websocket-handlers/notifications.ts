@@ -1,5 +1,9 @@
+import { deleteSingleNotification } from "$backend/repository/notification-repository.ts";
+import { markSingleNotificationRead } from "$backend/repository/notification-repository.ts";
 import {
+    deleteUserNotifications,
     getUserNotifications,
+    markReadUserNotifications,
     NotificationRecord,
 } from "$backend/repository/notification-repository.ts";
 import { Payload } from "$types";
@@ -17,7 +21,12 @@ export interface SendNotificationRequest {
 
 export type WorkerNotificationRequests = SendNotificationRequest;
 
-export type ClientNotificationRequests = Payload<"getMyNotifications", null>;
+export type ClientNotificationRequests =
+    | Payload<"getMyNotifications", null>
+    | Payload<"deleteAll", null>
+    | Payload<"markAllRead", null>
+    | Payload<"markSingleRead", { id: number }>
+    | Payload<"deleteSingle", { id: number }>;
 
 export type NotificationResponses =
     | Payload<
@@ -27,6 +36,22 @@ export type NotificationResponses =
     | Payload<
         "notification-added",
         NotificationRecord
+    >
+    | Payload<
+        "deleted-all",
+        null
+    >
+    | Payload<
+        "marked-all-read",
+        null
+    >
+    | Payload<
+        "marked-single-read",
+        { id: number }
+    >
+    | Payload<
+        "deleted-single",
+        { id: number }
     >;
 
 const clients: WebSocketClientList = {};
@@ -48,7 +73,7 @@ export const notificationsHandler: WebSocketHandler = {
         client: WebSocketClient,
         message: ClientNotificationRequests,
     ): Promise<void> => {
-        await clientMessageActions[message.type]?.(client);
+        await clientMessageActions[message.type]?.(client, message);
     },
 };
 
@@ -60,6 +85,58 @@ const getMyNotifications = async (client: WebSocketClient) => {
     });
 };
 
+const deleteAll = async (client: WebSocketClient) => {
+    await deleteUserNotifications(client.userId);
+    client.send<NotificationResponses>({
+        type: "deleted-all",
+        payload: null,
+    });
+};
+
+const markAllRead = async (client: WebSocketClient) => {
+    await markReadUserNotifications(client.userId);
+    client.send<NotificationResponses>({
+        type: "marked-all-read",
+        payload: null,
+    });
+};
+
+const markSingleRead = async (
+    client: WebSocketClient,
+    message: ClientNotificationRequests,
+) => {
+    if (message.type !== "markSingleRead") {
+        throw new Error("Invalid message type");
+    }
+    await markSingleNotificationRead(message.payload.id, client.userId);
+    client.send<NotificationResponses>({
+        type: "marked-single-read",
+        payload: {
+            id: message.payload.id,
+        },
+    });
+};
+
+const deleteSingle = async (
+    client: WebSocketClient,
+    message: ClientNotificationRequests,
+) => {
+    if (message.type !== "deleteSingle") {
+        throw new Error("Invalid message type");
+    }
+    await deleteSingleNotification(message.payload.id, client.userId);
+    client.send<NotificationResponses>({
+        type: "deleted-single",
+        payload: {
+            id: message.payload.id,
+        },
+    });
+};
+
 const clientMessageActions = {
     getMyNotifications,
+    deleteAll,
+    markAllRead,
+    markSingleRead,
+    deleteSingle,
 };

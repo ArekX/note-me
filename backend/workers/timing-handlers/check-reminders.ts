@@ -5,7 +5,7 @@ import { TimingHandler, TimingService } from "../timing-service.ts";
 export const checkReminders: TimingHandler = {
     triggerEveryMinutes: 1,
     onRegister(_parentService: TimingService): void {
-        // service = parentService;
+        // service = _parentService;
     },
     trigger(): Promise<void> {
         // service?.sendMessage({
