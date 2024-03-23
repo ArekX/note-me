@@ -181,14 +181,18 @@ export default function Notifications(props: NotificationsProps) {
                             </div>
                         </div>
                     </div>
-                    {notifications.value.map((notification) => (
-                        <NotificationItem
-                            key={notification.id}
-                            notification={notification}
-                            onDelete={handleDeleteSingle}
-                            onMarkRead={handleMarkSingleAsRead}
-                        />
-                    ))}
+                    {notifications.value.length > 0 && (
+                        <div class="overflow-auto max-h-52">
+                            {notifications.value.map((notification) => (
+                                <NotificationItem
+                                    key={notification.id}
+                                    notification={notification}
+                                    onDelete={handleDeleteSingle}
+                                    onMarkRead={handleMarkSingleAsRead}
+                                />
+                            ))}
+                        </div>
+                    )}
                     {notifications.value.length === 0 && (
                         <div class="pr-4 pl-4 pb-4 text-center">
                             <div>
