@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
 .notification-badge {
     @apply bg-red-500;
     border-radius: 100%;
@@ -96,4 +101,31 @@ dialog::backdrop {
 
 .icon-menu.show-items .icon-menu-items {
     display: block;
+}
+
+.note-editor {
+     flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: normal;
+  align-items: normal;
+}
+
+.note-editor input, .note-editor textarea {
+    outline: none;
+}
+
+.note-editor .title-editor {
+    font-size: 1.5rem;
+    font-weight: 600;
+    flex-grow: 1;
+    background: transparent;
+}
+
+.note-editor .text-editor {
+    font-size: 1.2rem;
+    line-height: 1.4em;
+    font-weight: 400;
+    margin-top: 2rem;
+    resize: none !important;
+    background: transparent;
 }

@@ -17,7 +17,6 @@ import { deleteGroup } from "$frontend/api.ts";
 import { validateSchema } from "$schemas/mod.ts";
 import { addGroupRequestSchema } from "$schemas/groups.ts";
 import { getDisplayMessage } from "$frontend/error-messages.ts";
-import { up } from "../../migrations/20231216_162457_initdb.ts";
 
 export default function GroupList() {
     const isLoading = useSignal(true);
@@ -175,7 +174,9 @@ export default function GroupList() {
         loadGroups(container);
     };
 
-    const handleAddNote = (container: ContainerGroupRecord) => {};
+    const handleAddNote = (container: ContainerGroupRecord) => {
+        window.location.href = `/app/note/new?group_id=${container.record.id}`;
+    };
 
     const handleDelete = async (
         container: ContainerGroupRecord,
@@ -244,6 +245,10 @@ export default function GroupList() {
         updateToRoot(container);
     };
 
+    const handleAddRootNote = () => {
+        window.location.href = `/app/note/new`;
+    };
+
     useEffect(() => {
         loadGroups();
         clearPopupOwner();
@@ -253,10 +258,10 @@ export default function GroupList() {
         <div class="mt-3">
             <SearchBar onSearch={searchNotesAndGroups} />
             <RootGroupBar
-                onAddNote={() => {}}
+                onAddNote={handleAddRootNote}
                 onAddRootGroup={addRootGroup}
                 onReloadEverything={handleReloadEverything}
-                onDropped={(e) => handleSwap(containerDraggedOver.value!)}
+                onDropped={() => handleSwap(containerDraggedOver.value!)}
                 containerDraggedOver={containerDraggedOver.value}
             />
             <div class="overflow-auto group-list">
@@ -292,7 +297,11 @@ export default function GroupList() {
                     />
                 ))}
                 {groups.value.length === 0 && !isLoading.value && (
-                    <div class="text-center text-gray-400 pt-14">
+                    <div
+                        class="text-center text-gray-400 pt-14 cursor-pointer"
+                        onClick={() => {
+                        }}
+                    >
                         <div>
                             <Icon name="note" size="5xl" />
                         </div>

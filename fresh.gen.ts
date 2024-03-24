@@ -20,6 +20,7 @@ import * as $app_middleware from "./routes/app/_middleware.ts";
 import * as $app_index from "./routes/app/index.tsx";
 import * as $app_logout from "./routes/app/logout.tsx";
 import * as $app_note_index from "./routes/app/note/index.tsx";
+import * as $app_note_new from "./routes/app/note/new.tsx";
 import * as $app_profile from "./routes/app/profile.tsx";
 import * as $app_settings_layout from "./routes/app/settings/_layout.tsx";
 import * as $app_settings_index from "./routes/app/settings/index.tsx";
@@ -37,9 +38,8 @@ import * as $groups_GroupItem from "./islands/groups/GroupItem.tsx";
 import * as $groups_GroupList from "./islands/groups/GroupList.tsx";
 import * as $groups_RootGroupBar from "./islands/groups/RootGroupBar.tsx";
 import * as $groups_SearchBar from "./islands/groups/SearchBar.tsx";
-import * as $notes_NewNote from "./islands/notes/NewNote.tsx";
-import * as $notes_Note from "./islands/notes/Note.tsx";
-import * as $notes_NoteList from "./islands/notes/NoteList.tsx";
+import * as $notes_NoteEditor from "./islands/notes/NoteEditor.tsx";
+import * as $notes_ViewNote from "./islands/notes/ViewNote.tsx";
 import * as $notifications_NotificationItem from "./islands/notifications/NotificationItem.tsx";
 import * as $notifications_NotificationList from "./islands/notifications/NotificationList.tsx";
 import * as $notifications_views_ReminderView from "./islands/notifications/views/ReminderView.tsx";
@@ -70,6 +70,7 @@ const manifest = {
         "./routes/app/index.tsx": $app_index,
         "./routes/app/logout.tsx": $app_logout,
         "./routes/app/note/index.tsx": $app_note_index,
+        "./routes/app/note/new.tsx": $app_note_new,
         "./routes/app/profile.tsx": $app_profile,
         "./routes/app/settings/_layout.tsx": $app_settings_layout,
         "./routes/app/settings/index.tsx": $app_settings_index,
@@ -89,9 +90,8 @@ const manifest = {
         "./islands/groups/GroupList.tsx": $groups_GroupList,
         "./islands/groups/RootGroupBar.tsx": $groups_RootGroupBar,
         "./islands/groups/SearchBar.tsx": $groups_SearchBar,
-        "./islands/notes/NewNote.tsx": $notes_NewNote,
-        "./islands/notes/Note.tsx": $notes_Note,
-        "./islands/notes/NoteList.tsx": $notes_NoteList,
+        "./islands/notes/NoteEditor.tsx": $notes_NoteEditor,
+        "./islands/notes/ViewNote.tsx": $notes_ViewNote,
         "./islands/notifications/NotificationItem.tsx":
             $notifications_NotificationItem,
         "./islands/notifications/NotificationList.tsx":

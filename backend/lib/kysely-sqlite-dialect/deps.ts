@@ -15,6 +15,7 @@ export {
     type QueryCompiler,
     type QueryResult,
     type ReferenceExpression,
+    type SelectExpression,
     type SelectQueryBuilder,
     type SimpleReferenceExpression,
     sql,

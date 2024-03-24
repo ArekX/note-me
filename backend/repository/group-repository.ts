@@ -12,11 +12,8 @@ export type GroupRecord =
         has_notes: number | null;
     };
 
-export const getUserGroups = async (
-    parent_id: string | null,
-    user_id: number,
-): Promise<GroupRecord[]> => {
-    let query = db.selectFrom("group")
+const getGroupQuery = () =>
+    db.selectFrom("group")
         .select([
             "id",
             "name",
@@ -31,6 +28,13 @@ export const getUserGroups = async (
             >`(SELECT 1 FROM "group_note" "gn" WHERE "gn"."group_id" = "group"."id" LIMIT 1)`
                 .as("has_notes"),
         ])
+        .where("is_deleted", "=", false);
+
+export const getUserGroups = async (
+    parent_id: string | null,
+    user_id: number,
+): Promise<GroupRecord[]> => {
+    let query = getGroupQuery()
         .where("user_id", "=", user_id)
         .where("is_deleted", "=", false)
         .orderBy("id", "asc");
@@ -139,4 +143,14 @@ export const deleteGroup = async (
         .executeTakeFirst();
 
     return result.numUpdatedRows > 0;
+};
+
+export const getSingleUserGroup = async (
+    id: number,
+    user_id: number,
+): Promise<GroupRecord | null> => {
+    return await getGroupQuery()
+        .where("id", "=", id)
+        .where("user_id", "=", user_id)
+        .executeTakeFirst() ?? null;
 };
