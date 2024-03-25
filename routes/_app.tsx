@@ -42,7 +42,7 @@ export default function App({ Component, route }: PageProps) {
                 />
                 <style>{MATERIAL_STYLE}</style>
                 <link rel="stylesheet" href="/styles.css" />
-                <link rel="icon" href="/logo.svg"></link>
+                <link rel="icon" href="/logo-white.svg"></link>
             </head>
             <body
                 class="bg-gray-900"

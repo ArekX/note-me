@@ -3,6 +3,7 @@ import { useSignal } from "@preact/signals";
 import { NoteRecord } from "$backend/repository/note-repository.ts";
 import { Button } from "$components/Button.tsx";
 import { Icon } from "$components/Icon.tsx";
+import { MoreMenu, MoreMenuItem } from "$islands/notes/MoreMenu.tsx";
 
 interface NoteEditorProps {
     note: Pick<NoteRecord, "title" | "note">;
@@ -21,9 +22,42 @@ export const NoteEditor = ({
         const element = e.target as HTMLTextAreaElement;
 
         element.style.height = "auto";
-        element.style.height = (element.scrollHeight) + "px";
+        element.style.height = (element.scrollHeight + 20) + "px";
         text.value = (e.target as HTMLInputElement).value;
     }
+
+    const moreMenuItems: MoreMenuItem[] = [
+        {
+            name: "Preview",
+            icon: "show-alt",
+            onClick: () => {},
+        },
+        {
+            name: "Details", // created by, last update, author, generated table of contents
+            icon: "detail",
+            onClick: () => {},
+        },
+        {
+            name: "History",
+            icon: "history",
+            onClick: () => {},
+        },
+        {
+            name: "Share",
+            icon: "share-alt",
+            onClick: () => {},
+        },
+        {
+            name: "Remind me",
+            icon: "alarm",
+            onClick: () => {},
+        },
+        {
+            name: "Delete",
+            icon: "minus-circle",
+            onClick: () => {},
+        },
+    ];
 
     return (
         <div class="note-editor flex flex-col">
@@ -37,17 +71,17 @@ export const NoteEditor = ({
                         name.value = (e.target as HTMLInputElement).value}
                 />
                 <div class="text-sm">
-                    <Button color="success">Save</Button>{" "}
-                    <Button color="primary">
-                        <Icon name="dots-horizontal-rounded" size="sm" />
-                    </Button>
+                    <Button color="success" title="Save">
+                        <Icon name="save" size="sm" />
+                    </Button>{" "}
+                    <MoreMenu items={moreMenuItems} />
                 </div>
             </div>
 
             <input
                 class="outline-none bg-transparent"
                 type="text"
-                placeholder="Enter note tags (space separated)"
+                placeholder="Tag your note"
                 value={tags.value}
                 onInput={(e: Event) =>
                     tags.value = (e.target as HTMLInputElement).value}
@@ -55,7 +89,7 @@ export const NoteEditor = ({
             {group && <div class="text-sm">&rarr; in {group.name}</div>}
             <textarea
                 class="text-editor flex-grow block basis-auto"
-                placeholder="Enter your note here"
+                placeholder="Write your note here"
                 onInput={handleTextInput}
             >
                 {text.value}

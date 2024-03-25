@@ -38,6 +38,7 @@ import * as $groups_GroupItem from "./islands/groups/GroupItem.tsx";
 import * as $groups_GroupList from "./islands/groups/GroupList.tsx";
 import * as $groups_RootGroupBar from "./islands/groups/RootGroupBar.tsx";
 import * as $groups_SearchBar from "./islands/groups/SearchBar.tsx";
+import * as $notes_MoreMenu from "./islands/notes/MoreMenu.tsx";
 import * as $notes_NoteEditor from "./islands/notes/NoteEditor.tsx";
 import * as $notes_ViewNote from "./islands/notes/ViewNote.tsx";
 import * as $notifications_NotificationItem from "./islands/notifications/NotificationItem.tsx";
@@ -90,6 +91,7 @@ const manifest = {
         "./islands/groups/GroupList.tsx": $groups_GroupList,
         "./islands/groups/RootGroupBar.tsx": $groups_RootGroupBar,
         "./islands/groups/SearchBar.tsx": $groups_SearchBar,
+        "./islands/notes/MoreMenu.tsx": $notes_MoreMenu,
         "./islands/notes/NoteEditor.tsx": $notes_NoteEditor,
         "./islands/notes/ViewNote.tsx": $notes_ViewNote,
         "./islands/notifications/NotificationItem.tsx":

@@ -89,7 +89,7 @@ export default function Notifications(props: NotificationsProps) {
         });
     };
 
-    const visible = useSignal(false);
+    const isVisible = useSignal(false);
 
     const menuRef = createRef<HTMLDivElement>();
 
@@ -100,14 +100,14 @@ export default function Notifications(props: NotificationsProps) {
 
         const handleDocumentClick = (event: Event) => {
             if (!menuRef.current!) {
-                visible.value = false;
+                isVisible.value = false;
                 return;
             }
             if (menuRef.current.contains(event.target as Node)) {
                 return;
             }
 
-            visible.value = false;
+            isVisible.value = false;
         };
 
         document.body.addEventListener("click", handleDocumentClick);
@@ -127,7 +127,7 @@ export default function Notifications(props: NotificationsProps) {
             {unreadCount > 0 && (
                 <span
                     class="notification-badge cursor-pointer"
-                    onClick={() => visible.value = !visible.value}
+                    onClick={() => isVisible.value = !isVisible.value}
                 >
                     {unreadCount > 9 ? "9+" : unreadCount}
                 </span>
@@ -135,11 +135,11 @@ export default function Notifications(props: NotificationsProps) {
             <Icon
                 name="bell"
                 className="cursor-pointer"
-                onClick={() => visible.value = !visible.value}
+                onClick={() => isVisible.value = !isVisible.value}
                 type={unreadCount > 0 ? "solid" : "regular"}
             />
 
-            {visible.value && (
+            {isVisible.value && (
                 <div
                     ref={menuRef}
                     class="absolute top-full left-0 w-96 bg-gray-800 pt-2 z-50 shadow-gray-900 shadow-md text-white text-left"
