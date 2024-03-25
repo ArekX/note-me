@@ -72,7 +72,7 @@ export const NoteEditor = ({
                 />
                 <div class="text-sm">
                     <Button color="success" title="Save">
-                        <Icon name="save" size="sm" />
+                        <Icon name="save" size="lg" />
                     </Button>{" "}
                     <MoreMenu items={moreMenuItems} />
                 </div>

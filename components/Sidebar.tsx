@@ -3,6 +3,7 @@ import { Logo } from "$components/Logo.tsx";
 import { NotificationRecord } from "$backend/repository/notification-repository.ts";
 import { Icon } from "$components/Icon.tsx";
 import GroupList from "../islands/groups/GroupList.tsx";
+import { ListPanel } from "../islands/sidebar/SideBarPanel.tsx";
 
 export interface SidebarProps {
     showSettings: boolean;
@@ -16,12 +17,12 @@ export function Sidebar(
         <div class="w-1/5 bg-gray-800 text-white bg-opacity-95">
             <div class="mt-5">
                 <div class="flex">
-                    <div class="flex-1 w-1/3 text-center">
+                    <div class="flex-1 w-1/3 text-left pl-2">
                         <a href="/app">
                             <Logo white={true} height={25} width={25} /> NoteMe
                         </a>
                     </div>
-                    <div class="flex-1 text-center">
+                    <div class="flex-1 text-right pr-2">
                         {showSettings && (
                             <a
                                 href="/app/settings"
@@ -51,7 +52,7 @@ export function Sidebar(
                     </div>
                 </div>
             </div>
-            <GroupList />
+            <ListPanel />
         </div>
     );
 }

@@ -45,6 +45,8 @@ import * as $notifications_NotificationItem from "./islands/notifications/Notifi
 import * as $notifications_NotificationList from "./islands/notifications/NotificationList.tsx";
 import * as $notifications_views_ReminderView from "./islands/notifications/views/ReminderView.tsx";
 import * as $profile_UserProfile from "./islands/profile/UserProfile.tsx";
+import * as $sidebar_ListSwitcher from "./islands/sidebar/ListSwitcher.tsx";
+import * as $sidebar_SideBarPanel from "./islands/sidebar/SideBarPanel.tsx";
 import * as $tags_EditTagForm from "./islands/tags/EditTagForm.tsx";
 import * as $tags_TagsList from "./islands/tags/TagsList.tsx";
 import * as $users_EditUserForm from "./islands/users/EditUserForm.tsx";
@@ -101,6 +103,8 @@ const manifest = {
         "./islands/notifications/views/ReminderView.tsx":
             $notifications_views_ReminderView,
         "./islands/profile/UserProfile.tsx": $profile_UserProfile,
+        "./islands/sidebar/ListSwitcher.tsx": $sidebar_ListSwitcher,
+        "./islands/sidebar/SideBarPanel.tsx": $sidebar_SideBarPanel,
         "./islands/tags/EditTagForm.tsx": $tags_EditTagForm,
         "./islands/tags/TagsList.tsx": $tags_TagsList,
         "./islands/users/EditUserForm.tsx": $users_EditUserForm,

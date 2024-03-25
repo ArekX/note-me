@@ -23,35 +23,45 @@ export default function Notifications(props: NotificationsProps) {
 
     useScriptsReadyEffect(() => {
         socketManager.onMessage<NotificationResponses>((data) => {
-            if (data.type == "notifications-list") {
-                notifications.value = data.payload;
-            } else if (data.type == "notification-added") {
-                notifications.value = [...notifications.value, data.payload];
-            } else if (data.type == "deleted-all") {
-                notifications.value = [];
-            } else if (data.type == "marked-all-read") {
-                notifications.value = notifications.value.map((
-                    notification,
-                ) => ({
-                    ...notification,
-                    is_read: true,
-                }));
-            } else if (data.type == "marked-single-read") {
-                notifications.value = notifications.value.map((
-                    notification,
-                ) => {
-                    if (notification.id === data.payload.id) {
-                        return {
-                            ...notification,
-                            is_read: true,
-                        };
-                    }
-                    return notification;
-                });
-            } else if (data.type == "deleted-single") {
-                notifications.value = notifications.value.filter((n) =>
-                    n.id !== data.payload.id
-                );
+            switch (data.type) {
+                case "notifications-list":
+                    notifications.value = data.payload;
+                    break;
+                case "notification-added":
+                    notifications.value = [
+                        ...notifications.value,
+                        data.payload,
+                    ];
+                    break;
+                case "deleted-all":
+                    notifications.value = [];
+                    break;
+                case "marked-all-read":
+                    notifications.value = notifications.value.map((
+                        notification,
+                    ) => ({
+                        ...notification,
+                        is_read: true,
+                    }));
+                    break;
+                case "marked-single-read":
+                    notifications.value = notifications.value.map(
+                        (notification) => {
+                            if (notification.id === data.payload.id) {
+                                return {
+                                    ...notification,
+                                    is_read: true,
+                                };
+                            }
+                            return notification;
+                        },
+                    );
+                    break;
+                case "deleted-single":
+                    notifications.value = notifications.value.filter((n) =>
+                        n.id !== data.payload.id
+                    );
+                    break;
             }
         });
 

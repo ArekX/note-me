@@ -75,7 +75,7 @@ export default function IconMenu(
                     >
                         {menuItems.map((item) => (
                             <div
-                                class="hover:bg-gray-700 cursor-pointer pr-2 pl-2"
+                                class="hover:bg-gray-700 cursor-pointer p-1 pr-2 pl-2"
                                 onClick={(e) => {
                                     item.onClick();
                                     clearPopupOwner();

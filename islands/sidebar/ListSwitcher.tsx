@@ -1,20 +1,25 @@
-import { Button } from "$components/Button.tsx";
 import { Icon } from "$components/Icon.tsx";
 import { useSignal } from "@preact/signals";
-import { useEffect } from "preact/hooks";
 import { createRef } from "preact";
+import { useEffect } from "preact/hooks";
 
-export interface MoreMenuItem {
+export interface ListSwitcherItem {
     name: string;
     icon: string;
     onClick: () => void;
 }
 
-interface MoreMenuProps {
-    items: MoreMenuItem[];
+interface ListSwitcherProps {
+    currentItem: string;
+    currentIcon: string;
+    items: ListSwitcherItem[];
 }
 
-export const MoreMenu = ({ items }: MoreMenuProps) => {
+export const ListSwitcher = ({
+    items,
+    currentItem,
+    currentIcon,
+}: ListSwitcherProps) => {
     const isVisible = useSignal(false);
     const menuRef = createRef<HTMLDivElement>();
 
@@ -43,18 +48,17 @@ export const MoreMenu = ({ items }: MoreMenuProps) => {
     }, [menuRef]);
 
     return (
-        <div class="relative inline-block">
-            <Button
-                color="primary"
-                onClick={() => isVisible.value = !isVisible.value}
-            >
-                <Icon name="dots-horizontal-rounded" size="lg" />
-            </Button>
+        <div class="cursor-pointer relative inline-block">
+            <div onClick={() => isVisible.value = !isVisible.value}>
+                <Icon name={currentIcon} size="sm" />
+                {currentItem}{" "}
+                <Icon name="chevron-down" size="sm" type="solid" />
+            </div>
 
             {isVisible.value && (
                 <div
                     ref={menuRef}
-                    class="text-white absolute text-lg right-0 top-full mt-1 drop-shadow-lg bg-gray-800 rounded-lg shadow-lg p-2 whitespace-nowrap break-keep"
+                    class="text-white absolute text-lg left-0 z-50 top-full mt-1 drop-shadow-lg bg-gray-800 rounded-lg shadow-lg p-2 whitespace-nowrap break-keep"
                 >
                     {items.map(({ name, icon, onClick }, index) => (
                         <div

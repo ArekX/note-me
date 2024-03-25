@@ -1,6 +1,7 @@
 import { Icon } from "$components/Icon.tsx";
 import { ContainerGroupRecord } from "$islands/groups/GroupItem.tsx";
 import { useSignal } from "@preact/signals";
+import { ComponentChild } from "preact";
 
 interface RootGroupBarProps {
     containerDraggedOver: ContainerGroupRecord | null;
@@ -8,10 +9,12 @@ interface RootGroupBarProps {
     onAddRootGroup: () => void;
     onReloadEverything: () => void;
     onAddNote: () => void;
+    switcherComponent: ComponentChild;
 }
 
 const RootGroupBar = ({
     containerDraggedOver,
+    switcherComponent,
     onDropped,
     onAddRootGroup,
     onReloadEverything,
@@ -49,8 +52,8 @@ const RootGroupBar = ({
                 onDragLeave={handleDragLeave}
             >
                 {containerDraggedOver
-                    ? "Drop here to move to top level"
-                    : "Notes"}
+                    ? <div>Drop here to move to top level</div>
+                    : switcherComponent}
             </div>
             <div class="flex-1 text-right opacity-30 hover:opacity-100 pr-1">
                 <span

@@ -1,5 +1,4 @@
 import { Signal, useSignal } from "@preact/signals";
-import SearchBar from "./SearchBar.tsx";
 import RootGroupBar from "./RootGroupBar.tsx";
 import Loader from "$islands/Loader.tsx";
 import { createGroup, findGroups, updateGroup } from "$frontend/api.ts";
@@ -17,14 +16,20 @@ import { deleteGroup } from "$frontend/api.ts";
 import { validateSchema } from "$schemas/mod.ts";
 import { addGroupRequestSchema } from "$schemas/groups.ts";
 import { getDisplayMessage } from "$frontend/error-messages.ts";
+import { ComponentChild } from "preact";
 
-export default function GroupList() {
+interface GroupListProps {
+    searchQuery: string;
+    switcherComponent: ComponentChild;
+}
+
+export default function GroupList({
+    switcherComponent,
+    searchQuery,
+}: GroupListProps) {
     const isLoading = useSignal(true);
     const groups: Signal<ContainerGroupRecord[]> = useSignal([]);
     const containerDraggedOver = useSignal<ContainerGroupRecord | null>(null);
-
-    const searchNotesAndGroups = async (query: string) => {
-    };
 
     const loadGroups = async (parent?: ContainerGroupRecord) => {
         if (!parent) {
@@ -255,9 +260,9 @@ export default function GroupList() {
     }, []);
 
     return (
-        <div class="mt-3">
-            <SearchBar onSearch={searchNotesAndGroups} />
+        <>
             <RootGroupBar
+                switcherComponent={switcherComponent}
                 onAddNote={handleAddRootNote}
                 onAddRootGroup={addRootGroup}
                 onReloadEverything={handleReloadEverything}
@@ -309,6 +314,6 @@ export default function GroupList() {
                     </div>
                 )}
             </div>
-        </div>
+        </>
     );
 }
