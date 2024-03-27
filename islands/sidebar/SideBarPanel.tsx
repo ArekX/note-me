@@ -1,43 +1,68 @@
 import SearchBar from "$islands/groups/SearchBar.tsx";
-import GroupList from "$islands/groups/GroupList.tsx";
 import {
     ListSwitcher,
     ListSwitcherItem,
 } from "$islands/sidebar/ListSwitcher.tsx";
 import { useSignal } from "@preact/signals";
+import { RendererViews } from "$islands/sidebar/RenderViews.tsx";
+
+interface ListView {
+    type: "notes" | "reminders" | "shared";
+    label: string;
+    icon: string;
+    placeholder: string;
+}
 
 export const ListPanel = () => {
     const showAdvancedSearch = useSignal(false);
     const searchQuery = useSignal("");
+    const currentType = useSignal<ListView>({
+        type: "notes",
+        label: "Notes",
+        icon: "note",
+        placeholder: "Search notes and groups...",
+    });
 
     const switchItems: ListSwitcherItem[] = [
         {
             name: "Notes",
             icon: "note",
             onClick: () => {
-                selectedItem.value = "Notes";
-                selectedIcon.value = "note";
+                currentType.value = {
+                    type: "notes",
+                    label: "Notes",
+                    icon: "note",
+                    placeholder: "Search notes and groups...",
+                };
             },
         },
         {
             name: "Reminders",
             icon: "alarm",
             onClick: () => {
-                selectedItem.value = "Reminders";
-                selectedIcon.value = "alarm";
+                currentType.value = {
+                    type: "reminders",
+                    label: "Reminders",
+                    icon: "alarm",
+                    placeholder: "Search reminders...",
+                };
             },
         },
         {
-            name: "Shared",
+            name: "Shared with me",
             icon: "share-alt",
             onClick: () => {
-                selectedItem.value = "Shared";
-                selectedIcon.value = "share-alt";
+                currentType.value = {
+                    type: "shared",
+                    label: "Shared with me",
+                    icon: "share-alt",
+                    placeholder: "Search shared notes...",
+                };
             },
         },
     ];
-    const selectedItem = useSignal("Notes");
-    const selectedIcon = useSignal("note");
+
+    const RenderView = RendererViews[currentType.value.type];
 
     return (
         <div class="mt-3">
@@ -45,22 +70,22 @@ export const ListPanel = () => {
                 onSearch={(query) => searchQuery.value = query}
                 showAdvancedSearch={showAdvancedSearch.value}
                 onTriggerAdvancedSearch={() => showAdvancedSearch.value = true}
-                searchPlaceholder="Search notes and groups..."
+                searchPlaceholder={currentType.value.placeholder}
                 advancedSearchComponent={
                     <button onClick={() => showAdvancedSearch.value = false}>
                         finish this
                     </button>
                 }
             />
-            <GroupList
-                searchQuery={searchQuery.value}
-                switcherComponent={
+            <RenderView
+                switcher={
                     <ListSwitcher
                         items={switchItems}
-                        currentIcon={selectedIcon.value}
-                        currentItem={selectedItem.value}
+                        currentIcon={currentType.value.icon}
+                        currentItem={currentType.value.label}
                     />
                 }
+                searchQuery={searchQuery.value}
             />
         </div>
     );

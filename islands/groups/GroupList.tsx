@@ -277,6 +277,7 @@ export default function GroupList({
                 >
                     Loading notes and groups...
                 </Loader>
+                {searchQuery}ss
                 {groups.value.map((group) => (
                     <GroupItem
                         container={group}

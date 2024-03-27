@@ -10,11 +10,19 @@ export interface MoreMenuItem {
     onClick: () => void;
 }
 
+export type MenuItemActions =
+    | "preview"
+    | "details"
+    | "history"
+    | "share"
+    | "remind"
+    | "delete";
+
 interface MoreMenuProps {
-    items: MoreMenuItem[];
+    onMenuItemClick?: (name: MenuItemActions) => void;
 }
 
-export const MoreMenu = ({ items }: MoreMenuProps) => {
+export const MoreMenu = ({ onMenuItemClick }: MoreMenuProps) => {
     const isVisible = useSignal(false);
     const menuRef = createRef<HTMLDivElement>();
 
@@ -42,10 +50,49 @@ export const MoreMenu = ({ items }: MoreMenuProps) => {
         };
     }, [menuRef]);
 
+    const sendAction = (action: MenuItemActions) => {
+        onMenuItemClick?.(action);
+        isVisible.value = false;
+    };
+
+    const items: MoreMenuItem[] = [
+        {
+            name: "Preview",
+            icon: "show-alt",
+            onClick: () => sendAction("preview"),
+        },
+        {
+            name: "Details", // created by, last update, author, generated table of contents
+            icon: "detail",
+            onClick: () => sendAction("details"),
+        },
+        {
+            name: "History",
+            icon: "history",
+            onClick: () => sendAction("history"),
+        },
+        {
+            name: "Share",
+            icon: "share-alt",
+            onClick: () => sendAction("share"),
+        },
+        {
+            name: "Remind me",
+            icon: "alarm",
+            onClick: () => sendAction("remind"),
+        },
+        {
+            name: "Delete",
+            icon: "minus-circle",
+            onClick: () => sendAction("delete"),
+        },
+    ];
+
     return (
         <div class="relative inline-block">
             <Button
                 color="primary"
+                tabIndex={5}
                 onClick={() => isVisible.value = !isVisible.value}
             >
                 <Icon name="dots-horizontal-rounded" size="lg" />
@@ -59,6 +106,7 @@ export const MoreMenu = ({ items }: MoreMenuProps) => {
                     {items.map(({ name, icon, onClick }, index) => (
                         <div
                             key={index}
+                            tabIndex={6 + index}
                             class="hover:bg-gray-700 cursor-pointer p-1 pl-2 pr-2"
                             onClick={onClick}
                         >

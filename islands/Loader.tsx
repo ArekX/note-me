@@ -35,8 +35,8 @@ export default function Loader(
                     >
                         <svg
                             class="animate-spin inline-block"
-                            width="35"
-                            height="35"
+                            width="28"
+                            height="28"
                             viewBox="0 0 135 135"
                             xmlns="http://www.w3.org/2000/svg"
                             fill={loaderColors[color]}

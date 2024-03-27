@@ -4,6 +4,10 @@ import { NoteRecord } from "$backend/repository/note-repository.ts";
 import { Button } from "$components/Button.tsx";
 import { Icon } from "$components/Icon.tsx";
 import { MoreMenu, MoreMenuItem } from "$islands/notes/MoreMenu.tsx";
+import Loader from "$islands/Loader.tsx";
+import { useEffect } from "preact/hooks";
+import { MenuItemActions } from "$islands/notes/MoreMenu.tsx";
+import { inputHandler } from "$frontend/methods.ts";
 
 interface NoteEditorProps {
     note: Pick<NoteRecord, "title" | "note">;
@@ -17,47 +21,38 @@ export const NoteEditor = ({
     const name = useSignal(note.title);
     const text = useSignal(note.note);
     const tags = useSignal("");
+    const isSaving = useSignal(false);
 
-    function handleTextInput(e: Event) {
+    const handleTextInput = (e: Event) => {
         const element = e.target as HTMLTextAreaElement;
 
         element.style.height = "auto";
         element.style.height = (element.scrollHeight + 20) + "px";
         text.value = (e.target as HTMLInputElement).value;
-    }
+    };
 
-    const moreMenuItems: MoreMenuItem[] = [
-        {
-            name: "Preview",
-            icon: "show-alt",
-            onClick: () => {},
-        },
-        {
-            name: "Details", // created by, last update, author, generated table of contents
-            icon: "detail",
-            onClick: () => {},
-        },
-        {
-            name: "History",
-            icon: "history",
-            onClick: () => {},
-        },
-        {
-            name: "Share",
-            icon: "share-alt",
-            onClick: () => {},
-        },
-        {
-            name: "Remind me",
-            icon: "alarm",
-            onClick: () => {},
-        },
-        {
-            name: "Delete",
-            icon: "minus-circle",
-            onClick: () => {},
-        },
-    ];
+    const handleSave = () => {
+        isSaving.value = true;
+    };
+
+    const handleMenuItemClicked = (action: MenuItemActions) => {
+        console.log("execute action", action);
+    };
+
+    useEffect(() => {
+        const handleHotkeys = (e: KeyboardEvent) => {
+            if (e.ctrlKey && e.key === "s") {
+                e.preventDefault();
+                handleSave();
+            }
+        };
+
+        document.addEventListener("keydown", handleHotkeys);
+
+        return () => {
+            document.removeEventListener("keydown", handleHotkeys);
+        };
+    });
 
     return (
         <div class="note-editor flex flex-col">
@@ -66,30 +61,44 @@ export const NoteEditor = ({
                     class="title-editor"
                     type="text"
                     placeholder="Name your note"
+                    tabIndex={1}
                     value={name.value}
-                    onInput={(e: Event) =>
-                        name.value = (e.target as HTMLInputElement).value}
+                    disabled={isSaving.value}
+                    onInput={inputHandler((value) => name.value = value)}
                 />
-                <div class="text-sm">
-                    <Button color="success" title="Save">
-                        <Icon name="save" size="lg" />
+                <div class="text-sm ml-2">
+                    <Button
+                        color={!isSaving.value ? "success" : "successDisabled"}
+                        title="Save"
+                        tabIndex={4}
+                        disabled={isSaving.value}
+                        onClick={handleSave}
+                    >
+                        {!isSaving.value
+                            ? <Icon name="save" size="lg" />
+                            : <Loader color="white">Saving...</Loader>}
                     </Button>{" "}
-                    <MoreMenu items={moreMenuItems} />
+                    {!isSaving.value && (
+                        <MoreMenu onMenuItemClick={handleMenuItemClicked} />
+                    )}
                 </div>
             </div>
 
             <input
-                class="outline-none bg-transparent"
+                class="outline-none bg-transparent mt-2"
                 type="text"
                 placeholder="Tag your note"
+                tabIndex={2}
                 value={tags.value}
-                onInput={(e: Event) =>
-                    tags.value = (e.target as HTMLInputElement).value}
+                disabled={isSaving.value}
+                onInput={inputHandler((value) => tags.value = value)}
             />
             {group && <div class="text-sm">&rarr; in {group.name}</div>}
             <textarea
                 class="text-editor flex-grow block basis-auto"
                 placeholder="Write your note here"
+                disabled={isSaving.value}
+                tabIndex={3}
                 onInput={handleTextInput}
             >
                 {text.value}

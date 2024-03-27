@@ -1,5 +1,4 @@
-import { ComponentChildren, JSX } from "preact";
-import { IS_BROWSER } from "$fresh/runtime.ts";
+import { ComponentChildren } from "preact";
 
 interface ButtonProps {
     disabled?: boolean;
@@ -9,12 +8,14 @@ interface ButtonProps {
     title?: string;
     color?: ButtonColors;
     type?: "button" | "submit";
+    tabIndex?: number;
     onClick?: () => void;
 }
 
 const buttonColors = {
     primary: "bg-gray-500 hover:bg-gray-600 text-white",
     success: "bg-sky-900 hover:bg-sky-600 text-white",
+    successDisabled: "bg-sky-600 text-white",
     danger: "bg-red-500 hover:bg-red-600 text-white",
 };
 
@@ -37,6 +38,7 @@ export function Button(
         size = "md",
         color = "primary",
         type = "button",
+        tabIndex,
         onClick,
     }: ButtonProps,
 ) {
@@ -46,6 +48,7 @@ export function Button(
             title={title}
             default={setAsDefault}
             disabled={disabled}
+            tabIndex={tabIndex}
             onClick={onClick}
             class={`${sizeTypes[size]} ${
                 buttonColors[color]
