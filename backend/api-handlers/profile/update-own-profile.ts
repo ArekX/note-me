@@ -3,7 +3,7 @@ import {
     updateUserProfile,
 } from "$backend/repository/user-repository.ts";
 import { validateRequest } from "$schemas/mod.ts";
-import { UserProfile, userProfileSchema } from "$schemas/users.ts";
+import { EditUserProfile, userProfileSchema } from "$schemas/users.ts";
 import { FreshContext } from "$fresh/server.ts";
 import { AppState } from "$types";
 import { validateUserPassword } from "$backend/repository/user-repository.ts";
@@ -13,7 +13,7 @@ export const updateOwnProfile = async (
     req: Request,
     ctx: FreshContext<AppState>,
 ): Promise<Response> => {
-    const data: UserProfile = await req.json();
+    const data: EditUserProfile = await req.json();
 
     const userId = ctx.state.session?.getUserId()!;
 

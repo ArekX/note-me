@@ -4,31 +4,11 @@ NoteMe is a self-hosted powerful note-taking app designed for enhanced
 productivity. It includes features like note history, reminders, and support for
 multiple users as well as note tagging and adding attachments.
 
-# Roadmap
-
-- [x] Login
-- [x] Note creation with tags and groups
-- [x] Group management
-- [x] User profile management
-- [ ] General Settings: Backup/Restore, Edit initial note
-- [x] Tags management
-- [ ] Note reminders
-- [ ] Share notes? (w and w/o expiration, list of users to share to / public)
-- [ ] Public notes view (no menu, center the text, UUID for share)
-- [ ] Admin: Transfer notes to another user
-- [ ] Auto Table of Contents based on headers, show/hide toc floating button
-- [ ] List switch between Groups/Shared Notes/Reminders
-- [ ] Profile Page - shared notes by this user, Recycle bin
-- [ ] Bruteforcing password protection
-- [ ] Reminders in user profile
-- [ ] Additional markdown features: {:group-ID-notes}, {:note-ID-link#header}
-- [ ] Slugify note title
-
 # Development
 
 Requirements:
 
-- [Deno 1.41.3](https://docs.deno.com/runtime/manual/getting_started/installation)
+- [Deno 1.42](https://docs.deno.com/runtime/manual/getting_started/installation)
 
 1. Copy the environment example file: `cp env.example .env`
 2. Run migrations: `deno task cli migrate-up`

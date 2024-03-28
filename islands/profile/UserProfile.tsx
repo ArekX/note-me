@@ -1,5 +1,5 @@
 import { useSignal } from "@preact/signals";
-import { UserProfile } from "$schemas/users.ts";
+import { EditUserProfile } from "$schemas/users.ts";
 import { Input } from "$components/Input.tsx";
 import { Button } from "$components/Button.tsx";
 import { updateProfile } from "$frontend/api.ts";
@@ -7,11 +7,11 @@ import { DropdownList } from "$components/DropdownList.tsx";
 import { supportedTimezoneList } from "$backend/time.ts";
 
 interface UserProfileProps {
-    initialProfileData: UserProfile;
+    initialProfileData: EditUserProfile;
 }
 
 export function UserProfile({ initialProfileData }: UserProfileProps) {
-    const userData = useSignal<UserProfile>({
+    const userData = useSignal<EditUserProfile>({
         ...initialProfileData,
     });
 
@@ -21,7 +21,7 @@ export function UserProfile({ initialProfileData }: UserProfileProps) {
     };
 
     const handlePropertyChange =
-        (propertyName: keyof UserProfile) => (value: string) => {
+        (propertyName: keyof EditUserProfile) => (value: string) => {
             userData.value = {
                 ...userData.value,
                 [propertyName]: value,

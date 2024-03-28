@@ -51,7 +51,6 @@ export const resolveTags = async (
 
 export const linkNoteWithTags = async (
     note_id: number,
-    user_id: number,
     tags: string[],
 ): Promise<boolean> => {
     const tagRecords = await resolveTags(note_id, tags);
@@ -63,7 +62,6 @@ export const linkNoteWithTags = async (
     const results = await db.insertInto("note_tag_note")
         .values(tagRecords.map((tagRecord) => ({
             note_id,
-            user_id,
             tag_id: tagRecord.id,
             created_at: getCurrentUnixTimestamp(),
         })))

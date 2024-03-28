@@ -60,8 +60,6 @@ export interface NoteTagNoteTable {
     id: Generated<number>;
     note_id: number;
     tag_id: number;
-    user_id: number;
-    created_at: number;
 }
 
 export interface SessionTable {

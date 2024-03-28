@@ -1,18 +1,24 @@
-import { zod } from "$schemas/deps.ts";
+import { zod, ZodIssue } from "$schemas/deps.ts";
 
 interface ErrorDisplayProps<T> {
-    label?: string;
-    errors: zod.ZodFormattedError<T> | null | undefined;
+    path: string;
+    errors: ZodIssue[] | null;
 }
 
 export function ErrorDisplay<T>(
-    props: ErrorDisplayProps<T>,
+    {
+        path,
+        errors,
+    }: ErrorDisplayProps<T>,
 ) {
-    return props.errors
+    return errors
         ? (
             <div class="text-red-600">
-                {props.label && <strong>{props.label}{": "}</strong>}
-                {props.errors?._errors.join(", ")}
+                {errors.filter((e) => e.path.includes(path)).map((error) => (
+                    <div>
+                        {error.message}
+                    </div>
+                ))}
             </div>
         )
         : null;

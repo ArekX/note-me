@@ -1,28 +1,18 @@
 import { zod } from "./deps.ts";
 
 const noteSchema = zod.object({
-    title: zod.string().min(1, "Note Title must have at least one character"),
-    text: zod.string().min(1, "Note must have at least one character"),
+    title: zod.string().min(1, "Title must have at least one character"),
+    text: zod.string(),
     user_id: zod.number(),
-    tags: zod.array(zod.string()),
+    tags: zod.array(zod.string()).max(20, "Note can have at most 20 tags"),
     group_id: zod.number().nullable(),
 });
 
-export type AddNoteAggregate = zod.infer<typeof addNoteAggregateSchema>;
-
-export const addNoteAggregateSchema = zod.object({
+export const addNoteRequestSchema = zod.object({
     title: noteSchema.shape.title,
     text: noteSchema.shape.text,
-    user_id: noteSchema.shape.user_id,
     tags: noteSchema.shape.tags,
     group_id: noteSchema.shape.group_id,
-}).strict();
-
-export const addNoteRequestSchema = zod.object({
-    title: addNoteAggregateSchema.shape.title,
-    text: addNoteAggregateSchema.shape.text,
-    tags: addNoteAggregateSchema.shape.tags,
-    group_id: addNoteAggregateSchema.shape.group_id,
 }).strict();
 
 export type AddNoteRequest = zod.infer<typeof addNoteRequestSchema>;

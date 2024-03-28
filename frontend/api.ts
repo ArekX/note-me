@@ -6,7 +6,7 @@ import { GroupRecord } from "$backend/repository/group-repository.ts";
 import { getUserData } from "$frontend/user-data.ts";
 import { AddNoteRequest } from "$schemas/notes.ts";
 import { AddGroupRequest, UpdateGroupRequest } from "$schemas/groups.ts";
-import { UserProfile } from "$schemas/users.ts";
+import { EditUserProfile } from "$schemas/users.ts";
 import { FindTagRequest } from "$backend/api-handlers/tags/find-tags.ts";
 import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
 import { UserRecord } from "$backend/repository/user-repository.ts";
@@ -83,7 +83,7 @@ export const deleteGroup = (
     });
 
 export const updateProfile = (
-    profile: UserProfile,
+    profile: EditUserProfile,
 ): Promise<IAxiodResponse<{ success: boolean }>> =>
     apiInterface.put(`/profile`, {
         ...profile,

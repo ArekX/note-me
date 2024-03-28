@@ -44,7 +44,7 @@ export const userProfileSchema = zod.object({
     },
 );
 
-export type UserProfile = zod.infer<typeof userProfileSchema>;
+export type EditUserProfile = zod.infer<typeof userProfileSchema>;
 
 export const addUserSchema = zod.object({
     name: userSchema.shape.name,

@@ -116,8 +116,9 @@ dialog::backdrop {
 
 .note-editor .title-editor {
     font-size: 1.5rem;
+    display: block;
+    width: 100%;
     font-weight: 600;
-    flex-grow: 1;
     background: transparent;
 }
 
@@ -125,7 +126,6 @@ dialog::backdrop {
     font-size: 1.2rem;
     line-height: 1.4em;
     font-weight: 400;
-    margin-top: 2rem;
     resize: none !important;
     background: transparent;
 }
