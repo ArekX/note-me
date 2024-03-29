@@ -1,6 +1,5 @@
 import { axiod, IAxiodResponse } from "./deps.ts";
 import { NoteRecord } from "$backend/repository/note-repository.ts";
-import { FindNotesRequest } from "$backend/api-handlers/notes/find-notes.ts";
 import { GroupRecord } from "$backend/repository/group-repository.ts";
 import { getUserData } from "$frontend/user-data.ts";
 import { AddNoteRequest } from "$schemas/notes.ts";
@@ -17,6 +16,7 @@ import { FindUserRequest } from "$backend/api-handlers/users/find-users.ts";
 import { GetTreeRequest } from "$backend/api-handlers/tree/get-tree-records.ts";
 import { TreeRecord } from "$backend/repository/tree-list.repository.ts";
 import { FindTreeRequest } from "$backend/api-handlers/tree/find-tree-records.ts";
+import { UpdateNoteRequest } from "$schemas/notes.ts";
 
 const apiInterface = axiod.create({
     withCredentials: true,
@@ -52,11 +52,16 @@ export const createNote = (
         },
     });
 
-export const findNotes = (
-    filter: FindNotesRequest,
-): Promise<IAxiodResponse<NoteRecord[]>> =>
-    apiInterface.get("/notes", {
-        params: filter as QueryParams,
+export const updateNote = (
+    id: number,
+    note: UpdateNoteRequest,
+): Promise<IAxiodResponse<boolean>> =>
+    apiInterface.put(`/notes/${id}`, {
+        ...note,
+    }, {
+        params: {
+            csrf: getUserData().csrfToken,
+        },
     });
 
 export const createGroup = (

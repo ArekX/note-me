@@ -1,7 +1,7 @@
 import { Signal, useSignal } from "@preact/signals";
 import RootGroupBar from "./RootGroupBar.tsx";
 import Loader from "$islands/Loader.tsx";
-import { createGroup, updateGroup } from "$frontend/api.ts";
+import { createGroup, updateGroup, updateNote } from "$frontend/api.ts";
 import { useEffect } from "preact/hooks";
 import { GetTreeRequest } from "$backend/api-handlers/tree/get-tree-records.ts";
 import { Icon } from "$components/Icon.tsx";
@@ -18,18 +18,26 @@ import { ComponentChild } from "preact";
 import { getTreeList } from "$frontend/api.ts";
 import { TreeRecord } from "$backend/repository/tree-list.repository.ts";
 import { closeAllPopovers } from "$frontend/hooks/use-single-popover.ts";
+import {
+    getSortedContainerRecords,
+    restoreTreeList,
+} from "$islands/note-tree/helpers.ts";
+import { storeTreeList } from "$islands/note-tree/helpers.ts";
 
-interface GroupListProps {
+interface TreeListProps {
     searchQuery: string;
     switcherComponent: ComponentChild;
 }
 
+const restoredTreeList = restoreTreeList();
+
 export default function TreeList({
     switcherComponent,
     searchQuery,
-}: GroupListProps) {
-    const isLoading = useSignal(true);
-    const groups: Signal<ContainerGroupRecord[]> = useSignal([]);
+}: TreeListProps) {
+    const isReady = useSignal(false);
+    const isLoading = useSignal(false);
+    const groups: Signal<ContainerGroupRecord[]> = useSignal(restoredTreeList);
     const containerDraggedOver = useSignal<ContainerGroupRecord | null>(null);
 
     const loadGroups = async (parent?: ContainerGroupRecord) => {
@@ -53,6 +61,7 @@ export default function TreeList({
             groups.value = result;
         } else {
             parent.children = result;
+            parent.are_children_loaded = true;
             updateToRoot(parent);
         }
 
@@ -61,6 +70,8 @@ export default function TreeList({
         } else {
             parent.is_processing = false;
         }
+
+        storeTreeList(groups.value);
     };
 
     const addRootGroup = () => {
@@ -107,18 +118,19 @@ export default function TreeList({
         updateToRoot(container);
     };
 
-    const updateToRoot = (container: ContainerGroupRecord) => {
-        container.children = [...container.children];
-        let parent = container.parent;
+    const updateToRoot = (container: ContainerGroupRecord | null) => {
+        let parent: ContainerGroupRecord | null = container;
         while (parent) {
             parent.children = [...parent.children];
             parent = parent.parent;
         }
         groups.value = [...groups.value];
+        storeTreeList(groups.value);
     };
 
     const handleReloadEverything = () => {
         groups.value = [];
+        updateToRoot(null);
         loadGroups();
     };
 
@@ -177,11 +189,6 @@ export default function TreeList({
         updateToRoot(container);
     };
 
-    const handleLoadchildren = (container: ContainerGroupRecord) => {
-        loadGroups(container);
-        closeAllPopovers();
-    };
-
     const handleAddNote = (container: ContainerGroupRecord) => {
         window.location.href = `/app/note/new?group_id=${container.record.id}`;
     };
@@ -216,10 +223,15 @@ export default function TreeList({
             newParent.is_processing = true;
             updateToRoot(newParent);
         }
-
-        await updateGroup(container.record.id, {
-            parent_id: newParent ? newParent.record.id : null,
-        });
+        if (container.record.type === "note") {
+            await updateNote(container.record.id, {
+                group_id: newParent ? newParent.record.id : null,
+            });
+        } else {
+            await updateGroup(container.record.id, {
+                parent_id: newParent ? newParent.record.id : null,
+            });
+        }
 
         container.is_processing = false;
 
@@ -227,6 +239,13 @@ export default function TreeList({
             container.parent.children = container.parent.children.filter((g) =>
                 g !== container
             );
+
+            if (container.parent.children.length === 0) {
+                container.parent.are_children_loaded = false;
+                container.parent.record.has_children = 0;
+                container.parent.is_open = false;
+            }
+
             updateToRoot(container.parent);
         } else {
             groups.value = groups.value.filter((g) => g !== container);
@@ -234,16 +253,17 @@ export default function TreeList({
 
         if (newParent) {
             newParent.is_processing = false;
-            newParent.children = [...newParent.children, container].toSorted((
-                a,
-                b,
-            ) => a.record.id - b.record.id);
+            newParent.children = getSortedContainerRecords([
+                ...newParent.children,
+                container,
+            ]);
             container.parent = newParent;
         } else {
             container.parent = null;
-            groups.value = [...groups.value, container].toSorted((a, b) =>
-                a.record.id - b.record.id
-            );
+            groups.value = getSortedContainerRecords([
+                ...groups.value,
+                container,
+            ]);
         }
 
         updateToRoot(container);
@@ -253,9 +273,37 @@ export default function TreeList({
         window.location.href = `/app/note/new`;
     };
 
+    const handleOpen = (container: ContainerGroupRecord) => {
+        container.is_open = true;
+
+        if (
+            container.record.type === "group" && !container.are_children_loaded
+        ) {
+            loadGroups(container);
+        }
+
+        updateToRoot(container);
+    };
+
+    const handleClose = (container: ContainerGroupRecord) => {
+        container.is_open = false;
+        updateToRoot(container);
+    };
+
+    const handleRefresh = (container: ContainerGroupRecord) => {
+        container.children = [];
+        container.are_children_loaded = false;
+        container.is_open = false;
+        loadGroups(container);
+    };
+
     useEffect(() => {
-        loadGroups();
+        if (restoredTreeList.length === 0) {
+            loadGroups();
+        }
+
         closeAllPopovers();
+        isReady.value = true;
     }, []);
 
     return (
@@ -290,7 +338,9 @@ export default function TreeList({
                         onAddNote={handleAddNote}
                         onAddGroup={handleAddGroup}
                         onRename={handleRename}
-                        onLoadChildren={handleLoadchildren}
+                        onOpen={handleOpen}
+                        onClose={handleClose}
+                        onRefresh={handleRefresh}
                         onDelete={handleDelete}
                         onDraggingEnd={() => {
                             containerDraggedOver.value = null;
@@ -300,7 +350,8 @@ export default function TreeList({
                         }}
                     />
                 ))}
-                {groups.value.length === 0 && !isLoading.value && (
+                {isReady.value && groups.value.length === 0 &&
+                    !isLoading.value && (
                     <div
                         class="text-center text-gray-400 pt-14 cursor-pointer"
                         onClick={() => {

@@ -11,10 +11,13 @@ import { closeAllPopovers } from "$frontend/hooks/use-single-popover.ts";
 export interface ContainerGroupRecord {
     is_new_record: boolean;
     is_processing: boolean;
+    are_children_loaded: boolean;
+    is_open: boolean;
     edit_mode: boolean;
     error_message: string;
     name: string;
     record: TreeRecord;
+    parent_id: number | null;
     parent: ContainerGroupRecord | null;
     children: ContainerGroupRecord[];
 }
@@ -40,7 +43,9 @@ interface GroupItemProps {
     onDrop: (toContainer: ContainerGroupRecord) => void;
     onDraggingStart: (container: ContainerGroupRecord) => void;
     onDraggingEnd: (container: ContainerGroupRecord) => void;
-    onLoadChildren: (container: ContainerGroupRecord) => void;
+    onOpen: (container: ContainerGroupRecord) => void;
+    onClose: (container: ContainerGroupRecord) => void;
+    onRefresh: (container: ContainerGroupRecord) => void;
 }
 
 export const createNewContainerRecord = (
@@ -68,10 +73,13 @@ export const createContainer = (
     return {
         is_new_record: false,
         is_processing: false,
+        are_children_loaded: false,
+        is_open: false,
         edit_mode: false,
         error_message: "",
         name: record.name,
         record,
+        parent_id: parent ? parent.record.id : null,
         parent,
         children: [],
     };
@@ -89,22 +97,22 @@ export default function TreeItem({
     onCancelEdit,
     onRename,
     onDelete,
-    onLoadChildren,
+    onOpen,
+    onRefresh,
+    onClose,
     onDraggingStart,
     onDraggingEnd,
     onDrop,
 }: GroupItemProps) {
     const name = useSignal(container.name);
-    const isOpen = useSignal(false);
     const isConfirmingDelete = useSignal(false);
-    const areChildrenLoaded = useSignal(false);
 
     const handleCancel = () => {
         const newRecordCount =
             container.children.filter((c) => c.is_new_record).length;
 
         if (newRecordCount === container.children.length) {
-            isOpen.value = false;
+            onClose(container);
         }
 
         name.value = container.name;
@@ -112,16 +120,16 @@ export default function TreeItem({
     };
 
     const handleOpenFolder = () => {
-        const { edit_mode, record, children } = container;
+        const { edit_mode, record, children, is_open } = container;
 
         if (edit_mode || (!record.has_children && children.length == 0)) {
             return;
         }
 
-        isOpen.value = !isOpen.value;
-
-        if (isOpen.value && !areChildrenLoaded.value) {
-            onLoadChildren(container);
+        if (is_open) {
+            onClose(container);
+        } else {
+            onOpen(container);
         }
     };
 
@@ -129,7 +137,8 @@ export default function TreeItem({
         if (
             draggedContainer.value === container ||
             draggedContainer.value?.parent === container ||
-            draggedContainer.value?.children.includes(container)
+            draggedContainer.value?.children.includes(container) ||
+            container.record.type === "note"
         ) {
             selectedTo.value = null;
             e.stopPropagation();
@@ -166,17 +175,15 @@ export default function TreeItem({
     const handleIconMenuAction = (action: MoreMenuItemAction) => {
         switch (action) {
             case "add-note":
-                isOpen.value = true;
+                onOpen(container);
                 onAddNote(container, parent);
                 break;
             case "add-group":
-                isOpen.value = true;
+                onOpen(container);
                 onAddGroup(container, parent);
                 break;
             case "refresh":
-                container.children = [];
-                areChildrenLoaded.value = false;
-                onLoadChildren(container);
+                onRefresh(container);
                 break;
             case "rename":
                 onRename(container);
@@ -191,22 +198,21 @@ export default function TreeItem({
         name.value = container.name;
     }, [container.name]);
 
-    useEffect(() => {
-        if (container.children.length == 0) {
-            isOpen.value = false;
-            areChildrenLoaded.value = false;
-        }
-    }, [container.children]);
-
     return (
         <div
             class={`group-item-container select-none ${
                 selectedTo.value === container ? "bg-red-600" : ""
             }`}
             onClick={(e) => {
+                e.stopPropagation();
+                if (container.record.type === "note") {
+                    window.location.href = `/app/note/${container.record.id}`;
+
+                    return;
+                }
+
                 closeAllPopovers();
                 handleOpenFolder();
-                e.stopPropagation();
             }}
         >
             <div
@@ -238,6 +244,19 @@ export default function TreeItem({
                                 }}
                             >
                                 <Icon name="plus" />
+                            </span>
+                        )}
+                        {container.record.type === "note" && (
+                            <span
+                                class="hover:text-gray-300 cursor-pointer"
+                                title="Open Note"
+                                onClick={(e) => {
+                                    window.location.href =
+                                        `/app/note/${container.record.id}`;
+                                    e.stopPropagation();
+                                }}
+                            >
+                                <Icon name="show" />
                             </span>
                         )}
                         <MoreMenu
@@ -309,7 +328,9 @@ export default function TreeItem({
                         <span class="group-item-name pl-2 pr-2">
                             <Icon
                                 name={container.record.type == "group"
-                                    ? (isOpen.value ? "folder-open" : "folder")
+                                    ? (container.is_open
+                                        ? "folder-open"
+                                        : "folder")
                                     : "file"}
                                 type={container.record.type == "group" &&
                                         (container.record.has_children ||
@@ -321,7 +342,7 @@ export default function TreeItem({
                         </span>
                     )}
             </div>
-            {isOpen.value && (
+            {container.is_open && (
                 <div class="group-item-children">
                     {container.children.map((child) => (
                         <TreeItem
@@ -333,7 +354,9 @@ export default function TreeItem({
                             onAddGroup={onAddGroup}
                             onRename={onRename}
                             onDelete={onDelete}
-                            onLoadChildren={onLoadChildren}
+                            onOpen={onOpen}
+                            onClose={onClose}
+                            onRefresh={onRefresh}
                             onDraggingStart={onDraggingStart}
                             onDraggingEnd={onDraggingEnd}
                             onDrop={onDrop}

@@ -37,8 +37,11 @@ export const getTreeList = async (
                 .innerJoin("note", "note.id", "group_note.note_id")
                 .where("group_note.group_id", group_id ? "=" : "is", group_id)
                 .where("note.is_deleted", "=", false)
-                .where("group_note.user_id", "=", user_id),
+                .where("group_note.user_id", "=", user_id)
+                .where("note.user_id", "=", user_id),
         )
+        .orderBy("type")
+        .orderBy("id")
         .execute();
 
     return results as TreeRecord[];

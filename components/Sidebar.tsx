@@ -2,8 +2,8 @@ import Notifications from "../islands/notifications/NotificationList.tsx";
 import { Logo } from "$components/Logo.tsx";
 import { NotificationRecord } from "$backend/repository/notification-repository.ts";
 import { Icon } from "$components/Icon.tsx";
-import TreeList from "../islands/note-tree/TreeList.tsx";
 import { ListPanel } from "../islands/sidebar/SideBarPanel.tsx";
+import { LogoutButton } from "$islands/sidebar/LogoutButton.tsx";
 
 export interface SidebarProps {
     showSettings: boolean;
@@ -42,13 +42,7 @@ export function Sidebar(
                         >
                             <Icon name="user" />
                         </a>
-                        <a
-                            href="/app/logout"
-                            class="hover:text-gray-300"
-                            title="Log out"
-                        >
-                            <Icon name="log-out" />
-                        </a>
+                        <LogoutButton />
                     </div>
                 </div>
             </div>

@@ -10,6 +10,7 @@ import * as $api_middleware from "./routes/api/_middleware.ts";
 import * as $api_find_tree from "./routes/api/find-tree.ts";
 import * as $api_groups_id_ from "./routes/api/groups/[id].ts";
 import * as $api_groups_index from "./routes/api/groups/index.ts";
+import * as $api_notes_id_ from "./routes/api/notes/[id].ts";
 import * as $api_notes_index from "./routes/api/notes/index.ts";
 import * as $api_profile from "./routes/api/profile.ts";
 import * as $api_tags_id_ from "./routes/api/tags/[id].ts";
@@ -21,6 +22,7 @@ import * as $app_layout from "./routes/app/_layout.tsx";
 import * as $app_middleware from "./routes/app/_middleware.ts";
 import * as $app_index from "./routes/app/index.tsx";
 import * as $app_logout from "./routes/app/logout.tsx";
+import * as $app_note_id_ from "./routes/app/note/[id].tsx";
 import * as $app_note_index from "./routes/app/note/index.tsx";
 import * as $app_note_new from "./routes/app/note/new.tsx";
 import * as $app_profile from "./routes/app/profile.tsx";
@@ -39,6 +41,7 @@ import * as $note_tree_MoreMenu from "./islands/note-tree/MoreMenu.tsx";
 import * as $note_tree_RootGroupBar from "./islands/note-tree/RootGroupBar.tsx";
 import * as $note_tree_TreeItem from "./islands/note-tree/TreeItem.tsx";
 import * as $note_tree_TreeList from "./islands/note-tree/TreeList.tsx";
+import * as $note_tree_helpers from "./islands/note-tree/helpers.ts";
 import * as $notes_MoreMenu from "./islands/notes/MoreMenu.tsx";
 import * as $notes_NoteEditor from "./islands/notes/NoteEditor.tsx";
 import * as $notes_ViewNote from "./islands/notes/ViewNote.tsx";
@@ -47,6 +50,7 @@ import * as $notifications_NotificationList from "./islands/notifications/Notifi
 import * as $notifications_views_ReminderView from "./islands/notifications/views/ReminderView.tsx";
 import * as $profile_UserProfile from "./islands/profile/UserProfile.tsx";
 import * as $sidebar_ListSwitcher from "./islands/sidebar/ListSwitcher.tsx";
+import * as $sidebar_LogoutButton from "./islands/sidebar/LogoutButton.tsx";
 import * as $sidebar_RemindersList from "./islands/sidebar/RemindersList.tsx";
 import * as $sidebar_RenderViews from "./islands/sidebar/RenderViews.tsx";
 import * as $sidebar_SearchBar from "./islands/sidebar/SearchBar.tsx";
@@ -68,6 +72,7 @@ const manifest = {
         "./routes/api/find-tree.ts": $api_find_tree,
         "./routes/api/groups/[id].ts": $api_groups_id_,
         "./routes/api/groups/index.ts": $api_groups_index,
+        "./routes/api/notes/[id].ts": $api_notes_id_,
         "./routes/api/notes/index.ts": $api_notes_index,
         "./routes/api/profile.ts": $api_profile,
         "./routes/api/tags/[id].ts": $api_tags_id_,
@@ -79,6 +84,7 @@ const manifest = {
         "./routes/app/_middleware.ts": $app_middleware,
         "./routes/app/index.tsx": $app_index,
         "./routes/app/logout.tsx": $app_logout,
+        "./routes/app/note/[id].tsx": $app_note_id_,
         "./routes/app/note/index.tsx": $app_note_index,
         "./routes/app/note/new.tsx": $app_note_new,
         "./routes/app/profile.tsx": $app_profile,
@@ -99,6 +105,7 @@ const manifest = {
         "./islands/note-tree/RootGroupBar.tsx": $note_tree_RootGroupBar,
         "./islands/note-tree/TreeItem.tsx": $note_tree_TreeItem,
         "./islands/note-tree/TreeList.tsx": $note_tree_TreeList,
+        "./islands/note-tree/helpers.ts": $note_tree_helpers,
         "./islands/notes/MoreMenu.tsx": $notes_MoreMenu,
         "./islands/notes/NoteEditor.tsx": $notes_NoteEditor,
         "./islands/notes/ViewNote.tsx": $notes_ViewNote,
@@ -110,6 +117,7 @@ const manifest = {
             $notifications_views_ReminderView,
         "./islands/profile/UserProfile.tsx": $profile_UserProfile,
         "./islands/sidebar/ListSwitcher.tsx": $sidebar_ListSwitcher,
+        "./islands/sidebar/LogoutButton.tsx": $sidebar_LogoutButton,
         "./islands/sidebar/RemindersList.tsx": $sidebar_RemindersList,
         "./islands/sidebar/RenderViews.tsx": $sidebar_RenderViews,
         "./islands/sidebar/SearchBar.tsx": $sidebar_SearchBar,

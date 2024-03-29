@@ -16,3 +16,12 @@ export const addNoteRequestSchema = zod.object({
 }).strict();
 
 export type AddNoteRequest = zod.infer<typeof addNoteRequestSchema>;
+
+export const updateNoteSchema = zod.object({
+    // title: noteSchema.shape.title,
+    // text: noteSchema.shape.text,
+    // tags: noteSchema.shape.tags,
+    group_id: noteSchema.shape.group_id.optional(),
+}).strict();
+
+export type UpdateNoteRequest = zod.infer<typeof updateNoteSchema>;

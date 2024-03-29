@@ -1,6 +1,7 @@
 import { NoteTable } from "$types";
 import { db } from "$backend/database.ts";
 import { getCurrentUnixTimestamp } from "$backend/time.ts";
+import { sql } from "$lib/kysely-sqlite-dialect/deps.ts";
 
 type NoteId = { id: number };
 
@@ -32,16 +33,58 @@ export const createNote = async (note: NewNote): Promise<NoteRecord> => {
     };
 };
 
-export interface NoteFilters {
-    user_id: number;
+export const updateNoteParent = async (
+    note_id: number,
+    new_parent_id: number | null,
+    user_id: number,
+): Promise<boolean> => {
+    const result = await db.updateTable("group_note")
+        .set({
+            group_id: new_parent_id,
+        })
+        .where("note_id", "=", note_id)
+        .where("user_id", "=", user_id)
+        .executeTakeFirst();
+
+    return result.numUpdatedRows > 0;
+};
+
+export interface ViewNoteRecord {
+    id: number;
+    title: string;
+    note: string;
+    created_at: number;
+    updated_at: number;
+    group_id: number;
+    group_name: string;
 }
 
-export const listNotes = async (filter: NoteFilters): Promise<NoteRecord[]> => {
-    const results = await db.selectFrom("note")
-        .where("user_id", "=", filter.user_id)
-        .orderBy("created_at", "desc")
-        .select(["id", "title", "note", "created_at", "updated_at", "user_id"])
-        .execute();
+export const getNote = async (
+    id: number,
+    user_id: number,
+): Promise<ViewNoteRecord | null> => {
+    const result = await db.selectFrom("note")
+        .select([
+            "note.id",
+            "title",
+            "note",
+            "note.created_at",
+            "note.updated_at",
+            sql<number>`\`group\`.id`.as("group_id"),
+            sql<string>`\`group\`.name`.as("group_name"),
+        ])
+        .where("note.id", "=", id)
+        .where("note.user_id", "=", user_id)
+        .where("note.is_deleted", "=", false)
+        .leftJoin(
+            "group_note",
+            (join) =>
+                join
+                    .onRef("note.id", "=", "group_note.note_id")
+                    .on("group_note.user_id", "=", user_id),
+        )
+        .leftJoin("group", "group_note.group_id", "group.id")
+        .executeTakeFirst();
 
-    return results;
+    return result ?? null;
 };
