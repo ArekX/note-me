@@ -1,4 +1,4 @@
-import SearchBar from "$islands/groups/SearchBar.tsx";
+import SearchBar from "./SearchBar.tsx";
 import {
     ListSwitcher,
     ListSwitcherItem,

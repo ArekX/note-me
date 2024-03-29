@@ -1,4 +1,4 @@
-import GroupList from "$islands/groups/GroupList.tsx";
+import TreeList from "../note-tree/TreeList.tsx";
 import { RemindersList } from "$islands/sidebar/RemindersList.tsx";
 import { SharedNotesList } from "$islands/sidebar/SharedNotesList.tsx";
 import { ComponentChild, VNode } from "preact";
@@ -13,7 +13,7 @@ type RendererTypes = "notes" | "shared" | "reminders";
 type RendererFn = (data: RendererProps) => VNode<unknown>;
 
 const RenderGroupList = (data: RendererProps) => (
-    <GroupList
+    <TreeList
         searchQuery={data.searchQuery}
         switcherComponent={data.switcher}
     />

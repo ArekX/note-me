@@ -3,7 +3,7 @@ import { Signal, signal, useSignal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
 import ConfirmDialog from "$islands/ConfirmDialog.tsx";
 import { TreeRecord } from "$backend/repository/tree-list.repository.ts";
-import { MoreMenuItemAction } from "$islands/groups/MoreMenu.tsx";
+import { MoreMenuItemAction } from "./MoreMenu.tsx";
 import { MoreMenu } from "./MoreMenu.tsx";
 import { isPopoverOpen } from "$frontend/hooks/use-single-popover.ts";
 import { closeAllPopovers } from "$frontend/hooks/use-single-popover.ts";
@@ -80,7 +80,7 @@ export const createContainer = (
 const draggedContainer: Signal<ContainerGroupRecord | null> = signal(null);
 const selectedTo: Signal<ContainerGroupRecord | null> = signal(null);
 
-export default function GroupItem({
+export default function TreeItem({
     parent,
     container,
     onAcceptEdit,
@@ -324,7 +324,7 @@ export default function GroupItem({
             {isOpen.value && (
                 <div class="group-item-children">
                     {container.children.map((child) => (
-                        <GroupItem
+                        <TreeItem
                             container={child}
                             parent={container}
                             onAcceptEdit={onAcceptEdit}

@@ -1,5 +1,5 @@
 import { Icon } from "$components/Icon.tsx";
-import { ContainerGroupRecord } from "$islands/groups/GroupItem.tsx";
+import { ContainerGroupRecord } from "./TreeItem.tsx";
 import { useSignal } from "@preact/signals";
 import { ComponentChild } from "preact";
 

@@ -7,6 +7,7 @@ import * as $_500 from "./routes/_500.tsx";
 import * as $_app from "./routes/_app.tsx";
 import * as $_middleware from "./routes/_middleware.ts";
 import * as $api_middleware from "./routes/api/_middleware.ts";
+import * as $api_find_tree from "./routes/api/find-tree.ts";
 import * as $api_groups_id_ from "./routes/api/groups/[id].ts";
 import * as $api_groups_index from "./routes/api/groups/index.ts";
 import * as $api_notes_index from "./routes/api/notes/index.ts";
@@ -34,11 +35,10 @@ import * as $Loader from "./islands/Loader.tsx";
 import * as $Pagination from "./islands/Pagination.tsx";
 import * as $ScriptLoader from "./islands/ScriptLoader.tsx";
 import * as $Viewer from "./islands/Viewer.tsx";
-import * as $groups_GroupItem from "./islands/groups/GroupItem.tsx";
-import * as $groups_GroupList from "./islands/groups/GroupList.tsx";
-import * as $groups_MoreMenu from "./islands/groups/MoreMenu.tsx";
-import * as $groups_RootGroupBar from "./islands/groups/RootGroupBar.tsx";
-import * as $groups_SearchBar from "./islands/groups/SearchBar.tsx";
+import * as $note_tree_MoreMenu from "./islands/note-tree/MoreMenu.tsx";
+import * as $note_tree_RootGroupBar from "./islands/note-tree/RootGroupBar.tsx";
+import * as $note_tree_TreeItem from "./islands/note-tree/TreeItem.tsx";
+import * as $note_tree_TreeList from "./islands/note-tree/TreeList.tsx";
 import * as $notes_MoreMenu from "./islands/notes/MoreMenu.tsx";
 import * as $notes_NoteEditor from "./islands/notes/NoteEditor.tsx";
 import * as $notes_ViewNote from "./islands/notes/ViewNote.tsx";
@@ -49,6 +49,7 @@ import * as $profile_UserProfile from "./islands/profile/UserProfile.tsx";
 import * as $sidebar_ListSwitcher from "./islands/sidebar/ListSwitcher.tsx";
 import * as $sidebar_RemindersList from "./islands/sidebar/RemindersList.tsx";
 import * as $sidebar_RenderViews from "./islands/sidebar/RenderViews.tsx";
+import * as $sidebar_SearchBar from "./islands/sidebar/SearchBar.tsx";
 import * as $sidebar_SharedNotesList from "./islands/sidebar/SharedNotesList.tsx";
 import * as $sidebar_SideBarPanel from "./islands/sidebar/SideBarPanel.tsx";
 import * as $tags_EditTagForm from "./islands/tags/EditTagForm.tsx";
@@ -64,6 +65,7 @@ const manifest = {
         "./routes/_app.tsx": $_app,
         "./routes/_middleware.ts": $_middleware,
         "./routes/api/_middleware.ts": $api_middleware,
+        "./routes/api/find-tree.ts": $api_find_tree,
         "./routes/api/groups/[id].ts": $api_groups_id_,
         "./routes/api/groups/index.ts": $api_groups_index,
         "./routes/api/notes/index.ts": $api_notes_index,
@@ -93,11 +95,10 @@ const manifest = {
         "./islands/Pagination.tsx": $Pagination,
         "./islands/ScriptLoader.tsx": $ScriptLoader,
         "./islands/Viewer.tsx": $Viewer,
-        "./islands/groups/GroupItem.tsx": $groups_GroupItem,
-        "./islands/groups/GroupList.tsx": $groups_GroupList,
-        "./islands/groups/MoreMenu.tsx": $groups_MoreMenu,
-        "./islands/groups/RootGroupBar.tsx": $groups_RootGroupBar,
-        "./islands/groups/SearchBar.tsx": $groups_SearchBar,
+        "./islands/note-tree/MoreMenu.tsx": $note_tree_MoreMenu,
+        "./islands/note-tree/RootGroupBar.tsx": $note_tree_RootGroupBar,
+        "./islands/note-tree/TreeItem.tsx": $note_tree_TreeItem,
+        "./islands/note-tree/TreeList.tsx": $note_tree_TreeList,
         "./islands/notes/MoreMenu.tsx": $notes_MoreMenu,
         "./islands/notes/NoteEditor.tsx": $notes_NoteEditor,
         "./islands/notes/ViewNote.tsx": $notes_ViewNote,
@@ -111,6 +112,7 @@ const manifest = {
         "./islands/sidebar/ListSwitcher.tsx": $sidebar_ListSwitcher,
         "./islands/sidebar/RemindersList.tsx": $sidebar_RemindersList,
         "./islands/sidebar/RenderViews.tsx": $sidebar_RenderViews,
+        "./islands/sidebar/SearchBar.tsx": $sidebar_SearchBar,
         "./islands/sidebar/SharedNotesList.tsx": $sidebar_SharedNotesList,
         "./islands/sidebar/SideBarPanel.tsx": $sidebar_SideBarPanel,
         "./islands/tags/EditTagForm.tsx": $tags_EditTagForm,

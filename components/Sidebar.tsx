@@ -2,7 +2,7 @@ import Notifications from "../islands/notifications/NotificationList.tsx";
 import { Logo } from "$components/Logo.tsx";
 import { NotificationRecord } from "$backend/repository/notification-repository.ts";
 import { Icon } from "$components/Icon.tsx";
-import GroupList from "../islands/groups/GroupList.tsx";
+import TreeList from "../islands/note-tree/TreeList.tsx";
 import { ListPanel } from "../islands/sidebar/SideBarPanel.tsx";
 
 export interface SidebarProps {

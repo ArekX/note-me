@@ -5,11 +5,11 @@ import { createGroup, updateGroup } from "$frontend/api.ts";
 import { useEffect } from "preact/hooks";
 import { GetTreeRequest } from "$backend/api-handlers/tree/get-tree-records.ts";
 import { Icon } from "$components/Icon.tsx";
-import GroupItem, {
+import TreeItem, {
     ContainerGroupRecord,
     createContainer,
     createNewContainerRecord,
-} from "$islands/groups/GroupItem.tsx";
+} from "./TreeItem.tsx";
 import { deleteGroup } from "$frontend/api.ts";
 import { validateSchema } from "$schemas/mod.ts";
 import { addGroupRequestSchema } from "$schemas/groups.ts";
@@ -24,7 +24,7 @@ interface GroupListProps {
     switcherComponent: ComponentChild;
 }
 
-export default function GroupList({
+export default function TreeList({
     switcherComponent,
     searchQuery,
 }: GroupListProps) {
@@ -277,7 +277,7 @@ export default function GroupList({
                     Loading notes and groups...
                 </Loader>
                 {groups.value.map((group) => (
-                    <GroupItem
+                    <TreeItem
                         container={group}
                         parent={null}
                         onDrop={(toContainer) =>
