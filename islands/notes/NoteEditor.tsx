@@ -3,7 +3,7 @@ import { useSignal } from "@preact/signals";
 import { NoteRecord } from "$backend/repository/note-repository.ts";
 import { Button } from "$components/Button.tsx";
 import { Icon } from "$components/Icon.tsx";
-import { MoreMenu, MoreMenuItem } from "$islands/notes/MoreMenu.tsx";
+import { MoreMenu } from "$islands/notes/MoreMenu.tsx";
 import Loader from "$islands/Loader.tsx";
 import { useEffect } from "preact/hooks";
 import { MenuItemActions } from "$islands/notes/MoreMenu.tsx";
@@ -111,6 +111,15 @@ export const NoteEditor = ({
                         {!isSaving.value
                             ? <Icon name="save" size="lg" />
                             : <Loader color="white">Saving...</Loader>}
+                    </Button>{" "}
+                    <Button
+                        color={!isSaving.value ? "success" : "successDisabled"}
+                        title="Preview"
+                        tabIndex={5}
+                        disabled={isSaving.value}
+                        onClick={handleSave}
+                    >
+                        <Icon name="show" size="lg" />
                     </Button>{" "}
                     {!isSaving.value && (
                         <MoreMenu onMenuItemClick={handleMenuItemClicked} />

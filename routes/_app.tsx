@@ -40,6 +40,10 @@ export default function App({ Component, route }: PageProps) {
                     rel="stylesheet"
                     href="/boxicons/css/boxicons.min.css"
                 />
+                <link
+                    rel="stylesheet"
+                    href="/highlightjs.min.css"
+                />
                 <style>{MATERIAL_STYLE}</style>
                 <link rel="stylesheet" href="/styles.css" />
                 <link rel="icon" href="/logo-white.svg"></link>

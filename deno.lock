@@ -10,6 +10,7 @@
       "jsr:@std/path@0.213": "jsr:@std/path@0.213.1",
       "npm:autoprefixer@10.4.17": "npm:autoprefixer@10.4.17_postcss@8.4.35",
       "npm:cssnano@6.0.3": "npm:cssnano@6.0.3_postcss@8.4.35",
+      "npm:highlight.js": "npm:highlight.js@11.9.0",
       "npm:kysely@0.26.3": "npm:kysely@0.26.3",
       "npm:postcss@8.4.35": "npm:postcss@8.4.35",
       "npm:tailwindcss@3.3.5": "npm:tailwindcss@3.3.5_postcss@8.4.35",
@@ -474,6 +475,10 @@
         "dependencies": {
           "function-bind": "function-bind@1.1.2"
         }
+      },
+      "highlight.js@11.9.0": {
+        "integrity": "sha512-fJ7cW7fQGCYAkgv4CPfwFHrfd/cLS4Hau96JuJ+ZTOWhjnhoeN1ub1tFmALm/+lW5z4WCAuAV9bm05AP0mS6Gw==",
+        "dependencies": {}
       },
       "is-binary-path@2.1.0": {
         "integrity": "sha512-ZMERYes6pDydyuGidse7OsHxtbI7WVeUEozgR/g7rd0xUimYNlvZRE/K2MgZTjWy725IfelLeVcEM97mmtRGXw==",
@@ -1107,6 +1112,8 @@
     }
   },
   "redirects": {
+    "https://deno.land/x//speed_highlight_js/dist/terminal.js": "https://deno.land/x/speed_highlight_js@v1.2.6/dist/terminal.js",
+    "https://deno.land/x/speed_highlight_js/dist/terminal.js": "https://deno.land/x/speed_highlight_js@v1.2.6/dist/terminal.js",
     "https://esm.sh/v135/@types/babel__helper-validator-identifier@^7/index.d.ts": "https://esm.sh/v135/@types/babel__helper-validator-identifier@7.15.2/index.d.ts"
   },
   "remote": {
@@ -1739,6 +1746,10 @@
     "https://deno.land/x/semaphore@v1.1.1/mod.ts": "431abb51927a16c537cec1cfb05bf2de6a8f3916331f1ec3f9f13ad7ad6a4ea5",
     "https://deno.land/x/semaphore@v1.1.1/mutex.ts": "2cc6490481f0fdfe97c6b326a2073819d76b76eac3877864a8ada6a2127492f2",
     "https://deno.land/x/semaphore@v1.1.1/semaphore.ts": "0acf1159d635fa3b9198a4ad4acac9e877d79196601aa80544ac0db5a71c646d",
+    "https://deno.land/x/speed_highlight_js@v1.2.6/dist/index.js": "3f06bcb851f0ad78de4ab1886611d1253a57d875c287a93ae92efa80c5e7593b",
+    "https://deno.land/x/speed_highlight_js@v1.2.6/dist/languages/js.js": "7876640e51ac364ccc44ed578a7ad0c7d8e430524a27307d91c960a0adf7836e",
+    "https://deno.land/x/speed_highlight_js@v1.2.6/dist/terminal.js": "a1e9d34701c93c794ff8f814494b31a1ea09f42c9e19559461399d5e8c2565eb",
+    "https://deno.land/x/speed_highlight_js@v1.2.6/dist/themes/atom-dark.js": "3375614717d7024e67e88b346549edf0f61d58fc6e3ecae09cb4ec0e6fbf5d64",
     "https://deno.land/x/sqlite@v3.7.0/build/sqlite.js": "cc55fef9cd124b2acb624899a5fad413834f4701bcfc21ac275844b822466292",
     "https://deno.land/x/sqlite@v3.7.0/build/vfs.js": "08533cc78fb29b9d9bd62f6bb93e5ef333407013fed185776808f11223ba0e70",
     "https://deno.land/x/sqlite@v3.7.0/mod.ts": "e09fc79d8065fe222578114b109b1fd60077bff1bb75448532077f784f4d6a83",

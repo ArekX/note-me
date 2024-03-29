@@ -53,10 +53,9 @@ export interface ViewNoteRecord {
     id: number;
     title: string;
     note: string;
-    created_at: number;
-    updated_at: number;
     group_id: number;
     group_name: string;
+    tags: string[];
 }
 
 export const getNote = async (
@@ -68,10 +67,13 @@ export const getNote = async (
             "note.id",
             "title",
             "note",
-            "note.created_at",
-            "note.updated_at",
             sql<number>`\`group\`.id`.as("group_id"),
             sql<string>`\`group\`.name`.as("group_name"),
+            sql<string>`(
+                SELECT GROUP_CONCAT(note_tag.name, ',')
+                FROM note_tag
+                INNER JOIN note_tag_note ON note_tag_note.note_id = note.id AND note_tag.id = note_tag_note.tag_id
+            )`.as("tags"),
         ])
         .where("note.id", "=", id)
         .where("note.user_id", "=", user_id)
@@ -86,5 +88,12 @@ export const getNote = async (
         .leftJoin("group", "group_note.group_id", "group.id")
         .executeTakeFirst();
 
-    return result ?? null;
+    if (!result) {
+        return null;
+    }
+
+    return {
+        ...result,
+        tags: (result.tags ?? "").split?.(",").filter(Boolean),
+    };
 };

@@ -4,6 +4,7 @@ import {
     getNote,
     ViewNoteRecord,
 } from "$backend/repository/note-repository.ts";
+import { ViewNote } from "$islands/notes/ViewNote.tsx";
 
 interface PageData {
     note: ViewNoteRecord | null;
@@ -31,18 +32,7 @@ export const handler: Handlers<PageData> = {
 export default function Page(props: PageProps<PageData, AppState>) {
     return (
         <div class="text-white p-4">
-            <div class="text-2xl font-bold">
-                {props.data.note?.title}
-            </div>
-            <div>
-                {props.data.note?.group_name}
-            </div>
-            <div>
-                Tags
-            </div>
-            <div>
-                {props.data.note?.note}
-            </div>
+            <ViewNote record={props.data.note!} />
         </div>
     );
 }

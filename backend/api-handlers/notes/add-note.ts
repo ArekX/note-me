@@ -32,7 +32,7 @@ export const handleAddNote = async (
         });
 
         await Promise.all([
-            linkNoteWithTags(record.id, body.tags),
+            linkNoteWithTags(record.id, userId, body.tags),
             assignNoteToGroup(body.group_id, record.id, userId),
         ]);
 

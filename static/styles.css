@@ -6,6 +6,7 @@ html, body {
   height: 100%;
   margin: 0;
   overflow: hidden;
+  @apply bg-gray-900;
 }
 
 .notification-badge {
@@ -129,4 +130,85 @@ dialog::backdrop {
     font-weight: 400;
     resize: none !important;
     background: transparent;
+}
+
+.view-note .title {
+    font-size: 2em;
+   font-weight: bold;
+}
+
+.view-note .tag {
+    font-size: 1.2em;
+    font-weight: 600;
+    @apply text-gray-400;
+    @apply mr-2;
+}
+
+.view-note .tag:hover {
+    @apply text-gray-300;
+
+}
+
+.markdown-viewer {
+    all: initial;
+    color: #FFF;
+    @apply font-sans; 
+    display: block;
+    margin-bottom: 5em;
+    padding-bottom: 5em;
+}
+
+.markdown-viewer p {
+    padding: .5em 0;
+}
+
+.markdown-viewer h1 {
+    font-size: 2.25em;
+    padding: .3em 0;
+}
+
+.markdown-viewer h2 {
+    font-size: 2em;
+    padding: .3em 0;
+}
+
+.markdown-viewer h3 {
+    font-size: 1.75em;
+    padding: .4em 0;
+}
+
+.markdown-viewer h4 {
+    font-size: 1.50em;
+    padding: .4em 0;
+}
+
+.markdown-viewer h5 {
+    font-size: 1.25em;
+    padding: .5em 0;
+}
+
+.markdown-viewer ul {
+    padding-left: 1.5em;
+    list-style-type: initial;
+}
+
+.markdown-viewer blockquote {
+    padding: .5em 1em;
+    @apply bg-gray-950;
+    border-left: 3px solid #FFF;
+     border-radius: .5em;
+}
+
+.markdown-viewer pre {
+    padding: 1em;
+    @apply bg-gray-950;
+    border-radius: .5em;
+}
+
+.markdown-viewer a {
+    @apply text-gray-400;
+}
+
+.markdown-viewer a:hover {
+    text-decoration: underline;
 }

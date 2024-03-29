@@ -191,6 +191,9 @@ export default function TreeItem({
             case "delete":
                 isConfirmingDelete.value = true;
                 break;
+            case "edit":
+                window.location.href = `/app/note/edit-${container.record.id}`;
+                break;
         }
     };
 
@@ -206,7 +209,8 @@ export default function TreeItem({
             onClick={(e) => {
                 e.stopPropagation();
                 if (container.record.type === "note") {
-                    window.location.href = `/app/note/${container.record.id}`;
+                    window.location.href =
+                        `/app/note/view-${container.record.id}`;
 
                     return;
                 }
@@ -252,11 +256,11 @@ export default function TreeItem({
                                 title="Open Note"
                                 onClick={(e) => {
                                     window.location.href =
-                                        `/app/note/${container.record.id}`;
+                                        `/app/note/edit-${container.record.id}`;
                                     e.stopPropagation();
                                 }}
                             >
-                                <Icon name="show" />
+                                <Icon name="pencil" />
                             </span>
                         )}
                         <MoreMenu

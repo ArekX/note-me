@@ -16,6 +16,11 @@ export type MoreMenuItemAction =
     | "add-group"
     | "refresh"
     | "rename"
+    | "edit"
+    | "details"
+    | "history"
+    | "share"
+    | "remind-me"
     | "delete";
 
 interface MoreMenuProps {
@@ -58,35 +63,57 @@ export const MoreMenu = (
 
     useWindowResize(menuRef, repositionMenu);
 
-    const menuItems = [
+    const groupMenu = [
         {
             name: "Add Note",
             icon: "plus",
-            visible: record.type === "group",
             onClick: () => onAction("add-note"),
         },
         {
             name: "Add Group",
             icon: "folder-plus",
-            visible: record.type === "group",
             onClick: () => onAction("add-group"),
         },
         {
             name: "Refresh",
             icon: "refresh",
-            visible: record.type === "group",
             onClick: () => onAction("refresh"),
         },
+    ];
+
+    const noteMenu = [
+        {
+            name: "Details",
+            icon: "detail",
+            onClick: () => onAction("details"),
+        },
+        {
+            name: "History",
+            icon: "history",
+            onClick: () => onAction("history"),
+        },
+        {
+            name: "Share",
+            icon: "share-alt",
+            onClick: () => onAction("share"),
+        },
+        {
+            name: "Remind me",
+            icon: "alarm",
+            onClick: () => onAction("remind-me"),
+        },
+    ];
+
+    const menuItems = [
+        ...(record.type === "group" ? groupMenu : noteMenu),
         {
             name: "Rename",
             icon: "edit",
-            visible: true,
             onClick: () => onAction("rename"),
         },
         {
             name: "Delete",
             icon: "minus-circle",
-            visible: true,
             onClick: () => onAction("delete"),
         },
     ];
@@ -107,7 +134,7 @@ export const MoreMenu = (
                         ref={menuRef}
                         class={`text-white icon-menu-items drop-shadow-lg fixed bg-gray-800 rounded-lg shadow-lg p-2 whitespace-nowrap break-keep`}
                     >
-                        {menuItems.filter((i) => i.visible).map((item) => (
+                        {menuItems.map((item) => (
                             <div
                                 class="hover:bg-gray-700 cursor-pointer p-1 pr-2 pl-2"
                                 onClick={(e) => {

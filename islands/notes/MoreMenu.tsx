@@ -1,7 +1,5 @@
 import { Button } from "$components/Button.tsx";
 import { Icon } from "$components/Icon.tsx";
-import { useSignal } from "@preact/signals";
-import { useEffect } from "preact/hooks";
 import { createRef } from "preact";
 import { useSinglePopover } from "$frontend/hooks/use-single-popover.ts";
 
