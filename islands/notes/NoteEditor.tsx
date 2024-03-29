@@ -67,11 +67,19 @@ export const NoteEditor = ({
         console.log("execute action", action);
     };
 
+    const handleTogglePreview = () => {
+    };
+
     useEffect(() => {
         const handleHotkeys = (e: KeyboardEvent) => {
             if (e.ctrlKey && e.key === "s") {
                 e.preventDefault();
                 handleSave();
+            }
+
+            if (e.ctrlKey && e.key === "v") {
+                e.preventDefault();
+                handleTogglePreview();
             }
         };
 
@@ -113,11 +121,11 @@ export const NoteEditor = ({
                             : <Loader color="white">Saving...</Loader>}
                     </Button>{" "}
                     <Button
-                        color={!isSaving.value ? "success" : "successDisabled"}
+                        color="primary"
                         title="Preview"
                         tabIndex={5}
                         disabled={isSaving.value}
-                        onClick={handleSave}
+                        onClick={handleTogglePreview}
                     >
                         <Icon name="show" size="lg" />
                     </Button>{" "}

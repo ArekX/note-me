@@ -49,7 +49,7 @@ export function Button(
             default={setAsDefault}
             disabled={disabled}
             tabIndex={tabIndex}
-            onClick={onClick}
+            onClick={() => !disabled && onClick?.()}
             class={`${sizeTypes[size]} ${
                 buttonColors[color]
             } transition-colors rounded-md`}
