@@ -60,11 +60,11 @@ export const groupExists = async (
 };
 
 export const assignNoteToGroup = async (
-    group_id: number,
+    group_id: number | null,
     note_id: number,
     user_id: number,
 ): Promise<void> => {
-    if (!(await groupExists(group_id, user_id))) {
+    if (group_id && !(await groupExists(group_id, user_id))) {
         throw new Deno.errors.InvalidData("Group does not exist!");
     }
 

@@ -7,10 +7,10 @@ import {
     NotificationResponses,
 } from "$backend/workers/websocket-handlers/notifications.ts";
 import { NotificationRecord } from "$backend/repository/notification-repository.ts";
-import { useEffect } from "preact/hooks";
 import { createRef } from "preact";
 import { NotificationItem } from "$islands/notifications/NotificationItem.tsx";
 import { Button } from "$components/Button.tsx";
+import { useSinglePopover } from "$frontend/hooks/use-single-popover.ts";
 
 interface NotificationsProps {
     initialNotifications: NotificationRecord[];
@@ -99,33 +99,14 @@ export default function Notifications(props: NotificationsProps) {
         });
     };
 
-    const isVisible = useSignal(false);
-
     const menuRef = createRef<HTMLDivElement>();
 
-    useEffect(() => {
-        if (!menuRef.current) {
-            return;
-        }
-
-        const handleDocumentClick = (event: Event) => {
-            if (!menuRef.current!) {
-                isVisible.value = false;
-                return;
-            }
-            if (menuRef.current.contains(event.target as Node)) {
-                return;
-            }
-
-            isVisible.value = false;
-        };
-
-        document.body.addEventListener("click", handleDocumentClick);
-
-        return () => {
-            document.body.removeEventListener("click", handleDocumentClick);
-        };
-    }, [menuRef]);
+    const { isOpen, open, close } = useSinglePopover(
+        "userNotifications-0",
+        menuRef,
+        () => {
+        },
+    );
 
     const unreadCount = notifications.value.filter((s) => !s.is_read).length;
 
@@ -137,7 +118,7 @@ export default function Notifications(props: NotificationsProps) {
             {unreadCount > 0 && (
                 <span
                     class="notification-badge cursor-pointer"
-                    onClick={() => isVisible.value = !isVisible.value}
+                    onClick={open}
                 >
                     {unreadCount > 9 ? "9+" : unreadCount}
                 </span>
@@ -145,11 +126,11 @@ export default function Notifications(props: NotificationsProps) {
             <Icon
                 name="bell"
                 className="cursor-pointer"
-                onClick={() => isVisible.value = !isVisible.value}
+                onClick={open}
                 type={unreadCount > 0 ? "solid" : "regular"}
             />
 
-            {isVisible.value && (
+            {isOpen && (
                 <div
                     ref={menuRef}
                     class="absolute top-full left-0 w-96 bg-gray-800 pt-2 z-50 shadow-gray-900 shadow-md text-white text-left"

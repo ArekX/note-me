@@ -33,9 +33,7 @@ export const handleAddNote = async (
 
         await Promise.all([
             linkNoteWithTags(record.id, body.tags),
-            body.group_id
-                ? assignNoteToGroup(body.group_id, record.id, userId)
-                : Promise.resolve(),
+            assignNoteToGroup(body.group_id, record.id, userId),
         ]);
 
         await commitTransaction();

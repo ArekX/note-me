@@ -1,6 +1,5 @@
 import { axiod, IAxiodResponse } from "./deps.ts";
 import { NoteRecord } from "$backend/repository/note-repository.ts";
-import { FindGroupsRequest } from "$backend/api-handlers/groups/find-groups.ts";
 import { FindNotesRequest } from "$backend/api-handlers/notes/find-notes.ts";
 import { GroupRecord } from "$backend/repository/group-repository.ts";
 import { getUserData } from "$frontend/user-data.ts";
@@ -15,6 +14,9 @@ import { AddUserRequest } from "$schemas/users.ts";
 import { UpdateUserRequest } from "$schemas/users.ts";
 import { AddTagRequest, UpdateTagRequest } from "$schemas/tags.ts";
 import { FindUserRequest } from "$backend/api-handlers/users/find-users.ts";
+import { GetTreeRequest } from "$backend/api-handlers/tree/get-tree-records.ts";
+import { TreeRecord } from "$backend/repository/tree-list.repository.ts";
+import { FindTreeRequest } from "$backend/api-handlers/tree/find-tree-records.ts";
 
 const apiInterface = axiod.create({
     withCredentials: true,
@@ -24,6 +26,20 @@ const apiInterface = axiod.create({
 type QueryParams = {
     [key: string]: string | number | boolean;
 } | undefined;
+
+export const getTreeList = (
+    filter?: GetTreeRequest,
+): Promise<IAxiodResponse<TreeRecord[]>> =>
+    apiInterface.get("/tree", {
+        params: filter as QueryParams,
+    });
+
+export const findTreeList = (
+    filter?: FindTreeRequest,
+): Promise<IAxiodResponse<TreeRecord[]>> =>
+    apiInterface.get("/find-tree", {
+        params: filter as QueryParams,
+    });
 
 export const createNote = (
     note: AddNoteRequest,
@@ -65,17 +81,9 @@ export const updateGroup = (
             csrf: getUserData().csrfToken,
         },
     });
-
-export const findGroups = (
-    filter?: FindGroupsRequest,
-): Promise<IAxiodResponse<GroupRecord[]>> =>
-    apiInterface.get("/groups", {
-        params: filter as QueryParams,
-    });
-
 export const deleteGroup = (
     id: number,
-): Promise<IAxiodResponse<GroupRecord[]>> =>
+): Promise<IAxiodResponse<void>> =>
     apiInterface.delete(`/groups/${id}`, {}, {
         params: {
             csrf: getUserData().csrfToken,
@@ -121,7 +129,7 @@ export const updateUser = (
 
 export const deleteUser = (
     id: number,
-): Promise<IAxiodResponse<boolean>> =>
+): Promise<IAxiodResponse<void>> =>
     apiInterface.delete(`/users/${id}`, {}, {
         params: {
             csrf: getUserData().csrfToken,
@@ -156,7 +164,7 @@ export const updateTag = (
 
 export const deleteTag = (
     id: number,
-): Promise<IAxiodResponse<boolean>> =>
+): Promise<IAxiodResponse<void>> =>
     apiInterface.delete(`/tags/${id}`, {}, {
         params: {
             csrf: getUserData().csrfToken,

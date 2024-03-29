@@ -13,6 +13,7 @@ import * as $api_notes_index from "./routes/api/notes/index.ts";
 import * as $api_profile from "./routes/api/profile.ts";
 import * as $api_tags_id_ from "./routes/api/tags/[id].ts";
 import * as $api_tags_index from "./routes/api/tags/index.ts";
+import * as $api_tree from "./routes/api/tree.ts";
 import * as $api_users_id_ from "./routes/api/users/[id].ts";
 import * as $api_users_index from "./routes/api/users/index.ts";
 import * as $app_layout from "./routes/app/_layout.tsx";
@@ -29,13 +30,13 @@ import * as $app_settings_users_index from "./routes/app/settings/users/index.ts
 import * as $index from "./routes/index.tsx";
 import * as $ConfirmDialog from "./islands/ConfirmDialog.tsx";
 import * as $Dialog from "./islands/Dialog.tsx";
-import * as $IconMenu from "./islands/IconMenu.tsx";
 import * as $Loader from "./islands/Loader.tsx";
 import * as $Pagination from "./islands/Pagination.tsx";
 import * as $ScriptLoader from "./islands/ScriptLoader.tsx";
 import * as $Viewer from "./islands/Viewer.tsx";
 import * as $groups_GroupItem from "./islands/groups/GroupItem.tsx";
 import * as $groups_GroupList from "./islands/groups/GroupList.tsx";
+import * as $groups_MoreMenu from "./islands/groups/MoreMenu.tsx";
 import * as $groups_RootGroupBar from "./islands/groups/RootGroupBar.tsx";
 import * as $groups_SearchBar from "./islands/groups/SearchBar.tsx";
 import * as $notes_MoreMenu from "./islands/notes/MoreMenu.tsx";
@@ -69,6 +70,7 @@ const manifest = {
         "./routes/api/profile.ts": $api_profile,
         "./routes/api/tags/[id].ts": $api_tags_id_,
         "./routes/api/tags/index.ts": $api_tags_index,
+        "./routes/api/tree.ts": $api_tree,
         "./routes/api/users/[id].ts": $api_users_id_,
         "./routes/api/users/index.ts": $api_users_index,
         "./routes/app/_layout.tsx": $app_layout,
@@ -87,13 +89,13 @@ const manifest = {
     islands: {
         "./islands/ConfirmDialog.tsx": $ConfirmDialog,
         "./islands/Dialog.tsx": $Dialog,
-        "./islands/IconMenu.tsx": $IconMenu,
         "./islands/Loader.tsx": $Loader,
         "./islands/Pagination.tsx": $Pagination,
         "./islands/ScriptLoader.tsx": $ScriptLoader,
         "./islands/Viewer.tsx": $Viewer,
         "./islands/groups/GroupItem.tsx": $groups_GroupItem,
         "./islands/groups/GroupList.tsx": $groups_GroupList,
+        "./islands/groups/MoreMenu.tsx": $groups_MoreMenu,
         "./islands/groups/RootGroupBar.tsx": $groups_RootGroupBar,
         "./islands/groups/SearchBar.tsx": $groups_SearchBar,
         "./islands/notes/MoreMenu.tsx": $notes_MoreMenu,

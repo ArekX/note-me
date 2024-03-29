@@ -1,22 +1,23 @@
 import { Signal, useSignal } from "@preact/signals";
 import RootGroupBar from "./RootGroupBar.tsx";
 import Loader from "$islands/Loader.tsx";
-import { createGroup, findGroups, updateGroup } from "$frontend/api.ts";
+import { createGroup, updateGroup } from "$frontend/api.ts";
 import { useEffect } from "preact/hooks";
-import { FindGroupsRequest } from "../../backend/api-handlers/groups/find-groups.ts";
+import { GetTreeRequest } from "$backend/api-handlers/tree/get-tree-records.ts";
 import { Icon } from "$components/Icon.tsx";
 import GroupItem, {
     ContainerGroupRecord,
     createContainer,
     createNewContainerRecord,
 } from "$islands/groups/GroupItem.tsx";
-import { clearPopupOwner } from "$frontend/stores/active-sidebar-item.ts";
-import { GroupRecord } from "$backend/repository/group-repository.ts";
 import { deleteGroup } from "$frontend/api.ts";
 import { validateSchema } from "$schemas/mod.ts";
 import { addGroupRequestSchema } from "$schemas/groups.ts";
 import { getDisplayMessage } from "$frontend/error-messages.ts";
 import { ComponentChild } from "preact";
+import { getTreeList } from "$frontend/api.ts";
+import { TreeRecord } from "$backend/repository/tree-list.repository.ts";
+import { closeAllPopovers } from "$frontend/hooks/use-single-popover.ts";
 
 interface GroupListProps {
     searchQuery: string;
@@ -38,18 +39,15 @@ export default function GroupList({
             parent.is_processing = true;
         }
 
-        const request: FindGroupsRequest = {};
+        const request: GetTreeRequest = {};
 
         if (parent) {
-            request.parent_id = parent.record.id.toString();
+            request.parent_id = parent.record.id;
         }
 
-        const result = (await findGroups(request)).data.map((
-            record: GroupRecord,
-        ) => createContainer({
-            type: "group",
-            record,
-        }, parent ?? null));
+        const result = (await getTreeList(request)).data.map((
+            record: TreeRecord,
+        ) => createContainer(record, parent ?? null));
 
         if (!parent) {
             groups.value = result;
@@ -68,33 +66,37 @@ export default function GroupList({
     const addRootGroup = () => {
         groups.value = [
             ...groups.value,
-            createNewContainerRecord("group", null, null),
+            createNewContainerRecord(null),
         ];
     };
 
     const saveGroup = async (container: ContainerGroupRecord) => {
         container.is_processing = true;
 
-        const { is_new_record, name, type, record } = container;
+        const { is_new_record, name, record } = container;
 
-        if (type !== "group") {
+        if (record.type !== "group") {
             return;
         }
 
         container.is_processing = true;
 
+        const parentId = container.parent?.record.id ?? null;
+
         if (is_new_record) {
-            container.record = (await createGroup({
+            const { data } = await createGroup({
                 name,
-                parent_id: record.parent_id,
-            })).data;
+                parent_id: parentId,
+            });
+            container.record.id = data.id;
+            container.record.name = data.name;
             container.is_new_record = false;
         } else {
             await updateGroup(
                 record.id,
                 {
                     name,
-                    parent_id: container.record.parent_id,
+                    parent_id: parentId,
                 },
             );
             container.record.name = container.name;
@@ -165,7 +167,7 @@ export default function GroupList({
 
     const handleAddGroup = (container: ContainerGroupRecord) => {
         container.children.push(
-            createNewContainerRecord("group", container.record.id, container),
+            createNewContainerRecord(container),
         );
         updateToRoot(container);
     };
@@ -177,6 +179,7 @@ export default function GroupList({
 
     const handleLoadchildren = (container: ContainerGroupRecord) => {
         loadGroups(container);
+        closeAllPopovers();
     };
 
     const handleAddNote = (container: ContainerGroupRecord) => {
@@ -236,10 +239,6 @@ export default function GroupList({
                 b,
             ) => a.record.id - b.record.id);
             container.parent = newParent;
-
-            if (container.type === "group") {
-                container.record.parent_id = newParent.record.id;
-            }
         } else {
             container.parent = null;
             groups.value = [...groups.value, container].toSorted((a, b) =>
@@ -256,7 +255,7 @@ export default function GroupList({
 
     useEffect(() => {
         loadGroups();
-        clearPopupOwner();
+        closeAllPopovers();
     }, []);
 
     return (
@@ -277,7 +276,6 @@ export default function GroupList({
                 >
                     Loading notes and groups...
                 </Loader>
-                {searchQuery}ss
                 {groups.value.map((group) => (
                     <GroupItem
                         container={group}

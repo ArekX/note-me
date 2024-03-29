@@ -3,6 +3,7 @@ import { Icon } from "$components/Icon.tsx";
 import { useSignal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
 import { createRef } from "preact";
+import { useSinglePopover } from "$frontend/hooks/use-single-popover.ts";
 
 export interface MoreMenuItem {
     name: string;
@@ -23,36 +24,17 @@ interface MoreMenuProps {
 }
 
 export const MoreMenu = ({ onMenuItemClick }: MoreMenuProps) => {
-    const isVisible = useSignal(false);
     const menuRef = createRef<HTMLDivElement>();
 
-    useEffect(() => {
-        if (!menuRef.current) {
-            return;
-        }
-
-        const handleDocumentClick = (event: Event) => {
-            if (!menuRef.current!) {
-                isVisible.value = false;
-                return;
-            }
-            if (menuRef.current.contains(event.target as Node)) {
-                return;
-            }
-
-            isVisible.value = false;
-        };
-
-        document.body.addEventListener("click", handleDocumentClick);
-
-        return () => {
-            document.body.removeEventListener("click", handleDocumentClick);
-        };
-    }, [menuRef]);
+    const {
+        isOpen,
+        open,
+        close,
+    } = useSinglePopover("notesMenu-0", menuRef, () => {});
 
     const sendAction = (action: MenuItemActions) => {
         onMenuItemClick?.(action);
-        isVisible.value = false;
+        close();
     };
 
     const items: MoreMenuItem[] = [
@@ -93,12 +75,12 @@ export const MoreMenu = ({ onMenuItemClick }: MoreMenuProps) => {
             <Button
                 color="primary"
                 tabIndex={5}
-                onClick={() => isVisible.value = !isVisible.value}
+                onClick={open}
             >
                 <Icon name="dots-horizontal-rounded" size="lg" />
             </Button>
 
-            {isVisible.value && (
+            {isOpen && (
                 <div
                     ref={menuRef}
                     class="text-white absolute text-lg right-0 top-full mt-1 drop-shadow-lg bg-gray-800 rounded-lg shadow-lg p-2 whitespace-nowrap break-keep"
