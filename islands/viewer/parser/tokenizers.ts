@@ -7,7 +7,7 @@ export interface Token<T extends string, Data = never> {
 }
 
 export type Tokenizer<T extends string, Data = never> = (
-    reader: Reader,
+    reader: Reader<string>,
 ) => Token<T, Data> | null;
 
 const tokenizeHtmlTag: Tokenizer<"html-tag"> = (reader) => {
@@ -271,7 +271,9 @@ const tokenizeWhitespace: Tokenizer<"whitespace"> = (reader) => {
 
 const tokenizeTextBlock: Tokenizer<"text-block"> = (reader) => {
     let value = "";
-    while (!reader.isEof() && !nonTextBlockChars.includes(reader.peek())) {
+    while (
+        !reader.isEof() && !nonTextBlockChars.includes(reader.peek() as string)
+    ) {
         value += reader.peek();
         reader.next();
     }
@@ -325,6 +327,8 @@ export type TokenParser =
     | typeof tokenizeEquals
     | typeof tokenizeAtSign
     | typeof tokenizeTextBlock;
+
+export type ParsedToken = NonNullable<ReturnType<TokenParser>>;
 
 export const tokenizers: TokenParser[] = [
     tokenizeHtmlTag,

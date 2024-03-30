@@ -1,6 +1,7 @@
 import { useMemo } from "preact/hooks";
 import { createReader } from "./parser/reader.ts";
 import { lex } from "./parser/lexer.ts";
+import { parse } from "./parser/parser.ts";
 
 export type ViewerProps = {
     text: string;
@@ -19,9 +20,21 @@ export default function Viewer({ text = "" }: ViewerProps) {
     // }, [viewerRef]);
 
     const parsedText = useMemo(() => {
-        const tokens = lex(createReader(text));
+        const ast = parse(lex(`
+            idemo niis
+            # idemo niis
+            ## idemo niis
+            ### idemo niis
+            #### idemo niis
+            ##### idemo niis
 
-        console.log(tokens);
+            ![ovo je alt text](https://google.com)
+
+            [nako neki](https://google.com)
+        
+        `));
+
+        console.log(ast);
 
         return text;
     }, [text]);

@@ -61,8 +61,11 @@ import * as $tags_TagsList from "./islands/tags/TagsList.tsx";
 import * as $users_EditUserForm from "./islands/users/EditUserForm.tsx";
 import * as $users_UserList from "./islands/users/UserList.tsx";
 import * as $viewer_Viewer from "./islands/viewer/Viewer.tsx";
+import * as $viewer_parser_grammar from "./islands/viewer/parser/grammar.ts";
 import * as $viewer_parser_lexer from "./islands/viewer/parser/lexer.ts";
+import * as $viewer_parser_parser from "./islands/viewer/parser/parser.ts";
 import * as $viewer_parser_reader from "./islands/viewer/parser/reader.ts";
+import * as $viewer_parser_rule from "./islands/viewer/parser/rule.ts";
 import * as $viewer_parser_tokenizers from "./islands/viewer/parser/tokenizers.ts";
 import { type Manifest } from "$fresh/server.ts";
 
@@ -132,8 +135,11 @@ const manifest = {
         "./islands/users/EditUserForm.tsx": $users_EditUserForm,
         "./islands/users/UserList.tsx": $users_UserList,
         "./islands/viewer/Viewer.tsx": $viewer_Viewer,
+        "./islands/viewer/parser/grammar.ts": $viewer_parser_grammar,
         "./islands/viewer/parser/lexer.ts": $viewer_parser_lexer,
+        "./islands/viewer/parser/parser.ts": $viewer_parser_parser,
         "./islands/viewer/parser/reader.ts": $viewer_parser_reader,
+        "./islands/viewer/parser/rule.ts": $viewer_parser_rule,
         "./islands/viewer/parser/tokenizers.ts": $viewer_parser_tokenizers,
     },
     baseUrl: import.meta.url,

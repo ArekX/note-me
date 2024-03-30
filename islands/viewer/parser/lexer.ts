@@ -1,9 +1,10 @@
-import { Reader } from "./reader.ts";
+import { createReader } from "./reader.ts";
 import { tokenizers, TokenParser } from "./tokenizers.ts";
 
 export type ResultToken = NonNullable<ReturnType<TokenParser>>;
 
-export const lex = (reader: Reader): ResultToken[] => {
+export const lex = (text: string): ResultToken[] => {
+    const reader = createReader(text);
     const results: ResultToken[] = [];
 
     while (!reader.isEof()) {
