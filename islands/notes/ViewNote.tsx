@@ -1,4 +1,4 @@
-import Viewer from "$islands/Viewer.tsx";
+import Viewer from "../viewer/Viewer.tsx";
 import { ViewNoteRecord } from "$backend/repository/note-repository.ts";
 import { Button } from "$components/Button.tsx";
 import { Icon } from "$components/Icon.tsx";
@@ -39,7 +39,7 @@ export function ViewNote({ record }: ViewNoteProps) {
                 <div class="text-sm">&rarr; in {record.group_name}</div>
             )}
             <div>
-                <Viewer markdownText={record.note} />
+                <Viewer text={record.note} />
             </div>
         </div>
     );

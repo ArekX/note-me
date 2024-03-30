@@ -37,7 +37,6 @@ import * as $Dialog from "./islands/Dialog.tsx";
 import * as $Loader from "./islands/Loader.tsx";
 import * as $Pagination from "./islands/Pagination.tsx";
 import * as $ScriptLoader from "./islands/ScriptLoader.tsx";
-import * as $Viewer from "./islands/Viewer.tsx";
 import * as $note_tree_MoreMenu from "./islands/note-tree/MoreMenu.tsx";
 import * as $note_tree_RootGroupBar from "./islands/note-tree/RootGroupBar.tsx";
 import * as $note_tree_TreeItem from "./islands/note-tree/TreeItem.tsx";
@@ -61,6 +60,10 @@ import * as $tags_EditTagForm from "./islands/tags/EditTagForm.tsx";
 import * as $tags_TagsList from "./islands/tags/TagsList.tsx";
 import * as $users_EditUserForm from "./islands/users/EditUserForm.tsx";
 import * as $users_UserList from "./islands/users/UserList.tsx";
+import * as $viewer_Viewer from "./islands/viewer/Viewer.tsx";
+import * as $viewer_parser_lexer from "./islands/viewer/parser/lexer.ts";
+import * as $viewer_parser_reader from "./islands/viewer/parser/reader.ts";
+import * as $viewer_parser_tokenizers from "./islands/viewer/parser/tokenizers.ts";
 import { type Manifest } from "$fresh/server.ts";
 
 const manifest = {
@@ -102,7 +105,6 @@ const manifest = {
         "./islands/Loader.tsx": $Loader,
         "./islands/Pagination.tsx": $Pagination,
         "./islands/ScriptLoader.tsx": $ScriptLoader,
-        "./islands/Viewer.tsx": $Viewer,
         "./islands/note-tree/MoreMenu.tsx": $note_tree_MoreMenu,
         "./islands/note-tree/RootGroupBar.tsx": $note_tree_RootGroupBar,
         "./islands/note-tree/TreeItem.tsx": $note_tree_TreeItem,
@@ -129,6 +131,10 @@ const manifest = {
         "./islands/tags/TagsList.tsx": $tags_TagsList,
         "./islands/users/EditUserForm.tsx": $users_EditUserForm,
         "./islands/users/UserList.tsx": $users_UserList,
+        "./islands/viewer/Viewer.tsx": $viewer_Viewer,
+        "./islands/viewer/parser/lexer.ts": $viewer_parser_lexer,
+        "./islands/viewer/parser/reader.ts": $viewer_parser_reader,
+        "./islands/viewer/parser/tokenizers.ts": $viewer_parser_tokenizers,
     },
     baseUrl: import.meta.url,
 } satisfies Manifest;
