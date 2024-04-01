@@ -15,6 +15,7 @@ export const parse = (tokens: ResultToken[]) => {
         // console.log(result, reader.peek(10));
 
         if (!result) {
+            console.log("Unparsed", reader.peek(10));
             // TODO: throw error here
             break;
         }

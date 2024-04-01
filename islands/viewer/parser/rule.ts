@@ -36,7 +36,7 @@ export type Rules = RuleFn | TokenParserFn;
 export const rule = (
     getRule: () => TokenParserFn,
     onMatch: MatchFn,
-): RuleFn =>
+) =>
 (reader: Reader<ParsedToken>) => {
     const checkRule = getRule();
     const result = checkRule(reader);

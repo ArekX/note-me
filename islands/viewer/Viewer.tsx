@@ -31,8 +31,23 @@ export default function Viewer({ text = "" }: ViewerProps) {
             ![ovo je alt text](https://google.com)
 
             [nako neki](https://google.com)
+
+            <script>alrt(1)</script>
+
+            nesto ***emphasis*** ne\`sto\`
+
+            > asss55
+
+            > bbb
+            > ccc
+
+            @[komanda]
+            @[druga komanda](parametar)
+
+            \`\`\`php
+            opa cupa\`\`\`
         
-        `));
+        s`));
 
         console.log(ast);
 

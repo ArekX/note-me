@@ -1,5 +1,5 @@
 import { createReader } from "./reader.ts";
-import { tokenizers, TokenParser } from "./tokenizers.ts";
+import { tokenizers, TokenizerState, TokenParser } from "./tokenizers.ts";
 
 export type ResultToken = NonNullable<ReturnType<TokenParser>>;
 
@@ -7,10 +7,14 @@ export const lex = (text: string): ResultToken[] => {
     const reader = createReader(text);
     const results: ResultToken[] = [];
 
+    const state: TokenizerState = {
+        isEscapeMode: false,
+    };
+
     while (!reader.isEof()) {
         let tokenAdded = false;
         for (const tokenize of tokenizers) {
-            const token = tokenize(reader);
+            const token = tokenize(reader, state);
             if (token) {
                 results.push(token);
                 tokenAdded = true;

@@ -12,18 +12,15 @@ import {
 import { ParsedToken } from "./tokenizers.ts";
 
 interface HeadingNode
-    extends TreeNode<"heading", { level: number; text: string }> {}
+    extends TreeNode<"heading", { level: number; text: RecursiveResult }> {}
 
-const parseHeadingRule = rule(
+const heading = rule(
     () =>
         exactly(
             minOf(1, token("hash")),
             minOf(
                 1,
-                either(
-                    token("whitespace"),
-                    token("text-block"),
-                ),
+                expression,
             ),
         ),
     (parsed) => {
@@ -33,8 +30,7 @@ const parseHeadingRule = rule(
             type: "heading",
             data: {
                 level: (parsedValue[0] as ParsedToken[]).length,
-                text: (parsedValue[1] as ParsedToken[]).map((t) => t.value)
-                    .join(""),
+                text: parsedValue[1] as RecursiveResult,
             },
         } as HeadingNode;
     },
@@ -42,13 +38,15 @@ const parseHeadingRule = rule(
 
 interface TextBlockNode extends TreeNode<"text-block", { text: string }> {}
 
-const parseTextBlockRule = rule(
+const textBlock = rule(
     () =>
         minOf(
             1,
             either(
                 token("text-block"),
                 token("whitespace"),
+                token("html-tag"),
+                token("number"),
             ),
         ),
     (parsed) => {
@@ -66,7 +64,7 @@ const parseTextBlockRule = rule(
 
 interface NewLineNode extends TreeNode<"new-line"> {}
 
-const parseNewLine = rule(
+const newLine = rule(
     () => token("new-line"),
     () => {
         return {
@@ -77,7 +75,7 @@ const parseNewLine = rule(
 
 interface ImageNode extends TreeNode<"image", { alt: string; link: string }> {}
 
-const parseImage = rule(
+const image = rule(
     () =>
         exactly(
             token("exclamation"),
@@ -100,7 +98,7 @@ const parseImage = rule(
 
 interface LinkNode extends TreeNode<"link", { text: string; link: string }> {}
 
-const parseLink = rule(
+const link = rule(
     () =>
         exactly(
             token("bracket"),
@@ -119,24 +117,192 @@ const parseLink = rule(
     },
 );
 
+interface CodeBlockNode
+    extends TreeNode<"code-block", { code: string; language: string }> {}
+
+const codeBlock = rule(
+    () => token("backtick-block"),
+    (parsed) => {
+        const value = parsed as Extract<
+            ParsedToken,
+            { type: "backtick-block" }
+        >;
+        return {
+            type: "code-block",
+            data: {
+                code: value?.value ?? "",
+                language: value?.data?.language ?? "",
+            },
+        } as CodeBlockNode;
+    },
+);
+
+interface ExtensionCommandNode
+    extends TreeNode<"extension-command", { command: string; data: string }> {}
+
+const extensionCommand = rule(
+    () =>
+        exactly(
+            token("at-sign"),
+            optional(token("whitespace")),
+            token("bracket"),
+            optional(token("whitespace")),
+            optional(token("parentheses")),
+        ),
+    (parsed) => {
+        const value = parsed as ParsedToken[];
+        return {
+            type: "extension-command",
+            data: {
+                command: value[2].value,
+                data: value[4].value ?? "",
+            },
+        } as ExtensionCommandNode;
+    },
+);
+
+interface BlockQuoteNode
+    extends TreeNode<"block-quote", { lines: RecursiveResult[] }> {}
+
+const blockQuote = rule(
+    () =>
+        minOf(
+            1,
+            exactly(
+                token("blockquote"),
+                parseStatement,
+                token("new-line"),
+                optional(token("whitespace")),
+            ),
+        ),
+    (parsed) => {
+        const value = parsed as RecursiveResult[][];
+        const lines = value.map((block: RecursiveResult[]) => {
+            return block[1] as RecursiveResult;
+        });
+
+        return {
+            type: "block-quote",
+            data: { lines },
+        } as BlockQuoteNode;
+    },
+);
+
+interface ItalicizedNode
+    extends TreeNode<"italicized", { text: RecursiveResult }> {}
+
+const italicString = rule(
+    () =>
+        either(
+            exactly(
+                token("star"),
+                expression,
+                token("star"),
+            ),
+            exactly(
+                token("underscore"),
+                expression,
+                token("underscore"),
+            ),
+        ),
+    (parsed) => {
+        const value = (parsed as RecursiveResult[])[1] as RecursiveResult;
+
+        return {
+            type: "italicized",
+            data: { text: value },
+        } as ItalicizedNode;
+    },
+);
+
+interface BoldedNode extends TreeNode<"bolded", { text: RecursiveResult }> {}
+
+const boldString = rule(
+    () =>
+        either(
+            exactly(
+                token("star"),
+                token("star"),
+                expression,
+                token("star"),
+                token("star"),
+            ),
+            exactly(
+                token("underscore"),
+                token("underscore"),
+                expression,
+                token("underscore"),
+                token("underscore"),
+            ),
+        ),
+    (parsed) => {
+        const value = (parsed as RecursiveResult[])[1] as RecursiveResult;
+
+        return {
+            type: "bolded",
+            data: { text: value },
+        } as BoldedNode;
+    },
+);
+
+interface BacktickedNode extends TreeNode<"backticked", { text: string }> {}
+
+const backtickString = rule(
+    () => token("backtick"),
+    (parsed) => {
+        const value = parsed as Extract<ParsedToken, { type: "backtick" }>;
+
+        return {
+            type: "backticked",
+            data: { text: value.value },
+        } as BacktickedNode;
+    },
+);
+
+type ExpressionNode = TreeNode<"expression">;
+
+export const expression = rule(
+    () =>
+        either(
+            backtickString,
+            extensionCommand,
+            image,
+            link,
+            boldString,
+            italicString,
+            textBlock,
+        ),
+    (expression) => ({
+        type: "expression",
+        children: [expression],
+    } as ExpressionNode),
+);
+
+type StatementNode = TreeNode<"statement">;
+
 export type TreeNodes =
     | HeadingNode
     | StatementNode
     | TextBlockNode
     | NewLineNode
     | ImageNode
+    | BoldedNode
+    | BlockQuoteNode
+    | BacktickedNode
+    | ExtensionCommandNode
+    | CodeBlockNode
+    | ItalicizedNode
+    | ExpressionNode
     | LinkNode;
-
-type StatementNode = TreeNode<"statement">;
 
 export const parseStatement = rule(
     () =>
         either(
-            parseHeadingRule,
-            parseNewLine,
-            parseTextBlockRule,
-            parseImage,
-            parseLink,
+            heading,
+            newLine,
+            codeBlock,
+            blockQuote,
+            expression,
         ),
     (rootValue) => rootValue as TreeNodes,
 );

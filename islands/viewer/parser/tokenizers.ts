@@ -6,13 +6,50 @@ export interface Token<T extends string, Data = never> {
     value: string;
 }
 
+export interface TokenizerState {
+    isEscapeMode: boolean;
+}
+
 export type Tokenizer<T extends string, Data = never> = (
     reader: Reader<string>,
+    state: TokenizerState,
 ) => Token<T, Data> | null;
 
-const tokenizeHtmlTag: Tokenizer<"html-tag"> = (reader) => {
+const createCharacterTokenizer =
+    <T extends string>(type: T, character: string): Tokenizer<T> =>
+    (reader, state) => {
+        if (state.isEscapeMode || reader.peek() !== character) {
+            return null;
+        }
+
+        reader.next();
+        return {
+            type,
+            value: character,
+        };
+    };
+
+const tokenizeEscape: Tokenizer<"escape"> = (reader, state) => {
+    if (reader.peek() !== "\\") {
+        return null;
+    }
+
+    state.isEscapeMode = true;
+    reader.next();
+
+    return {
+        type: "escape",
+        value: "\\",
+    };
+};
+
+const tokenizeHtmlTag: Tokenizer<"html-tag"> = (reader, state) => {
     if (reader.peek() !== "<") {
         return null;
+    }
+
+    if (state.isEscapeMode) {
+        state.isEscapeMode = false;
     }
 
     let value = "";
@@ -30,20 +67,8 @@ const tokenizeHtmlTag: Tokenizer<"html-tag"> = (reader) => {
     };
 };
 
-const tokenizeNewLine: Tokenizer<"new-line"> = (reader) => {
-    if (reader.peek() === "\n") {
-        reader.next();
-        return {
-            type: "new-line",
-            value: "\n",
-        };
-    }
-
-    return null;
-};
-
-const tokenizeBacktick: Tokenizer<"backtick"> = (reader) => {
-    if (reader.peek() !== "`") {
+const tokenizeBacktick: Tokenizer<"backtick"> = (reader, state) => {
+    if (state.isEscapeMode || reader.peek() !== "`") {
         return null;
     }
 
@@ -54,6 +79,8 @@ const tokenizeBacktick: Tokenizer<"backtick"> = (reader) => {
         value += reader.peek();
         reader.next();
     }
+
+    reader.next();
 
     return {
         type: "backtick",
@@ -91,35 +118,6 @@ const tokenizeBacktickBlock: Tokenizer<"backtick-block", { language: string }> =
             value,
         };
     };
-
-const tokenizeBlockquote: Tokenizer<"blockquote"> = (reader) => {
-    if (reader.peek() !== ">") {
-        return null;
-    }
-    reader.next();
-
-    return {
-        type: "blockquote",
-        value: ">",
-    };
-};
-
-const tokenizeExclamation: Tokenizer<
-    "exclamation"
-> = (
-    reader,
-) => {
-    if (reader.peek() !== "!") {
-        return null;
-    }
-
-    reader.next();
-
-    return {
-        type: "exclamation",
-        value: "!",
-    };
-};
 
 const tokenizeBracket: Tokenizer<
     "bracket"
@@ -171,87 +169,6 @@ const tokenizeParentheses: Tokenizer<
     };
 };
 
-const tokenizeStar: Tokenizer<
-    "star"
-> = (
-    reader,
-) => {
-    if (reader.peek() !== "*") {
-        return null;
-    }
-
-    reader.next();
-
-    return {
-        type: "star",
-        value: "*",
-    };
-};
-
-const tokenizeUnderscore: Tokenizer<
-    "underscore"
-> = (
-    reader,
-) => {
-    if (reader.peek() !== "_") {
-        return null;
-    }
-    reader.next();
-
-    return {
-        type: "underscore",
-        value: "_",
-    };
-};
-
-const tokenizeMinus: Tokenizer<
-    "minus"
-> = (
-    reader,
-) => {
-    if (reader.peek() !== "-") {
-        return null;
-    }
-
-    reader.next();
-
-    return {
-        type: "minus",
-        value: "-",
-    };
-};
-
-const tokenizeEquals: Tokenizer<
-    "equals"
-> = (
-    reader,
-) => {
-    if (reader.peek() !== "=") {
-        return null;
-    }
-
-    reader.next();
-
-    return {
-        type: "equals",
-        value: "=",
-    };
-};
-
-const nonTextBlockChars = [
-    "<",
-    ">",
-    "\n",
-    "#",
-    "`",
-    "[",
-    "!",
-    " ",
-    "*",
-    "_",
-    "-",
-];
-
 const tokenizeWhitespace: Tokenizer<"whitespace"> = (reader) => {
     if (reader.peek() !== " ") {
         return null;
@@ -269,12 +186,67 @@ const tokenizeWhitespace: Tokenizer<"whitespace"> = (reader) => {
     };
 };
 
-const tokenizeTextBlock: Tokenizer<"text-block"> = (reader) => {
+const numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+
+const tokenizeNumber: Tokenizer<"number"> = (reader) => {
     let value = "";
-    while (
-        !reader.isEof() && !nonTextBlockChars.includes(reader.peek() as string)
-    ) {
+
+    while (!reader.isEof() && numbers.includes(reader.peek() as string)) {
         value += reader.peek();
+        reader.next();
+    }
+
+    return value.length > 0
+        ? {
+            type: "number",
+            value,
+        }
+        : null;
+};
+
+const tokenizeNewLine = createCharacterTokenizer("new-line", "\n");
+const tokenizeBlockquote = createCharacterTokenizer("blockquote", ">");
+const tokenizeExclamation = createCharacterTokenizer("exclamation", "!");
+const tokenizeStar = createCharacterTokenizer("star", "*");
+const tokenizeUnderscore = createCharacterTokenizer("underscore", "_");
+const tokenizeMinus = createCharacterTokenizer("minus", "-");
+const tokenizeEquals = createCharacterTokenizer("equals", "=");
+const tokenizeAtSign = createCharacterTokenizer("at-sign", "@");
+const tokenizeHash = createCharacterTokenizer("hash", "#");
+const tokenizeDot = createCharacterTokenizer("dot", ".");
+
+const nonTextBlockChars = [
+    "<",
+    ">",
+    "\n",
+    "#",
+    "`",
+    "[",
+    "!",
+    " ",
+    "@",
+    "*",
+    "_",
+    "-",
+    ".",
+    ...numbers,
+    "\\",
+];
+
+const tokenizeTextBlock: Tokenizer<"text-block"> = (reader, state) => {
+    let value = "";
+    while (!reader.isEof()) {
+        const character = reader.peek() as string;
+
+        if (nonTextBlockChars.includes(character)) {
+            if (!state.isEscapeMode) {
+                break;
+            }
+
+            state.isEscapeMode = false;
+        }
+
+        value += character;
         reader.next();
     }
 
@@ -284,41 +256,18 @@ const tokenizeTextBlock: Tokenizer<"text-block"> = (reader) => {
     };
 };
 
-const tokenizeAtSign: Tokenizer<"at-sign"> = (reader) => {
-    if (reader.peek() !== "@") {
-        return null;
-    }
-
-    reader.next();
-
-    return {
-        type: "at-sign",
-        value: "@",
-    };
-};
-
-const tokenizeHash: Tokenizer<"hash"> = (reader) => {
-    if (reader.peek() !== "#") {
-        return null;
-    }
-
-    reader.next();
-
-    return {
-        type: "hash",
-        value: "#",
-    };
-};
-
 export type TokenParser =
     | typeof tokenizeHtmlTag
     | typeof tokenizeHash
     | typeof tokenizeNewLine
     | typeof tokenizeBacktickBlock
+    | typeof tokenizeNumber
     | typeof tokenizeBacktick
     | typeof tokenizeBlockquote
     | typeof tokenizeExclamation
     | typeof tokenizeBracket
+    | typeof tokenizeEscape
+    | typeof tokenizeDot
     | typeof tokenizeParentheses
     | typeof tokenizeWhitespace
     | typeof tokenizeStar
@@ -346,5 +295,8 @@ export const tokenizers: TokenParser[] = [
     tokenizeMinus,
     tokenizeEquals,
     tokenizeAtSign,
+    tokenizeNumber,
+    tokenizeEscape,
+    tokenizeDot,
     tokenizeTextBlock,
 ];
