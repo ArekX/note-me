@@ -22,11 +22,15 @@ export default function Viewer({ text = "" }: ViewerProps) {
     const parsedText = useMemo(() => {
         const ast = parse(lex(`
             idemo niis
-            # idemo niis
+            \\# idemo niis
             ## idemo niis
             ### idemo niis
             #### idemo niis
             ##### idemo niis
+
+1. asfsafasf
+2. asfsafasf
+3. 43434 34343
 
             ![ovo je alt text](https://google.com)
 
@@ -49,7 +53,7 @@ export default function Viewer({ text = "" }: ViewerProps) {
         
         s`));
 
-        console.log(ast);
+        // console.log(ast);
 
         return text;
     }, [text]);

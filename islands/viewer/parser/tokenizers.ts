@@ -37,10 +37,7 @@ const tokenizeEscape: Tokenizer<"escape"> = (reader, state) => {
     state.isEscapeMode = true;
     reader.next();
 
-    return {
-        type: "escape",
-        value: "\\",
-    };
+    return null;
 };
 
 const tokenizeHtmlTag: Tokenizer<"html-tag"> = (reader, state) => {

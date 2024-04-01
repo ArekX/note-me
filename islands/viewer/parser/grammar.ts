@@ -18,10 +18,8 @@ const heading = rule(
     () =>
         exactly(
             minOf(1, token("hash")),
-            minOf(
-                1,
-                expression,
-            ),
+            expression,
+            token("new-line"),
         ),
     (parsed) => {
         const parsedValue = parsed as RecursiveResult[];
@@ -259,6 +257,79 @@ const backtickString = rule(
     },
 );
 
+interface UnorderedListNode extends
+    TreeNode<"unordered-list", {
+        items: {
+            level: number;
+            value: RecursiveResult;
+        }[];
+    }> {}
+
+const unorderedList = rule(
+    () =>
+        minOf(
+            1,
+            exactly(
+                optional(token("whitespace")),
+                token("star"),
+                expression,
+                token("new-line"),
+            ),
+        ),
+    (parsed) => {
+        return {
+            type: "unordered-list",
+            data: {
+                items: (parsed as RecursiveResult[][]).map((p) => {
+                    return {
+                        level: (p[0] as ParsedToken).type === "whitespace"
+                            ? (p[0] as ParsedToken).value.length
+                            : 0,
+                        value: p[2] as RecursiveResult,
+                    };
+                }),
+            },
+        } as UnorderedListNode;
+    },
+);
+
+interface OrderedListNode extends
+    TreeNode<"ordered-list", {
+        items: {
+            level: number;
+            value: RecursiveResult;
+        }[];
+    }> {}
+
+const orderedList = rule(
+    () =>
+        minOf(
+            1,
+            exactly(
+                optional(token("whitespace")),
+                token("number"),
+                token("dot"),
+                expression,
+                token("new-line"),
+            ),
+        ),
+    (parsed) => {
+        return {
+            type: "ordered-list",
+            data: {
+                items: (parsed as RecursiveResult[][]).map((p) => {
+                    return {
+                        level: (p[0] as ParsedToken).type === "whitespace"
+                            ? (p[0] as ParsedToken).value.length
+                            : 0,
+                        value: p[3] as RecursiveResult,
+                    };
+                }),
+            },
+        } as OrderedListNode;
+    },
+);
+
 type ExpressionNode = TreeNode<"expression">;
 
 export const expression = rule(
@@ -270,6 +341,8 @@ export const expression = rule(
             link,
             boldString,
             italicString,
+            orderedList,
+            unorderedList,
             textBlock,
         ),
     (expression) => ({
@@ -286,8 +359,10 @@ export type TreeNodes =
     | TextBlockNode
     | NewLineNode
     | ImageNode
+    | OrderedListNode
     | BoldedNode
     | BlockQuoteNode
+    | UnorderedListNode
     | BacktickedNode
     | ExtensionCommandNode
     | CodeBlockNode
