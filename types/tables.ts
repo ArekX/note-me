@@ -1,4 +1,4 @@
-import { Generated } from "../backend/lib/kysely-sqlite-dialect/deps.ts";
+import { Generated } from "../lib/kysely-sqlite-dialect/deps.ts";
 import { Roles } from "$backend/rbac/role-definitions.ts";
 
 export interface UserTable {

@@ -34,7 +34,7 @@
         "$schemas/": "./schemas/",
         "$frontend/": "./frontend/",
         "$cli/": "./cli/",
-        "$lib/": "./backend/lib/",
+        "$lib/": "./lib/",
         "$types": "./types/mod.ts",
         "$tests/": "./tests/"
     },

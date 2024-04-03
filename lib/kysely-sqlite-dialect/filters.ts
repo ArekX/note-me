@@ -2,7 +2,7 @@ import {
     ReferenceExpression,
     SelectQueryBuilder,
     StringReference,
-} from "$lib/kysely-sqlite-dialect/deps.ts";
+} from "./deps.ts";
 
 export const filterByText = <DB, TB extends keyof DB, O>(
     query: SelectQueryBuilder<DB, TB, O>,

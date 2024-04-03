@@ -1,7 +1,7 @@
 import { useMemo } from "preact/hooks";
-import { createReader } from "./parser/reader.ts";
-import { lex } from "./parser/lexer.ts";
-import { parse } from "./parser/parser.ts";
+import { createReader } from "../../lib/parser/reader.ts";
+import { lex } from "../../lib/parser/lexer.ts";
+import { parse } from "../../lib/parser/parser.ts";
 
 export type ViewerProps = {
     text: string;

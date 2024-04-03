@@ -29,7 +29,7 @@ const createCharacterTokenizer =
         };
     };
 
-const tokenizeEscape: Tokenizer<"escape"> = (reader, state) => {
+const tokenizeEscape: Tokenizer<never> = (reader, state) => {
     if (reader.peek() !== "\\") {
         return null;
     }
@@ -230,7 +230,7 @@ const nonTextBlockChars = [
     "\\",
 ];
 
-const tokenizeTextBlock: Tokenizer<"text-block"> = (reader, state) => {
+const tokenizeWord: Tokenizer<"word"> = (reader, state) => {
     let value = "";
     while (!reader.isEof()) {
         const character = reader.peek() as string;
@@ -248,7 +248,7 @@ const tokenizeTextBlock: Tokenizer<"text-block"> = (reader, state) => {
     }
 
     return {
-        type: "text-block",
+        type: "word",
         value,
     };
 };
@@ -272,9 +272,9 @@ export type TokenParser =
     | typeof tokenizeMinus
     | typeof tokenizeEquals
     | typeof tokenizeAtSign
-    | typeof tokenizeTextBlock;
+    | typeof tokenizeWord;
 
-export type ParsedToken = NonNullable<ReturnType<TokenParser>>;
+export type ParsedToken = NonNullable<ReturnType<TokenParser>> | Token<"eof">;
 
 export const tokenizers: TokenParser[] = [
     tokenizeHtmlTag,
@@ -295,5 +295,5 @@ export const tokenizers: TokenParser[] = [
     tokenizeNumber,
     tokenizeEscape,
     tokenizeDot,
-    tokenizeTextBlock,
+    tokenizeWord,
 ];

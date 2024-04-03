@@ -61,12 +61,12 @@ import * as $tags_TagsList from "./islands/tags/TagsList.tsx";
 import * as $users_EditUserForm from "./islands/users/EditUserForm.tsx";
 import * as $users_UserList from "./islands/users/UserList.tsx";
 import * as $viewer_Viewer from "./islands/viewer/Viewer.tsx";
-import * as $viewer_parser_grammar from "./islands/viewer/parser/grammar.ts";
-import * as $viewer_parser_lexer from "./islands/viewer/parser/lexer.ts";
-import * as $viewer_parser_parser from "./islands/viewer/parser/parser.ts";
-import * as $viewer_parser_reader from "./islands/viewer/parser/reader.ts";
-import * as $viewer_parser_rule from "./islands/viewer/parser/rule.ts";
-import * as $viewer_parser_tokenizers from "./islands/viewer/parser/tokenizers.ts";
+import * as $viewer_parser_grammar from "./lib/parser/grammar.ts";
+import * as $viewer_parser_lexer from "./lib/parser/lexer.ts";
+import * as $viewer_parser_parser from "./lib/parser/parser.ts";
+import * as $viewer_parser_reader from "./lib/parser/reader.ts";
+import * as $viewer_parser_rule from "./lib/parser/rule.ts";
+import * as $viewer_parser_tokenizers from "./lib/parser/tokenizers.ts";
 import { type Manifest } from "$fresh/server.ts";
 
 const manifest = {

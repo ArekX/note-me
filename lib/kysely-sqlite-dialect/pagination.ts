@@ -1,4 +1,4 @@
-import { SelectQueryBuilder, sql } from "$lib/kysely-sqlite-dialect/mod.ts";
+import { SelectQueryBuilder, sql } from "./mod.ts";
 
 export const applyPagination = <DB, TB extends keyof DB, O>(
     query: SelectQueryBuilder<DB, TB, O>,

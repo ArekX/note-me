@@ -1,4 +1,4 @@
-import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
+import { Paged } from "../lib/kysely-sqlite-dialect/pagination.ts";
 
 export const toCreated = <T>(result: T) =>
     new Response(JSON.stringify(result), {

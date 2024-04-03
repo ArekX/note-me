@@ -1,11 +1,9 @@
 import { createReader } from "./reader.ts";
-import { tokenizers, TokenizerState, TokenParser } from "./tokenizers.ts";
+import { ParsedToken, tokenizers, TokenizerState } from "./tokenizers.ts";
 
-export type ResultToken = NonNullable<ReturnType<TokenParser>>;
-
-export const lex = (text: string): ResultToken[] => {
+export const lex = (text: string): ParsedToken[] => {
     const reader = createReader(text);
-    const results: ResultToken[] = [];
+    const results: ParsedToken[] = [];
 
     const state: TokenizerState = {
         isEscapeMode: false,
@@ -29,6 +27,8 @@ export const lex = (text: string): ResultToken[] => {
         const { line, character } = reader.getAt();
         throw new Error(`Unexpected token at ${line}:${character}.`);
     }
+
+    results.push({ type: "eof", value: "" });
 
     return results;
 };

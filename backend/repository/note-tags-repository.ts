@@ -1,9 +1,9 @@
 import { db } from "$backend/database.ts";
 import { NoteTagTable, RecordId } from "$types";
 import { getCurrentUnixTimestamp } from "$backend/time.ts";
-import { applyFilters } from "$lib/kysely-sqlite-dialect/filters.ts";
-import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
-import { pageResults } from "$lib/kysely-sqlite-dialect/pagination.ts";
+import { applyFilters } from "../../lib/kysely-sqlite-dialect/filters.ts";
+import { Paged } from "../../lib/kysely-sqlite-dialect/pagination.ts";
+import { pageResults } from "../../lib/kysely-sqlite-dialect/pagination.ts";
 
 export type TagRecord =
     & Pick<

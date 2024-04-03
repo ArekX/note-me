@@ -6,7 +6,7 @@ import { AddNoteRequest } from "$schemas/notes.ts";
 import { AddGroupRequest, UpdateGroupRequest } from "$schemas/groups.ts";
 import { EditUserProfile } from "$schemas/users.ts";
 import { FindTagRequest } from "$backend/api-handlers/tags/find-tags.ts";
-import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
+import { Paged } from "../lib/kysely-sqlite-dialect/pagination.ts";
 import { UserRecord } from "$backend/repository/user-repository.ts";
 import { TagRecord } from "$backend/repository/note-tags-repository.ts";
 import { AddUserRequest } from "$schemas/users.ts";

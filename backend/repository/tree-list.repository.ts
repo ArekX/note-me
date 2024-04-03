@@ -1,5 +1,5 @@
 import { db } from "$backend/database.ts";
-import { sql } from "$lib/kysely-sqlite-dialect/deps.ts";
+import { sql } from "../../lib/kysely-sqlite-dialect/deps.ts";
 
 export interface TreeRecord {
     type: "group" | "note";

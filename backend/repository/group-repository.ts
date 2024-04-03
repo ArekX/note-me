@@ -2,7 +2,7 @@ import { db } from "$backend/database.ts";
 import { RecordId } from "../../types/repository.ts";
 import { GroupTable } from "../../types/tables.ts";
 import { getCurrentUnixTimestamp } from "$backend/time.ts";
-import { sql } from "$lib/kysely-sqlite-dialect/deps.ts";
+import { sql } from "../../lib/kysely-sqlite-dialect/deps.ts";
 
 export type GroupRecord =
     & Pick<GroupTable, "name" | "parent_id" | "created_at">

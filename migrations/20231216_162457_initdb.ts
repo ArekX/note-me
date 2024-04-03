@@ -1,4 +1,4 @@
-import { Kysely } from "$backend/lib/migrator/deps.ts";
+import { Kysely } from "../lib/migrator/deps.ts";
 
 export async function up(db: Kysely<unknown>): Promise<void> {
     await db.schema.createTable("user")
