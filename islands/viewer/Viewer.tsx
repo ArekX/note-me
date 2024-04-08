@@ -1,66 +1,43 @@
+import { parseMarkdown } from "$frontend/markdown.ts";
 import { useMemo } from "preact/hooks";
-import { createReader } from "../../lib/parser/reader.ts";
-import { lex } from "../../lib/parser/lexer.ts";
-import { parse } from "../../lib/parser/parser.ts";
+import { CodeBlock } from "./blocks/CodeBlock.tsx";
+import { AstTokenWithChildren } from "$frontend/markdown.ts";
 
 export type ViewerProps = {
     text: string;
 };
 
 export default function Viewer({ text = "" }: ViewerProps) {
-    // useEffect(() => {
-    //     if (viewerRef.current) {
-    //         viewerRef.current.querySelectorAll("pre code").forEach((block) => {
-    //             block.innerHTML =
-    //                 highlightJs.highlight(block.textContent ?? "", {
-    //                     language: block.classList[0].replace("lang-", ""),
-    //                 }).value;
-    //         });
-    //     }
-    // }, [viewerRef]);
+    console.log(parseMarkdown(text));
 
-    const parsedText = useMemo(() => {
-        const ast = parse(lex(`
-            idemo niis
-            \\# idemo niis
-            ## idemo niis
-            ### idemo niis
-            #### idemo niis
-            ##### idemo niis
+    const components = useMemo(() => {
+        const root = parseMarkdown(text);
+        // Convert the AST to a JSX tree and return it;
 
-1. asfsafasf
-2. asfsafasf
-3. 43434 34343
+        const result = [];
 
-            ![ovo je alt text](https://google.com)
+        for (const token of root.children) {
+            if (token.type === "codeBlock") {
+                const { children, language } = token as AstTokenWithChildren & {
+                    language: string;
+                }; // TODO: Add proper type checking
+                result.push(
+                    <CodeBlock
+                        code={children.map((t) => t.content).join("\n")}
+                        language={language}
+                    />,
+                );
+            } else {
+                result.push(<div>{token.content}</div>);
+            }
+        }
 
-            [nako neki](https://google.com)
-
-            <script>alrt(1)</script>
-
-            nesto ***emphasis*** ne\`sto\`
-
-            > asss55
-
-            > bbb
-            > ccc
-
-            @[komanda]
-            @[druga komanda](parametar)
-
-            \`\`\`php
-            opa cupa\`\`\`
-        
-        s`));
-
-        // console.log(ast);
-
-        return text;
+        return result;
     }, [text]);
 
     return (
         <div class="markdown-viewer">
-            <pre>{parsedText}</pre>
+            {components}
         </div>
     );
 }
