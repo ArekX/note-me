@@ -62,6 +62,7 @@ import * as $users_EditUserForm from "./islands/users/EditUserForm.tsx";
 import * as $users_UserList from "./islands/users/UserList.tsx";
 import * as $viewer_Viewer from "./islands/viewer/Viewer.tsx";
 import * as $viewer_blocks_CodeBlock from "./islands/viewer/blocks/CodeBlock.tsx";
+import * as $viewer_renderer from "./islands/viewer/renderer.tsx";
 import { type Manifest } from "$fresh/server.ts";
 
 const manifest = {
@@ -131,6 +132,7 @@ const manifest = {
         "./islands/users/UserList.tsx": $users_UserList,
         "./islands/viewer/Viewer.tsx": $viewer_Viewer,
         "./islands/viewer/blocks/CodeBlock.tsx": $viewer_blocks_CodeBlock,
+        "./islands/viewer/renderer.tsx": $viewer_renderer,
     },
     baseUrl: import.meta.url,
 } satisfies Manifest;

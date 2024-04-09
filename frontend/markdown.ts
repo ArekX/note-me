@@ -1,25 +1,132 @@
 import { Token, tokens } from "$frontend/deps.ts";
 
-export interface AstToken {
-    type:
-        | "root"
-        | "list"
-        | "listItem"
-        | "codeBlock"
-        | Token["type"];
-    content?: string;
+export type AstNode = AstContainerNode | AstContentNode;
+
+type AstContentNode =
+    | AstContentNodeOf<"text">
+    | AstContentNodeOf<"code">
+    | AstContentNodeOf<"html">
+    | AstContentNodeOf<"footnoteReference">
+    | AstContentNodeOf<"softBreak">
+    | AstContentNodeOf<"hardBreak">
+    | AstContentNodeOf<"rule">
+    | AstContentNodeOf<"taskListMarker">;
+
+type AstContainerNode =
+    | RootAstNode
+    | AstContainerNodeOf<"list", { type: "ordered" | "unordered" }>
+    | AstContainerNodeOf<"link", { title: string; url: string }>
+    | AstContainerNodeOf<"image", { title: string; url: string }>
+    | AstContainerNodeOf<"blockQuote">
+    | AstContainerNodeOf<"heading">
+    | AstContainerNodeOf<"strikethrough">
+    | AstContainerNodeOf<"emphasis">
+    | AstContainerNodeOf<"strong">
+    | AstContainerNodeOf<"listItem">
+    | AstContainerNodeOf<"paragraph">
+    | AstContainerNodeOf<"table">
+    | AstContainerNodeOf<"tableHead">
+    | AstContainerNodeOf<"tableRow">
+    | AstContainerNodeOf<"tableCell">
+    | AstContainerNodeOf<"footnoteDefinition", { label: string }>
+    | AstContainerNodeOf<"codeBlock", { language: string }>;
+
+type RootAstNode = AstContainerNodeOf<"root">;
+
+interface AstNodeOf<T> {
+    type: T;
 }
 
-export interface AstTokenWithChildren extends AstToken {
-    children: (AstToken | AstTokenWithChildren)[];
+interface AstContentNodeOf<T> extends AstNodeOf<T> {
+    content: string;
 }
 
-const toSyntaxTree = (tokens: Token[]): AstTokenWithChildren => {
-    const root: AstTokenWithChildren = {
-        type: "root",
+interface AstContainerNodeOf<T, Data = null> extends AstNodeOf<T> {
+    data: Data;
+    children: AstNode[];
+}
+
+type TextToken = Token & { content: string };
+
+const groupTextTokens = (tokens: Token[]): Token[] => {
+    const result = [];
+    let textToken: TextToken | null = null;
+
+    for (const token of tokens) {
+        if (token.type !== "text" && token.type !== "html") {
+            textToken = null;
+            result.push(token);
+            continue;
+        }
+
+        if (textToken === null) {
+            textToken = { ...token, type: "text" } as TextToken;
+            result.push(textToken);
+            continue;
+        }
+
+        textToken.content += token.content;
+    }
+
+    return result;
+};
+
+const createContainerNode = (
+    token: Extract<Token, { type: "start" | "end" }>,
+): AstContainerNode => {
+    const type = token.tag as AstContainerNode["type"];
+
+    switch (type) {
+        case "codeBlock":
+            return {
+                type,
+                data: {
+                    language: (token as { language?: string }).language ?? "",
+                },
+                children: [],
+            };
+        case "list":
+            return {
+                type,
+                data: {
+                    type: "startNumber" in token ? "ordered" : "unordered",
+                },
+                children: [],
+            };
+        case "link":
+            /* falls through */
+        case "image": {
+            const { url, title } = token as { url: string; title: string };
+            return {
+                type,
+                data: { url, title },
+                children: [],
+            };
+        }
+        case "footnoteDefinition":
+            return {
+                type,
+                data: {
+                    label: (token as { label: string }).label,
+                },
+                children: [],
+            };
+    }
+
+    return {
+        type,
+        data: null,
         children: [],
     };
-    const stack: AstTokenWithChildren[] = [root];
+};
+
+const toSyntaxTree = (tokens: Token[]): RootAstNode => {
+    const root: RootAstNode = {
+        type: "root",
+        data: null,
+        children: [],
+    };
+    const stack: AstContainerNode[] = [root];
 
     for (let i = 0; i < tokens.length; i++) {
         const token = tokens[i];
@@ -32,31 +139,24 @@ const toSyntaxTree = (tokens: Token[]): AstTokenWithChildren => {
             stack.pop();
             continue;
         } else if (token.type == "start") {
-            const parentToken: AstTokenWithChildren = {
-                ...token,
-                type: token.tag as AstToken["type"],
-                children: [],
-            };
-            stack[stack.length - 1].children.push(parentToken);
-            stack.push(parentToken);
+            const parent = createContainerNode(token);
+            stack[stack.length - 1].children.push(parent!);
+            stack.push(parent!);
             continue;
         }
 
-        if (token.type === "html") {
-            token.type = "text";
-        }
-
-        stack[stack.length - 1].children.push(token as AstToken);
+        stack[stack.length - 1].children.push({
+            ...token,
+        } as AstNode);
     }
 
     return root;
 };
 
-export const parseMarkdown = (markdownText: string): AstTokenWithChildren =>
-    toSyntaxTree(tokens(markdownText, {
+export const parseMarkdown = (markdownText: string): RootAstNode =>
+    toSyntaxTree(groupTextTokens(tokens(markdownText, {
         footnotes: true,
         tables: true,
         strikethrough: true,
         tasklists: true,
-        smartPunctuation: true,
-    }));
+    })));
