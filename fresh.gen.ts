@@ -61,7 +61,21 @@ import * as $tags_TagsList from "./islands/tags/TagsList.tsx";
 import * as $users_EditUserForm from "./islands/users/EditUserForm.tsx";
 import * as $users_UserList from "./islands/users/UserList.tsx";
 import * as $viewer_Viewer from "./islands/viewer/Viewer.tsx";
+import * as $viewer_blocks_Blockquote from "./islands/viewer/blocks/Blockquote.tsx";
+import * as $viewer_blocks_Break from "./islands/viewer/blocks/Break.tsx";
+import * as $viewer_blocks_Checkbox from "./islands/viewer/blocks/Checkbox.tsx";
+import * as $viewer_blocks_ChildrenNode from "./islands/viewer/blocks/ChildrenNode.tsx";
+import * as $viewer_blocks_Code from "./islands/viewer/blocks/Code.tsx";
 import * as $viewer_blocks_CodeBlock from "./islands/viewer/blocks/CodeBlock.tsx";
+import * as $viewer_blocks_Extension from "./islands/viewer/blocks/Extension.tsx";
+import * as $viewer_blocks_Footnote from "./islands/viewer/blocks/Footnote.tsx";
+import * as $viewer_blocks_Heading from "./islands/viewer/blocks/Heading.tsx";
+import * as $viewer_blocks_HorizontalLine from "./islands/viewer/blocks/HorizontalLine.tsx";
+import * as $viewer_blocks_Image from "./islands/viewer/blocks/Image.tsx";
+import * as $viewer_blocks_Link from "./islands/viewer/blocks/Link.tsx";
+import * as $viewer_blocks_List from "./islands/viewer/blocks/List.tsx";
+import * as $viewer_blocks_Root from "./islands/viewer/blocks/Root.tsx";
+import * as $viewer_blocks_Text from "./islands/viewer/blocks/Text.tsx";
 import * as $viewer_renderer from "./islands/viewer/renderer.tsx";
 import { type Manifest } from "$fresh/server.ts";
 
@@ -131,7 +145,22 @@ const manifest = {
         "./islands/users/EditUserForm.tsx": $users_EditUserForm,
         "./islands/users/UserList.tsx": $users_UserList,
         "./islands/viewer/Viewer.tsx": $viewer_Viewer,
+        "./islands/viewer/blocks/Blockquote.tsx": $viewer_blocks_Blockquote,
+        "./islands/viewer/blocks/Break.tsx": $viewer_blocks_Break,
+        "./islands/viewer/blocks/Checkbox.tsx": $viewer_blocks_Checkbox,
+        "./islands/viewer/blocks/ChildrenNode.tsx": $viewer_blocks_ChildrenNode,
+        "./islands/viewer/blocks/Code.tsx": $viewer_blocks_Code,
         "./islands/viewer/blocks/CodeBlock.tsx": $viewer_blocks_CodeBlock,
+        "./islands/viewer/blocks/Extension.tsx": $viewer_blocks_Extension,
+        "./islands/viewer/blocks/Footnote.tsx": $viewer_blocks_Footnote,
+        "./islands/viewer/blocks/Heading.tsx": $viewer_blocks_Heading,
+        "./islands/viewer/blocks/HorizontalLine.tsx":
+            $viewer_blocks_HorizontalLine,
+        "./islands/viewer/blocks/Image.tsx": $viewer_blocks_Image,
+        "./islands/viewer/blocks/Link.tsx": $viewer_blocks_Link,
+        "./islands/viewer/blocks/List.tsx": $viewer_blocks_List,
+        "./islands/viewer/blocks/Root.tsx": $viewer_blocks_Root,
+        "./islands/viewer/blocks/Text.tsx": $viewer_blocks_Text,
         "./islands/viewer/renderer.tsx": $viewer_renderer,
     },
     baseUrl: import.meta.url,

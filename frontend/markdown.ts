@@ -2,23 +2,23 @@ import { Token, tokens } from "$frontend/deps.ts";
 
 export type AstNode = AstContainerNode | AstContentNode;
 
-type AstContentNode =
+export type AstContentNode =
     | AstContentNodeOf<"text">
     | AstContentNodeOf<"code">
-    | AstContentNodeOf<"html">
     | AstContentNodeOf<"footnoteReference">
     | AstContentNodeOf<"softBreak">
     | AstContentNodeOf<"hardBreak">
     | AstContentNodeOf<"rule">
-    | AstContentNodeOf<"taskListMarker">;
+    | (AstContentNodeOf<"image"> & { title: string; url: string })
+    | (AstContentNodeOf<"extension"> & { extension: string; params: string[] })
+    | (AstContentNodeOf<"taskListMarker"> & { checked: boolean });
 
-type AstContainerNode =
+export type AstContainerNode =
     | RootAstNode
     | AstContainerNodeOf<"list", { type: "ordered" | "unordered" }>
     | AstContainerNodeOf<"link", { title: string; url: string }>
-    | AstContainerNodeOf<"image", { title: string; url: string }>
     | AstContainerNodeOf<"blockQuote">
-    | AstContainerNodeOf<"heading">
+    | AstContainerNodeOf<"heading", { level: number }>
     | AstContainerNodeOf<"strikethrough">
     | AstContainerNodeOf<"emphasis">
     | AstContainerNodeOf<"strong">
@@ -48,7 +48,99 @@ interface AstContainerNodeOf<T, Data = null> extends AstNodeOf<T> {
 
 type TextToken = Token & { content: string };
 
-const groupTextTokens = (tokens: Token[]): Token[] => {
+type ExtensionToken = {
+    type: "extension";
+    extension: string;
+    params: string[];
+};
+
+type Tokens = ExtensionToken | Token;
+
+type TokenPipelineFn = (tokens: Tokens[]) => Tokens[];
+
+const extensionRegex =
+    /(?<!\\){\:(?<extension>[a-zA-Z0-9-]+)(?<params>(\|[^\|\}]+)*)\}/g;
+
+const removeExtensionEscape = (text: string): string =>
+    text.replace(/\\\{/g, "{");
+
+const parseImageTokens: TokenPipelineFn = (tokens: Tokens[]): Tokens[] => {
+    const result = [];
+    const imageStack: { title: string; url: string }[] = [];
+
+    for (const token of tokens) {
+        if (token.type === "start" && token.tag === "image") {
+            imageStack.push({ title: "", url: token.url });
+        } else if (token.type === "end" && token.tag === "image") {
+            result.push({
+                type: "image",
+                ...imageStack.pop()!,
+            });
+            continue;
+        }
+
+        if (imageStack.length === 0) {
+            result.push(token);
+        }
+
+        if (imageStack.length > 0 && token.type === "text") {
+            imageStack[imageStack.length - 1].title += token.content;
+        }
+    }
+
+    return result as Tokens[];
+};
+
+const parseExtensions: TokenPipelineFn = (tokens: Tokens[]): Tokens[] => {
+    const results: Tokens[] = [];
+    console.log(tokens);
+    for (const token of tokens) {
+        if (token.type !== "text") {
+            results.push(token);
+            continue;
+        }
+        const iterator = token.content.matchAll(extensionRegex);
+        let text = token.content;
+
+        let anyMatches = false;
+        for (const match of iterator) {
+            anyMatches = true;
+            const {
+                0: matched,
+                index,
+                groups: { extension, params: paramString } = {},
+            } = match;
+
+            const params = paramString.slice(1).split("|");
+
+            const leftSide = text.slice(0, index);
+
+            if (leftSide.length > 0) {
+                results.push({
+                    type: "text",
+                    content: removeExtensionEscape(leftSide),
+                });
+            }
+
+            text = text.slice(index + matched.length);
+
+            results.push({
+                type: "extension",
+                extension,
+                params,
+            });
+        }
+
+        if (!anyMatches) {
+            token.content = removeExtensionEscape(token.content);
+            results.push(token);
+        }
+    }
+
+    return results;
+};
+
+const groupTextTokens: TokenPipelineFn = (tokens: Tokens[]): Tokens[] => {
     const result = [];
     let textToken: TextToken | null = null;
 
@@ -93,9 +185,7 @@ const createContainerNode = (
                 },
                 children: [],
             };
-        case "link":
-            /* falls through */
-        case "image": {
+        case "link": {
             const { url, title } = token as { url: string; title: string };
             return {
                 type,
@@ -103,6 +193,14 @@ const createContainerNode = (
                 children: [],
             };
         }
+        case "heading":
+            return {
+                type,
+                data: {
+                    level: (token as { level: number }).level,
+                },
+                children: [],
+            };
         case "footnoteDefinition":
             return {
                 type,
@@ -120,7 +218,7 @@ const createContainerNode = (
     };
 };
 
-const toSyntaxTree = (tokens: Token[]): RootAstNode => {
+const toSyntaxTree = (tokens: Tokens[]): RootAstNode => {
     const root: RootAstNode = {
         type: "root",
         data: null,
@@ -153,10 +251,19 @@ const toSyntaxTree = (tokens: Token[]): RootAstNode => {
     return root;
 };
 
+const pipeline: TokenPipelineFn[] = [
+    parseImageTokens,
+    parseExtensions,
+    groupTextTokens,
+];
+
 export const parseMarkdown = (markdownText: string): RootAstNode =>
-    toSyntaxTree(groupTextTokens(tokens(markdownText, {
-        footnotes: true,
-        tables: true,
-        strikethrough: true,
-        tasklists: true,
-    })));
+    toSyntaxTree(pipeline.reduce(
+        (result, fn) => fn(result),
+        tokens(markdownText, {
+            footnotes: true,
+            tables: true,
+            strikethrough: true,
+            tasklists: true,
+        }) as Tokens[],
+    ));

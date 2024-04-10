@@ -1,18 +1,12 @@
-import { parseMarkdown } from "$frontend/markdown.ts";
 import { useMemo } from "preact/hooks";
-import {
-    createComponent,
-    markdownToComponents,
-} from "$islands/viewer/renderer.tsx";
+import { renderMarkdown } from "$islands/viewer/renderer.tsx";
 
 export type ViewerProps = {
     text: string;
 };
 
 export default function Viewer({ text = "" }: ViewerProps) {
-    console.log(parseMarkdown(text));
-
-    const components = useMemo(() => markdownToComponents(text), [
+    const components = useMemo(() => renderMarkdown(text), [
         text,
     ]);
 
