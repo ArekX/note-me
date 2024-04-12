@@ -93,7 +93,7 @@ const parseImageTokens: TokenPipelineFn = (tokens: Tokens[]): Tokens[] => {
 
 const parseExtensions: TokenPipelineFn = (tokens: Tokens[]): Tokens[] => {
     const results: Tokens[] = [];
-    console.log(tokens);
+
     for (const token of tokens) {
         if (token.type !== "text") {
             results.push(token);

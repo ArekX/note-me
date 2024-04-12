@@ -33,6 +33,28 @@ export const createNote = async (note: NewNote): Promise<NoteRecord> => {
     };
 };
 
+export type UpdateNote = Partial<Pick<NoteTable, "title" | "note">>;
+
+export const updateNote = async (
+    id: number,
+    user_id: number,
+    note: UpdateNote,
+): Promise<boolean> => {
+    const record = {
+        ...note,
+        updated_at: getCurrentUnixTimestamp(),
+    };
+
+    const result = await db.updateTable("note")
+        .set(record)
+        .where("id", "=", id)
+        .where("user_id", "=", user_id)
+        .where("is_deleted", "=", false)
+        .executeTakeFirst();
+
+    return result.numUpdatedRows > 0;
+};
+
 export const updateNoteParent = async (
     note_id: number,
     new_parent_id: number | null,

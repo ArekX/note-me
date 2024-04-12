@@ -9,9 +9,12 @@
       "jsr:@std/jsonc@0.213": "jsr:@std/jsonc@0.213.1",
       "jsr:@std/path@0.213": "jsr:@std/path@0.213.1",
       "npm:autoprefixer@10.4.17": "npm:autoprefixer@10.4.17_postcss@8.4.35",
+      "npm:autosize": "npm:autosize@6.0.1",
+      "npm:autosize@6.0.1": "npm:autosize@6.0.1",
       "npm:cssnano@6.0.3": "npm:cssnano@6.0.3_postcss@8.4.35",
       "npm:fuzzing": "npm:fuzzing@0.12.21",
       "npm:highlight.js": "npm:highlight.js@11.9.0",
+      "npm:highlight.js@11.9.0": "npm:highlight.js@11.9.0",
       "npm:kysely@0.26.3": "npm:kysely@0.26.3",
       "npm:postcss@8.4.35": "npm:postcss@8.4.35",
       "npm:tailwindcss@3.3.5": "npm:tailwindcss@3.3.5_postcss@8.4.35",
@@ -162,6 +165,10 @@
           "postcss": "postcss@8.4.35",
           "postcss-value-parser": "postcss-value-parser@4.2.0"
         }
+      },
+      "autosize@6.0.1": {
+        "integrity": "sha512-f86EjiUKE6Xvczc4ioP1JBlWG7FKrE13qe/DxBCpe8GCipCq2nFw73aO8QEBKHfSbYGDN5eB9jXWKen7tspDqQ==",
+        "dependencies": {}
       },
       "balanced-match@1.0.2": {
         "integrity": "sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==",

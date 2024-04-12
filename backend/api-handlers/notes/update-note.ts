@@ -10,6 +10,9 @@ import {
 import { updateNoteParent } from "$backend/repository/note-repository.ts";
 import { validateRequest } from "$schemas/mod.ts";
 import { UpdateNoteRequest } from "$schemas/notes.ts";
+import { updateNote } from "$backend/repository/note-repository.ts";
+import { when } from "$backend/promise.ts";
+import { linkNoteWithTags } from "$backend/repository/note-tags-repository.ts";
 
 export const handleUpdateNote = async (
     req: Request,
@@ -26,10 +29,33 @@ export const handleUpdateNote = async (
 
     try {
         const results = await Promise.all([
-            updateNoteParent(
-                noteId,
-                body.group_id ? +body.group_id : null,
-                userId,
+            when(
+                () => "group_id" in body,
+                () =>
+                    updateNoteParent(
+                        noteId,
+                        body.group_id ? +body.group_id : null,
+                        userId,
+                    ),
+                () => Promise.resolve(true),
+            ),
+            when(
+                () => [body.title, body.text].some(Boolean),
+                () =>
+                    updateNote(
+                        noteId,
+                        userId,
+                        {
+                            title: body.title,
+                            note: body.text,
+                        },
+                    ),
+                () => Promise.resolve(true),
+            ),
+            when(
+                () => !!body.tags,
+                () => linkNoteWithTags(noteId, userId, body.tags!),
+                () => Promise.resolve(true),
             ),
         ]);
 

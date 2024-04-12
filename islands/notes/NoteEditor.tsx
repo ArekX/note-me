@@ -13,11 +13,40 @@ import { addNoteRequestSchema } from "$schemas/notes.ts";
 import { validateSchema } from "$schemas/mod.ts";
 import { ZodIssue } from "$schemas/deps.ts";
 import { ErrorDisplay } from "$components/ErrorDisplay.tsx";
+import { createRef } from "preact";
+import { autosize } from "$frontend/deps.ts";
+import { updateNote } from "$frontend/api.ts";
+import Viewer from "$islands/viewer/Viewer.tsx";
+
+interface NoteData extends Pick<NoteRecord, "title" | "note"> {
+    id?: number;
+    tags: string[];
+}
 
 interface NoteEditorProps {
-    note: Pick<NoteRecord, "title" | "note">;
+    note: NoteData;
     group: GroupRecord | null;
 }
+
+const getTagArray = (tagString: string) => {
+    const sanitizedTagString = tagString
+        .replace(/[^a-zA-Z0-9_# -]+/g, "")
+        .replace(/#/g, " ")
+        .replace(/ {2,}/g, " ")
+        .replace(/\-{2,}/g, "-")
+        .replace(/\_{2,}/g, "_")
+        .trim();
+    if (sanitizedTagString.length == 0) {
+        return [];
+    }
+
+    return sanitizedTagString.split(" ");
+};
+
+const getFormattedTagString = (tagString: string) => {
+    const tags = getTagArray(tagString);
+    return tags.length > 0 ? `#${tags.join(" #")}` : "";
+};
 
 export const NoteEditor = ({
     group,
@@ -25,16 +54,14 @@ export const NoteEditor = ({
 }: NoteEditorProps) => {
     const name = useSignal(note.title);
     const text = useSignal(note.note);
-    const tags = useSignal("");
+    const tagString = useSignal(getFormattedTagString(note.tags.join(" ")));
     const isSaving = useSignal(false);
+    const isPreviewMode = useSignal(false);
     const validationErrors = useSignal<ZodIssue[]>([]);
+    const textAreaRef = createRef<HTMLTextAreaElement>();
 
-    const handleTextInput = (e: Event) => {
-        const element = e.target as HTMLTextAreaElement;
-
-        element.style.height = "auto";
-        element.style.height = (element.scrollHeight + 20) + "px";
-        text.value = (e.target as HTMLInputElement).value;
+    const formatTagString = () => {
+        tagString.value = getFormattedTagString(tagString.value);
     };
 
     const handleSave = async () => {
@@ -42,7 +69,7 @@ export const NoteEditor = ({
 
         const noteToSave = {
             group_id: group ? +group.id : null,
-            tags: tags.value.replace(/ {2,}/g, " ").trim().split(" "),
+            tags: getTagArray(tagString.value),
             text: text.value,
             title: name.value,
         };
@@ -56,9 +83,11 @@ export const NoteEditor = ({
             return;
         }
 
-        const result = await createNote(noteToSave);
-
-        console.log("saved note", result);
+        if (note.id) {
+            await updateNote(note.id, noteToSave);
+        } else {
+            await createNote(noteToSave);
+        }
 
         isSaving.value = false;
     };
@@ -68,6 +97,7 @@ export const NoteEditor = ({
     };
 
     const handleTogglePreview = () => {
+        isPreviewMode.value = !isPreviewMode.value;
     };
 
     useEffect(() => {
@@ -76,8 +106,7 @@ export const NoteEditor = ({
                 e.preventDefault();
                 handleSave();
             }
-
-            if (e.ctrlKey && e.key === "v") {
+            if (e.ctrlKey && e.key === "e") {
                 e.preventDefault();
                 handleTogglePreview();
             }
@@ -89,6 +118,17 @@ export const NoteEditor = ({
             document.removeEventListener("keydown", handleHotkeys);
         };
     });
+
+    useEffect(() => {
+        if (!textAreaRef.current) {
+            return;
+        }
+        autosize(textAreaRef.current);
+
+        return () => {
+            autosize.destroy(textAreaRef.current);
+        };
+    }, [textAreaRef]);
 
     return (
         <div class="note-editor flex flex-col">
@@ -122,12 +162,17 @@ export const NoteEditor = ({
                     </Button>{" "}
                     <Button
                         color="primary"
-                        title="Preview"
+                        title={isPreviewMode.value
+                            ? "Edit"
+                            : "Preview markdown"}
                         tabIndex={5}
                         disabled={isSaving.value}
                         onClick={handleTogglePreview}
                     >
-                        <Icon name="show" size="lg" />
+                        <Icon
+                            name={isPreviewMode.value ? "pencil" : "show"}
+                            size="lg"
+                        />
                     </Button>{" "}
                     {!isSaving.value && (
                         <MoreMenu onMenuItemClick={handleMenuItemClicked} />
@@ -137,13 +182,14 @@ export const NoteEditor = ({
 
             <div class="flex-grow">
                 <input
-                    class="outline-none block bg-transparent mt-2 w-full"
+                    class="outline-none block bg-transparent mt-2 w-full tag-editor"
                     type="text"
                     placeholder="Tag your note"
                     tabIndex={2}
-                    value={tags.value}
+                    value={tagString.value}
                     disabled={isSaving.value}
-                    onInput={inputHandler((value) => tags.value = value)}
+                    onInput={inputHandler((value) => tagString.value = value)}
+                    onBlur={formatTagString}
                 />
                 <ErrorDisplay
                     errors={validationErrors.value}
@@ -157,15 +203,18 @@ export const NoteEditor = ({
                     path="text"
                 />
             </div>
-            <textarea
-                class="text-editor flex-grow block basis-auto"
-                placeholder="Write your note here"
-                disabled={isSaving.value}
-                tabIndex={3}
-                onInput={handleTextInput}
-            >
-                {text.value}
-            </textarea>
+            {isPreviewMode.value ? <Viewer text={text.value} /> : (
+                <textarea
+                    ref={textAreaRef}
+                    class="text-editor flex-grow block basis-auto"
+                    placeholder="Write your note here"
+                    disabled={isSaving.value}
+                    tabIndex={3}
+                    onInput={inputHandler((value) => text.value = value)}
+                >
+                    {text.value}
+                </textarea>
+            )}
         </div>
     );
 };

@@ -5,5 +5,9 @@ interface ExtensionProps {
 }
 
 export const Extension = ({ node }: ExtensionProps) => {
-    return <div>Extension</div>;
+    return (
+        <span class="p-1 border-solid border-2">
+            Ext: {node.extension}({node.params.join(", ")})
+        </span>
+    );
 };

@@ -1,22 +1,20 @@
 import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
 import { AppState } from "$types";
+import { NoteEditor } from "$islands/notes/NoteEditor.tsx";
 import {
     getNote,
     ViewNoteRecord,
 } from "$backend/repository/note-repository.ts";
 
 interface PageData {
-    note: ViewNoteRecord | null;
+    note: ViewNoteRecord;
 }
 
 export const handler: Handlers<PageData> = {
-    async GET(_req, ctx: FreshContext<AppState, PageData>) {
-        const noteId = +ctx.params.id;
+    async GET(req, ctx: FreshContext<AppState, PageData>) {
+        const userId = ctx.state.session?.getUserId() ?? 0;
 
-        const note = await getNote(
-            noteId,
-            ctx.state.session?.getUserId() ?? 0,
-        );
+        const note = await getNote(+ctx.params.id, userId);
 
         if (!note) {
             throw new Deno.errors.NotFound("Requested note not found.");
@@ -29,9 +27,21 @@ export const handler: Handlers<PageData> = {
 };
 
 export default function Page(props: PageProps<PageData, AppState>) {
+    const { note } = props.data;
+
     return (
         <div class="text-white p-4">
-            Edit
+            <div>
+                <NoteEditor
+                    group={null}
+                    note={{
+                        id: note.id,
+                        title: note.title,
+                        note: note.note,
+                        tags: note.tags,
+                    }}
+                />
+            </div>
         </div>
     );
 }

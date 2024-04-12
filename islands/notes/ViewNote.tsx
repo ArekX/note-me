@@ -19,7 +19,10 @@ export function ViewNote({ record }: ViewNoteProps) {
                     <Button
                         color="success"
                         title="Edit"
-                        onClick={() => {}}
+                        onClick={() => {
+                            window.location.href =
+                                `/app/note/edit-${record.id}`;
+                        }}
                     >
                         <Icon name="pencil" size="lg" /> Edit
                     </Button>{" "}

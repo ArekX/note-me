@@ -117,7 +117,7 @@ dialog::backdrop {
 }
 
 .note-editor .title-editor {
-    font-size: 1.5rem;
+    font-size: 2rem;
     display: block;
     width: 100%;
     font-weight: 600;
@@ -125,7 +125,8 @@ dialog::backdrop {
 }
 
 .note-editor .text-editor {
-    font-size: 1.2rem;
+    font-family: monospace;
+    font-size: 1.1rem;
     line-height: 1.4em;
     font-weight: 400;
     resize: none !important;
@@ -137,7 +138,7 @@ dialog::backdrop {
    font-weight: bold;
 }
 
-.view-note .tag {
+.view-note .tag, .note-editor .tag-editor {
     font-size: 1.2em;
     font-weight: 600;
     @apply text-gray-400;
@@ -157,6 +158,21 @@ dialog::backdrop {
     margin-bottom: 5em;
     padding-bottom: 5em;
 }
+
+.markdown-viewer td {
+    border: .2em solid;
+    @apply p-2;
+    @apply border-gray-600;
+}
+
+.markdown-viewer tr:nth-child(odd) {
+    @apply bg-gray-800;
+}
+
+.markdown-viewer .node-tableHead {
+    @apply font-bold bg-gray-700;
+}
+
 
 .markdown-viewer p {
     padding: .5em 0;
@@ -187,9 +203,16 @@ dialog::backdrop {
     padding: .5em 0;
 }
 
-.markdown-viewer ul {
+.markdown-viewer ul, .markdown-viewer ol {
     padding-left: 1.5em;
+}
+
+.markdown-viewer ul {
     list-style-type: initial;
+}
+
+.markdown-viewer ol {
+    list-style-type: decimal;
 }
 
 .markdown-viewer blockquote {

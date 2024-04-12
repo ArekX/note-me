@@ -18,9 +18,9 @@ export const addNoteRequestSchema = zod.object({
 export type AddNoteRequest = zod.infer<typeof addNoteRequestSchema>;
 
 export const updateNoteSchema = zod.object({
-    // title: noteSchema.shape.title,
-    // text: noteSchema.shape.text,
-    // tags: noteSchema.shape.tags,
+    title: noteSchema.shape.title.optional(),
+    text: noteSchema.shape.text.optional(),
+    tags: noteSchema.shape.tags.optional(),
     group_id: noteSchema.shape.group_id.optional(),
 }).strict();
 

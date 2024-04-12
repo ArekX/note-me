@@ -24,7 +24,7 @@ const nodeElementMap: Record<ChildNodeTypes, string> = {
     emphasis: "i",
     listItem: "li",
     paragraph: "p",
-    tableHead: "th",
+    tableHead: "tr",
     tableRow: "tr",
     tableCell: "td",
 };
@@ -32,7 +32,7 @@ const nodeElementMap: Record<ChildNodeTypes, string> = {
 export const ChildrenNode = ({ node }: ChildrenNodeProps) => {
     return createElement(
         nodeElementMap[node.type],
-        {},
+        { className: `node-${node.type}` },
         renderChildren(node),
     );
 };

@@ -45,6 +45,7 @@ export default function Page(props: PageProps<PageData, AppState>) {
                     note={{
                         title: "",
                         note: "",
+                        tags: [],
                     }}
                 />
             </div>

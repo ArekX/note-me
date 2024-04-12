@@ -1,9 +1,9 @@
 import { db } from "$backend/database.ts";
 import { NoteTagTable, RecordId } from "$types";
 import { getCurrentUnixTimestamp } from "$backend/time.ts";
-import { applyFilters } from "../../lib/kysely-sqlite-dialect/filters.ts";
-import { Paged } from "../../lib/kysely-sqlite-dialect/pagination.ts";
-import { pageResults } from "../../lib/kysely-sqlite-dialect/pagination.ts";
+import { applyFilters } from "$lib/kysely-sqlite-dialect/filters.ts";
+import { Paged, pageResults } from "$lib/kysely-sqlite-dialect/pagination.ts";
+import { when } from "$backend/promise.ts";
 
 export type TagRecord =
     & Pick<
@@ -65,18 +65,58 @@ export const linkNoteWithTags = async (
         return true;
     }
 
-    const results = await db.insertInto("note_tag_note")
-        .values(tagRecords.map((tag) => ({
-            note_id,
-            tag_id: tag.id,
-            created_at: getCurrentUnixTimestamp(),
-        })))
-        .returning("id")
-        .execute();
+    const tagsToAdd: number[] = [];
+    const tagsToRemove: number[] = [];
 
-    if (results.length !== tagRecords.length) {
-        throw new Error("Could not link note with tags!");
+    const insertedIds = (
+        await db.selectFrom("note_tag")
+            .select([
+                "note_tag.id",
+            ])
+            .innerJoin(
+                "note_tag_note",
+                (join) =>
+                    join
+                        .onRef("note_tag.id", "=", "note_tag_note.tag_id")
+                        .on("note_tag_note.note_id", "=", note_id),
+            )
+            .execute()
+    ).map((r) => r.id);
+
+    for (const tag of tagRecords) {
+        if (!insertedIds.includes(tag.id)) {
+            tagsToAdd.push(tag.id);
+        }
     }
+
+    for (const id of insertedIds) {
+        if (!tagRecords.find((tag) => tag.id === id)) {
+            tagsToRemove.push(id);
+        }
+    }
+
+    await Promise.all([
+        when(
+            () => tagsToAdd.length > 0,
+            () =>
+                db.insertInto("note_tag_note")
+                    .values(tagsToAdd.map((id) => ({
+                        note_id,
+                        tag_id: id,
+                        created_at: getCurrentUnixTimestamp(),
+                    })))
+                    .execute(),
+        ),
+        when(
+            () => tagsToRemove.length > 0,
+            () =>
+                db.deleteFrom("note_tag_note")
+                    .where("note_id", "=", note_id)
+                    .where("tag_id", "in", tagsToRemove)
+                    .execute(),
+        ),
+    ]);
+
     return true;
 };
 
