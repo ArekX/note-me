@@ -10,6 +10,7 @@ import { Icon } from "$components/Icon.tsx";
 import { getUserByLogin } from "$backend/repository/user-repository.ts";
 import { Button } from "$components/Button.tsx";
 import { Input } from "$components/Input.tsx";
+import InvalidateData from "$islands/InvalidateData.tsx";
 
 interface LoginResult {
     username: string;
@@ -98,6 +99,7 @@ export default function Page(props: PageProps<LoginResult>) {
                         </Button>
                     </div>
                 </form>
+                <InvalidateData />
             </div>
         </div>
     );

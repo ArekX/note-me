@@ -20,6 +20,12 @@ You should be log in with `demo` as username and password.
 
 # Run
 
+**Important:** Environment file `.env` is required to properly run the
+containers. See [example.env](example.env) for details.
+
+On first run, database will be created with an administrator username `admin`
+and password `admin`.
+
 ## via Docker
 
 Requirements:
@@ -28,8 +34,9 @@ Requirements:
 
 1. Find version you want to run at
    [DockerHub](https://hub.docker.com/repository/docker/arekxv/note-me/general)
-2. Run `docker run -p 8000:8000 -p 8080:8080 arekxv/note-me:<VERSION>`, replace
-   `<VERSION>` with the version.
+2. Run
+   `docker run -p 8000:8000 -p 8080:8080 --env-file ./.env arekxv/note-me:<VERSION>`,
+   replace `<VERSION>` with the version.
 
 Application will be on `http://localhost:8000`. Additional WebSocket interface
 (for notifications and communication) will be used at `http://localhost:8080`.
@@ -43,7 +50,7 @@ Requirements:
 Use same instruction as for Docker, but use `podman run` instead of
 `docker run`.
 
-# Build and Run
+# Build and run manually
 
 Requirements:
 
@@ -53,10 +60,7 @@ Requirements:
 2. Add DENO_DEPLOYMENT_ID environment variable. Should be
    `export DENO_DEPLOYMENT_ID=$(git rev-parse HEAD)`
 3. Run `deno task cache` to pre-install all dependencies.
-4. Run migrations `deno task cli migrate-up`
-5. Run `deno task cli add-user "Administrator" admin admin` to create a login
-   for yourself.
-6. Run `deno task production`
+4. Run `deno task production`
 
 # Build and run using Docker
 
@@ -69,7 +73,8 @@ Steps:
 1. Tag a release with `git tag <VERSION>`.
 2. Run `deno task build-docker`
 3. After docker image is built run
-   `docker run -p 8000:8000 -p 8080:8080 arekxv/note-me:<VERSION>`
+   `docker run -p 8000:8000 -p 8080:8080 --env-file ./.env arekxv/note-me:<VERSION>`,
+   replace `<VERSION>` with the version.
 
 Or see
 [pre-built versions on DockerHub](https://hub.docker.com/repository/docker/arekxv/note-me/general)
@@ -85,4 +90,4 @@ Steps:
 
 1. Run `deno task build-podman`
 2. After image is built run
-   `podman run -p 8000:8000 -p 8080:8080 localhost/arekxv/note-me`
+   `podman run -p 8000:8000 -p 8080:8080 --env-file ./.env localhost/arekxv/note-me`

@@ -34,6 +34,7 @@ import * as $app_settings_users_index from "./routes/app/settings/users/index.ts
 import * as $index from "./routes/index.tsx";
 import * as $ConfirmDialog from "./islands/ConfirmDialog.tsx";
 import * as $Dialog from "./islands/Dialog.tsx";
+import * as $InvalidateData from "./islands/InvalidateData.tsx";
 import * as $Loader from "./islands/Loader.tsx";
 import * as $Pagination from "./islands/Pagination.tsx";
 import * as $ScriptLoader from "./islands/ScriptLoader.tsx";
@@ -115,6 +116,7 @@ const manifest = {
     islands: {
         "./islands/ConfirmDialog.tsx": $ConfirmDialog,
         "./islands/Dialog.tsx": $Dialog,
+        "./islands/InvalidateData.tsx": $InvalidateData,
         "./islands/Loader.tsx": $Loader,
         "./islands/Pagination.tsx": $Pagination,
         "./islands/ScriptLoader.tsx": $ScriptLoader,

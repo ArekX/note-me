@@ -29,6 +29,12 @@ export class KyselyMigrationManager<T> {
         });
     }
 
+    async isFirstRun() {
+        const migrator = this.#migrator;
+        const migrations = await migrator.getMigrations();
+        return migrations.filter((x) => x.executedAt).length === 0;
+    }
+
     async migrateUp(amount?: number) {
         const migrator = this.#migrator;
 

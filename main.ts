@@ -11,7 +11,16 @@ import manifest from "./fresh.gen.ts";
 import config from "./fresh.config.ts";
 import { migrator } from "$backend/migration-manager.ts";
 import { backgroundServices } from "./backend/workers/mod.ts";
+import { initializeFirstRun } from "$backend/first-run.ts";
 
 backgroundServices.startAll();
+
+const isFirstRun = await migrator.isFirstRun();
 await migrator.migrateUp();
+
+if (isFirstRun) {
+    console.log("Setting up initial data on first run.");
+    await initializeFirstRun();
+}
+
 await start(manifest, config);
