@@ -3,6 +3,7 @@ import {
     checkIfUserExists,
     createUserRecord,
 } from "$backend/repository/user-repository.ts";
+import { cliLogger } from "$backend/logger.ts";
 
 export const addUser = new Command()
     .description("Add a user")
@@ -15,17 +16,20 @@ export const addUser = new Command()
             password: string,
         ) => {
             if (await checkIfUserExists(username)) {
-                console.log(`User with username '${username}' already exists!`);
+                cliLogger.warn(
+                    `User with username '{username}' already exists!`,
+                    { username },
+                );
                 return;
             }
 
-            console.log("Creating user...");
-            console.log("Name:", name);
-            console.log("Username:", username);
-            console.log("Password:", password);
-            console.log("Role: admin");
+            cliLogger.info("Creating user...");
+            cliLogger.info("Name: {name}", { name });
+            cliLogger.info("Username: {username}", { username });
+            cliLogger.info("Password: {password}", { password });
+            cliLogger.info("Role: admin");
             const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            console.log("Timezone:", timezone);
+            cliLogger.info("Timezone: {timezone}", { timezone });
             await createUserRecord({
                 name,
                 username,
@@ -33,6 +37,6 @@ export const addUser = new Command()
                 role: "admin",
                 timezone,
             });
-            console.log("User created!");
+            cliLogger.info("User created!");
         },
     );

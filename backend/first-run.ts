@@ -1,7 +1,8 @@
 import { createUserRecord } from "$backend/repository/user-repository.ts";
+import { webLogger } from "$backend/logger.ts";
 
 export const initializeFirstRun = async () => {
-    console.log("Creating administrator user...");
+    webLogger.info("Creating administrator user...");
     await createUserRecord({
         name: "Administrator",
         username: "admin",
@@ -10,5 +11,5 @@ export const initializeFirstRun = async () => {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     });
 
-    console.log("First time setup complete!");
+    webLogger.info("First time setup complete!");
 };

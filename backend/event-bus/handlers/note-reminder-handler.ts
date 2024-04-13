@@ -14,7 +14,7 @@ export interface NoteReminderReceived {
 
 export const noteReminderHandler: EventHandler = {
     eventTypes: ["note-reminder-received"],
-    async handle(event: NoteReminderEvent): Promise<void> {
+    async handle(_event: NoteReminderEvent): Promise<void> {
         const result = await createNotification({
             data: {
                 type: "reminder-received",
@@ -32,7 +32,5 @@ export const noteReminderHandler: EventHandler = {
                 data: result,
             },
         });
-
-        console.log("Note reminder received", event.payload);
     },
 };

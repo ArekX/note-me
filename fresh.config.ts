@@ -1,13 +1,16 @@
 import { defineConfig } from "$fresh/server.ts";
 import tailwind from "$fresh/plugins/tailwind.ts";
+import { webLogger } from "$backend/logger.ts";
 
 export default defineConfig({
     plugins: [tailwind()],
     server: {
-        port: parseInt(Deno.env.get("SERVER_PORT") ?? "8000", 10),
-        onListen(params) {
-            console.log(
-                `NoteMe started and running on http://localhost:${params.port}`,
+        hostname: Deno.env.get("SERVER_ADDRESS") ?? "localhost",
+        port: +(Deno.env.get("WEBSERVER_PORT") || 8000),
+        onListen({ hostname, port }) {
+            webLogger.info(
+                "Webserver started and running at {hostname}:{port}",
+                { hostname, port },
             );
         },
     },

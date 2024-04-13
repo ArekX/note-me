@@ -1,4 +1,5 @@
 import { BusEvents } from "$backend/event-bus/bus-events.ts";
+import { workerLogger } from "$backend/logger.ts";
 
 export interface TimingHandler {
     triggerEveryMinutes: number;
@@ -41,7 +42,7 @@ export class TimingService {
     }
 
     async start() {
-        console.log("Timing worker started.");
+        workerLogger.info("Periodic timing service started.");
         for await (const _ of this.#triggerNextPeriod()) {
             for (const handler of this.#handlers) {
                 handler.leftMinutes--;

@@ -10,7 +10,7 @@ export type NotificationReceivedEvent = BusEvent<
 export const notificationReceivedHandler: EventHandler = {
     eventTypes: ["notification-received"],
     handle(event: NotificationReceivedEvent): void {
-        backgroundServices.services.websocketServer.send({
+        backgroundServices.services.websocketService.send({
             type: "notification",
             payload: event.payload,
         });
