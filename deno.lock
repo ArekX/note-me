@@ -18,6 +18,8 @@
       "npm:kysely@0.26.3": "npm:kysely@0.26.3",
       "npm:postcss@8.4.35": "npm:postcss@8.4.35",
       "npm:tailwindcss@3.3.5": "npm:tailwindcss@3.3.5_postcss@8.4.35",
+      "npm:text-field-edit": "npm:text-field-edit@4.1.1",
+      "npm:text-field-edit@4.1.1": "npm:text-field-edit@4.1.1",
       "npm:zod@3.22.4": "npm:zod@3.22.4"
     },
     "jsr": {
@@ -1056,6 +1058,10 @@
           "resolve": "resolve@1.22.8",
           "sucrase": "sucrase@3.35.0"
         }
+      },
+      "text-field-edit@4.1.1": {
+        "integrity": "sha512-bgvsU5CFdBm8YuDdpLALNqS7Th8bVaRD5cww9VMYaBYab324iN3XOXvuQxTxp9JSPhHHF6zGCDEyF08JUV2hPw==",
+        "dependencies": {}
       },
       "thenify-all@1.6.0": {
         "integrity": "sha512-RNxQH/qI8/t3thXJDwcstUO4zeqo64+Uy/+sNVRBx4Xn2OX+OZ9oP+iJnNFqplFra2ZUVeKCSa2oVWi3T4uVmA==",

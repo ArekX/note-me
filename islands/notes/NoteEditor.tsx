@@ -14,7 +14,7 @@ import { validateSchema } from "$schemas/mod.ts";
 import { ZodIssue } from "$schemas/deps.ts";
 import { ErrorDisplay } from "$components/ErrorDisplay.tsx";
 import { createRef } from "preact";
-import { autosize } from "$frontend/deps.ts";
+import { autosize, insertTextIntoField } from "$frontend/deps.ts";
 import { updateNote } from "$frontend/api.ts";
 import Viewer from "$islands/viewer/Viewer.tsx";
 
@@ -100,6 +100,16 @@ export const NoteEditor = ({
         isPreviewMode.value = !isPreviewMode.value;
     };
 
+    const handleTextKeyDown = (e: KeyboardEvent) => {
+        if (!textAreaRef.current) {
+            return;
+        }
+        if (e.key === "Tab") {
+            insertTextIntoField(textAreaRef.current, "    ");
+            e.preventDefault();
+        }
+    };
+
     useEffect(() => {
         const handleHotkeys = (e: KeyboardEvent) => {
             if (e.ctrlKey && e.key === "s") {
@@ -123,6 +133,7 @@ export const NoteEditor = ({
         if (!textAreaRef.current) {
             return;
         }
+
         autosize(textAreaRef.current);
 
         return () => {
@@ -175,7 +186,10 @@ export const NoteEditor = ({
                         />
                     </Button>{" "}
                     {!isSaving.value && (
-                        <MoreMenu onMenuItemClick={handleMenuItemClicked} />
+                        <MoreMenu
+                            onMenuItemClick={handleMenuItemClicked}
+                            mode={note.id ? "existing" : "new"}
+                        />
                     )}
                 </div>
             </div>
@@ -210,6 +224,7 @@ export const NoteEditor = ({
                     placeholder="Write your note here"
                     disabled={isSaving.value}
                     tabIndex={3}
+                    onKeyDown={handleTextKeyDown}
                     onInput={inputHandler((value) => text.value = value)}
                 >
                     {text.value}

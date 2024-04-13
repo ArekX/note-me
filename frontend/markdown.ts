@@ -58,9 +58,6 @@ type Tokens = ExtensionToken | Token;
 
 type TokenPipelineFn = (tokens: Tokens[]) => Tokens[];
 
-const extensionRegex =
-    /(?<!\\){\:(?<extension>[a-zA-Z0-9-]+)(?<params>(\|[^\|\}]+)*)\}/g;
-
 const removeExtensionEscape = (text: string): string =>
     text.replace(/\\\{/g, "{");
 
@@ -91,6 +88,9 @@ const parseImageTokens: TokenPipelineFn = (tokens: Tokens[]): Tokens[] => {
     return result as Tokens[];
 };
 
+const extensionRegex =
+    /(?<!\\){\:(?<extension>[a-zA-Z0-9-]+)(?<params>(\|[^}]+)*)\}/;
+
 const parseExtensions: TokenPipelineFn = (tokens: Tokens[]): Tokens[] => {
     const results: Tokens[] = [];
 
@@ -99,17 +99,16 @@ const parseExtensions: TokenPipelineFn = (tokens: Tokens[]): Tokens[] => {
             results.push(token);
             continue;
         }
-        const iterator = token.content.matchAll(extensionRegex);
-        let text = token.content;
 
-        let anyMatches = false;
-        for (const match of iterator) {
-            anyMatches = true;
+        let text = token.content;
+        let match = text.match(extensionRegex);
+
+        while (match) {
             const {
                 0: matched,
                 index,
                 groups: { extension, params: paramString } = {},
-            } = match;
+            } = match!;
 
             const params = paramString.slice(1).split("|");
 
@@ -122,18 +121,22 @@ const parseExtensions: TokenPipelineFn = (tokens: Tokens[]): Tokens[] => {
                 });
             }
 
-            text = text.slice(index + matched.length);
+            text = text.slice(index! + matched.length);
 
             results.push({
                 type: "extension",
                 extension,
                 params,
             });
+
+            match = text.match(extensionRegex);
         }
 
-        if (!anyMatches) {
-            token.content = removeExtensionEscape(token.content);
-            results.push(token);
+        if (text.length > 0) {
+            results.push({
+                type: "text",
+                content: removeExtensionEscape(text),
+            });
         }
     }
 

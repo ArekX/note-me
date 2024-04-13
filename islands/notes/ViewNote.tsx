@@ -5,31 +5,39 @@ import { Icon } from "$components/Icon.tsx";
 import { MoreMenu } from "$islands/notes/MoreMenu.tsx";
 
 export interface ViewNoteProps {
+    readonly?: boolean;
     record: ViewNoteRecord;
 }
 
-export function ViewNote({ record }: ViewNoteProps) {
+export function ViewNote(
+    { readonly = false, record }: ViewNoteProps,
+) {
     return (
         <div class="view-note flex flex-col">
             <div class="flex flex-row">
                 <div class="title w-10/12">
                     {record.title}
                 </div>
-                <div class="text-md ml-2 w-2/12 text-right">
-                    <Button
-                        color="success"
-                        title="Edit"
-                        onClick={() => {
-                            window.location.href =
-                                `/app/note/edit-${record.id}`;
-                        }}
-                    >
-                        <Icon name="pencil" size="lg" /> Edit
-                    </Button>{" "}
-                    <div class="text-left inline-block">
-                        <MoreMenu onMenuItemClick={() => {}} />
+                {!readonly && (
+                    <div class="text-md ml-2 w-2/12 text-right">
+                        <Button
+                            color="success"
+                            title="Edit"
+                            onClick={() => {
+                                window.location.href =
+                                    `/app/note/edit-${record.id}`;
+                            }}
+                        >
+                            <Icon name="pencil" size="lg" />
+                        </Button>{" "}
+                        <div class="text-left inline-block">
+                            <MoreMenu
+                                onMenuItemClick={() => {}}
+                                mode={record.id ? "existing" : "new"}
+                            />
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
             <div>
                 {record.tags.map((tag) => (

@@ -3,9 +3,12 @@ import { Icon } from "$components/Icon.tsx";
 import { createRef } from "preact";
 import { useSinglePopover } from "$frontend/hooks/use-single-popover.ts";
 
+type ModeType = "new" | "existing" | "both";
+
 export interface MoreMenuItem {
     name: string;
     icon: string;
+    mode: ModeType;
     onClick: () => void;
 }
 
@@ -18,10 +21,11 @@ export type MenuItemActions =
     | "delete";
 
 interface MoreMenuProps {
+    mode: ModeType;
     onMenuItemClick?: (name: MenuItemActions) => void;
 }
 
-export const MoreMenu = ({ onMenuItemClick }: MoreMenuProps) => {
+export const MoreMenu = ({ mode, onMenuItemClick }: MoreMenuProps) => {
     const menuRef = createRef<HTMLDivElement>();
 
     const {
@@ -37,36 +41,42 @@ export const MoreMenu = ({ onMenuItemClick }: MoreMenuProps) => {
 
     const items: MoreMenuItem[] = [
         {
-            name: "Preview",
-            icon: "show-alt",
-            onClick: () => sendAction("preview"),
-        },
-        {
             name: "Details", // created by, last update, author, generated table of contents
             icon: "detail",
+            mode: "existing",
             onClick: () => sendAction("details"),
         },
         {
             name: "History",
             icon: "history",
+            mode: "existing",
             onClick: () => sendAction("history"),
         },
         {
             name: "Share",
             icon: "share-alt",
+            mode: "existing",
             onClick: () => sendAction("share"),
         },
         {
             name: "Remind me",
             icon: "alarm",
+            mode: "existing",
             onClick: () => sendAction("remind"),
         },
         {
             name: "Delete",
             icon: "minus-circle",
+            mode: "existing",
             onClick: () => sendAction("delete"),
         },
-    ];
+    ].filter((item) =>
+        item.mode === mode || item.mode === "both"
+    ) as MoreMenuItem[];
+
+    if (items.length === 0) {
+        return null;
+    }
 
     return (
         <div class="relative inline-block">

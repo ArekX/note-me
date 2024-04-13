@@ -15,6 +15,10 @@ export const CodeBlock = ({ node }: CodeBlockProps) => {
             return;
         }
 
+        if (!node.data.language) {
+            return;
+        }
+
         const code = viewerRef.current.textContent ?? "";
 
         viewerRef.current.innerHTML = highlightJs.highlight(
