@@ -9,6 +9,7 @@ export interface BackgroundServices {
         timingService: BackgroundService<unknown>;
     };
     startAll(): void;
+    stopAll(): void;
 }
 
 export const backgroundServices: BackgroundServices = {
@@ -22,6 +23,13 @@ export const backgroundServices: BackgroundServices = {
             service.start();
             webLogger.debug("Background service started.");
             service.onMessage((message) => eventBus.emit(message));
+        }
+    },
+    stopAll(): void {
+        for (const [serviceName, service] of Object.entries(this.services)) {
+            webLogger.info(`Stopping background service: ${serviceName}`);
+            service.stop();
+            webLogger.debug("Background service stopped.");
         }
     },
 };

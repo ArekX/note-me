@@ -10,6 +10,4 @@ export const initializeFirstRun = async () => {
         role: "admin",
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     });
-
-    webLogger.info("First time setup complete!");
 };

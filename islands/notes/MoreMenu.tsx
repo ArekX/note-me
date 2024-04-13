@@ -8,24 +8,29 @@ type ModeType = "new" | "existing" | "both";
 export interface MoreMenuItem {
     name: string;
     icon: string;
-    mode: ModeType;
+    showOnMode: ModeType;
     onClick: () => void;
 }
 
 export type MenuItemActions =
     | "preview"
+    | "edit"
     | "details"
     | "history"
     | "share"
     | "remind"
+    | "help"
     | "delete";
 
 interface MoreMenuProps {
     mode: ModeType;
+    inPreviewMode: boolean;
     onMenuItemClick?: (name: MenuItemActions) => void;
 }
 
-export const MoreMenu = ({ mode, onMenuItemClick }: MoreMenuProps) => {
+export const MoreMenu = (
+    { mode, inPreviewMode, onMenuItemClick }: MoreMenuProps,
+) => {
     const menuRef = createRef<HTMLDivElement>();
 
     const {
@@ -41,37 +46,49 @@ export const MoreMenu = ({ mode, onMenuItemClick }: MoreMenuProps) => {
 
     const items: MoreMenuItem[] = [
         {
+            name: inPreviewMode ? "Edit mode" : "Preview mode",
+            icon: inPreviewMode ? "pencil" : "show",
+            showOnMode: "both",
+            onClick: () => sendAction(inPreviewMode ? "edit" : "preview"),
+        },
+        {
             name: "Details", // created by, last update, author, generated table of contents
             icon: "detail",
-            mode: "existing",
+            showOnMode: "existing",
             onClick: () => sendAction("details"),
         },
         {
             name: "History",
             icon: "history",
-            mode: "existing",
+            showOnMode: "existing",
             onClick: () => sendAction("history"),
         },
         {
             name: "Share",
             icon: "share-alt",
-            mode: "existing",
+            showOnMode: "existing",
             onClick: () => sendAction("share"),
         },
         {
             name: "Remind me",
             icon: "alarm",
-            mode: "existing",
+            showOnMode: "existing",
             onClick: () => sendAction("remind"),
         },
         {
             name: "Delete",
             icon: "minus-circle",
-            mode: "existing",
+            showOnMode: "existing",
             onClick: () => sendAction("delete"),
         },
+        {
+            name: "Help",
+            icon: "help-circle",
+            showOnMode: "both",
+            onClick: () => sendAction("help"),
+        },
     ].filter((item) =>
-        item.mode === mode || item.mode === "both"
+        item.showOnMode === mode || item.showOnMode === "both"
     ) as MoreMenuItem[];
 
     if (items.length === 0) {

@@ -6,8 +6,11 @@ import config from "./fresh.config.ts";
 import "$std/dotenv/load.ts";
 import { backgroundServices } from "./backend/workers/mod.ts";
 import { webLogger } from "$backend/logger.ts";
+import { setupCleanupActions } from "$backend/cleanup.ts";
 
 backgroundServices.startAll();
 webLogger.debug("All background services started");
+
+setupCleanupActions();
 
 await dev(import.meta.url, "./main.ts", config);

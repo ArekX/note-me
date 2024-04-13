@@ -94,10 +94,20 @@ export const NoteEditor = ({
 
     const handleMenuItemClicked = (action: MenuItemActions) => {
         console.log("execute action", action);
+
+        if (action === "preview") {
+            isPreviewMode.value = true;
+        } else if (action === "edit") {
+            isPreviewMode.value = false;
+        }
     };
 
     const handleTogglePreview = () => {
         isPreviewMode.value = !isPreviewMode.value;
+    };
+
+    const handleCancelChanges = () => {
+        window.location.href = `/app/note/view-${note.id}`;
     };
 
     const handleTextKeyDown = (e: KeyboardEvent) => {
@@ -163,7 +173,6 @@ export const NoteEditor = ({
                     <Button
                         color={!isSaving.value ? "success" : "successDisabled"}
                         title="Save"
-                        tabIndex={4}
                         disabled={isSaving.value}
                         onClick={handleSave}
                     >
@@ -171,23 +180,27 @@ export const NoteEditor = ({
                             ? <Icon name="save" size="lg" />
                             : <Loader color="white">Saving...</Loader>}
                     </Button>{" "}
-                    <Button
-                        color="primary"
-                        title={isPreviewMode.value
-                            ? "Edit"
-                            : "Preview markdown"}
-                        tabIndex={5}
-                        disabled={isSaving.value}
-                        onClick={handleTogglePreview}
-                    >
-                        <Icon
-                            name={isPreviewMode.value ? "pencil" : "show"}
-                            size="lg"
-                        />
-                    </Button>{" "}
+                    {note.id && (
+                        <>
+                            <Button
+                                color="primary"
+                                disabled={isSaving.value}
+                                title="Cancel changes"
+                                onClick={handleCancelChanges}
+                            >
+                                <Icon
+                                    name="tag-x"
+                                    size="lg"
+                                    type="solid"
+                                />
+                            </Button>
+                            {" "}
+                        </>
+                    )}
                     {!isSaving.value && (
                         <MoreMenu
                             onMenuItemClick={handleMenuItemClicked}
+                            inPreviewMode={isPreviewMode.value}
                             mode={note.id ? "existing" : "new"}
                         />
                     )}

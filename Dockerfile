@@ -8,4 +8,6 @@ COPY . /app
 WORKDIR /app
 RUN deno task cache
 
+STOPSIGNAL SIGINT
+
 CMD ["task", "production"]

@@ -33,6 +33,7 @@ export function ViewNote(
                         <div class="text-left inline-block">
                             <MoreMenu
                                 onMenuItemClick={() => {}}
+                                inPreviewMode={false}
                                 mode={record.id ? "existing" : "new"}
                             />
                         </div>

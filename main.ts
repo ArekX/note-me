@@ -13,8 +13,11 @@ import { migrator } from "$backend/migration-manager.ts";
 import { backgroundServices } from "./backend/workers/mod.ts";
 import { initializeFirstRun } from "$backend/first-run.ts";
 import { webLogger } from "$backend/logger.ts";
+import { setupCleanupActions } from "$backend/cleanup.ts";
 
 backgroundServices.startAll();
+
+setupCleanupActions();
 
 const isFirstRun = await migrator.isFirstRun();
 await migrator.migrateUp();
@@ -22,6 +25,7 @@ await migrator.migrateUp();
 if (isFirstRun) {
     webLogger.info("Setting up initial data on first run.");
     await initializeFirstRun();
+    webLogger.info("First time setup complete!");
 }
 
 await start(manifest, config);
