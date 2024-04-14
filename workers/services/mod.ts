@@ -1,7 +1,7 @@
-import { BackgroundService } from "$workers/background-service.ts";
+import { BackgroundWorker } from "./background-worker.ts";
 import { SocketBackendMessage } from "$workers/websocket/messages.ts";
 
 export const services = {
-    websocket: new BackgroundService<SocketBackendMessage>("websocket"),
-    timer: new BackgroundService<never>("timer"),
+    websocket: new BackgroundWorker<SocketBackendMessage>("websocket"),
+    timer: new BackgroundWorker<never>("timer"),
 };

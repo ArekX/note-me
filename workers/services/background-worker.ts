@@ -1,11 +1,6 @@
 import { BusEvents } from "$backend/event-bus/bus-events.ts";
 
-export interface BackgroundServiceWorker {
-    start(): void;
-    stop(): void;
-}
-
-export class BackgroundService<MessageType> {
+export class BackgroundWorker<MessageType> {
     #worker: Worker | null = null;
 
     constructor(
@@ -23,10 +18,9 @@ export class BackgroundService<MessageType> {
     start() {
         this.#worker = new Worker(
             new URL(
-                `./services/${this.serviceName}-service.ts`,
+                `./${this.serviceName}-service.ts`,
                 import.meta.url,
-            )
-                .href,
+            ).href,
             {
                 type: "module",
             },
