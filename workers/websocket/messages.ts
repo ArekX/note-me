@@ -1,21 +1,16 @@
-import { Payload } from "$types";
-import { NotificationRecord } from "$backend/repository/notification-repository.ts";
+import {
+    NotificationBackendMessage,
+    NotificationFrontendMessage,
+} from "$workers/websocket/handlers/notifications.ts";
+import {
+    NoteBackendMessage,
+    NoteFrontendMessage,
+} from "$workers/websocket/handlers/notes.ts";
 
-export type SocketFrontendMessage = NotificationMessages;
+export type SocketFrontendMessage =
+    | NotificationFrontendMessage
+    | NoteFrontendMessage;
 
-export type SocketBackendMessage = Payload<
-    "notification",
-    SendNotificationRequest
->;
-
-export interface SendNotificationRequest {
-    toUserId: number;
-    data: NotificationRecord;
-}
-
-export type NotificationMessages =
-    | Payload<"getMyNotifications", null>
-    | Payload<"deleteAll", null>
-    | Payload<"markAllRead", null>
-    | Payload<"markSingleRead", { id: number }>
-    | Payload<"deleteSingle", { id: number }>;
+export type SocketBackendMessage =
+    | NotificationBackendMessage
+    | NoteBackendMessage;

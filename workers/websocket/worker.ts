@@ -3,8 +3,8 @@
 declare const self: DedicatedWorkerGlobalScope;
 
 import "$std/dotenv/load.ts";
-import { WebSocketService } from "../websocket/websocket-service.ts";
-import { notificationsHandler } from "../websocket/handlers/notifications.ts";
+import { WebSocketService } from "./websocket-service.ts";
+import { notificationsHandler } from "./handlers/notifications.ts";
 
 const service = new WebSocketService();
 

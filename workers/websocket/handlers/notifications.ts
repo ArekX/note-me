@@ -11,12 +11,15 @@ import {
 import { BaseWebSocketHandler } from "../websocket-handler.ts";
 import { SocketClient } from "../types.ts";
 import { Payload } from "$types";
-import {
-    NotificationMessages,
-    SocketBackendMessage,
-} from "$workers/websocket/messages.ts";
 
-export type NotificationResponses =
+export type NotificationFrontendMessage =
+    | Payload<"getMyNotifications", null>
+    | Payload<"deleteAll", null>
+    | Payload<"markAllRead", null>
+    | Payload<"markSingleRead", { id: number }>
+    | Payload<"deleteSingle", { id: number }>;
+
+export type NotificationFrontendResponse =
     | Payload<
         "notifications-list",
         NotificationRecord[]
@@ -42,9 +45,17 @@ export type NotificationResponses =
         { id: number }
     >;
 
+export type NotificationBackendMessage = Payload<
+    "addNotification",
+    {
+        toUserId: number;
+        data: NotificationRecord;
+    }
+>;
+
 const getMyNotifications = async (client: SocketClient) => {
     const results = await getUserNotifications(client.userId);
-    client.send<NotificationResponses>({
+    client.send<NotificationFrontendResponse>({
         type: "notifications-list",
         payload: results,
     });
@@ -52,7 +63,7 @@ const getMyNotifications = async (client: SocketClient) => {
 
 const deleteAll = async (client: SocketClient) => {
     await deleteUserNotifications(client.userId);
-    client.send<NotificationResponses>({
+    client.send<NotificationFrontendResponse>({
         type: "deleted-all",
         payload: null,
     });
@@ -60,7 +71,7 @@ const deleteAll = async (client: SocketClient) => {
 
 const markAllRead = async (client: SocketClient) => {
     await markReadUserNotifications(client.userId);
-    client.send<NotificationResponses>({
+    client.send<NotificationFrontendResponse>({
         type: "marked-all-read",
         payload: null,
     });
@@ -68,13 +79,13 @@ const markAllRead = async (client: SocketClient) => {
 
 const markSingleRead = async (
     client: SocketClient,
-    message: NotificationMessages,
+    message: NotificationFrontendMessage,
 ) => {
     if (message.type !== "markSingleRead") {
         throw new Error("Invalid message type");
     }
     await markSingleNotificationRead(message.payload.id, client.userId);
-    client.send<NotificationResponses>({
+    client.send<NotificationFrontendResponse>({
         type: "marked-single-read",
         payload: {
             id: message.payload.id,
@@ -84,13 +95,13 @@ const markSingleRead = async (
 
 const deleteSingle = async (
     client: SocketClient,
-    message: NotificationMessages,
+    message: NotificationFrontendMessage,
 ) => {
     if (message.type !== "deleteSingle") {
         throw new Error("Invalid message type");
     }
     await deleteSingleNotification(message.payload.id, client.userId);
-    client.send<NotificationResponses>({
+    client.send<NotificationFrontendResponse>({
         type: "deleted-single",
         payload: {
             id: message.payload.id,
@@ -100,11 +111,11 @@ const deleteSingle = async (
 
 type ClientMessageActionFn<T> = (
     client: SocketClient,
-    message: Extract<NotificationMessages, { type: T }>,
+    message: Extract<NotificationFrontendMessage, { type: T }>,
 ) => Promise<void>;
 
 type ClientMessageActions = {
-    [K in NotificationMessages["type"]]: ClientMessageActionFn<K>;
+    [K in NotificationFrontendMessage["type"]]: ClientMessageActionFn<K>;
 };
 
 const clientMessageActions: ClientMessageActions = {
@@ -115,24 +126,30 @@ const clientMessageActions: ClientMessageActions = {
     deleteSingle,
 };
 
-class NotificationHandler
-    extends BaseWebSocketHandler<NotificationMessages, SocketBackendMessage> {
+class NotificationHandler extends BaseWebSocketHandler<
+    NotificationFrontendMessage,
+    NotificationBackendMessage
+> {
     onFrontendMessage(
         client: SocketClient,
-        message: NotificationMessages,
+        message: NotificationFrontendMessage,
     ): void {
         const runAction =
             clientMessageActions[message.type] as ClientMessageActionFn<
-                NotificationMessages["type"]
+                NotificationFrontendMessage["type"]
             >;
 
         runAction(client, message);
     }
 
-    onBackendMessage(data: SocketBackendMessage): Promise<void> {
+    getAllowedBackendMessages(): NotificationBackendMessage["type"][] {
+        return ["addNotification"];
+    }
+
+    onBackendScopedMessage(data: NotificationBackendMessage): Promise<void> {
         const client = this.getClient(data.payload.toUserId);
 
-        client?.send<NotificationResponses>({
+        client?.send<NotificationFrontendResponse>({
             type: "notification-added",
             payload: data.payload.data,
         });

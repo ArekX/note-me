@@ -45,9 +45,7 @@ export class WebSocketService {
                 id,
                 socket,
                 userId,
-                send: <T>(data: T) => {
-                    socket.send(JSON.stringify(data));
-                },
+                send: <T>(data: T) => socket.send(JSON.stringify(data)),
             };
             this.#clients[id] = client;
 
@@ -74,23 +72,6 @@ export class WebSocketService {
         });
 
         return response;
-    }
-
-    sendTo<T>(clientId: string, data: T): boolean {
-        const client = this.getClient(clientId);
-        if (!client) {
-            return false;
-        }
-
-        client.socket.send(JSON.stringify(data));
-
-        return true;
-    }
-
-    broadcast<T>(data: T): void {
-        for (const client of Object.values(this.#clients)) {
-            client.socket.send(JSON.stringify(data));
-        }
     }
 
     async handleBackendMessage(data: SocketBackendMessage): Promise<void> {

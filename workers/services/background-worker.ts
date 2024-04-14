@@ -4,7 +4,7 @@ export class BackgroundWorker<MessageType> {
     #worker: Worker | null = null;
 
     constructor(
-        private readonly serviceName: string,
+        private readonly workerPath: string,
     ) {}
 
     send(message: MessageType) {
@@ -18,7 +18,7 @@ export class BackgroundWorker<MessageType> {
     start() {
         this.#worker = new Worker(
             new URL(
-                `./${this.serviceName}-service.ts`,
+                `../${this.workerPath}`,
                 import.meta.url,
             ).href,
             {

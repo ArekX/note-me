@@ -3,10 +3,10 @@
 declare const self: DedicatedWorkerGlobalScope;
 
 import "$std/dotenv/load.ts";
-import { checkReminders } from "../timers/handlers/check-reminders.ts";
-import { TimerService } from "../timers/periodic-timer-service.ts";
+import { checkReminders } from "./handlers/check-reminders.ts";
+import { TimerService } from "./periodic-timer-service.ts";
 
-const timerService = new TimerService(60 * 1000, self);
+const timerService = new TimerService(10 * 1000, self);
 
 timerService.registerHandler(checkReminders);
 

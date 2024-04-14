@@ -2,8 +2,10 @@ import { SocketClient, WebSocketHandler } from "./types.ts";
 
 type SocketUserClientMap = { [key: SocketClient["userId"]]: SocketClient };
 
-export class BaseWebSocketHandler<Frontend, Backend>
-    implements WebSocketHandler<Frontend, Backend> {
+export abstract class BaseWebSocketHandler<
+    Frontend,
+    Backend extends { type: string },
+> implements WebSocketHandler<Frontend, Backend> {
     #clients: SocketUserClientMap = {};
 
     onConnected(client: SocketClient) {
@@ -20,5 +22,17 @@ export class BaseWebSocketHandler<Frontend, Backend>
 
     getAllClients(): SocketClient[] {
         return Object.values(this.#clients);
+    }
+
+    abstract getAllowedBackendMessages(): Backend["type"][];
+
+    abstract onBackendScopedMessage(data: Backend): Promise<void>;
+
+    onBackendMessage(data: Backend): Promise<void> {
+        if (!this.getAllowedBackendMessages().includes(data.type)) {
+            return Promise.resolve();
+        }
+
+        return this.onBackendScopedMessage(data);
     }
 }

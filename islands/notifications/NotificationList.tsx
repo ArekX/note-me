@@ -2,7 +2,7 @@ import { useSignal } from "@preact/signals";
 import { Icon } from "$components/Icon.tsx";
 import { useScriptsReadyEffect } from "../../frontend/hooks/use-scripts-ready.ts";
 import {
-    NotificationResponses,
+    NotificationFrontendResponse,
 } from "$workers/websocket/handlers/notifications.ts";
 import { NotificationRecord } from "$backend/repository/notification-repository.ts";
 import { createRef } from "preact";
@@ -10,7 +10,7 @@ import { NotificationItem } from "$islands/notifications/NotificationItem.tsx";
 import { Button } from "$components/Button.tsx";
 import { useSinglePopover } from "$frontend/hooks/use-single-popover.ts";
 import { useWebsocketEvent } from "$frontend/hooks/use-websocket-event.ts";
-import { NotificationMessages } from "$workers/websocket/messages.ts";
+import { NotificationFrontendMessage } from "$workers/websocket/handlers/notifications.ts";
 
 interface NotificationsProps {
     initialNotifications: NotificationRecord[];
@@ -21,7 +21,7 @@ export default function Notifications(props: NotificationsProps) {
         props.initialNotifications,
     );
 
-    const { dispatchEvent } = useWebsocketEvent<NotificationResponses>({
+    const { dispatchEvent } = useWebsocketEvent<NotificationFrontendResponse>({
         eventMap: {
             "notifications-list": (data): void => {
                 notifications.value = data.payload;
@@ -65,39 +65,35 @@ export default function Notifications(props: NotificationsProps) {
     });
 
     useScriptsReadyEffect(() => {
-        dispatchEvent<NotificationMessages>({
+        dispatchEvent<NotificationFrontendMessage>({
             type: "getMyNotifications",
             payload: null,
         });
     });
 
-    const handleDeleteSingle = (notification: NotificationRecord) => {
-        dispatchEvent<NotificationMessages>({
+    const handleDeleteSingle = (notification: NotificationRecord) =>
+        dispatchEvent<NotificationFrontendMessage>({
             type: "deleteSingle",
             payload: { id: notification.id },
         });
-    };
 
-    const handleDeleteAll = () => {
-        dispatchEvent<NotificationMessages>({
+    const handleDeleteAll = () =>
+        dispatchEvent<NotificationFrontendMessage>({
             type: "deleteAll",
             payload: null,
         });
-    };
 
-    const handleMarkAllRead = () => {
-        dispatchEvent<NotificationMessages>({
+    const handleMarkAllRead = () =>
+        dispatchEvent<NotificationFrontendMessage>({
             type: "markAllRead",
             payload: null,
         });
-    };
 
-    const handleMarkSingleAsRead = (notification: NotificationRecord) => {
-        dispatchEvent<NotificationMessages>({
+    const handleMarkSingleAsRead = (notification: NotificationRecord) =>
+        dispatchEvent<NotificationFrontendMessage>({
             type: "markSingleRead",
             payload: { id: notification.id },
         });
-    };
 
     const menuRef = createRef<HTMLDivElement>();
 
