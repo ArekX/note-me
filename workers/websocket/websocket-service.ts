@@ -85,12 +85,13 @@ export class WebSocketService {
     }
 
     start() {
+        const hostname = this.hostname;
         Deno.serve({
             port: this.port,
-            hostname: this.hostname,
+            hostname: hostname,
             handler: (request) => this.#handleRequest(request),
             signal: this.#abortController.signal,
-            onListen({ port, hostname }) {
+            onListen({ port }) {
                 workerLogger.info(
                     `WebSocket service started and running at {hostname}:{port}`,
                     { hostname, port },

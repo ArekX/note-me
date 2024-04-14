@@ -6,7 +6,10 @@ import "$std/dotenv/load.ts";
 import { WebSocketService } from "./websocket-service.ts";
 import { notificationsHandler } from "./handlers/notifications.ts";
 
-const service = new WebSocketService();
+const service = new WebSocketService(
+    +(Deno.env.get("WEBSOCKET_PORT") ?? 8080),
+    Deno.env.get("SERVER_ADDRESS") ?? "127.0.0.1",
+);
 
 service.registerHandler(notificationsHandler);
 
