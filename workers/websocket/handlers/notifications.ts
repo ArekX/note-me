@@ -21,27 +21,27 @@ export type NotificationFrontendMessage =
 
 export type NotificationFrontendResponse =
     | Payload<
-        "notifications-list",
+        "notificationsList",
         NotificationRecord[]
     >
     | Payload<
-        "notification-added",
+        "notificationAdded",
         NotificationRecord
     >
     | Payload<
-        "deleted-all",
+        "deletedAll",
         null
     >
     | Payload<
-        "marked-all-read",
+        "markedAllRead",
         null
     >
     | Payload<
-        "marked-single-read",
+        "markedSingleRead",
         { id: number }
     >
     | Payload<
-        "deleted-single",
+        "deletedSingle",
         { id: number }
     >;
 
@@ -56,7 +56,7 @@ export type NotificationBackendMessage = Payload<
 const getMyNotifications = async (client: SocketClient) => {
     const results = await getUserNotifications(client.userId);
     client.send<NotificationFrontendResponse>({
-        type: "notifications-list",
+        type: "notificationsList",
         payload: results,
     });
 };
@@ -64,7 +64,7 @@ const getMyNotifications = async (client: SocketClient) => {
 const deleteAll = async (client: SocketClient) => {
     await deleteUserNotifications(client.userId);
     client.send<NotificationFrontendResponse>({
-        type: "deleted-all",
+        type: "deletedAll",
         payload: null,
     });
 };
@@ -72,7 +72,7 @@ const deleteAll = async (client: SocketClient) => {
 const markAllRead = async (client: SocketClient) => {
     await markReadUserNotifications(client.userId);
     client.send<NotificationFrontendResponse>({
-        type: "marked-all-read",
+        type: "markedAllRead",
         payload: null,
     });
 };
@@ -86,7 +86,7 @@ const markSingleRead = async (
     }
     await markSingleNotificationRead(message.payload.id, client.userId);
     client.send<NotificationFrontendResponse>({
-        type: "marked-single-read",
+        type: "markedSingleRead",
         payload: {
             id: message.payload.id,
         },
@@ -102,7 +102,7 @@ const deleteSingle = async (
     }
     await deleteSingleNotification(message.payload.id, client.userId);
     client.send<NotificationFrontendResponse>({
-        type: "deleted-single",
+        type: "deletedSingle",
         payload: {
             id: message.payload.id,
         },
@@ -150,7 +150,7 @@ class NotificationHandler extends BaseWebSocketHandler<
         const client = this.getClient(data.payload.toUserId);
 
         client?.send<NotificationFrontendResponse>({
-            type: "notification-added",
+            type: "notificationAdded",
             payload: data.payload.data,
         });
 

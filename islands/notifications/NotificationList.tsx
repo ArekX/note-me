@@ -23,13 +23,13 @@ export default function Notifications(props: NotificationsProps) {
 
     const { dispatchEvent } = useWebsocketEvent<NotificationFrontendResponse>({
         eventMap: {
-            "notifications-list": (data): void => {
+            notificationsList: (data): void => {
                 notifications.value = data.payload;
             },
-            "deleted-all": (): void => {
+            deletedAll: (): void => {
                 notifications.value = [];
             },
-            "marked-all-read": (): void => {
+            markedAllRead: (): void => {
                 notifications.value = notifications.value.map((
                     notification,
                 ) => ({
@@ -37,7 +37,7 @@ export default function Notifications(props: NotificationsProps) {
                     is_read: true,
                 }));
             },
-            "marked-single-read": (data): void => {
+            markedSingleRead: (data): void => {
                 notifications.value = notifications.value.map(
                     (notification) => {
                         if (notification.id === data.payload.id) {
@@ -50,12 +50,12 @@ export default function Notifications(props: NotificationsProps) {
                     },
                 );
             },
-            "deleted-single": (data): void => {
+            deletedSingle: (data): void => {
                 notifications.value = notifications.value.filter((n) =>
                     n.id !== data.payload.id
                 );
             },
-            "notification-added": (data): void => {
+            notificationAdded: (data): void => {
                 notifications.value = [
                     ...notifications.value,
                     data.payload,

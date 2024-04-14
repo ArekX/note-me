@@ -6,7 +6,7 @@ import "$std/dotenv/load.ts";
 import { checkReminders } from "./handlers/check-reminders.ts";
 import { TimerService } from "./periodic-timer-service.ts";
 
-const timerService = new TimerService(10 * 1000, self);
+const timerService = new TimerService(self);
 
 timerService.registerHandler(checkReminders);
 

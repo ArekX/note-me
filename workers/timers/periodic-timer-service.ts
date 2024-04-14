@@ -12,12 +12,14 @@ interface RegisteredTimingHandler {
     handler: TimerHandler;
 }
 
+export const EVERY_MINUTE = 60 * 1000;
+
 export class TimerService {
     #handlers: Set<RegisteredTimingHandler> = new Set();
 
     constructor(
-        private readonly triggerTimeout: number = 60 * 1000,
         private readonly worker: DedicatedWorkerGlobalScope,
+        private readonly runEvery: number = EVERY_MINUTE,
     ) {}
 
     registerHandler(handler: TimerHandler) {
@@ -30,9 +32,7 @@ export class TimerService {
 
     async *#triggerNextPeriod() {
         while (true) {
-            await new Promise((resolve) =>
-                setTimeout(resolve, this.triggerTimeout)
-            );
+            await new Promise((resolve) => setTimeout(resolve, this.runEvery));
             yield;
         }
     }
