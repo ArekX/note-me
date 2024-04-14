@@ -3,12 +3,12 @@ import { Icon } from "$components/Icon.tsx";
 import { createRef } from "preact";
 import { useSinglePopover } from "$frontend/hooks/use-single-popover.ts";
 
-type ModeType = "new" | "existing" | "both";
+type ModeType = "view" | "edit-new" | "edit-existing";
 
 export interface MoreMenuItem {
     name: string;
     icon: string;
-    showOnMode: ModeType;
+    modes: ModeType[];
     onClick: () => void;
 }
 
@@ -48,48 +48,46 @@ export const MoreMenu = (
         {
             name: inPreviewMode ? "Edit mode" : "Preview mode",
             icon: inPreviewMode ? "pencil" : "show",
-            showOnMode: "both",
+            modes: ["edit-new", "edit-existing"],
             onClick: () => sendAction(inPreviewMode ? "edit" : "preview"),
         },
         {
-            name: "Details", // created by, last update, author, generated table of contents
+            name: "Details",
             icon: "detail",
-            showOnMode: "existing",
+            modes: ["view", "edit-existing"],
             onClick: () => sendAction("details"),
         },
         {
             name: "History",
             icon: "history",
-            showOnMode: "existing",
+            modes: ["view", "edit-existing"],
             onClick: () => sendAction("history"),
         },
         {
             name: "Share",
             icon: "share-alt",
-            showOnMode: "existing",
+            modes: ["view", "edit-existing"],
             onClick: () => sendAction("share"),
         },
         {
             name: "Remind me",
             icon: "alarm",
-            showOnMode: "existing",
+            modes: ["view", "edit-existing"],
             onClick: () => sendAction("remind"),
         },
         {
             name: "Delete",
             icon: "minus-circle",
-            showOnMode: "existing",
+            modes: ["view", "edit-existing"],
             onClick: () => sendAction("delete"),
         },
         {
             name: "Help",
             icon: "help-circle",
-            showOnMode: "both",
+            modes: ["view", "edit-existing"],
             onClick: () => sendAction("help"),
         },
-    ].filter((item) =>
-        item.showOnMode === mode || item.showOnMode === "both"
-    ) as MoreMenuItem[];
+    ].filter(({ modes }) => modes.includes(mode)) as MoreMenuItem[];
 
     if (items.length === 0) {
         return null;

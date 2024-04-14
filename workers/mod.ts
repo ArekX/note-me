@@ -1,22 +1,15 @@
 import { eventBus } from "$backend/event-bus/mod.ts";
 import { webLogger } from "$backend/logger.ts";
-import { BackgroundService } from "./background-service.ts";
-import { WebSocketMessage } from "./webworkers/websocket-worker.ts";
+import { services } from "./services/mod.ts";
 
 export interface BackgroundServices {
-    services: {
-        websocketService: BackgroundService<WebSocketMessage>;
-        timingService: BackgroundService<unknown>;
-    };
+    services: typeof services;
     startAll(): void;
     stopAll(): void;
 }
 
 export const backgroundServices: BackgroundServices = {
-    services: {
-        websocketService: new BackgroundService("websocket-worker"),
-        timingService: new BackgroundService("timing-worker"),
-    },
+    services,
     startAll(): void {
         for (const [serviceName, service] of Object.entries(this.services)) {
             webLogger.info(`Starting background service: ${serviceName}`);

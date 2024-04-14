@@ -1,5 +1,6 @@
 import { UserRecord } from "$backend/repository/user-repository.ts";
 import { AppPermissions } from "$backend/rbac/permissions.ts";
+import { unixToDate } from "$frontend/time.ts";
 
 export type FrontendUserData =
     & Pick<
@@ -35,15 +36,24 @@ class UserData {
         });
     }
 
-    formatDate(date: Date): string {
+    formatDate(date: Date | number): string {
+        if (typeof date === "number") {
+            date = unixToDate(date);
+        }
         return this.#intlDate.format(date);
     }
 
-    formatTime(date: Date): string {
+    formatTime(date: Date | number): string {
+        if (typeof date === "number") {
+            date = unixToDate(date);
+        }
         return this.#intlTime.format(date);
     }
 
-    formatDateTime(date: Date): string {
+    formatDateTime(date: Date | number): string {
+        if (typeof date === "number") {
+            date = unixToDate(date);
+        }
         return this.#intlDateTime.format(date);
     }
 

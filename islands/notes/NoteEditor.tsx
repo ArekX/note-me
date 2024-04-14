@@ -17,6 +17,7 @@ import { createRef } from "preact";
 import { autosize, insertTextIntoField } from "$frontend/deps.ts";
 import { updateNote } from "$frontend/api.ts";
 import Viewer from "$islands/viewer/Viewer.tsx";
+import NoteWindow, { NoteWindowTypes } from "$islands/notes/NoteWindow.tsx";
 
 interface NoteData extends Pick<NoteRecord, "title" | "note"> {
     id?: number;
@@ -56,7 +57,9 @@ export const NoteEditor = ({
     const text = useSignal(note.note);
     const tagString = useSignal(getFormattedTagString(note.tags.join(" ")));
     const isSaving = useSignal(false);
+    const windowMode = useSignal<NoteWindowTypes | null>(null);
     const isPreviewMode = useSignal(false);
+
     const validationErrors = useSignal<ZodIssue[]>([]);
     const textAreaRef = createRef<HTMLTextAreaElement>();
 
@@ -93,12 +96,21 @@ export const NoteEditor = ({
     };
 
     const handleMenuItemClicked = (action: MenuItemActions) => {
-        console.log("execute action", action);
-
-        if (action === "preview") {
-            isPreviewMode.value = true;
-        } else if (action === "edit") {
-            isPreviewMode.value = false;
+        switch (action) {
+            case "preview":
+                isPreviewMode.value = true;
+                break;
+            case "edit":
+                isPreviewMode.value = false;
+                break;
+            case "details":
+            case "history":
+            case "share":
+            case "remind":
+            case "help":
+            case "delete":
+                windowMode.value = action;
+                break;
         }
     };
 
@@ -201,7 +213,7 @@ export const NoteEditor = ({
                         <MoreMenu
                             onMenuItemClick={handleMenuItemClicked}
                             inPreviewMode={isPreviewMode.value}
-                            mode={note.id ? "existing" : "new"}
+                            mode={note.id ? "edit-existing" : "edit-new"}
                         />
                     )}
                 </div>
@@ -242,6 +254,13 @@ export const NoteEditor = ({
                 >
                     {text.value}
                 </textarea>
+            )}
+            {note.id && (
+                <NoteWindow
+                    onClose={() => windowMode.value = null}
+                    type={windowMode.value}
+                    noteId={note.id}
+                />
             )}
         </div>
     );

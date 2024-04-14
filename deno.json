@@ -32,6 +32,7 @@
         "$components/": "./components/",
         "$islands/": "./islands/",
         "$backend/": "./backend/",
+        "$workers/": "./workers/",
         "$schemas/": "./schemas/",
         "$frontend/": "./frontend/",
         "$cli/": "./cli/",

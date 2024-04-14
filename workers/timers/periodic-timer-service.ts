@@ -1,18 +1,18 @@
 import { BusEvents } from "$backend/event-bus/bus-events.ts";
 import { workerLogger } from "$backend/logger.ts";
 
-export interface TimingHandler {
+export interface TimerHandler {
     triggerEveryMinutes: number;
     trigger: () => Promise<void>;
-    onRegister(service: TimingService): void;
+    onRegister(service: TimerService): void;
 }
 
 interface RegisteredTimingHandler {
     leftMinutes: number;
-    handler: TimingHandler;
+    handler: TimerHandler;
 }
 
-export class TimingService {
+export class TimerService {
     #handlers: Set<RegisteredTimingHandler> = new Set();
 
     constructor(
@@ -20,7 +20,7 @@ export class TimingService {
         private readonly worker: DedicatedWorkerGlobalScope,
     ) {}
 
-    registerHandler(handler: TimingHandler) {
+    registerHandler(handler: TimerHandler) {
         this.#handlers.add({
             leftMinutes: handler.triggerEveryMinutes,
             handler,

@@ -4,7 +4,7 @@ import dev from "$fresh/dev.ts";
 import config from "./fresh.config.ts";
 
 import "$std/dotenv/load.ts";
-import { backgroundServices } from "./backend/workers/mod.ts";
+import { backgroundServices } from "./workers/mod.ts";
 import { webLogger } from "$backend/logger.ts";
 import { setupCleanupActions } from "$backend/cleanup.ts";
 

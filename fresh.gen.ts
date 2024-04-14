@@ -11,6 +11,7 @@ import * as $api_find_tree from "./routes/api/find-tree.ts";
 import * as $api_groups_id_ from "./routes/api/groups/[id].ts";
 import * as $api_groups_index from "./routes/api/groups/index.ts";
 import * as $api_notes_id_ from "./routes/api/notes/[id].ts";
+import * as $api_notes_details_id_ from "./routes/api/notes/details/[id].ts";
 import * as $api_notes_index from "./routes/api/notes/index.ts";
 import * as $api_profile from "./routes/api/profile.ts";
 import * as $api_tags_id_ from "./routes/api/tags/[id].ts";
@@ -45,7 +46,11 @@ import * as $note_tree_TreeList from "./islands/note-tree/TreeList.tsx";
 import * as $note_tree_helpers from "./islands/note-tree/helpers.ts";
 import * as $notes_MoreMenu from "./islands/notes/MoreMenu.tsx";
 import * as $notes_NoteEditor from "./islands/notes/NoteEditor.tsx";
+import * as $notes_NoteWindow from "./islands/notes/NoteWindow.tsx";
 import * as $notes_ViewNote from "./islands/notes/ViewNote.tsx";
+import * as $notes_windows_Help from "./islands/notes/windows/Help.tsx";
+import * as $notes_windows_NoteDelete from "./islands/notes/windows/NoteDelete.tsx";
+import * as $notes_windows_NoteDetails from "./islands/notes/windows/NoteDetails.tsx";
 import * as $notifications_NotificationItem from "./islands/notifications/NotificationItem.tsx";
 import * as $notifications_NotificationList from "./islands/notifications/NotificationList.tsx";
 import * as $notifications_views_ReminderView from "./islands/notifications/views/ReminderView.tsx";
@@ -91,6 +96,7 @@ const manifest = {
         "./routes/api/groups/[id].ts": $api_groups_id_,
         "./routes/api/groups/index.ts": $api_groups_index,
         "./routes/api/notes/[id].ts": $api_notes_id_,
+        "./routes/api/notes/details/[id].ts": $api_notes_details_id_,
         "./routes/api/notes/index.ts": $api_notes_index,
         "./routes/api/profile.ts": $api_profile,
         "./routes/api/tags/[id].ts": $api_tags_id_,
@@ -127,7 +133,11 @@ const manifest = {
         "./islands/note-tree/helpers.ts": $note_tree_helpers,
         "./islands/notes/MoreMenu.tsx": $notes_MoreMenu,
         "./islands/notes/NoteEditor.tsx": $notes_NoteEditor,
+        "./islands/notes/NoteWindow.tsx": $notes_NoteWindow,
         "./islands/notes/ViewNote.tsx": $notes_ViewNote,
+        "./islands/notes/windows/Help.tsx": $notes_windows_Help,
+        "./islands/notes/windows/NoteDelete.tsx": $notes_windows_NoteDelete,
+        "./islands/notes/windows/NoteDetails.tsx": $notes_windows_NoteDetails,
         "./islands/notifications/NotificationItem.tsx":
             $notifications_NotificationItem,
         "./islands/notifications/NotificationList.tsx":

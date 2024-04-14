@@ -2,7 +2,9 @@ import Viewer from "../viewer/Viewer.tsx";
 import { ViewNoteRecord } from "$backend/repository/note-repository.ts";
 import { Button } from "$components/Button.tsx";
 import { Icon } from "$components/Icon.tsx";
-import { MoreMenu } from "$islands/notes/MoreMenu.tsx";
+import { MenuItemActions, MoreMenu } from "$islands/notes/MoreMenu.tsx";
+import NoteWindow, { NoteWindowTypes } from "$islands/notes/NoteWindow.tsx";
+import { useSignal } from "@preact/signals";
 
 export interface ViewNoteProps {
     readonly?: boolean;
@@ -12,6 +14,21 @@ export interface ViewNoteProps {
 export function ViewNote(
     { readonly = false, record }: ViewNoteProps,
 ) {
+    const windowMode = useSignal<NoteWindowTypes | null>(null);
+
+    const handleMenuItemClicked = (action: MenuItemActions) => {
+        switch (action) {
+            case "details":
+            case "history":
+            case "share":
+            case "remind":
+            case "help":
+            case "delete":
+                windowMode.value = action;
+                break;
+        }
+    };
+
     return (
         <div class="view-note flex flex-col">
             <div class="flex flex-row">
@@ -32,9 +49,9 @@ export function ViewNote(
                         </Button>{" "}
                         <div class="text-left inline-block">
                             <MoreMenu
-                                onMenuItemClick={() => {}}
+                                onMenuItemClick={handleMenuItemClicked}
                                 inPreviewMode={false}
-                                mode={record.id ? "existing" : "new"}
+                                mode="view"
                             />
                         </div>
                     </div>
@@ -53,6 +70,13 @@ export function ViewNote(
             <div>
                 <Viewer text={record.note} />
             </div>
+            {record.id && (
+                <NoteWindow
+                    onClose={() => windowMode.value = null}
+                    type={windowMode.value}
+                    noteId={record.id}
+                />
+            )}
         </div>
     );
 }

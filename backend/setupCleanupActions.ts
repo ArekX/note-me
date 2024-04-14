@@ -1,5 +1,5 @@
 import { flushFileLogs, webLogger } from "$backend/logger.ts";
-import { backgroundServices } from "$backend/workers/mod.ts";
+import { backgroundServices } from "../workers/mod.ts";
 
 export const setupCleanupActions = () => {
     Deno.addSignalListener("SIGINT", () => {

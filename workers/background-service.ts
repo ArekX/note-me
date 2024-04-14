@@ -22,7 +22,10 @@ export class BackgroundService<MessageType> {
 
     start() {
         this.#worker = new Worker(
-            new URL(`./webworkers/${this.serviceName}.ts`, import.meta.url)
+            new URL(
+                `./services/${this.serviceName}-service.ts`,
+                import.meta.url,
+            )
                 .href,
             {
                 type: "module",

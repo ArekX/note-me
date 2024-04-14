@@ -119,3 +119,56 @@ export const getNote = async (
         tags: (result.tags ?? "").split?.(",").filter(Boolean),
     };
 };
+
+export interface NoteDetailsRecord {
+    group_id: number;
+    group_name: string;
+    created_at: number;
+    updated_at: number;
+    user_name: string;
+}
+
+export const getNoteDetails = async (
+    note_id: number,
+    user_id: number,
+): Promise<NoteDetailsRecord | null> => {
+    const result = await db.selectFrom("note")
+        .select([
+            sql<number>`\`group\`.id`.as("group_id"),
+            sql<string>`\`group\`.name`.as("group_name"),
+            "note.created_at",
+            "note.updated_at",
+            sql<string>`user.name`.as("user_name"),
+        ])
+        .where("note.id", "=", note_id)
+        .where("note.user_id", "=", user_id)
+        .where("note.is_deleted", "=", false)
+        .leftJoin(
+            "group_note",
+            (join) =>
+                join
+                    .onRef("note.id", "=", "group_note.note_id")
+                    .on("group_note.user_id", "=", user_id),
+        )
+        .leftJoin("group", "group_note.group_id", "group.id")
+        .leftJoin("user", "note.user_id", "user.id")
+        .executeTakeFirst();
+
+    return result ?? null;
+};
+
+export const deleteNote = async (
+    note_id: number,
+    user_id: number,
+): Promise<boolean> => {
+    const result = await db.updateTable("note")
+        .set({
+            is_deleted: true,
+        })
+        .where("id", "=", note_id)
+        .where("user_id", "=", user_id)
+        .where("is_deleted", "=", false)
+        .executeTakeFirst();
+
+    return result.numUpdatedRows > 0;
+};

@@ -1,16 +1,16 @@
 import { useSignal } from "@preact/signals";
 import { Icon } from "$components/Icon.tsx";
-import { socketManager } from "$frontend/socket-manager.ts";
 import { useScriptsReadyEffect } from "../../frontend/hooks/use-scripts-ready.ts";
 import {
-    ClientNotificationRequests,
     NotificationResponses,
-} from "$backend/workers/websocket-handlers/notifications.ts";
+} from "$workers/websocket/handlers/notifications.ts";
 import { NotificationRecord } from "$backend/repository/notification-repository.ts";
 import { createRef } from "preact";
 import { NotificationItem } from "$islands/notifications/NotificationItem.tsx";
 import { Button } from "$components/Button.tsx";
 import { useSinglePopover } from "$frontend/hooks/use-single-popover.ts";
+import { useWebsocketEvent } from "$frontend/hooks/use-websocket-event.ts";
+import { NotificationMessages } from "$workers/websocket/messages.ts";
 
 interface NotificationsProps {
     initialNotifications: NotificationRecord[];
@@ -21,79 +21,79 @@ export default function Notifications(props: NotificationsProps) {
         props.initialNotifications,
     );
 
-    useScriptsReadyEffect(() => {
-        socketManager.onMessage<NotificationResponses>((data) => {
-            switch (data.type) {
-                case "notifications-list":
-                    notifications.value = data.payload;
-                    break;
-                case "notification-added":
-                    notifications.value = [
-                        ...notifications.value,
-                        data.payload,
-                    ];
-                    break;
-                case "deleted-all":
-                    notifications.value = [];
-                    break;
-                case "marked-all-read":
-                    notifications.value = notifications.value.map((
-                        notification,
-                    ) => ({
-                        ...notification,
-                        is_read: true,
-                    }));
-                    break;
-                case "marked-single-read":
-                    notifications.value = notifications.value.map(
-                        (notification) => {
-                            if (notification.id === data.payload.id) {
-                                return {
-                                    ...notification,
-                                    is_read: true,
-                                };
-                            }
-                            return notification;
-                        },
-                    );
-                    break;
-                case "deleted-single":
-                    notifications.value = notifications.value.filter((n) =>
-                        n.id !== data.payload.id
-                    );
-                    break;
-            }
-        });
+    const { dispatchEvent } = useWebsocketEvent<NotificationResponses>({
+        eventMap: {
+            "notifications-list": (data): void => {
+                notifications.value = data.payload;
+            },
+            "deleted-all": (): void => {
+                notifications.value = [];
+            },
+            "marked-all-read": (): void => {
+                notifications.value = notifications.value.map((
+                    notification,
+                ) => ({
+                    ...notification,
+                    is_read: true,
+                }));
+            },
+            "marked-single-read": (data): void => {
+                notifications.value = notifications.value.map(
+                    (notification) => {
+                        if (notification.id === data.payload.id) {
+                            return {
+                                ...notification,
+                                is_read: true,
+                            };
+                        }
+                        return notification;
+                    },
+                );
+            },
+            "deleted-single": (data): void => {
+                notifications.value = notifications.value.filter((n) =>
+                    n.id !== data.payload.id
+                );
+            },
+            "notification-added": (data): void => {
+                notifications.value = [
+                    ...notifications.value,
+                    data.payload,
+                ];
+            },
+        },
+    });
 
-        socketManager.send<ClientNotificationRequests>({
+    useScriptsReadyEffect(() => {
+        dispatchEvent<NotificationMessages>({
             type: "getMyNotifications",
             payload: null,
         });
     });
 
     const handleDeleteSingle = (notification: NotificationRecord) => {
-        socketManager.send<ClientNotificationRequests>({
+        dispatchEvent<NotificationMessages>({
             type: "deleteSingle",
             payload: { id: notification.id },
         });
     };
 
     const handleDeleteAll = () => {
-        socketManager.send<ClientNotificationRequests>({
+        dispatchEvent<NotificationMessages>({
             type: "deleteAll",
             payload: null,
         });
     };
 
     const handleMarkAllRead = () => {
-        socketManager.send<ClientNotificationRequests>({
+        dispatchEvent<NotificationMessages>({
             type: "markAllRead",
             payload: null,
         });
     };
 
     const handleMarkSingleAsRead = (notification: NotificationRecord) => {
-        socketManager.send<ClientNotificationRequests>({
+        dispatchEvent<NotificationMessages>({
             type: "markSingleRead",
             payload: { id: notification.id },
         });
@@ -101,7 +101,7 @@ export default function Notifications(props: NotificationsProps) {
 
     const menuRef = createRef<HTMLDivElement>();
 
-    const { isOpen, open, close } = useSinglePopover(
+    const { isOpen, open } = useSinglePopover(
         "userNotifications-0",
         menuRef,
         () => {

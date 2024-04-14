@@ -1,5 +1,8 @@
 import { axiod, IAxiodResponse } from "./deps.ts";
-import { NoteRecord } from "$backend/repository/note-repository.ts";
+import {
+    NoteDetailsRecord,
+    NoteRecord,
+} from "$backend/repository/note-repository.ts";
 import { GroupRecord } from "$backend/repository/group-repository.ts";
 import { getUserData } from "$frontend/user-data.ts";
 import { AddNoteRequest } from "$schemas/notes.ts";
@@ -59,6 +62,24 @@ export const updateNote = (
     apiInterface.put(`/notes/${id}`, {
         ...note,
     }, {
+        params: {
+            csrf: getUserData().csrfToken,
+        },
+    });
+
+export const deleteNote = (
+    id: number,
+): Promise<IAxiodResponse<void>> =>
+    apiInterface.delete(`/notes/${id}`, {
+        params: {
+            csrf: getUserData().csrfToken,
+        },
+    });
+
+export const getNoteDetails = (
+    note_id: number,
+): Promise<IAxiodResponse<NoteDetailsRecord>> =>
+    apiInterface.get(`/notes/details/${note_id}`, {
         params: {
             csrf: getUserData().csrfToken,
         },

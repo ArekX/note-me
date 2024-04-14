@@ -25,6 +25,7 @@ export default function Dialog({
     return (
         <dialog
             ref={dialogRef}
+            onCancel={(e) => e.preventDefault()}
             onClick={(e) => e.stopPropagation()}
             {...props}
         >

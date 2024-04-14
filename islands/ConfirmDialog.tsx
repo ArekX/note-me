@@ -4,6 +4,7 @@ import { Button, ButtonColors } from "$components/Button.tsx";
 
 interface ConfirmDialogProps {
     visible: boolean;
+    isProcessing?: boolean;
     prompt: string | ComponentChildren;
     onConfirm: () => void;
     onCancel: () => void;
@@ -16,6 +17,7 @@ interface ConfirmDialogProps {
 export default function ConfirmDialog({
     visible,
     prompt,
+    isProcessing = false,
     confirmText = "Ok",
     cancelText = "Cancel",
     confirmColor,
@@ -46,24 +48,27 @@ export default function ConfirmDialog({
     return (
         <dialog
             ref={dialogRef}
+            onCancel={(e) => e.preventDefault()}
             onClick={(e) => e.stopPropagation()}
             class="select-none"
         >
             <div class="p-2">{prompt}</div>
-            <div class="text-center p-2">
-                <span class="pr-4">
-                    <Button
-                        color={confirmColor}
-                        setAsDefault={true}
-                        onClick={handleConfirm}
-                    >
-                        {confirmText}
+            {!isProcessing && (
+                <div class="text-center p-2">
+                    <span class="pr-4">
+                        <Button
+                            color={confirmColor}
+                            setAsDefault={true}
+                            onClick={handleConfirm}
+                        >
+                            {confirmText}
+                        </Button>
+                    </span>
+                    <Button color={cancelColor} onClick={handleCancel}>
+                        {cancelText}
                     </Button>
-                </span>
-                <Button color={cancelColor} onClick={handleCancel}>
-                    {cancelText}
-                </Button>
-            </div>
+                </div>
+            )}
         </dialog>
     );
 }

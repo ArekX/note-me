@@ -1,6 +1,6 @@
 import { BusEvent, EventHandler } from "$backend/event-bus/event-bus.ts";
-import { backgroundServices } from "$backend/workers/mod.ts";
-import { SendNotificationRequest } from "$backend/workers/websocket-handlers/notifications.ts";
+import { services } from "$workers/services/mod.ts";
+import { SendNotificationRequest } from "$workers/websocket/messages.ts";
 
 export type NotificationReceivedEvent = BusEvent<
     "notification-received",
@@ -10,7 +10,7 @@ export type NotificationReceivedEvent = BusEvent<
 export const notificationReceivedHandler: EventHandler = {
     eventTypes: ["notification-received"],
     handle(event: NotificationReceivedEvent): void {
-        backgroundServices.services.websocketService.send({
+        services.websocket.send({
             type: "notification",
             payload: event.payload,
         });

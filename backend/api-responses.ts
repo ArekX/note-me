@@ -20,6 +20,14 @@ export const toDeleted = () =>
         status: 204,
     });
 
+export const toSingleResult = <T>(result: T) =>
+    new Response(
+        JSON.stringify(result),
+        {
+            status: 200,
+        },
+    );
+
 export const toResultList = <T>(results: T[]) =>
     new Response(
         JSON.stringify(results),
