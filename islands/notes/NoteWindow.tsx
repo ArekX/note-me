@@ -29,7 +29,11 @@ export default function NoteWindow({
                 show={type == "details"}
             />
             <Help show={type == "help"} onClose={onClose} />
-            <NoteDelete show={type == "delete"} onClose={onClose} />
+            <NoteDelete
+                noteId={noteId}
+                show={type == "delete"}
+                onClose={onClose}
+            />
         </>
     );
 }

@@ -1,7 +1,7 @@
 import Dialog from "$islands/Dialog.tsx";
 import { useEffect } from "preact/hooks";
 import { useSignal } from "@preact/signals";
-import { useLoading } from "$frontend/hooks/use-loading.ts";
+import { useLoader } from "$frontend/hooks/use-loading.ts";
 import Loader from "$islands/Loader.tsx";
 import { getNoteDetails } from "$frontend/api.ts";
 import { NoteDetailsRecord } from "$backend/repository/note-repository.ts";
@@ -18,10 +18,10 @@ interface NoteDetailsProps {
 export const NoteDetails = ({ show, noteId, onClose }: NoteDetailsProps) => {
     const noteData = useSignal<NoteDetailsRecord | null>(null);
 
-    const isNoteLoading = useLoading();
+    const isNoteLoading = useLoader();
 
     const loadNoteDetails = async () => {
-        if (isNoteLoading.value) {
+        if (isNoteLoading.running) {
             return;
         }
 
@@ -44,7 +44,7 @@ export const NoteDetails = ({ show, noteId, onClose }: NoteDetailsProps) => {
         {};
     return (
         <Dialog visible={show}>
-            {isNoteLoading.value
+            {isNoteLoading.running
                 ? <Loader color="white">Loading note details...</Loader>
                 : noteData.value && (
                     <div>

@@ -70,7 +70,7 @@ export const updateNote = (
 export const deleteNote = (
     id: number,
 ): Promise<IAxiodResponse<void>> =>
-    apiInterface.delete(`/notes/${id}`, {
+    apiInterface.delete(`/notes/${id}`, {}, {
         params: {
             csrf: getUserData().csrfToken,
         },

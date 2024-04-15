@@ -46,7 +46,9 @@ import * as $note_tree_TreeList from "./islands/note-tree/TreeList.tsx";
 import * as $note_tree_helpers from "./islands/note-tree/helpers.ts";
 import * as $notes_MoreMenu from "./islands/notes/MoreMenu.tsx";
 import * as $notes_NoteEditor from "./islands/notes/NoteEditor.tsx";
+import * as $notes_NoteInput from "./islands/notes/NoteInput.tsx";
 import * as $notes_NoteWindow from "./islands/notes/NoteWindow.tsx";
+import * as $notes_TagInput from "./islands/notes/TagInput.tsx";
 import * as $notes_ViewNote from "./islands/notes/ViewNote.tsx";
 import * as $notes_windows_Help from "./islands/notes/windows/Help.tsx";
 import * as $notes_windows_NoteDelete from "./islands/notes/windows/NoteDelete.tsx";
@@ -133,7 +135,9 @@ const manifest = {
         "./islands/note-tree/helpers.ts": $note_tree_helpers,
         "./islands/notes/MoreMenu.tsx": $notes_MoreMenu,
         "./islands/notes/NoteEditor.tsx": $notes_NoteEditor,
+        "./islands/notes/NoteInput.tsx": $notes_NoteInput,
         "./islands/notes/NoteWindow.tsx": $notes_NoteWindow,
+        "./islands/notes/TagInput.tsx": $notes_TagInput,
         "./islands/notes/ViewNote.tsx": $notes_ViewNote,
         "./islands/notes/windows/Help.tsx": $notes_windows_Help,
         "./islands/notes/windows/NoteDelete.tsx": $notes_windows_NoteDelete,

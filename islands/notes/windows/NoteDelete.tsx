@@ -1,21 +1,28 @@
 import ConfirmDialog from "$islands/ConfirmDialog.tsx";
-import { useLoading } from "$frontend/hooks/use-loading.ts";
+import { useLoader } from "$frontend/hooks/use-loading.ts";
 import Loader from "$islands/Loader.tsx";
+import { deleteNote } from "$frontend/api.ts";
+import { clearStorage } from "$frontend/session-storage.ts";
 
 interface NoteDeleteProps {
+    noteId: number;
     show: boolean;
     onClose: () => void;
 }
 
-export const NoteDelete = ({ show, onClose }: NoteDeleteProps) => {
-    const deleteLoader = useLoading();
-    const handleConfirmedDelete = () => {
+export const NoteDelete = ({ noteId, show, onClose }: NoteDeleteProps) => {
+    const deleteLoader = useLoader();
+    const handleConfirmedDelete = async () => {
         deleteLoader.start();
+        await deleteNote(noteId);
+        deleteLoader.stop();
+        clearStorage();
+        window.location.href = "/app";
     };
 
     return (
         <ConfirmDialog
-            prompt={deleteLoader.value
+            prompt={deleteLoader.running
                 ? <Loader color="white">Deleting note...</Loader>
                 : (
                     <>
@@ -27,7 +34,7 @@ export const NoteDelete = ({ show, onClose }: NoteDeleteProps) => {
                         </div>
                     </>
                 )}
-            isProcessing={deleteLoader.value}
+            isProcessing={deleteLoader.running}
             confirmText="Delete note"
             confirmColor="danger"
             visible={show}

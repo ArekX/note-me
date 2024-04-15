@@ -129,6 +129,8 @@ dialog::backdrop {
     font-size: 1.1rem;
     line-height: 1.4em;
     font-weight: 400;
+    min-height: calc(100vh - 8em);
+    overflow: hidden;
     resize: none !important;
     background: transparent;
 }
