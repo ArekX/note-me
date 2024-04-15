@@ -4,6 +4,7 @@ import { NotificationRecord } from "$backend/repository/notification-repository.
 import { Icon } from "$components/Icon.tsx";
 import { ListPanel } from "../islands/sidebar/SideBarPanel.tsx";
 import { LogoutButton } from "$islands/sidebar/LogoutButton.tsx";
+import { getCurrentMonthWallpaper } from "$frontend/wallpaper.ts";
 
 export interface SidebarProps {
     showSettings: boolean;
@@ -13,8 +14,17 @@ export interface SidebarProps {
 export function Sidebar(
     { initialNotifications, showSettings }: SidebarProps,
 ) {
+    const wallpaper = getCurrentMonthWallpaper();
     return (
-        <div class="w-1/5 bg-gray-800 text-white bg-opacity-95">
+        <div
+            class="w-1/5 bg-gray-800 text-white bg-opacity-95"
+            style={{
+                "background-image": `url(${wallpaper})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundBlendMode: "multiply",
+            }}
+        >
             <div class="mt-5">
                 <div class="flex">
                     <div class="flex-1 w-1/3 text-left pl-2">

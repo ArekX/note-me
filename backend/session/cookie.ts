@@ -22,7 +22,7 @@ export const createSessionCookie = (sessionId: string): Cookie => {
         value: sessionId,
         maxAge: +(Deno.env.get("COOKIE_MAX_AGE_SECONDS") ?? monthInSeconds),
         sameSite: "Strict",
-        domain: Deno.env.get("COOKIE_HOSTNAME") ?? "http://localhost:8000",
+        domain: Deno.env.get("COOKIE_DOMAIN") ?? "localhost",
         path: "/",
         secure: (Deno.env.get("COOKIE_MAX_AGE_SECONDS") ?? "0") == "1",
     };
