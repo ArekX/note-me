@@ -97,12 +97,7 @@ export default function Notifications(props: NotificationsProps) {
 
     const menuRef = createRef<HTMLDivElement>();
 
-    const { isOpen, open } = useSinglePopover(
-        "userNotifications-0",
-        menuRef,
-        () => {
-        },
-    );
+    const { isOpen, open } = useSinglePopover("userNotifications-0", menuRef);
 
     const unreadCount = notifications.value.filter((s) => !s.is_read).length;
 

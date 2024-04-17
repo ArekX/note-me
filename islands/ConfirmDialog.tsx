@@ -1,6 +1,6 @@
-import { useEffect } from "preact/hooks";
-import { ComponentChildren, createRef } from "preact";
+import { ComponentChildren } from "preact";
 import { Button, ButtonColors } from "$components/Button.tsx";
+import Dialog from "$islands/Dialog.tsx";
 
 interface ConfirmDialogProps {
     visible: boolean;
@@ -25,32 +25,12 @@ export default function ConfirmDialog({
     onConfirm,
     onCancel,
 }: ConfirmDialogProps) {
-    const dialogRef = createRef<HTMLDialogElement>();
-
-    useEffect(() => {
-        if (visible) {
-            dialogRef.current?.showModal();
-        } else {
-            dialogRef.current?.close();
-        }
-    }, [dialogRef, visible]);
-
-    const handleConfirm = () => {
-        onConfirm();
-        dialogRef.current?.close();
-    };
-
-    const handleCancel = () => {
-        onCancel();
-        dialogRef.current?.close();
-    };
-
     return (
-        <dialog
-            ref={dialogRef}
-            onCancel={(e) => e.preventDefault()}
-            onClick={(e) => e.stopPropagation()}
-            class="select-none"
+        <Dialog
+            visible={visible}
+            canCancel={true}
+            onCancel={onCancel}
+            props={{ "class": "select-none" }}
         >
             <div class="p-2">{prompt}</div>
             {!isProcessing && (
@@ -59,16 +39,16 @@ export default function ConfirmDialog({
                         <Button
                             color={confirmColor}
                             setAsDefault={true}
-                            onClick={handleConfirm}
+                            onClick={onConfirm}
                         >
                             {confirmText}
                         </Button>
                     </span>
-                    <Button color={cancelColor} onClick={handleCancel}>
+                    <Button color={cancelColor} onClick={onCancel}>
                         {cancelText}
                     </Button>
                 </div>
             )}
-        </dialog>
+        </Dialog>
     );
 }

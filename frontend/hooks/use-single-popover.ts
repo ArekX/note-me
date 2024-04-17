@@ -1,4 +1,4 @@
-import { signal } from "@preact/signals";
+import { signal, useSignal } from "@preact/signals";
 import { Ref, useEffect, useMemo } from "preact/hooks";
 
 export type PopoverId = `${string}-${number}`;
@@ -16,60 +16,72 @@ export const closeAllPopovers = () => {
 export const useSinglePopover = <T extends Node>(
     identifier: PopoverId,
     menuRef: Ref<T>,
-    onOpened: () => void,
+    onOpened?: () => void,
     onClosed?: () => void,
 ) => {
-    const open = () => {
-        currentIdentifier.value = identifier;
+    const state = useSignal<"ready" | "opening" | "closing">("ready");
 
-        if (currentIdentifier.value && isPopoverOpen(identifier)) {
-            onClosed?.();
+    const open = () => {
+        if (currentIdentifier.value === identifier) {
+            return;
         }
+
+        state.value = "opening";
+        currentIdentifier.value = identifier;
     };
 
     const close = () => {
+        if (currentIdentifier.value === null) {
+            return;
+        }
+
+        state.value = "closing";
         currentIdentifier.value = null;
     };
-
-    useEffect(() => {
-        if (currentIdentifier.value && isPopoverOpen(identifier)) {
-            onClosed?.();
-        }
-    }, [currentIdentifier.value]);
-
-    useEffect(() => {
-        if (menuRef.current) {
-            onOpened();
-        }
-    }, [menuRef]);
 
     useEffect(() => {
         if (!menuRef.current) {
             return;
         }
 
-        const handleDocumentClick = (event: Event) => {
-            if (!menuRef.current!) {
-                return;
-            }
+        if (state.value === "ready" && !isPopoverOpen(identifier)) {
+            close();
+        } else if (state.value === "opening") {
+            onOpened?.();
+            state.value = "ready";
+        } else if (state.value === "closing") {
+            onClosed?.();
+            state.value = "ready";
+        }
+    }, [menuRef, currentIdentifier.value]);
 
-            if (menuRef.current.contains(event.target as Node)) {
+    useEffect(() => {
+        if (!menuRef.current) {
+            return;
+        }
+
+        const handle = (event: Event) => {
+            if (
+                !menuRef.current! ||
+                menuRef.current.contains(event.target as Node)
+            ) {
                 return;
             }
 
             close();
         };
 
-        document.body.addEventListener("click", handleDocumentClick);
+        document.body.addEventListener("click", handle);
 
         return () => {
-            document.body.removeEventListener("click", handleDocumentClick);
+            document.body.removeEventListener("click", handle);
         };
     }, [menuRef]);
 
-    const isOpen = useMemo(() => currentIdentifier.value === identifier, [
-        currentIdentifier.value,
-    ]);
+    const isOpen = useMemo(
+        () => currentIdentifier.value === identifier,
+        [currentIdentifier.value],
+    );
 
     return {
         isOpen,

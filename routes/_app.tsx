@@ -1,18 +1,9 @@
 import { type PageProps } from "$fresh/server.ts";
 import { getCurrentMonthWallpaper } from "$frontend/wallpaper.ts";
 
-const MATERIAL_STYLE = `
-.material-symbols-outlined {
-            font-variation-settings:
-            'FILL' 0,
-            'wght' 400,
-            'GRAD' 200,
-            'opsz' 48
-          }
-`;
-
 export default function App({ Component, route }: PageProps) {
     const wallpaper = route === "/" ? getCurrentMonthWallpaper() : null;
+
     return (
         <html>
             <head>
@@ -30,7 +21,6 @@ export default function App({ Component, route }: PageProps) {
                     rel="stylesheet"
                     href="/highlightjs.min.css"
                 />
-                <style>{MATERIAL_STYLE}</style>
                 <link rel="stylesheet" href="/styles.css" />
                 <link rel="icon" href="/logo-white.svg"></link>
             </head>

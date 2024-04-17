@@ -3,13 +3,17 @@ import { ComponentChildren, createRef } from "preact";
 
 interface DialogProps {
     visible: boolean;
+    canCancel?: boolean;
     props?: Record<string, unknown>;
     children: ComponentChildren;
+    onCancel?: () => void;
 }
 
 export default function Dialog({
     visible,
     children,
+    canCancel = false,
+    onCancel,
     props,
 }: DialogProps) {
     const dialogRef = createRef<HTMLDialogElement>();
@@ -25,7 +29,14 @@ export default function Dialog({
     return (
         <dialog
             ref={dialogRef}
-            onCancel={(e) => e.preventDefault()}
+            onCancel={(e) => {
+                if (canCancel) {
+                    onCancel?.();
+                    return;
+                }
+
+                e.preventDefault();
+            }}
             onClick={(e) => e.stopPropagation()}
             {...props}
         >
