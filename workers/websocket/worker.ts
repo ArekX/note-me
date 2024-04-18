@@ -18,3 +18,7 @@ if (import.meta.main) {
         await service.handleBackendMessage(JSON.parse(event.data));
     service.start();
 }
+
+self.onerror = (event) => {
+    console.error("WebSocket worker error:", event);
+};

@@ -38,17 +38,13 @@ export const handler: Handlers<PageData> = {
 
 export default function Page(props: PageProps<PageData, AppState>) {
     return (
-        <div class="text-white p-4">
-            <div>
-                <NoteEditor
-                    group={props.data.group}
-                    note={{
-                        title: "",
-                        note: "",
-                        tags: [],
-                    }}
-                />
-            </div>
-        </div>
+        <NoteEditor
+            group={props.data.group}
+            note={{
+                title: "",
+                note: "",
+                tags: [],
+            }}
+        />
     );
 }

@@ -30,9 +30,5 @@ export const handler: Handlers<PageData> = {
 };
 
 export default function Page(props: PageProps<PageData, AppState>) {
-    return (
-        <div class="text-white p-4">
-            <ViewNote record={props.data.note!} />
-        </div>
-    );
+    return <ViewNote record={props.data.note!} />;
 }

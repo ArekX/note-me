@@ -6,7 +6,7 @@ ENV DENO_DEPLOYMENT_ID=${GIT_REVISION}
 COPY . /app
 
 WORKDIR /app
-RUN deno task cache
+RUN deno task cache && deno task build-assets
 
 STOPSIGNAL SIGINT
 

@@ -13,3 +13,7 @@ timerService.registerHandler(checkReminders);
 if (import.meta.main) {
     timerService.start();
 }
+
+self.onerror = (event) => {
+    console.error("Periodic timer worker error:", event);
+};

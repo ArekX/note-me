@@ -71,6 +71,7 @@ export const NoteInput = ({
                 ref={textAreaRef}
                 class="text-editor block w-full"
                 placeholder="Write your note here"
+                tabIndex={3}
                 disabled={isSaving}
                 onKeyDown={handleTextKeyDown}
                 onInput={handleTextInput}

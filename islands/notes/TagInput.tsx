@@ -4,6 +4,7 @@ import { useEffect } from "preact/hooks";
 import { createRef } from "preact";
 import Loader from "$islands/Loader.tsx";
 import { useSinglePopover } from "$frontend/hooks/use-single-popover.ts";
+import { useLoader } from "$frontend/hooks/use-loading.ts";
 
 interface TagInputProps {
     initialTags: string[];
@@ -38,6 +39,7 @@ export default function TagInput({
 }: TagInputProps) {
     const tagString = useSignal(getFormattedTagString(initialTags.join(" ")));
     const inputRef = createRef<HTMLInputElement>();
+    const isSearching = useLoader(true);
     const dropdownRef = createRef<HTMLDivElement>();
     const tagInputRef = createRef<HTMLDivElement>();
     const selectedTagIndex = useSignal<number | null>(null);
@@ -62,21 +64,26 @@ export default function TagInput({
             return;
         }
 
+        if (e.key === "Tab") {
+            return;
+        }
+
         if (e.key === "ArrowDown") {
             selectedTagIndex.value = Math.min(
                 (selectedTagIndex.value ?? -1) + 1,
                 autocompleteTags.value.length - 1,
             );
-            open();
             e.preventDefault();
         } else if (e.key === "ArrowUp") {
             selectedTagIndex.value = Math.max(
                 (selectedTagIndex.value ?? 1) - 1,
                 0,
             );
-            open();
+
             e.preventDefault();
         }
+
+        open();
     };
 
     const calculateDropdownPos = () => {
@@ -131,10 +138,10 @@ export default function TagInput({
     );
 
     useEffect(() => {
-        if (isOpen) {
+        if (dropdownRef.current) {
             calculateDropdownPos();
         }
-    }, [tagString, dropdownRef, isOpen]);
+    }, [dropdownRef]);
 
     return (
         <div ref={tagInputRef}>
@@ -155,32 +162,35 @@ export default function TagInput({
                     ref={dropdownRef}
                     class="fixed top-full left-0 bg-gray-800 text-white max-h-52 overflow-auto rounded-md"
                 >
-                    <div class="p-4">
-                        <Loader color="white">Searching...</Loader>
-                    </div>
-                    {autocompleteTags.value.map((tag, index) => (
-                        <div
-                            onClick={() => handleAddTag(tag)}
-                            ref={(el) => {
-                                if (
-                                    selectedTagIndex.value === index
-                                ) {
-                                    el?.scrollIntoView({
-                                        behavior: "smooth",
-                                        block: "nearest",
-                                    });
-                                }
-                            }}
-                            class={`cursor-pointer border-b-2 last:border-b-0 border-gray-100 pr-4 pl-4 pt-2 pb-2 
-                                  hover:bg-gray-100 hover:text-black ${
-                                selectedTagIndex.value === index
-                                    ? "bg-gray-100 text-black"
-                                    : ""
-                            }`}
-                        >
-                            #{tag}
+                    {isSearching.running && (
+                        <div class="p-4">
+                            <Loader color="white">Searching...</Loader>
                         </div>
-                    ))}
+                    )}
+                    {!isSearching.running &&
+                        autocompleteTags.value.map((tag, index) => (
+                            <div
+                                onClick={() => handleAddTag(tag)}
+                                ref={(el) => {
+                                    if (
+                                        selectedTagIndex.value === index
+                                    ) {
+                                        el?.scrollIntoView({
+                                            behavior: "smooth",
+                                            block: "nearest",
+                                        });
+                                    }
+                                }}
+                                class={`cursor-pointer border-b-2 last:border-b-0 border-gray-100 pr-4 pl-4 pt-2 pb-2 
+                                  hover:bg-gray-100 hover:text-black ${
+                                    selectedTagIndex.value === index
+                                        ? "bg-gray-100 text-black"
+                                        : ""
+                                }`}
+                            >
+                                #{tag}
+                            </div>
+                        ))}
                 </div>
             )}
         </div>

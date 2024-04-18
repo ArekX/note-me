@@ -30,18 +30,14 @@ export default function Page(props: PageProps<PageData, AppState>) {
     const { note } = props.data;
 
     return (
-        <div class="text-white p-4">
-            <div>
-                <NoteEditor
-                    group={null}
-                    note={{
-                        id: note.id,
-                        title: note.title,
-                        note: note.note,
-                        tags: note.tags,
-                    }}
-                />
-            </div>
-        </div>
+        <NoteEditor
+            group={null}
+            note={{
+                id: note.id,
+                title: note.title,
+                note: note.note,
+                tags: note.tags,
+            }}
+        />
     );
 }

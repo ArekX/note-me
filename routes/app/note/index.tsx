@@ -2,7 +2,7 @@ import { Icon } from "$components/Icon.tsx";
 
 export default function Page() {
     return (
-        <div class="text-white p-4">
+        <>
             <h2 class="text-4xl">Welcome to NoteMe!</h2>
 
             <div className="text-lg">
@@ -17,6 +17,6 @@ export default function Page() {
                     icon.
                 </p>
             </div>
-        </div>
+        </>
     );
 }
