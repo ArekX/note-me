@@ -1,5 +1,4 @@
-import { defineLayout, FreshContext } from "$fresh/server.ts";
-import { AppState } from "$types";
+import { defineLayout } from "$fresh/server.ts";
 
 export default defineLayout((_, ctx) => {
     return (
