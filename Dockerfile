@@ -1,4 +1,4 @@
-FROM denoland/deno:1.42.3
+FROM denoland/deno:1.42.4
 
 ARG GIT_REVISION
 ENV DENO_DEPLOYMENT_ID=${GIT_REVISION}

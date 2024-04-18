@@ -14,7 +14,8 @@
         "production": "deno run -A --check main.ts",
         "debug": "deno run --inspect-wait -A dev.ts",
         "test": "deno test -A",
-        "preview": "deno run -A main.ts"
+        "preview": "deno run -A main.ts",
+        "build": "deno run -A dev.ts build"
     },
     "lint": { "rules": { "tags": ["fresh", "recommended"] } },
     "exclude": ["**/_fresh/*"],
