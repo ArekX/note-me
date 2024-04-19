@@ -16,7 +16,7 @@ import { ErrorDisplay } from "$components/ErrorDisplay.tsx";
 import { updateNote } from "$frontend/api.ts";
 import Viewer from "$islands/viewer/Viewer.tsx";
 import NoteWindow, { NoteWindowTypes } from "$islands/notes/NoteWindow.tsx";
-import { NoteInput } from "$islands/notes/NoteInput.tsx";
+import { NoteTextArea } from "./NoteTextArea.tsx";
 import TagInput from "$islands/notes/TagInput.tsx";
 import { useLoader } from "$frontend/hooks/use-loading.ts";
 
@@ -193,7 +193,7 @@ export const NoteEditor = ({
                 />
             </div>
             {isPreviewMode.value ? <Viewer text={text.value} /> : (
-                <NoteInput
+                <NoteTextArea
                     initialText={text.value}
                     isSaving={isSaving.running}
                     onChange={(newText) => text.value = newText}

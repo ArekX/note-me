@@ -5,6 +5,8 @@ import { createRef } from "preact";
 import Loader from "$islands/Loader.tsx";
 import { useSinglePopover } from "$frontend/hooks/use-single-popover.ts";
 import { useLoader } from "$frontend/hooks/use-loading.ts";
+import { debounce } from "$frontend/deps.ts";
+import { findTags } from "$frontend/api.ts";
 
 interface TagInputProps {
     initialTags: string[];
@@ -32,6 +34,96 @@ const getFormattedTagString = (tagString: string) => {
     return tags.length > 0 ? `#${tags.join(" #")}` : "";
 };
 
+const findTagSides = (text: string, position: number) => {
+    let rightIndex = text.length;
+
+    for (let i = position - 1; i <= text.length - 1; i++) {
+        if (text[i] === "#" || text[i] === " ") {
+            rightIndex = i;
+            break;
+        }
+    }
+
+    let leftIndex = 0;
+    for (let i = position - 1; i >= 0; i--) {
+        if (text[i] === "#" || text[i] === " ") {
+            leftIndex = i;
+            break;
+        }
+    }
+
+    if (
+        text.trim().length === 0 || leftIndex === rightIndex || text === "#"
+    ) {
+        return null;
+    }
+
+    return {
+        tag: text.substring(leftIndex + 1, rightIndex),
+        leftIndex,
+        rightIndex,
+    };
+};
+
+const insertTag = (element: HTMLInputElement, tag: string) => {
+    const tagString = element.value;
+    const { leftIndex = null, rightIndex = null } = findTagSides(
+        tagString,
+        element.selectionStart ?? 0,
+    ) ?? {};
+
+    if (leftIndex === null || rightIndex === null) {
+        return;
+    }
+
+    let before = tagString.substring(0, leftIndex).trim();
+    let after = tagString.substring(rightIndex).trim();
+
+    if (before.length > 0) {
+        before += " ";
+    }
+
+    if (after.length > 0) {
+        after = " " + after;
+    }
+
+    element.value = before + `#${tag}` + after;
+    element.selectionStart = leftIndex + tag.length + 2;
+    element.selectionEnd = leftIndex + tag.length + 2;
+    element.dispatchEvent(new Event("input"));
+};
+
+const calculateDropdownPos = (
+    dropdown: HTMLDivElement,
+    input: HTMLInputElement,
+) => {
+    const position = input.selectionStart || 0;
+    const span = document.createElement("span");
+    span.style.position = "absolute";
+    span.style.visibility = "hidden";
+
+    const styles = getComputedStyle(input);
+
+    for (let i = 0; i < styles.length; i++) {
+        const key = styles[i];
+        // deno-lint-ignore no-explicit-any
+        span.style[key as any] = styles[key as any];
+    }
+
+    span.style.display = "inline-block";
+    span.style.width = "auto";
+
+    span.textContent = input.value.substring(0, position);
+    document.body.appendChild(span);
+    const textWidth = span.offsetWidth;
+    document.body.removeChild(span);
+
+    const { left, top } = input.getBoundingClientRect();
+
+    dropdown.style.top = `${top + input.offsetHeight}px`;
+    dropdown.style.left = `${textWidth + left}px`;
+};
+
 export default function TagInput({
     initialTags,
     isSaving,
@@ -43,31 +135,12 @@ export default function TagInput({
     const dropdownRef = createRef<HTMLDivElement>();
     const tagInputRef = createRef<HTMLDivElement>();
     const selectedTagIndex = useSignal<number | null>(null);
-    const autocompleteTags = useSignal<string[]>([
-        "tag1",
-        "tag2",
-        "tag3",
-        "tag3",
-        "tag3",
-        "tag3",
-        "tag3",
-    ]);
+    const autocompleteTags = useSignal<string[]>([]);
 
-    const handleBlur = () => {
-        tagString.value = getFormattedTagString(tagString.value);
-        onChange(getTagArray(tagString.value));
-        // selectedTagIndex.value = null;
-    };
-
-    const handleKeyUp = (e: KeyboardEvent) => {
-        if (autocompleteTags.value.length === 0) {
+    const handleKeyDown = (e: KeyboardEvent) => {
+        if (autocompleteTags.value.length == 0) {
             return;
         }
-
-        if (e.key === "Tab") {
-            return;
-        }
-
         if (e.key === "ArrowDown") {
             selectedTagIndex.value = Math.min(
                 (selectedTagIndex.value ?? -1) + 1,
@@ -81,67 +154,109 @@ export default function TagInput({
             );
 
             e.preventDefault();
+        } else if (e.key === "Enter") {
+            if (selectedTagIndex.value !== null) {
+                insertTag(
+                    inputRef.current!,
+                    autocompleteTags.value[selectedTagIndex.value],
+                );
+                closeTagWindow();
+            }
         }
-
-        open();
     };
 
-    const calculateDropdownPos = () => {
+    const handleKeyUp = (e: KeyboardEvent) => {
+        if (
+            e.key === "Tab" || e.key === "ArrowDown" || e.key === "ArrowUp" ||
+            e.key === "Enter"
+        ) {
+            return;
+        }
+
+        searchTags();
+    };
+
+    const handleTagClick = (tag: string) => {
+        insertTag(inputRef.current!, tag);
+        closeTagWindow();
+    };
+
+    const searchTags = debounce(async () => {
+        if (!inputRef.current) {
+            return;
+        }
+
+        const { tag } = findTagSides(
+            inputRef.current?.value ?? "",
+            inputRef.current?.selectionStart ?? 0,
+        ) || {};
+
+        if (!tag) {
+            closeTagWindow();
+            return;
+        }
+        isSearching.start();
+        open();
+
+        const { data } = await findTags({
+            name: tag,
+            page: 1,
+        });
+        autocompleteTags.value = data.results.map((r) => r.name);
+        selectedTagIndex.value = 0;
+        isSearching.stop();
+    }, 500);
+
+    const recalculatePosition = () => {
         if (!dropdownRef.current || !inputRef.current) {
             return;
         }
 
-        const el = inputRef.current;
-
-        const position = el.selectionStart || 0;
-        const span = document.createElement("span");
-        span.style.position = "absolute";
-        span.style.visibility = "hidden";
-
-        const styles = getComputedStyle(el);
-
-        for (let i = 0; i < styles.length; i++) {
-            const key = styles[i];
-            // deno-lint-ignore no-explicit-any
-            span.style[key as any] = styles[key as any];
-        }
-
-        span.style.display = "inline-block";
-        span.style.width = "auto";
-
-        span.textContent = el.value.substring(0, position);
-        document.body.appendChild(span);
-        const textWidth = span.offsetWidth;
-        document.body.removeChild(span);
-
-        const { left, top } = el.getBoundingClientRect();
-
-        dropdownRef.current.style.top = `${top + el.offsetHeight}px`;
-        dropdownRef.current.style.left = `${textWidth + left}px`;
+        calculateDropdownPos(dropdownRef.current, inputRef.current);
     };
 
-    const handleAddTag = (tag: string) => {
-        tagString.value = `${tagString.value} ${tag}`;
-        onChange(getTagArray(tagString.value));
-        selectedTagIndex.value = null;
-        console.log(tag);
-    };
-
-    const { isOpen, open } = useSinglePopover(
+    const { isOpen, open, close: closeTagWindow } = useSinglePopover(
         "tagInput-0",
         dropdownRef,
         () => {
-            calculateDropdownPos();
+            recalculatePosition();
             selectedTagIndex.value = 0;
         },
-        () => selectedTagIndex.value = null,
+        () => {
+            selectedTagIndex.value = null;
+            tagString.value = getFormattedTagString(tagString.value);
+            onChange(getTagArray(tagString.value));
+        },
     );
 
     useEffect(() => {
         if (dropdownRef.current) {
-            calculateDropdownPos();
+            recalculatePosition();
         }
     }, [dropdownRef]);
+
+    useEffect(() => {
+        const handleInputLeave = (e: MouseEvent) => {
+            if (e.target === inputRef.current) {
+                return;
+            }
+
+            if (
+                tagInputRef.current &&
+                !tagInputRef.current.contains(e.target as Node)
+            ) {
+                closeTagWindow();
+            }
+            tagString.value = getFormattedTagString(tagString.value);
+            onChange(getTagArray(tagString.value));
+        };
+
+        document.addEventListener("click", handleInputLeave);
+
+        return () => {
+            document.removeEventListener("click", handleInputLeave);
+        };
+    }, []);
 
     return (
         <div ref={tagInputRef}>
@@ -154,8 +269,8 @@ export default function TagInput({
                 value={tagString.value}
                 disabled={isSaving}
                 onInput={inputHandler((value) => tagString.value = value)}
-                onBlur={handleBlur}
-                onKeyDown={handleKeyUp}
+                onKeyDown={handleKeyDown}
+                onKeyUp={handleKeyUp}
             />
             {isOpen && (
                 <div
@@ -170,7 +285,7 @@ export default function TagInput({
                     {!isSearching.running &&
                         autocompleteTags.value.map((tag, index) => (
                             <div
-                                onClick={() => handleAddTag(tag)}
+                                onClick={() => handleTagClick(tag)}
                                 ref={(el) => {
                                     if (
                                         selectedTagIndex.value === index

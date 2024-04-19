@@ -1344,7 +1344,8 @@
     "https://deno.land/x//speed_highlight_js/dist/terminal.js": "https://deno.land/x/speed_highlight_js@v1.2.6/dist/terminal.js",
     "https://deno.land/x/minifier/mod.ts": "https://deno.land/x/minifier@v1.1.1/mod.ts",
     "https://deno.land/x/speed_highlight_js/dist/terminal.js": "https://deno.land/x/speed_highlight_js@v1.2.6/dist/terminal.js",
-    "https://esm.sh/v135/@types/babel__helper-validator-identifier@^7/index.d.ts": "https://esm.sh/v135/@types/babel__helper-validator-identifier@7.15.2/index.d.ts"
+    "https://esm.sh/v135/@types/babel__helper-validator-identifier@^7/index.d.ts": "https://esm.sh/v135/@types/babel__helper-validator-identifier@7.15.2/index.d.ts",
+    "https://esm.sh/v135/@types/babel__helper-validator-identifier@~7/index.d.ts": "https://esm.sh/v135/@types/babel__helper-validator-identifier@7.15.2/index.d.ts"
   },
   "remote": {
     "https://deno.land/std@0.103.0/encoding/base64.ts": "eecae390f1f1d1cae6f6c6d732ede5276bf4b9cd29b1d281678c054dc5cc009e",

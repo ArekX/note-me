@@ -12,7 +12,7 @@ interface NoteInputProps {
     onChange: (text: string) => void;
 }
 
-export const NoteInput = ({
+export const NoteTextArea = ({
     isSaving,
     initialText,
     onChange,
