@@ -58,15 +58,11 @@ const handleConnectionRequest = async (request: Request): Promise<Response> => {
     return response;
 };
 
-let abortController: AbortController;
-
 const startServer = (hostname: string, port: number) => {
-    abortController = new AbortController();
     Deno.serve({
         port,
         hostname,
         handler: handleConnectionRequest,
-        signal: abortController.signal,
         onListen({ port }) {
             workerLogger.info(
                 `WebSocket service started and running at {hostname}:{port}`,
@@ -75,8 +71,6 @@ const startServer = (hostname: string, port: number) => {
         },
     });
 };
-
-const stopServer = () => abortController.abort();
 
 const clientEvents: Record<ClientEvent, ClientEventFn[]> = {
     connected: [],
@@ -194,13 +188,12 @@ const getClientByUserId = (userId: number): SocketClient | null => {
 export type WebsocketService = typeof websocketService;
 
 export const websocketService = {
-    start: startServer,
-    stop: stopServer,
+    startServer,
     getClient,
     getClientByUserId,
     register,
     registerMap,
     registerKindMap,
     registerClientEvent,
-    onBackendRequest: handleBackendRequest,
+    handleBackendRequest,
 };

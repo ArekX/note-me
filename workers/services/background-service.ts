@@ -1,7 +1,7 @@
 import { BusEvents } from "$backend/event-bus/bus-events.ts";
 import { workerLogger } from "$backend/logger.ts";
 
-export class BackgroundWorker {
+export class BackgroundService {
     #worker: Worker | null = null;
 
     constructor(

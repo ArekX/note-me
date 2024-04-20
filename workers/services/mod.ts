@@ -1,6 +1,6 @@
-import { BackgroundWorker } from "./background-worker.ts";
+import { BackgroundService } from "./background-service.ts";
 
 export const services = {
-    websocket: new BackgroundWorker("websocket/worker.ts"),
-    timer: new BackgroundWorker("timers/worker.ts"),
+    websocket: new BackgroundService("websocket/worker.ts"),
+    periodicTask: new BackgroundService("periodic-task/worker.ts"),
 };
