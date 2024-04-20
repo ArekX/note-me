@@ -15,4 +15,3 @@ database.sqlite
 database2.sqlite
 temp
 app.log
-fresh.gen.ts
