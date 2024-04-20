@@ -3,6 +3,7 @@ type SocketHandler = (message: unknown) => void;
 class SocketManager {
     #socket: WebSocket | null = null;
     #handlers: Set<SocketHandler> = new Set();
+    #pendingRequests: string[] = [];
 
     connect(socketHost: string): Promise<void> {
         return new Promise((resolve) => {
@@ -14,11 +15,22 @@ class SocketManager {
             this.#socket.onmessage = (event) =>
                 this.#processHandlers(event.data);
             this.#socket.onclose = () => this.#socket = null;
-            this.#socket.onopen = () => resolve();
+            this.#socket.onopen = () => {
+                for (const request of this.#pendingRequests) {
+                    this.#socket?.send(request);
+                }
+                this.#pendingRequests = [];
+                resolve();
+            };
         });
     }
 
     send<T>(message: T) {
+        if (!this.#socket || this.#socket.readyState !== WebSocket.OPEN) {
+            this.#pendingRequests.push(JSON.stringify(message));
+            return;
+        }
+
         this.#socket?.send(JSON.stringify(message));
     }
 
