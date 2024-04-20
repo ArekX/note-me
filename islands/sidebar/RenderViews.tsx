@@ -1,4 +1,4 @@
-import TreeList from "../note-tree/TreeList.tsx";
+import TreeList from "../tree/TreeList.tsx";
 import { RemindersList } from "$islands/sidebar/RemindersList.tsx";
 import { SharedNotesList } from "$islands/sidebar/SharedNotesList.tsx";
 import { ComponentChild, VNode } from "preact";

@@ -3,6 +3,8 @@ import { workerLogger } from "$backend/logger.ts";
 
 export class BackgroundService {
     #worker: Worker | null = null;
+    #started: boolean = false;
+    #retriesLeft: number = +(Deno.env.get("ALLOWED_SERVICE_RETRIES") || 3);
 
     constructor(
         private readonly workerPath: string,
@@ -12,14 +14,19 @@ export class BackgroundService {
         this.#worker?.postMessage(JSON.stringify(message));
     }
 
+    get isStarted() {
+        return this.#started;
+    }
+
     stop() {
         this.#worker?.terminate();
+        this.#started = false;
     }
 
     start() {
         this.#worker = new Worker(
             new URL(
-                `../${this.workerPath}`,
+                `../${this.workerPath}/worker.ts`,
                 import.meta.url,
             ).href,
             {
@@ -47,10 +54,16 @@ export class BackgroundService {
                     line: event.lineno,
                 },
             );
-            this.stop();
-            this.start();
-            event.preventDefault();
+
+            if (this.#retriesLeft > 0) {
+                this.stop();
+                this.start();
+                event.preventDefault();
+                this.#retriesLeft--;
+            }
         };
+
+        this.#started = true;
     }
 
     onMessage(callback: (message: BusEvents) => void) {

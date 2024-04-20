@@ -22,11 +22,11 @@ class SocketManager {
         this.#socket?.send(JSON.stringify(message));
     }
 
-    addMessageListener<T>(handler: (message: T) => void) {
+    addListener<T>(handler: (message: T) => void) {
         this.#handlers.add(handler as SocketHandler);
     }
 
-    removeMessageListener<T>(handler: (message: T) => void) {
+    removeListener<T>(handler: (message: T) => void) {
         this.#handlers.delete(handler as SocketHandler);
     }
 

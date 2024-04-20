@@ -40,11 +40,6 @@ import * as $InvalidateData from "./islands/InvalidateData.tsx";
 import * as $Loader from "./islands/Loader.tsx";
 import * as $Pagination from "./islands/Pagination.tsx";
 import * as $ScriptLoader from "./islands/ScriptLoader.tsx";
-import * as $note_tree_MoreMenu from "./islands/note-tree/MoreMenu.tsx";
-import * as $note_tree_RootGroupBar from "./islands/note-tree/RootGroupBar.tsx";
-import * as $note_tree_TreeItem from "./islands/note-tree/TreeItem.tsx";
-import * as $note_tree_TreeList from "./islands/note-tree/TreeList.tsx";
-import * as $note_tree_helpers from "./islands/note-tree/helpers.ts";
 import * as $notes_InsertDialog from "./islands/notes/InsertDialog.tsx";
 import * as $notes_MoreMenu from "./islands/notes/MoreMenu.tsx";
 import * as $notes_NoteEditor from "./islands/notes/NoteEditor.tsx";
@@ -70,6 +65,11 @@ import * as $sidebar_SharedNotesList from "./islands/sidebar/SharedNotesList.tsx
 import * as $sidebar_SideBarPanel from "./islands/sidebar/SideBarPanel.tsx";
 import * as $tags_EditTagForm from "./islands/tags/EditTagForm.tsx";
 import * as $tags_TagsList from "./islands/tags/TagsList.tsx";
+import * as $tree_MoreMenu from "./islands/tree/MoreMenu.tsx";
+import * as $tree_RootGroupBar from "./islands/tree/RootGroupBar.tsx";
+import * as $tree_TreeItem from "./islands/tree/TreeItem.tsx";
+import * as $tree_TreeList from "./islands/tree/TreeList.tsx";
+import * as $tree_helpers from "./islands/tree/helpers.ts";
 import * as $users_EditUserForm from "./islands/users/EditUserForm.tsx";
 import * as $users_UserList from "./islands/users/UserList.tsx";
 import * as $viewer_Viewer from "./islands/viewer/Viewer.tsx";
@@ -133,11 +133,6 @@ const manifest = {
         "./islands/Loader.tsx": $Loader,
         "./islands/Pagination.tsx": $Pagination,
         "./islands/ScriptLoader.tsx": $ScriptLoader,
-        "./islands/note-tree/MoreMenu.tsx": $note_tree_MoreMenu,
-        "./islands/note-tree/RootGroupBar.tsx": $note_tree_RootGroupBar,
-        "./islands/note-tree/TreeItem.tsx": $note_tree_TreeItem,
-        "./islands/note-tree/TreeList.tsx": $note_tree_TreeList,
-        "./islands/note-tree/helpers.ts": $note_tree_helpers,
         "./islands/notes/InsertDialog.tsx": $notes_InsertDialog,
         "./islands/notes/MoreMenu.tsx": $notes_MoreMenu,
         "./islands/notes/NoteEditor.tsx": $notes_NoteEditor,
@@ -168,6 +163,11 @@ const manifest = {
         "./islands/sidebar/SideBarPanel.tsx": $sidebar_SideBarPanel,
         "./islands/tags/EditTagForm.tsx": $tags_EditTagForm,
         "./islands/tags/TagsList.tsx": $tags_TagsList,
+        "./islands/tree/MoreMenu.tsx": $tree_MoreMenu,
+        "./islands/tree/RootGroupBar.tsx": $tree_RootGroupBar,
+        "./islands/tree/TreeItem.tsx": $tree_TreeItem,
+        "./islands/tree/TreeList.tsx": $tree_TreeList,
+        "./islands/tree/helpers.ts": $tree_helpers,
         "./islands/users/EditUserForm.tsx": $users_EditUserForm,
         "./islands/users/UserList.tsx": $users_UserList,
         "./islands/viewer/Viewer.tsx": $viewer_Viewer,

@@ -31,47 +31,24 @@ const logHandlers: log.LogConfig["handlers"] = {
     }),
 };
 
-const logToFile = Deno.env.get("LOG_TO_FILE") ?? null;
-
-let fileHandler: log.FileHandler | null = null;
-const logTargets = ["default"];
-
-if (logToFile) {
-    fileHandler = new log.FileHandler(loggingLevel, {
-        filename: logToFile,
-        mode: "a",
-        formatter: (record) => {
-            return `${formatMessage(record)}||${
-                JSON.stringify({
-                    ...record,
-                    args: record.args,
-                })
-            }`;
-        },
-    });
-    logTargets.push("file");
-    logHandlers.file = fileHandler;
-}
-
 log.setup({
     loggers: {
         default: {
             level: loggingLevel,
-            handlers: logTargets,
+            handlers: ["default"],
         },
         worker: {
             level: loggingLevel,
-            handlers: logTargets,
+            handlers: ["default"],
         },
         cli: {
             level: loggingLevel,
-            handlers: logTargets,
+            handlers: ["default"],
         },
     },
     handlers: logHandlers,
 });
 
-export const flushFileLogs = () => fileHandler?.flush();
 export const cliLogger = log.getLogger("cli");
 export const workerLogger = log.getLogger("worker");
 export const webLogger = log.getLogger();

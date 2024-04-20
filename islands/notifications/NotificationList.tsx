@@ -7,7 +7,7 @@ import { createRef } from "preact";
 import { NotificationItem } from "$islands/notifications/NotificationItem.tsx";
 import { Button } from "$components/Button.tsx";
 import { useSinglePopover } from "$frontend/hooks/use-single-popover.ts";
-import { useWebsocketBus } from "../../frontend/hooks/use-websocket-bus.ts";
+import { useWebsocketService } from "../../frontend/hooks/use-websocket-service.ts";
 import {
     DeleteAllMessage,
     DeleteSingleMessage,
@@ -26,8 +26,10 @@ export default function Notifications(props: NotificationsProps) {
         props.initialNotifications,
     );
 
-    const { request } = useWebsocketBus<NotificationFrontendResponse>({
-        namespace: "notifications",
+    const { dispatchRequest } = useWebsocketService<
+        NotificationFrontendResponse
+    >({
+        defaultNamespace: "notifications",
         responseMap: {
             notificationsList: (data): void => {
                 notifications.value = data.records;
@@ -71,29 +73,29 @@ export default function Notifications(props: NotificationsProps) {
     });
 
     useScriptsReadyEffect(() => {
-        request<GetMyNotificationsMessage>({
+        dispatchRequest<GetMyNotificationsMessage>({
             type: "getMyNotifications",
         });
     });
 
     const handleDeleteSingle = (notification: NotificationRecord) =>
-        request<DeleteSingleMessage>({
+        dispatchRequest<DeleteSingleMessage>({
             type: "deleteSingle",
             id: notification.id,
         });
 
     const handleDeleteAll = () =>
-        request<DeleteAllMessage>({
+        dispatchRequest<DeleteAllMessage>({
             type: "deleteAll",
         });
 
     const handleMarkAllRead = () =>
-        request<MarkAllReadMessage>({
+        dispatchRequest<MarkAllReadMessage>({
             type: "markAllRead",
         });
 
     const handleMarkSingleAsRead = (notification: NotificationRecord) =>
-        request<MarkSingleReadMessage>({
+        dispatchRequest<MarkSingleReadMessage>({
             type: "markSingleRead",
             id: notification.id,
         });

@@ -13,10 +13,8 @@ import { migrator } from "$backend/migration-manager.ts";
 import { startBackgroundServices } from "./workers/mod.ts";
 import { initializeFirstRun } from "$backend/first-run.ts";
 import { webLogger } from "$backend/logger.ts";
-import { setupCleanupActions } from "$backend/cleanup.ts";
 
 startBackgroundServices();
-setupCleanupActions();
 
 const isFirstRun = await migrator.isFirstRun();
 await migrator.migrateUp();

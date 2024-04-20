@@ -23,11 +23,18 @@ import { ComponentChild } from "preact";
 import { getTreeList } from "$frontend/api.ts";
 import { TreeRecord } from "$backend/repository/tree-list.repository.ts";
 import { closeAllPopovers } from "$frontend/hooks/use-single-popover.ts";
+import { getSortedContainerRecords, restoreTreeList } from "./helpers.ts";
+import { storeTreeList } from "./helpers.ts";
+import { useWebsocketService } from "../../frontend/hooks/use-websocket-service.ts";
 import {
-    getSortedContainerRecords,
-    restoreTreeList,
-} from "$islands/note-tree/helpers.ts";
-import { storeTreeList } from "$islands/note-tree/helpers.ts";
+    GetTreeMessage,
+    GetTreeResponse,
+    TreeFrontendResponse,
+} from "$workers/websocket/api/tree/messages.ts";
+import {
+    CreateGroupMessage,
+    CreateGroupResponse,
+} from "$workers/websocket/api/group/messages.ts";
 
 interface TreeListProps {
     searchQuery: string;
@@ -45,6 +52,10 @@ export default function TreeList({
     const groups: Signal<ContainerGroupRecord[]> = useSignal(restoredTreeList);
     const containerDraggedOver = useSignal<ContainerGroupRecord | null>(null);
 
+    const { sendRequest } = useWebsocketService<TreeFrontendResponse>({
+        defaultNamespace: "tree",
+    });
+
     const loadGroups = async (parent?: ContainerGroupRecord) => {
         if (!parent) {
             isLoading.value = true;
@@ -52,15 +63,17 @@ export default function TreeList({
             parent.is_processing = true;
         }
 
-        const request: GetTreeRequest = {};
+        const response = await sendRequest<GetTreeMessage, GetTreeResponse>({
+            request: {
+                type: "getTree",
+                parent_id: parent?.record.id,
+            },
+            response: "getTreeResponse",
+        });
 
-        if (parent) {
-            request.parent_id = parent.record.id;
-        }
-
-        const result = (await getTreeList(request)).data.map((
-            record: TreeRecord,
-        ) => createContainer(record, parent ?? null));
+        const result = response.records.map((record) =>
+            createContainer(record, parent ?? null)
+        );
 
         if (!parent) {
             groups.value = result;
@@ -100,12 +113,23 @@ export default function TreeList({
         const parentId = container.parent?.record.id ?? null;
 
         if (is_new_record) {
-            const { data } = await createGroup({
-                name,
-                parent_id: parentId,
+            const { record } = await sendRequest<
+                CreateGroupMessage,
+                CreateGroupResponse
+            >({
+                request: {
+                    namespace: "groups",
+                    type: "createGroup",
+                    data: {
+                        name,
+                        parent_id: parentId,
+                    },
+                },
+                response: "createGroupResponse",
+                responseNamespace: "groups",
             });
-            container.record.id = data.id;
-            container.record.name = data.name;
+            container.record.id = record.id;
+            container.record.name = record.name;
             container.is_new_record = false;
         } else {
             await updateGroup(

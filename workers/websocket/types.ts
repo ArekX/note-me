@@ -41,3 +41,10 @@ export type RegisterKindMap<
     backend?: RegisterListenerMap<BackendMessages>;
     frontend?: RegisterListenerMap<FrontendMessages>;
 };
+
+export type RegisterFrontendKindMap<T extends Message> = Required<
+    Pick<RegisterKindMap<T, T>, "frontend">
+>;
+export type RegisterBackendKindMap<T extends Message> = Required<
+    Pick<RegisterKindMap<T, T>, "backend">
+>;
