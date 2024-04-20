@@ -5,6 +5,7 @@ import { autosize, insertTextIntoField } from "$frontend/deps.ts";
 import { Button } from "$components/Button.tsx";
 import { Icon } from "$components/Icon.tsx";
 import Dialog from "$islands/Dialog.tsx";
+import { InsertDialog } from "$islands/notes/InsertDialog.tsx";
 
 interface NoteInputProps {
     isSaving: boolean;
@@ -19,6 +20,7 @@ export const NoteTextArea = ({
 }: NoteInputProps) => {
     const text = useSignal(initialText);
     const showInsertDialog = useSignal(false);
+    const lastCursorPosition = useSignal(0);
     const textAreaRef = createRef<HTMLTextAreaElement>();
 
     const handleTextInput = (event: Event) => {
@@ -26,15 +28,36 @@ export const NoteTextArea = ({
         onChange(text.value);
     };
 
-    const handleTextKeyDown = (e: KeyboardEvent) => {
+    const recordLastCursorPosition = () => {
         if (!textAreaRef.current) {
             return;
         }
+
+        lastCursorPosition.value = textAreaRef.current.selectionStart || 0;
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+        if (!textAreaRef.current) {
+            return;
+        }
+
+        lastCursorPosition.value = textAreaRef.current.selectionStart || 0;
+
         if (e.key === "Tab") {
             insertTextIntoField(textAreaRef.current, "    ");
             e.preventDefault();
             onChange(text.value);
         }
+    };
+
+    const handleDialogInsert = (insertedText: string) => {
+        const textValue = text.value;
+        const cursorPosition = lastCursorPosition.value;
+
+        text.value = `${textValue.slice(0, cursorPosition)}${insertedText}${
+            textValue.slice(cursorPosition)
+        }`;
+        onChange(text.value);
     };
 
     useEffect(() => {
@@ -49,31 +72,38 @@ export const NoteTextArea = ({
         };
     }, [textAreaRef]);
 
+    useEffect(() => {
+        const handleHotkeys = (e: KeyboardEvent) => {
+            if (e.ctrlKey && e.key === "i") {
+                showInsertDialog.value = true;
+                e.preventDefault();
+            }
+        };
+
+        document.addEventListener("keydown", handleHotkeys);
+
+        return () => {
+            document.removeEventListener("keydown", handleHotkeys);
+        };
+    }, []);
+
     return (
         <div class="flex-grow block basis-auto">
-            <div class="fixed bottom-5 right-8 opacity-30 hover:opacity-100">
-                <Button
-                    color="success"
-                    title="Insert item"
-                    onClick={() => showInsertDialog.value = true}
-                >
-                    <Icon name="plus" />
-                </Button>
-                <Dialog
-                    visible={showInsertDialog.value}
-                    canCancel={true}
-                    onCancel={() => showInsertDialog.value = false}
-                >
-                    Idemo niis
-                </Dialog>
-            </div>
+            <InsertDialog
+                show={showInsertDialog.value}
+                onInsert={handleDialogInsert}
+                onShowRequest={(shouldShow) =>
+                    showInsertDialog.value = shouldShow}
+            />
             <textarea
                 ref={textAreaRef}
                 class="text-editor block w-full"
                 placeholder="Write your note here"
                 tabIndex={3}
                 disabled={isSaving}
-                onKeyDown={handleTextKeyDown}
+                onMouseUp={recordLastCursorPosition}
+                onKeyDown={handleKeyDown}
+                onKeyUp={recordLastCursorPosition}
                 onInput={handleTextInput}
             >
                 {text.value}

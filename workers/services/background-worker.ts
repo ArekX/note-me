@@ -1,14 +1,14 @@
 import { BusEvents } from "$backend/event-bus/bus-events.ts";
 import { workerLogger } from "$backend/logger.ts";
 
-export class BackgroundWorker<MessageType> {
+export class BackgroundWorker {
     #worker: Worker | null = null;
 
     constructor(
         private readonly workerPath: string,
     ) {}
 
-    send(message: MessageType) {
+    send<T extends object>(message: T) {
         this.#worker?.postMessage(JSON.stringify(message));
     }
 

@@ -19,6 +19,7 @@ import NoteWindow, { NoteWindowTypes } from "$islands/notes/NoteWindow.tsx";
 import { NoteTextArea } from "./NoteTextArea.tsx";
 import TagInput from "$islands/notes/TagInput.tsx";
 import { useLoader } from "$frontend/hooks/use-loading.ts";
+import { clearStorage } from "$frontend/session-storage.ts";
 
 interface NoteData extends Pick<NoteRecord, "title" | "note"> {
     id?: number;
@@ -64,7 +65,9 @@ export const NoteEditor = ({
         if (note.id) {
             await updateNote(note.id, noteToSave);
         } else {
-            await createNote(noteToSave);
+            const note = await createNote(noteToSave);
+            clearStorage();
+            window.location.href = "/app/note/view-" + note.data.id;
         }
 
         isSaving.stop();
@@ -114,7 +117,7 @@ export const NoteEditor = ({
         return () => {
             document.removeEventListener("keydown", handleHotkeys);
         };
-    });
+    }, []);
 
     return (
         <div class="note-editor flex flex-col">

@@ -1,7 +1,12 @@
 import { Signal, useSignal } from "@preact/signals";
 import RootGroupBar from "./RootGroupBar.tsx";
 import Loader from "$islands/Loader.tsx";
-import { createGroup, updateGroup, updateNote } from "$frontend/api.ts";
+import {
+    createGroup,
+    deleteNote,
+    updateGroup,
+    updateNote,
+} from "$frontend/api.ts";
 import { useEffect } from "preact/hooks";
 import { GetTreeRequest } from "$backend/api-handlers/tree/get-tree-records.ts";
 import { Icon } from "$components/Icon.tsx";
@@ -198,7 +203,12 @@ export default function TreeList({
         parent?: ContainerGroupRecord,
     ) => {
         container.is_processing = true;
-        await deleteGroup(container.record.id);
+
+        if (container.record.type === "note") {
+            await deleteNote(container.record.id);
+        } else {
+            await deleteGroup(container.record.id);
+        }
 
         if (parent) {
             parent.children = parent.children.filter((g) => g !== container);
@@ -355,6 +365,7 @@ export default function TreeList({
                     <div
                         class="text-center text-gray-400 pt-14 cursor-pointer"
                         onClick={() => {
+                            window.location.href = "/app/note/new";
                         }}
                     >
                         <div>

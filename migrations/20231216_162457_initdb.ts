@@ -59,14 +59,11 @@ export async function up(db: Kysely<unknown>): Promise<void> {
         .addColumn("repeat_amount", "int8", (col) => col.notNull())
         .execute();
 
-    await db.schema.createTable("note_attachment")
+    await db.schema.createTable("file")
         .ifNotExists()
         .addColumn("id", "integer", (col) => col.autoIncrement().primaryKey())
-        .addColumn(
-            "note_id",
-            "integer",
-            (col) => col.notNull().references("note.id"),
-        )
+        .addColumn("name", "varchar(255)", (col) => col.notNull())
+        .addColumn("type", "varchar(255)", (col) => col.notNull())
         .addColumn(
             "user_id",
             "integer",
@@ -198,7 +195,7 @@ export async function up(db: Kysely<unknown>): Promise<void> {
 
 export async function down(db: Kysely<unknown>): Promise<void> {
     await db.schema.dropTable("note_reminder").execute();
-    await db.schema.dropTable("note_attachment").execute();
+    await db.schema.dropTable("file").execute();
     await db.schema.dropTable("note_history").execute();
     await db.schema.dropTable("note_tag").execute();
     await db.schema.dropTable("note_tag_note").execute();

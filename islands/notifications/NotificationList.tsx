@@ -1,16 +1,21 @@
 import { useSignal } from "@preact/signals";
 import { Icon } from "$components/Icon.tsx";
 import { useScriptsReadyEffect } from "../../frontend/hooks/use-scripts-ready.ts";
-import {
-    NotificationFrontendResponse,
-} from "$workers/websocket/handlers/notifications.ts";
+
 import { NotificationRecord } from "$backend/repository/notification-repository.ts";
 import { createRef } from "preact";
 import { NotificationItem } from "$islands/notifications/NotificationItem.tsx";
 import { Button } from "$components/Button.tsx";
 import { useSinglePopover } from "$frontend/hooks/use-single-popover.ts";
-import { useWebsocketEvent } from "$frontend/hooks/use-websocket-event.ts";
-import { NotificationFrontendMessage } from "$workers/websocket/handlers/notifications.ts";
+import { useWebsocketBus } from "../../frontend/hooks/use-websocket-bus.ts";
+import {
+    DeleteAllMessage,
+    DeleteSingleMessage,
+    GetMyNotificationsMessage,
+    MarkAllReadMessage,
+    MarkSingleReadMessage,
+    NotificationFrontendResponse,
+} from "$workers/websocket/api/notifications/messages.ts";
 
 interface NotificationsProps {
     initialNotifications: NotificationRecord[];
@@ -21,10 +26,11 @@ export default function Notifications(props: NotificationsProps) {
         props.initialNotifications,
     );
 
-    const { dispatchEvent } = useWebsocketEvent<NotificationFrontendResponse>({
-        eventMap: {
+    const { request } = useWebsocketBus<NotificationFrontendResponse>({
+        namespace: "notifications",
+        responseMap: {
             notificationsList: (data): void => {
-                notifications.value = data.payload;
+                notifications.value = data.records;
             },
             deletedAll: (): void => {
                 notifications.value = [];
@@ -40,7 +46,7 @@ export default function Notifications(props: NotificationsProps) {
             markedSingleRead: (data): void => {
                 notifications.value = notifications.value.map(
                     (notification) => {
-                        if (notification.id === data.payload.id) {
+                        if (notification.id === data.id) {
                             return {
                                 ...notification,
                                 is_read: true,
@@ -52,47 +58,44 @@ export default function Notifications(props: NotificationsProps) {
             },
             deletedSingle: (data): void => {
                 notifications.value = notifications.value.filter((n) =>
-                    n.id !== data.payload.id
+                    n.id !== data.id
                 );
             },
             notificationAdded: (data): void => {
                 notifications.value = [
                     ...notifications.value,
-                    data.payload,
+                    data.record,
                 ];
             },
         },
     });
 
     useScriptsReadyEffect(() => {
-        dispatchEvent<NotificationFrontendMessage>({
+        request<GetMyNotificationsMessage>({
             type: "getMyNotifications",
-            payload: null,
         });
     });
 
     const handleDeleteSingle = (notification: NotificationRecord) =>
-        dispatchEvent<NotificationFrontendMessage>({
+        request<DeleteSingleMessage>({
             type: "deleteSingle",
-            payload: { id: notification.id },
+            id: notification.id,
         });
 
     const handleDeleteAll = () =>
-        dispatchEvent<NotificationFrontendMessage>({
+        request<DeleteAllMessage>({
             type: "deleteAll",
-            payload: null,
         });
 
     const handleMarkAllRead = () =>
-        dispatchEvent<NotificationFrontendMessage>({
+        request<MarkAllReadMessage>({
             type: "markAllRead",
-            payload: null,
         });
 
     const handleMarkSingleAsRead = (notification: NotificationRecord) =>
-        dispatchEvent<NotificationFrontendMessage>({
+        request<MarkSingleReadMessage>({
             type: "markSingleRead",
-            payload: { id: notification.id },
+            id: notification.id,
         });
 
     const menuRef = createRef<HTMLDivElement>();

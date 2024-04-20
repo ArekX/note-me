@@ -1,3 +1,5 @@
+import { WebsocketService } from "$workers/websocket/websocket-service.ts";
+
 export interface SocketClient {
     id: string;
     userId: number;
@@ -5,14 +7,37 @@ export interface SocketClient {
     send<T>(data: T): void;
 }
 
-export interface WebSocketHandler<
-    FrontendMessage = unknown,
-    BackendMessage = unknown,
-> {
-    onConnected?(client: SocketClient): void;
-    onDisconnected?(client: SocketClient): void;
-    onBackendMessage?(data: BackendMessage): Promise<void>;
-    onFrontendMessage?(client: SocketClient, data: FrontendMessage): void;
-}
-
 export type SocketClientMap = { [key: SocketClient["id"]]: SocketClient };
+
+export type ClientEvent = "connected" | "disconnected";
+export type ClientEventFn = (event: ClientEvent, client: SocketClient) => void;
+
+export type Message<Namespace = string, Type = string, Data = unknown> = {
+    type: Type;
+    namespace: Namespace;
+} & Data;
+
+export type ListenerKind = "backend" | "frontend";
+
+export type ListenerFn<T = unknown> = (data: {
+    message: T;
+    service: WebsocketService;
+    sourceClient?: SocketClient;
+    respond: <R extends Message>(data: Omit<R, "namespace">) => void;
+}) => void;
+
+export type NamespaceMap = { [key: string]: ListenerMap };
+
+export type ListenerMap = { [key: string]: ListenerFn[] };
+
+export type RegisterListenerMap<T extends Message> = {
+    [K in T["type"]]?: ListenerFn<Extract<T, { type: K }>>;
+};
+
+export type RegisterKindMap<
+    BackendMessages extends Message,
+    FrontendMessages extends Message,
+> = {
+    backend?: RegisterListenerMap<BackendMessages>;
+    frontend?: RegisterListenerMap<FrontendMessages>;
+};
