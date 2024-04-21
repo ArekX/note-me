@@ -13,6 +13,7 @@ export type ClientEvent = "connected" | "disconnected";
 export type ClientEventFn = (event: ClientEvent, client: SocketClient) => void;
 
 export type Message<Namespace = string, Type = string, Data = unknown> = {
+    requestId: string;
     type: Type;
     namespace: Namespace;
 } & Data;
@@ -23,7 +24,9 @@ export type ListenerFn<T = unknown> = (data: {
     message: T;
     service: WebsocketService;
     sourceClient?: SocketClient;
-    respond: <R extends Message>(data: Omit<R, "namespace">) => void;
+    respond: <R extends Message>(
+        data: Omit<R, "namespace" | "requestId">,
+    ) => void;
 }) => void;
 
 export type NamespaceMap = { [key: string]: ListenerMap };

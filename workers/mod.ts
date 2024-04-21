@@ -7,8 +7,9 @@ const checkServiceDisabled = (serviceName: string): boolean => {
         serviceName.replace(/([a-z])([A-Z])/g, "$1_$2").toUpperCase();
 
     webLogger.debug(
-        "Checking if service is disabled by environment variable '{name}'",
+        "Checking if service '{serviceName}' is disabled by environment variable '{name}'",
         {
+            serviceName,
             name: serviceDisabledEnvName,
         },
     );

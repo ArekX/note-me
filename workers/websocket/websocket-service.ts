@@ -110,10 +110,11 @@ const handleClientRequest = (client: SocketClient, message: Message) => {
             message,
             service: websocketService,
             sourceClient: client,
-            respond: (message) => {
+            respond: (responseMessage) => {
                 client.send({
+                    requestId: message.requestId,
                     namespace,
-                    ...message,
+                    ...responseMessage,
                 });
             },
         });

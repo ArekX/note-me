@@ -125,8 +125,7 @@ export default function TreeList({
                         parent_id: parentId,
                     },
                 },
-                response: "createGroupResponse",
-                responseNamespace: "groups",
+                response: { type: "createGroupResponse", namespace: "groups" },
             });
             container.record.id = record.id;
             container.record.name = record.name;

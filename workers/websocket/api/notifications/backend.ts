@@ -12,6 +12,7 @@ const addNotification: ListenerFn<AddNotificationMessage> = ({
     const client = service.getClientByUserId(message.toUserId);
 
     client?.send<NotificationFrontendResponse>({
+        requestId: message.requestId,
         namespace: "notifications",
         type: "notificationAdded",
         record: message.data,

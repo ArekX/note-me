@@ -1,5 +1,6 @@
 import { BusEvents } from "$backend/event-bus/bus-events.ts";
 import { workerLogger } from "$backend/logger.ts";
+import { Message } from "$workers/websocket/types.ts";
 
 export class BackgroundService {
     #worker: Worker | null = null;
@@ -10,8 +11,11 @@ export class BackgroundService {
         private readonly workerPath: string,
     ) {}
 
-    send<T extends object>(message: T) {
-        this.#worker?.postMessage(JSON.stringify(message));
+    send<T extends Message>(message: T | Omit<T, "requestId">) {
+        this.#worker?.postMessage(JSON.stringify({
+            requestId: crypto.randomUUID(),
+            ...message,
+        }));
     }
 
     get isStarted() {

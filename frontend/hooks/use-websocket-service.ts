@@ -31,8 +31,9 @@ export const useWebsocketService = <T extends Message>(
     }
 
     const dispatchRequest = <T extends Message>(
-        message: T | Omit<T, "namespace">,
+        message: T | Omit<T, "namespace" | "requestId">,
     ) => socketManager.send({
+        requestId: crypto.randomUUID(),
         namespace: options.defaultNamespace,
         ...message,
     });
@@ -41,29 +42,33 @@ export const useWebsocketService = <T extends Message>(
         Request extends Message,
         Response extends Message,
     >(data: {
-        request: Request | Omit<Request, "namespace">;
-        response: Response["type"];
-        responseNamespace?: string;
+        request: Request | Omit<Request, "namespace" | "requestId">;
+        response: Response["type"] | {
+            type: Response["type"];
+            namespace: Response["namespace"];
+        };
     }): Promise<Response> => {
         const {
             request,
-            response: responseType,
-            responseNamespace = options.defaultNamespace,
         } = data;
+
+        const requestId = crypto.randomUUID();
+
         return new Promise((resolve) => {
             const responseHandler = (data: Message) => {
-                if (
-                    data.namespace == responseNamespace &&
-                    data.type === responseType
-                ) {
-                    resolve(data as Response);
-                    socketManager.removeListener(responseHandler);
+                if (data.requestId !== requestId) {
+                    return;
                 }
+
+                // TODO: Handle error responses
+                resolve(data as Response);
+
+                socketManager.removeListener(responseHandler);
             };
 
             socketManager.addListener(responseHandler);
-
-            dispatchRequest({
+            socketManager.send({
+                requestId,
                 namespace: options.defaultNamespace,
                 ...request,
             });
