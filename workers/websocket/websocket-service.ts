@@ -5,6 +5,7 @@ import { workerLogger } from "$backend/logger.ts";
 import {
     ClientEvent,
     ClientEventFn,
+    ErrorMessage,
     ListenerFn,
     ListenerKind,
     Message,
@@ -84,8 +85,18 @@ const handleBackendRequest = (message: Message) => {
     const { namespace, type } = message;
     const listeners = backendListeners[namespace]?.[type] ?? [];
 
+    let wasRequestHandled = false;
+
     for (const listener of listeners) {
         listener({ message, service: websocketService, respond: () => {} });
+        wasRequestHandled = true;
+    }
+
+    if (!wasRequestHandled) {
+        workerLogger.error(
+            `No handler for backend message of type '{type}' in namespace '{namespace}' was found.`,
+            { type, namespace },
+        );
     }
 };
 
@@ -105,6 +116,8 @@ const handleClientRequest = (client: SocketClient, message: Message) => {
     const { namespace, type } = message;
     const listeners = frontendListeners[namespace]?.[type] ?? [];
 
+    let wasRequestHandled = false;
+
     for (const listener of listeners) {
         listener({
             message,
@@ -117,6 +130,21 @@ const handleClientRequest = (client: SocketClient, message: Message) => {
                     ...responseMessage,
                 });
             },
+        });
+        wasRequestHandled = true;
+    }
+
+    if (!wasRequestHandled) {
+        workerLogger.debug(
+            `No handler for frontend message of type '{type}' in namespace '{namespace}' was found.`,
+            { type, namespace },
+        );
+        client.send<ErrorMessage>({
+            requestId: message.requestId,
+            namespace: "system",
+            type: "error",
+            message:
+                `No handler for message of type '${type}' in namespace '${namespace}' was found.`,
         });
     }
 };

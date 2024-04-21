@@ -18,6 +18,15 @@ export type Message<Namespace = string, Type = string, Data = unknown> = {
     namespace: Namespace;
 } & Data;
 
+export type ErrorMessage = Message<"system", "error", { message: string }>;
+
+export type OperationResponseMessage<Namespace = string, Type = string> =
+    Message<
+        Namespace,
+        Type,
+        { success: boolean }
+    >;
+
 export type ListenerKind = "backend" | "frontend";
 
 export type ListenerFn<T = unknown> = (data: {

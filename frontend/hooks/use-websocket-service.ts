@@ -2,24 +2,38 @@ import { useScriptsReadyEffect } from "$frontend/hooks/use-scripts-ready.ts";
 import { socketManager } from "$frontend/socket-manager.ts";
 import { Message } from "$workers/websocket/types.ts";
 
+type EventMap<T extends Message> = Partial<
+    { [K in T["type"]]: (data: Extract<T, { type: K }>) => void }
+>;
+type NamespaceMap<T extends Message> = {
+    [K in T["namespace"]]: EventMap<Extract<T, { namespace: K }>>;
+};
+
 interface WebSocketEventOptions<T extends Message> {
-    defaultNamespace: T["namespace"];
-    responseMap?: Partial<
-        { [K in T["type"]]: (data: Extract<T, { type: K }>) => void }
-    >;
+    messageNamespace: T["namespace"];
+    eventMap?: NamespaceMap<T>;
+}
+
+export interface ErrorResponse<T> {
+    error: string;
+    data: T;
 }
 
 export const useWebsocketService = <T extends Message>(
     options: WebSocketEventOptions<T>,
 ) => {
-    const { responseMap } = options;
+    const { eventMap } = options;
 
-    if (responseMap) {
+    if (eventMap) {
         useScriptsReadyEffect(() => {
             const handleWebsocketMessage = (data: T) => {
-                responseMap[data.type as T["type"]]?.(
-                    data as Extract<T, { type: T["type"] }>,
-                );
+                eventMap[data.namespace as T["namespace"]]
+                    ?.[data.type as T["type"]]?.(
+                        data as Extract<
+                            Extract<T, { namespace: T["namespace"] }>,
+                            { type: T["type"] }
+                        >,
+                    );
             };
 
             socketManager.addListener<T>(handleWebsocketMessage);
@@ -30,38 +44,57 @@ export const useWebsocketService = <T extends Message>(
         });
     }
 
-    const dispatchRequest = <T extends Message>(
+    const dispatchMessage = <T extends Message>(
         message: T | Omit<T, "namespace" | "requestId">,
     ) => socketManager.send({
         requestId: crypto.randomUUID(),
-        namespace: options.defaultNamespace,
+        namespace: options.messageNamespace,
         ...message,
     });
 
-    const sendRequest = <
+    const sendMessage = <
         Request extends Message,
         Response extends Message,
     >(data: {
         request: Request | Omit<Request, "namespace" | "requestId">;
-        response: Response["type"] | {
-            type: Response["type"];
-            namespace: Response["namespace"];
-        };
+        require: Response["type"];
+        requireNamespace?: Response["namespace"];
     }): Promise<Response> => {
         const {
             request,
+            require,
+            requireNamespace = null,
         } = data;
 
         const requestId = crypto.randomUUID();
 
-        return new Promise((resolve) => {
+        const timeoutError = new Promise<Response>((_, reject) =>
+            setTimeout(() => {
+                reject(
+                    {
+                        error: "No response received after 15s.",
+                    } as ErrorResponse<never>,
+                );
+            }, 15000)
+        );
+
+        const mainRequest = new Promise<Response>((resolve, reject) => {
             const responseHandler = (data: Message) => {
                 if (data.requestId !== requestId) {
                     return;
                 }
 
-                // TODO: Handle error responses
-                resolve(data as Response);
+                if (
+                    data.type !== require ||
+                    (requireNamespace && data.namespace !== requireNamespace)
+                ) {
+                    reject({
+                        error: `Unexpected response type: ${data.type}`,
+                        data: data as Message,
+                    } as ErrorResponse<Message>);
+                } else {
+                    resolve(data as Response);
+                }
 
                 socketManager.removeListener(responseHandler);
             };
@@ -69,11 +102,16 @@ export const useWebsocketService = <T extends Message>(
             socketManager.addListener(responseHandler);
             socketManager.send({
                 requestId,
-                namespace: options.defaultNamespace,
+                namespace: options.messageNamespace,
                 ...request,
             });
         });
+
+        return Promise.race([
+            mainRequest,
+            timeoutError,
+        ]);
     };
 
-    return { dispatchRequest, sendRequest };
+    return { dispatchMessage, sendMessage };
 };

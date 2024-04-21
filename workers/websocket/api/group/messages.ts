@@ -1,6 +1,6 @@
-import { Message } from "$workers/websocket/types.ts";
+import { Message, OperationResponseMessage } from "$workers/websocket/types.ts";
 import { GroupRecord } from "$backend/repository/group-repository.ts";
-import { AddGroupRequest } from "$schemas/groups.ts";
+import { AddGroupRequest, UpdateGroupRequest } from "$schemas/groups.ts";
 
 type GroupMessage<Type, Data = unknown> = Message<
     "groups",
@@ -18,6 +18,32 @@ export type CreateGroupResponse = GroupMessage<
     { record: GroupRecord }
 >;
 
-export type GroupFrontendResponse = CreateGroupResponse;
+export type UpdateGroupMessage = GroupMessage<
+    "updateGroup",
+    { id: number; data: UpdateGroupRequest }
+>;
 
-export type GroupFrontendMessage = CreateGroupMessage;
+export type UpdateGroupResponse = OperationResponseMessage<
+    "groups",
+    "updateGroupResponse"
+>;
+
+export type DeleteGroupMessage = GroupMessage<
+    "deleteGroup",
+    { id: number }
+>;
+
+export type DeleteGroupResponse = OperationResponseMessage<
+    "groups",
+    "deleteGroupResponse"
+>;
+
+export type GroupFrontendResponse =
+    | CreateGroupResponse
+    | UpdateGroupResponse
+    | DeleteGroupResponse;
+
+export type GroupFrontendMessage =
+    | CreateGroupMessage
+    | UpdateGroupMessage
+    | DeleteGroupMessage;

@@ -26,76 +26,78 @@ export default function Notifications(props: NotificationsProps) {
         props.initialNotifications,
     );
 
-    const { dispatchRequest } = useWebsocketService<
+    const { dispatchMessage } = useWebsocketService<
         NotificationFrontendResponse
     >({
-        defaultNamespace: "notifications",
-        responseMap: {
-            notificationsList: (data): void => {
-                notifications.value = data.records;
-            },
-            deletedAll: (): void => {
-                notifications.value = [];
-            },
-            markedAllRead: (): void => {
-                notifications.value = notifications.value.map((
-                    notification,
-                ) => ({
-                    ...notification,
-                    is_read: true,
-                }));
-            },
-            markedSingleRead: (data): void => {
-                notifications.value = notifications.value.map(
-                    (notification) => {
-                        if (notification.id === data.id) {
-                            return {
-                                ...notification,
-                                is_read: true,
-                            };
-                        }
-                        return notification;
-                    },
-                );
-            },
-            deletedSingle: (data): void => {
-                notifications.value = notifications.value.filter((n) =>
-                    n.id !== data.id
-                );
-            },
-            notificationAdded: (data): void => {
-                notifications.value = [
-                    ...notifications.value,
-                    data.record,
-                ];
+        messageNamespace: "notifications",
+        eventMap: {
+            notifications: {
+                notificationsList: (data): void => {
+                    notifications.value = data.records;
+                },
+                deletedAll: (): void => {
+                    notifications.value = [];
+                },
+                markedAllRead: (): void => {
+                    notifications.value = notifications.value.map((
+                        notification,
+                    ) => ({
+                        ...notification,
+                        is_read: true,
+                    }));
+                },
+                markedSingleRead: (data): void => {
+                    notifications.value = notifications.value.map(
+                        (notification) => {
+                            if (notification.id === data.id) {
+                                return {
+                                    ...notification,
+                                    is_read: true,
+                                };
+                            }
+                            return notification;
+                        },
+                    );
+                },
+                deletedSingle: (data): void => {
+                    notifications.value = notifications.value.filter((n) =>
+                        n.id !== data.id
+                    );
+                },
+                notificationAdded: (data): void => {
+                    notifications.value = [
+                        ...notifications.value,
+                        data.record,
+                    ];
+                },
             },
         },
     });
 
     useScriptsReadyEffect(() => {
-        dispatchRequest<GetMyNotificationsMessage>({
+        dispatchMessage<GetMyNotificationsMessage>({
             type: "getMyNotifications",
         });
     });
 
     const handleDeleteSingle = (notification: NotificationRecord) =>
-        dispatchRequest<DeleteSingleMessage>({
+        dispatchMessage<DeleteSingleMessage>({
             type: "deleteSingle",
             id: notification.id,
         });
 
     const handleDeleteAll = () =>
-        dispatchRequest<DeleteAllMessage>({
+        dispatchMessage<DeleteAllMessage>({
             type: "deleteAll",
         });
 
     const handleMarkAllRead = () =>
-        dispatchRequest<MarkAllReadMessage>({
+        dispatchMessage<MarkAllReadMessage>({
             type: "markAllRead",
         });
 
     const handleMarkSingleAsRead = (notification: NotificationRecord) =>
-        dispatchRequest<MarkSingleReadMessage>({
+        dispatchMessage<MarkSingleReadMessage>({
             type: "markSingleRead",
             id: notification.id,
         });
