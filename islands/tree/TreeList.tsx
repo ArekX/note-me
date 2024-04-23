@@ -1,3 +1,4 @@
+/*
 import { Signal, useSignal } from "@preact/signals";
 import RootGroupBar from "./RootGroupBar.tsx";
 import Loader from "$islands/Loader.tsx";
@@ -9,7 +10,6 @@ import TreeItem, {
     createContainer,
     createNewContainerRecord,
 } from "./TreeItem.tsx";
-import { deleteGroup } from "$frontend/api.ts";
 import { validateSchema } from "$schemas/mod.ts";
 import { addGroupRequestSchema } from "$schemas/groups.ts";
 import { getDisplayMessage } from "$frontend/error-messages.ts";
@@ -17,7 +17,7 @@ import { ComponentChild } from "preact";
 import { closeAllPopovers } from "$frontend/hooks/use-single-popover.ts";
 import { getSortedContainerRecords, restoreTreeList } from "./helpers.ts";
 import { storeTreeList } from "./helpers.ts";
-import { useWebsocketService } from "../../frontend/hooks/use-websocket-service.ts";
+import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import {
     GetTreeMessage,
     GetTreeResponse,
@@ -27,6 +27,7 @@ import {
     CreateGroupMessage,
     CreateGroupResponse,
     DeleteGroupMessage,
+    GroupFrontendResponse,
     UpdateGroupMessage,
     UpdateGroupResponse,
 } from "$workers/websocket/api/group/messages.ts";
@@ -38,6 +39,26 @@ interface TreeListProps {
 
 const restoredTreeList = restoreTreeList();
 
+const findRecordByIdInList = (
+    id: number,
+    type: ContainerGroupRecord["record"]["type"],
+    containers: ContainerGroupRecord[],
+): ContainerGroupRecord | null => {
+    for (const child of containers) {
+        if (child.record.id === id && child.record.type === type) {
+            return child;
+        }
+
+        const result = findRecordByIdInList(id, type, child.children);
+
+        if (result) {
+            return result;
+        }
+    }
+
+    return null;
+};
+
 export default function TreeList({
     switcherComponent,
     searchQuery,
@@ -48,9 +69,51 @@ export default function TreeList({
     const containerDraggedOver = useSignal<ContainerGroupRecord | null>(null);
 
     const { sendMessage, dispatchMessage } = useWebsocketService<
-        TreeFrontendResponse
+        TreeFrontendResponse | GroupFrontendResponse
     >({
         messageNamespace: "tree",
+        eventMap: {
+            groups: {
+                deleteGroupResponse: (data) => {
+                    const record = findRecordByIdInList(
+                        data.deletedId,
+                        "group",
+                        groups.value,
+                    );
+
+                    if (!record) {
+                        return;
+                    }
+
+                    const parent = record.parent;
+
+                    if (parent) {
+                        parent.children = parent.children.filter((g) =>
+                            g !== record
+                        );
+                        updateToRoot(parent);
+                        return;
+                    }
+
+                    groups.value = groups.value.filter((g) => g !== record);
+                },
+                updateGroupResponse: (data) => {
+                    const record = findRecordByIdInList(
+                        data.updatedId,
+                        "group",
+                        groups.value,
+                    );
+
+                    if (!record) {
+                        return;
+                    }
+
+                    record.is_processing = false;
+                    record.name = data.updatedData?.name ?? record.name;
+                    updateToRoot(record);
+                },
+            },
+        },
     });
 
     const loadGroups = async (parent?: ContainerGroupRecord) => {
@@ -128,19 +191,15 @@ export default function TreeList({
             container.record.name = record.name;
             container.is_new_record = false;
         } else {
-            await sendMessage<UpdateGroupMessage, UpdateGroupResponse>({
-                request: {
-                    namespace: "groups",
-                    type: "updateGroup",
-                    id: record.id,
-                    data: {
-                        name,
-                        parent_id: parentId,
-                    },
+            await dispatchMessage<UpdateGroupMessage>({
+                namespace: "groups",
+                type: "updateGroup",
+                id: record.id,
+                data: {
+                    name,
+                    parent_id: parentId,
                 },
-                require: "updateGroupResponse",
             });
-            container.record.name = container.name;
         }
 
         container.edit_mode = false;
@@ -225,7 +284,6 @@ export default function TreeList({
 
     const handleDelete = async (
         container: ContainerGroupRecord,
-        parent?: ContainerGroupRecord,
     ) => {
         container.is_processing = true;
 
@@ -238,15 +296,6 @@ export default function TreeList({
                 id: container.record.id,
             });
         }
-
-        // TODO: This part needs to be in event map.
-        if (parent) {
-            parent.children = parent.children.filter((g) => g !== container);
-            updateToRoot(parent);
-            return;
-        }
-
-        groups.value = groups.value.filter((g) => g !== container);
     };
 
     const handleSwap = async (
@@ -408,3 +457,4 @@ export default function TreeList({
         </>
     );
 }
+*/

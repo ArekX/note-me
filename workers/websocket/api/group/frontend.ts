@@ -40,7 +40,8 @@ const updateGroupRequest: ListenerFn<UpdateGroupMessage> = async (
 
     respond<UpdateGroupResponse>({
         type: "updateGroupResponse",
-        success: true,
+        updatedId: id,
+        updatedData: data,
     });
 };
 
@@ -53,7 +54,7 @@ const deleteGroupRequest: ListenerFn<DeleteGroupMessage> = async (
 
     respond<DeleteGroupResponse>({
         type: "deleteGroupResponse",
-        success: true,
+        deletedId: id,
     });
 };
 

@@ -5,9 +5,11 @@ import { Message } from "$workers/websocket/types.ts";
 type EventMap<T extends Message> = Partial<
     { [K in T["type"]]: (data: Extract<T, { type: K }>) => void }
 >;
-type NamespaceMap<T extends Message> = {
-    [K in T["namespace"]]: EventMap<Extract<T, { namespace: K }>>;
-};
+type NamespaceMap<T extends Message> = Partial<
+    {
+        [K in T["namespace"]]: EventMap<Extract<T, { namespace: K }>>;
+    }
+>;
 
 interface WebSocketEventOptions<T extends Message> {
     messageNamespace: T["namespace"];

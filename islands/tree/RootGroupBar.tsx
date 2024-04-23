@@ -1,10 +1,10 @@
 import { Icon } from "$components/Icon.tsx";
-import { ContainerGroupRecord } from "./TreeItem.tsx";
 import { useSignal } from "@preact/signals";
 import { ComponentChild } from "preact";
+import { RecordContainer } from "$islands/tree/record-container.ts";
 
 interface RootGroupBarProps {
-    containerDraggedOver: ContainerGroupRecord | null;
+    containerDraggedOver: RecordContainer | null;
     onDropped: (e: DragEvent) => void;
     onAddRootGroup: () => void;
     onReloadEverything: () => void;

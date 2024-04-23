@@ -7,86 +7,36 @@ import { MoreMenuItemAction } from "./MoreMenu.tsx";
 import { MoreMenu } from "./MoreMenu.tsx";
 import { isPopoverOpen } from "$frontend/hooks/use-single-popover.ts";
 import { closeAllPopovers } from "$frontend/hooks/use-single-popover.ts";
+import { ContainerRecord } from "$islands/tree/container.ts";
 
-export interface ContainerGroupRecord {
-    is_new_record: boolean;
-    is_processing: boolean;
-    are_children_loaded: boolean;
-    is_open: boolean;
-    edit_mode: boolean;
-    error_message: string;
-    name: string;
-    record: TreeRecord;
-    parent_id: number | null;
-    parent: ContainerGroupRecord | null;
-    children: ContainerGroupRecord[];
-}
+const draggedContainer: Signal<ContainerRecord | null> = signal(null);
+const selectedTo: Signal<ContainerRecord | null> = signal(null);
 
-interface GroupItemProps {
-    parent: ContainerGroupRecord | null;
-    container: ContainerGroupRecord;
-    onAcceptEdit: (container: ContainerGroupRecord, newName: string) => void;
+export interface TreeItemProps {
+    parent: ContainerRecord | null;
+    container: ContainerRecord;
+    onAcceptEdit: (container: ContainerRecord, newName: string) => void;
     onCancelEdit: (
-        container: ContainerGroupRecord,
-        parent: ContainerGroupRecord | null,
+        container: ContainerRecord,
+        parent: ContainerRecord | null,
     ) => void;
     onAddNote: (
-        container: ContainerGroupRecord,
-        parent: ContainerGroupRecord | null,
+        container: ContainerRecord,
+        parent: ContainerRecord | null,
     ) => void;
     onAddGroup: (
-        container: ContainerGroupRecord,
-        parent: ContainerGroupRecord | null,
+        container: ContainerRecord,
+        parent: ContainerRecord | null,
     ) => void;
-    onRename: (container: ContainerGroupRecord) => void;
-    onDelete: (container: ContainerGroupRecord) => void;
-    onDrop: (toContainer: ContainerGroupRecord) => void;
-    onDraggingStart: (container: ContainerGroupRecord) => void;
-    onDraggingEnd: (container: ContainerGroupRecord) => void;
-    onOpen: (container: ContainerGroupRecord) => void;
-    onClose: (container: ContainerGroupRecord) => void;
-    onRefresh: (container: ContainerGroupRecord) => void;
+    onRename: (container: ContainerRecord) => void;
+    onDelete: (container: ContainerRecord) => void;
+    onDrop: (toContainer: ContainerRecord) => void;
+    onDraggingStart: (container: ContainerRecord) => void;
+    onDraggingEnd: (container: ContainerRecord) => void;
+    onOpen: (container: ContainerRecord) => void;
+    onClose: (container: ContainerRecord) => void;
+    onRefresh: (container: ContainerRecord) => void;
 }
-
-export const createNewContainerRecord = (
-    parent: ContainerGroupRecord | null,
-): ContainerGroupRecord => {
-    return {
-        ...createContainer(
-            {
-                id: 0,
-                type: "group",
-                name: "",
-                has_children: 0,
-            },
-            parent,
-        ),
-        is_new_record: true,
-        edit_mode: true,
-    };
-};
-
-export const createContainer = (
-    record: TreeRecord,
-    parent: ContainerGroupRecord | null,
-): ContainerGroupRecord => {
-    return {
-        is_new_record: false,
-        is_processing: false,
-        are_children_loaded: false,
-        is_open: false,
-        edit_mode: false,
-        error_message: "",
-        name: record.name,
-        record,
-        parent_id: parent ? parent.record.id : null,
-        parent,
-        children: [],
-    };
-};
-
-const draggedContainer: Signal<ContainerGroupRecord | null> = signal(null);
-const selectedTo: Signal<ContainerGroupRecord | null> = signal(null);
 
 export default function TreeItem({
     parent,
@@ -103,7 +53,7 @@ export default function TreeItem({
     onDraggingStart,
     onDraggingEnd,
     onDrop,
-}: GroupItemProps) {
+}: TreeItemProps) {
     const name = useSignal(container.name);
     const isConfirmingDelete = useSignal(false);
 

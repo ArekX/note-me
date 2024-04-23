@@ -1,4 +1,4 @@
-import { ContainerGroupRecord } from "./TreeItem.tsx";
+/*import { ContainerGroupRecord } from "./TreeItem.tsx";
 import { restore, store } from "$frontend/session-storage.ts";
 
 let restoredTreeList: ContainerGroupRecord[] | null = null;
@@ -65,3 +65,4 @@ export const getSortedContainerRecords = (records: ContainerGroupRecord[]) => {
 };
 
 restoreTreeList();
+*/
