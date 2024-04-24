@@ -1,10 +1,11 @@
 import { clearStorage } from "$frontend/session-storage.ts";
 import { Icon } from "$components/Icon.tsx";
+import { redirectTo } from "$frontend/redirection-manager.ts";
 
 export const LogoutButton = () => {
     const handleLogOut = () => {
         clearStorage();
-        window.location.href = "/app/logout";
+        redirectTo.logout();
     };
 
     return (

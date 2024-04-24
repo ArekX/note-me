@@ -5,6 +5,7 @@ import { Icon } from "$components/Icon.tsx";
 import { MenuItemActions, MoreMenu } from "$islands/notes/MoreMenu.tsx";
 import NoteWindow, { NoteWindowTypes } from "$islands/notes/NoteWindow.tsx";
 import { useSignal } from "@preact/signals";
+import { redirectTo } from "$frontend/redirection-manager.ts";
 
 export interface ViewNoteProps {
     readonly?: boolean;
@@ -41,8 +42,7 @@ export function ViewNote(
                             color="success"
                             title="Edit"
                             onClick={() => {
-                                window.location.href =
-                                    `/app/note/edit-${record.id}`;
+                                redirectTo.editNote({ noteId: record.id });
                             }}
                         >
                             <Icon name="pencil" size="lg" />

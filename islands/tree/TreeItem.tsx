@@ -8,6 +8,7 @@ import { MoreMenu } from "./MoreMenu.tsx";
 import { isPopoverOpen } from "$frontend/hooks/use-single-popover.ts";
 import { closeAllPopovers } from "$frontend/hooks/use-single-popover.ts";
 import { ContainerRecord } from "$islands/tree/container.ts";
+import { redirectTo } from "$frontend/redirection-manager.ts";
 
 const draggedContainer: Signal<ContainerRecord | null> = signal(null);
 const selectedTo: Signal<ContainerRecord | null> = signal(null);
@@ -142,7 +143,7 @@ export default function TreeItem({
                 isConfirmingDelete.value = true;
                 break;
             case "edit":
-                window.location.href = `/app/note/edit-${container.record.id}`;
+                redirectTo.editNote({ noteId: container.record.id });
                 break;
         }
     };
@@ -159,9 +160,7 @@ export default function TreeItem({
             onClick={(e) => {
                 e.stopPropagation();
                 if (container.record.type === "note") {
-                    window.location.href =
-                        `/app/note/view-${container.record.id}`;
-
+                    redirectTo.viewNote({ noteId: container.record.id });
                     return;
                 }
 
@@ -205,8 +204,9 @@ export default function TreeItem({
                                 class="hover:text-gray-300 cursor-pointer"
                                 title="Open Note"
                                 onClick={(e) => {
-                                    window.location.href =
-                                        `/app/note/edit-${container.record.id}`;
+                                    redirectTo.editNote({
+                                        noteId: container.record.id,
+                                    });
                                     e.stopPropagation();
                                 }}
                             >

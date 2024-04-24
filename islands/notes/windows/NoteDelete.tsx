@@ -3,6 +3,7 @@ import { useLoader } from "$frontend/hooks/use-loading.ts";
 import Loader from "$islands/Loader.tsx";
 import { deleteNote } from "$frontend/api.ts";
 import { clearStorage } from "$frontend/session-storage.ts";
+import { redirectTo } from "$frontend/redirection-manager.ts";
 
 interface NoteDeleteProps {
     noteId: number;
@@ -17,7 +18,7 @@ export const NoteDelete = ({ noteId, show, onClose }: NoteDeleteProps) => {
         await deleteNote(noteId);
         deleteLoader.stop();
         clearStorage();
-        window.location.href = "/app";
+        redirectTo.root();
     };
 
     return (

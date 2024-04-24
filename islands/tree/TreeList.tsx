@@ -279,7 +279,8 @@ export default function TreeList({
     };
 
     const handleAddNote = (container: ContainerGroupRecord) => {
-        window.location.href = `/app/note/new?group_id=${container.record.id}`;
+        redirectTo.
+         = `/app/note/new?group_id=${container.record.id}`;
     };
 
     const handleDelete = async (
@@ -359,7 +360,8 @@ export default function TreeList({
     };
 
     const handleAddRootNote = () => {
-        window.location.href = `/app/note/new`;
+        redirectTo.
+         = `/app/note/new`;
     };
 
     const handleOpen = (container: ContainerGroupRecord) => {
@@ -444,7 +446,8 @@ export default function TreeList({
                     <div
                         class="text-center text-gray-400 pt-14 cursor-pointer"
                         onClick={() => {
-                            window.location.href = "/app/note/new";
+                            redirectTo.
+                             = "/app/note/new";
                         }}
                     >
                         <div>

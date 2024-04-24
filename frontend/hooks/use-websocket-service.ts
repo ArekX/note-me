@@ -1,6 +1,6 @@
 import { useScriptsReadyEffect } from "$frontend/hooks/use-scripts-ready.ts";
-import { socketManager } from "$frontend/socket-manager.ts";
 import { Message } from "$workers/websocket/types.ts";
+import { addListener, removeListener, send } from "$frontend/socket-manager.ts";
 
 type EventMap<T extends Message> = Partial<
     { [K in T["type"]]: (data: Extract<T, { type: K }>) => void }
@@ -38,17 +38,17 @@ export const useWebsocketService = <T extends Message>(
                     );
             };
 
-            socketManager.addListener<T>(handleWebsocketMessage);
+            addListener(handleWebsocketMessage);
 
             return () => {
-                socketManager.removeListener<T>(handleWebsocketMessage);
+                removeListener(handleWebsocketMessage);
             };
         });
     }
 
     const dispatchMessage = <T extends Message>(
         message: T | Omit<T, "namespace" | "requestId">,
-    ) => socketManager.send({
+    ) => send({
         requestId: crypto.randomUUID(),
         namespace: options.messageNamespace,
         ...message,
@@ -98,11 +98,11 @@ export const useWebsocketService = <T extends Message>(
                     resolve(data as Response);
                 }
 
-                socketManager.removeListener(responseHandler);
+                removeListener(responseHandler);
             };
 
-            socketManager.addListener(responseHandler);
-            socketManager.send({
+            addListener(responseHandler);
+            send({
                 requestId,
                 namespace: options.messageNamespace,
                 ...request,

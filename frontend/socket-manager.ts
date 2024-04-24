@@ -1,53 +1,64 @@
+import {
+    consumePropagationTicket,
+    createPropagationTicket,
+    runCriticalJob,
+    TicketId,
+} from "$frontend/propagation-manager.ts";
+
 type SocketHandler = (message: unknown) => void;
 
-class SocketManager {
-    #socket: WebSocket | null = null;
-    #handlers: Set<SocketHandler> = new Set();
-    #pendingRequests: string[] = [];
+let socket: WebSocket | null = null;
 
-    connect(socketHost: string): Promise<void> {
-        return new Promise((resolve) => {
-            if (this.#socket) {
-                return;
-            }
+let pendingRequestsPropagationTicket: TicketId | null = null;
+let pendingRequests: string[] = [];
 
-            this.#socket = new WebSocket(socketHost);
-            this.#socket.onmessage = (event) =>
-                this.#processHandlers(event.data);
-            this.#socket.onclose = () => this.#socket = null;
-            this.#socket.onopen = () => {
-                for (const request of this.#pendingRequests) {
-                    this.#socket?.send(request);
-                }
-                this.#pendingRequests = [];
-                resolve();
-            };
-        });
-    }
+const handlers: Set<SocketHandler> = new Set();
 
-    send<T>(message: T) {
-        if (!this.#socket || this.#socket.readyState !== WebSocket.OPEN) {
-            this.#pendingRequests.push(JSON.stringify(message));
+export const connect = (host: string): Promise<void> => {
+    return new Promise((resolve) => {
+        if (socket) {
             return;
         }
 
-        this.#socket?.send(JSON.stringify(message));
-    }
+        socket = new WebSocket(host);
+        socket.onmessage = (event) => processHandlers(event.data);
+        socket.onclose = () => socket = null;
+        socket.onopen = () => {
+            for (const request of pendingRequests) {
+                socket?.send(request);
+            }
+            pendingRequests = [];
+            consumePropagationTicket(pendingRequestsPropagationTicket!);
+            resolve();
+        };
+    });
+};
 
-    addListener<T>(handler: (message: T) => void) {
-        this.#handlers.add(handler as SocketHandler);
-    }
-
-    removeListener<T>(handler: (message: T) => void) {
-        this.#handlers.delete(handler as SocketHandler);
-    }
-
-    #processHandlers(message: string) {
+const processHandlers = (message: string) => {
+    runCriticalJob(() => {
         const data = JSON.parse(message);
-        for (const handler of this.#handlers) {
+        for (const handler of handlers) {
             handler(data);
         }
-    }
-}
+    });
+};
 
-export const socketManager = new SocketManager();
+export const send = <T>(message: T) => {
+    if (!socket || socket.readyState !== WebSocket.OPEN) {
+        pendingRequests.push(JSON.stringify(message));
+        if (!pendingRequestsPropagationTicket) {
+            pendingRequestsPropagationTicket = createPropagationTicket();
+        }
+        return;
+    }
+
+    socket?.send(JSON.stringify(message));
+};
+
+export const addListener = <T>(handler: (message: T) => void) => {
+    handlers.add(handler as SocketHandler);
+};
+
+export const removeListener = <T>(handler: (message: T) => void) => {
+    handlers.delete(handler as SocketHandler);
+};
