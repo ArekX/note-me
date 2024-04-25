@@ -1,7 +1,7 @@
 import { Icon } from "$components/Icon.tsx";
 import { useSignal } from "@preact/signals";
 import { ComponentChild } from "preact";
-import { RecordContainer } from "$islands/tree/record-container.ts";
+import { RecordContainer } from "./hooks/use-record-tree.ts";
 
 interface RootGroupBarProps {
     containerDraggedOver: RecordContainer | null;

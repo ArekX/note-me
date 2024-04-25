@@ -1,6 +1,12 @@
 import { useSignal } from "@preact/signals";
 
-export const useLoader = (initialValue = false) => {
+export interface LoaderHook {
+    running: boolean;
+    start: () => void;
+    stop: () => void;
+}
+
+export const useLoader = (initialValue = false): LoaderHook => {
     const isLoading = useSignal(initialValue);
 
     const start = () => isLoading.value = true;

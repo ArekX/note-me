@@ -66,13 +66,15 @@ import * as $sidebar_SideBarPanel from "./islands/sidebar/SideBarPanel.tsx";
 import * as $tags_EditTagForm from "./islands/tags/EditTagForm.tsx";
 import * as $tags_TagsList from "./islands/tags/TagsList.tsx";
 import * as $tree_MoreMenu from "./islands/tree/MoreMenu.tsx";
+import * as $tree_NewTreeItem from "./islands/tree/NewTreeItem.tsx";
 import * as $tree_NewTreeList from "./islands/tree/NewTreeList.tsx";
 import * as $tree_RootGroupBar from "./islands/tree/RootGroupBar.tsx";
 import * as $tree_TreeItem from "./islands/tree/TreeItem.tsx";
 import * as $tree_TreeList from "./islands/tree/TreeList.tsx";
 import * as $tree_container from "./islands/tree/container.ts";
 import * as $tree_helpers from "./islands/tree/helpers.ts";
-import * as $tree_record_container from "./islands/tree/record-container.ts";
+import * as $tree_hooks_use_drag_manager from "./islands/tree/hooks/use-drag-manager.ts";
+import * as $tree_hooks_use_record_tree from "./islands/tree/hooks/use-record-tree.ts";
 import * as $users_EditUserForm from "./islands/users/EditUserForm.tsx";
 import * as $users_UserList from "./islands/users/UserList.tsx";
 import * as $viewer_Viewer from "./islands/viewer/Viewer.tsx";
@@ -167,13 +169,16 @@ const manifest = {
         "./islands/tags/EditTagForm.tsx": $tags_EditTagForm,
         "./islands/tags/TagsList.tsx": $tags_TagsList,
         "./islands/tree/MoreMenu.tsx": $tree_MoreMenu,
+        "./islands/tree/NewTreeItem.tsx": $tree_NewTreeItem,
         "./islands/tree/NewTreeList.tsx": $tree_NewTreeList,
         "./islands/tree/RootGroupBar.tsx": $tree_RootGroupBar,
         "./islands/tree/TreeItem.tsx": $tree_TreeItem,
         "./islands/tree/TreeList.tsx": $tree_TreeList,
         "./islands/tree/container.ts": $tree_container,
         "./islands/tree/helpers.ts": $tree_helpers,
-        "./islands/tree/record-container.ts": $tree_record_container,
+        "./islands/tree/hooks/use-drag-manager.ts":
+            $tree_hooks_use_drag_manager,
+        "./islands/tree/hooks/use-record-tree.ts": $tree_hooks_use_record_tree,
         "./islands/users/EditUserForm.tsx": $users_EditUserForm,
         "./islands/users/UserList.tsx": $users_UserList,
         "./islands/viewer/Viewer.tsx": $viewer_Viewer,

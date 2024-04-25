@@ -1,6 +1,9 @@
 {
     "deno.enable": true,
     "deno.lint": true,
+    "files.watcherExclude": {
+        "fresh.gen.ts": true
+    },
     "editor.defaultFormatter": "denoland.vscode-deno",
     "[typescriptreact]": {
         "editor.defaultFormatter": "denoland.vscode-deno"

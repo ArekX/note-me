@@ -3,7 +3,7 @@ import { runOnReady } from "$frontend/propagation-manager.ts";
 const paths = {
     root: () => "/app",
     logout: () => "/app/logout",
-    newNote: (data: { groupId?: number }) =>
+    newNote: (data: { groupId?: number } = {}) =>
         `/app/note/new${data.groupId ? `?group_id=${data.groupId}` : ""}`,
     viewNote: (data: { noteId: number }) => `/app/note/view-${data.noteId}`,
     editNote: (data: { noteId: number }) => `/app/note/edit-${data.noteId}`,
