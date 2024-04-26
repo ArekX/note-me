@@ -28,6 +28,7 @@ export interface RecordContainer {
     is_processing: boolean;
     is_open: boolean;
     children_loaded: boolean;
+    has_children: boolean;
     display_mode: DisplayMode;
     parent: RecordContainer | null;
     children: RecordContainer[];
@@ -37,11 +38,12 @@ interface ContainerData {
     record?: TreeRecord | null;
     parent?: RecordContainer;
     type?: RecordType | null;
+    has_children?: boolean;
     name?: string;
 }
 
 const createContainer = (
-    { record, parent, type, name = "" }: ContainerData,
+    { record, parent, type, name = "", has_children = false }: ContainerData,
 ): RecordContainer => ({
     id: record?.id ?? null,
     name: record?.name ?? name,
@@ -49,6 +51,7 @@ const createContainer = (
     is_open: false,
     is_processing: false,
     children_loaded: false,
+    has_children,
     display_mode: "view",
     parent: parent ?? null,
     children: [],
@@ -79,7 +82,9 @@ export interface RecordTreeHook {
 }
 
 export const useRecordTree = (): RecordTreeHook => {
-    const tree = useSignal<RecordContainer>(createContainer({ type: "root" }));
+    const tree = useSignal<RecordContainer>(
+        createContainer({ type: "root", has_children: true }),
+    );
     const rootLoader = useLoader(false);
 
     const { sendMessage, dispatchMessage } = useWebsocketService<
@@ -128,7 +133,7 @@ export const useRecordTree = (): RecordTreeHook => {
         updateContainer(container, { name });
 
     const loadChildren = async (container: RecordContainer) => {
-        if (container.children_loaded) {
+        if (!container.has_children || container.children_loaded) {
             return;
         }
 

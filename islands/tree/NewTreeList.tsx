@@ -7,6 +7,7 @@ import Loader from "$islands/Loader.tsx";
 import { useLoader } from "$frontend/hooks/use-loading.ts";
 import { useDragManager } from "$islands/tree/hooks/use-drag-manager.ts";
 import NewTreeItem from "$islands/tree/NewTreeItem.tsx";
+import { Icon } from "$components/Icon.tsx";
 
 interface TreeListProps {
     searchQuery: string;
@@ -39,12 +40,26 @@ export const NewTreeList = ({
                 >
                     Loading notes and groups...
                 </Loader>
+                {!tree.root_loader.running && tree.root.children.length === 0 &&
+                    (
+                        <div
+                            class="text-center text-gray-400 pt-14 cursor-pointer"
+                            onClick={() => redirectTo.newNote()}
+                        >
+                            <div>
+                                <Icon name="note" size="5xl" />
+                            </div>
+                            Add your first note with <Icon name="plus" />!
+                        </div>
+                    )}
+                {tree.root.children.map((container) => (
+                    <NewTreeItem
+                        container={container}
+                        drag_manager={dragManager}
+                        tree_manager={tree}
+                    />
+                ))}
             </div>
-            <NewTreeItem
-                container={tree.root}
-                drag_manager={dragManager}
-                tree_manager={tree}
-            />
         </>
     );
 };
