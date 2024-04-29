@@ -43,18 +43,19 @@ interface ContainerData {
 }
 
 const createContainer = (
-    { record, parent, type, name = "", has_children = false }: ContainerData,
+    overrides: Partial<RecordContainer>,
 ): RecordContainer => ({
-    id: record?.id ?? null,
-    name: record?.name ?? name,
-    type: type ?? record?.type ?? "root",
+    id: null,
+    name: "",
+    type: "root",
     is_open: false,
     is_processing: false,
     children_loaded: false,
-    has_children,
+    has_children: false,
     display_mode: "view",
-    parent: parent ?? null,
+    parent: null,
     children: [],
+    ...overrides,
 });
 
 export interface RecordTreeHook {
@@ -68,22 +69,26 @@ export interface RecordTreeHook {
     setName: (container: RecordContainer, name: string) => void;
     loadChildren: (container: RecordContainer) => Promise<void>;
     open: (container: RecordContainer) => void;
+    toggleOpen: (container: RecordContainer) => void;
     close: (container: RecordContainer) => void;
     addNew: (
         parent: RecordContainer,
-        type: RecordContainer["type"],
+        overrides: Partial<RecordContainer>,
     ) => Promise<RecordContainer>;
     save: (container: RecordContainer) => Promise<void>;
     deleteContainer: (container: RecordContainer) => Promise<void>;
-    swapParent: (
+    changeParent: (
         container: RecordContainer,
         newParent: RecordContainer,
     ) => Promise<void>;
 }
 
 export const useRecordTree = (): RecordTreeHook => {
+    const createRootContainer = () =>
+        createContainer({ type: "root", has_children: true });
+
     const tree = useSignal<RecordContainer>(
-        createContainer({ type: "root", has_children: true }),
+        createRootContainer(),
     );
     const rootLoader = useLoader(false);
 
@@ -102,7 +107,7 @@ export const useRecordTree = (): RecordTreeHook => {
 
     const reloadTree = async () => {
         // TODO: Clear tree storage
-        setRootValue(createContainer({ type: "root" }));
+        setRootValue(createRootContainer());
         await loadChildren(tree.value);
     };
 
@@ -151,7 +156,13 @@ export const useRecordTree = (): RecordTreeHook => {
             is_processing: false,
             children_loaded: true,
             children: records.map((record) =>
-                createContainer({ record, parent: container })
+                createContainer({
+                    id: record.id,
+                    name: record.name,
+                    type: record.type,
+                    parent: container,
+                    has_children: !!record.has_children,
+                })
             ),
         });
     };
@@ -232,12 +243,16 @@ export const useRecordTree = (): RecordTreeHook => {
         }
     };
 
-    const swapParent = async (
+    const changeParent = async (
         container: RecordContainer,
         newParent: RecordContainer,
     ) => {
         if (container.id === null) {
             throw new Error("Cannot swap parent for a new container");
+        }
+
+        if (newParent.has_children && !newParent.children_loaded) {
+            await open(newParent);
         }
 
         updateContainer(container, { is_processing: true });
@@ -252,22 +267,31 @@ export const useRecordTree = (): RecordTreeHook => {
             });
         }
 
-        if (container.parent) {
-            updateContainer(container.parent, {
-                children: container.parent.children.filter(
-                    (child) => child !== container,
-                ),
-            });
+        const oldParent = container.parent;
+
+        if (oldParent) {
+            oldParent.children = oldParent.children.filter(
+                (child) => child !== container,
+            );
+
+            if (oldParent.children.length === 0) {
+                oldParent.has_children = false;
+                oldParent.is_open = false;
+            }
         }
 
-        updateContainer(newParent, {
-            children: [...newParent.children, container],
-        });
+        newParent.children = [...newParent.children, container];
+        newParent.has_children = true;
+        newParent.is_open = true;
 
-        updateContainer(container, {
-            parent: newParent,
-            is_processing: false,
-        });
+        container.parent = newParent;
+        container.is_processing = false;
+
+        propagate(container);
+
+        if (oldParent) {
+            propagate(oldParent);
+        }
     };
 
     const open = async (container: RecordContainer) => {
@@ -281,20 +305,23 @@ export const useRecordTree = (): RecordTreeHook => {
     const close = (container: RecordContainer) =>
         updateContainer(container, { is_open: false });
 
+    const toggleOpen = (container: RecordContainer) =>
+        container.is_open ? close(container) : open(container);
+
     const addNew = async (
         parent: RecordContainer,
-        type: RecordContainer["type"],
+        overrides: Partial<RecordContainer> = {},
     ): Promise<RecordContainer> => {
-        if (!parent.children_loaded) {
-            await loadChildren(parent);
-        }
+        await loadChildren(parent);
 
         const newContainer = createContainer({
-            type,
+            ...overrides,
+            parent,
         });
 
         // TODO: Add proper sorting.
         updateContainer(parent, {
+            is_open: true,
             children: [...parent.children, newContainer],
         });
 
@@ -314,10 +341,11 @@ export const useRecordTree = (): RecordTreeHook => {
         setName,
         loadChildren,
         addNew,
+        toggleOpen,
         open,
         close,
         save,
         deleteContainer,
-        swapParent,
+        changeParent,
     };
 };

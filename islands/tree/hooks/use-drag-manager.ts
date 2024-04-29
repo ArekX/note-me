@@ -3,40 +3,43 @@ import { useSignal } from "@preact/signals";
 export interface DragManagerHook<T> {
     source: T | null;
     target: T | null;
-    isDropAllowed: (value: T) => boolean;
+    canDropTo: (value: T) => boolean;
     drag: (value: T) => void;
-    drop: () => void;
-    setDropTarget: (value: T) => void;
+    reset: () => void;
+    setDropTarget: (value: T | null) => void;
 }
 
 export const useDragManager = <
-    T extends { parent: T | null; children: T[] },
+    T extends { id: number | null; parent: T | null; children: T[] },
 >(): DragManagerHook<T> => {
     const dragSource = useSignal<T | null>(null);
     const dropTarget = useSignal<T | null>(null);
 
-    const isDropAllowed = (value: T) =>
-        dragSource.value !== value &&
-        dragSource.value?.parent !== value &&
-        !dragSource.value?.children.includes(value);
+    const canDropTo = (target: T) => {
+        return dragSource.value !== null &&
+            dragSource.value.id !== target.id &&
+            dragSource.value.parent?.id !== target.id;
+    };
 
-    const drag = (value: T) => dragSource.value = value;
+    const drag = (value: T) => {
+        dragSource.value = value;
+    };
 
-    const drop = () => {
+    const reset = () => {
         dragSource.value = null;
         dropTarget.value = null;
     };
 
-    const setDropTarget = (value: T) => {
+    const setDropTarget = (value: T | null) => {
         dropTarget.value = value;
     };
 
     return {
         source: dragSource.value,
         target: dropTarget.value,
-        isDropAllowed,
+        canDropTo,
         drag,
-        drop,
+        reset,
         setDropTarget,
     };
 };

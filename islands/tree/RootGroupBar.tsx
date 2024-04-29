@@ -1,48 +1,42 @@
 import { Icon } from "$components/Icon.tsx";
-import { useSignal } from "@preact/signals";
 import { ComponentChild } from "preact";
-import { RecordContainer } from "./hooks/use-record-tree.ts";
+import { RecordContainer, RecordTreeHook } from "./hooks/use-record-tree.ts";
+import { DragManagerHook } from "$islands/tree/hooks/use-drag-manager.ts";
+import { redirectTo } from "$frontend/redirection-manager.ts";
 
 interface RootGroupBarProps {
-    containerDraggedOver: RecordContainer | null;
-    onDropped: (e: DragEvent) => void;
-    onAddRootGroup: () => void;
-    onReloadEverything: () => void;
-    onAddNote: () => void;
+    recordTree: RecordTreeHook;
+    dragManager: DragManagerHook<RecordContainer>;
     switcherComponent: ComponentChild;
 }
 
 const RootGroupBar = ({
-    containerDraggedOver,
+    recordTree,
+    dragManager,
     switcherComponent,
-    onDropped,
-    onAddRootGroup,
-    onReloadEverything,
-    onAddNote,
 }: RootGroupBarProps) => {
-    const rootDraggedOver = useSignal(false);
-
     const handleDrop = (e: DragEvent) => {
-        rootDraggedOver.value = false;
-        onDropped(e);
+        recordTree.changeParent(dragManager.source!, recordTree.root);
     };
 
     const handleDragOver = (e: DragEvent) => {
-        if (containerDraggedOver?.parent === null) {
+        if (dragManager.canDropTo(recordTree.root)) {
+            dragManager.setDropTarget(recordTree.root);
+            e.preventDefault();
             return;
         }
-        rootDraggedOver.value = true;
-        e.preventDefault();
     };
 
     const handleDragLeave = () => {
-        rootDraggedOver.value = false;
+        dragManager.setDropTarget(null);
     };
+
+    const { source, target } = dragManager;
 
     return (
         <div
             class={`flex pl-2 select-none  ${
-                rootDraggedOver.value ? "bg-red-500" : ""
+                target === recordTree.root ? "bg-red-500" : ""
             }`}
         >
             <div
@@ -51,7 +45,7 @@ const RootGroupBar = ({
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
             >
-                {containerDraggedOver
+                {source
                     ? <div>Drop here to move to top level</div>
                     : switcherComponent}
             </div>
@@ -59,21 +53,25 @@ const RootGroupBar = ({
                 <span
                     class="cursor-pointer hover:text-gray-300"
                     title="Add Note"
-                    onClick={onAddNote}
+                    onClick={() => redirectTo.newNote()}
                 >
                     <Icon name="plus" />
                 </span>
                 <span
                     class="cursor-pointer hover:text-gray-300"
                     title="Add Group"
-                    onClick={onAddRootGroup}
+                    onClick={() =>
+                        recordTree.addNew(recordTree.root, {
+                            type: "group",
+                            display_mode: "edit",
+                        })}
                 >
                     <Icon name="folder-plus" />
                 </span>
                 <span
                     class="cursor-pointer hover:text-gray-300"
                     title="Reload"
-                    onClick={onReloadEverything}
+                    onClick={() => recordTree.reloadTree()}
                 >
                     <Icon name="refresh" />
                 </span>

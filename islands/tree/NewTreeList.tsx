@@ -24,13 +24,9 @@ export const NewTreeList = ({
     return (
         <>
             <RootGroupBar
+                dragManager={dragManager}
+                recordTree={tree}
                 switcherComponent={switcherComponent}
-                onAddNote={() => redirectTo.newNote()}
-                onAddRootGroup={() => tree.addNew(tree.root, "group")}
-                onReloadEverything={() => tree.reloadTree()}
-                onDropped={() =>
-                    tree.swapParent(dragManager.source!, tree.root)}
-                containerDraggedOver={dragManager.source}
             />
             <div class="overflow-auto group-list">
                 <Loader
@@ -40,7 +36,9 @@ export const NewTreeList = ({
                 >
                     Loading notes and groups...
                 </Loader>
-                {!tree.root_loader.running && tree.root.children.length === 0 &&
+                {!tree.root_loader.running &&
+                    tree.root.children_loaded &&
+                    tree.root.children.length === 0 &&
                     (
                         <div
                             class="text-center text-gray-400 pt-14 cursor-pointer"
@@ -55,8 +53,8 @@ export const NewTreeList = ({
                 {tree.root.children.map((container) => (
                     <NewTreeItem
                         container={container}
-                        drag_manager={dragManager}
-                        tree_manager={tree}
+                        dragManager={dragManager}
+                        treeManager={tree}
                     />
                 ))}
             </div>

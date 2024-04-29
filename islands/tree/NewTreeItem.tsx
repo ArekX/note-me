@@ -5,23 +5,139 @@ import {
 import { DragManagerHook } from "$islands/tree/hooks/use-drag-manager.ts";
 import { redirectTo } from "$frontend/redirection-manager.ts";
 import { Icon } from "$components/Icon.tsx";
+import { useSignal } from "@preact/signals";
+import { useEffect, useLayoutEffect } from "preact/hooks";
 
 export interface TreeItemProps {
-    drag_manager: DragManagerHook<RecordContainer>;
-    tree_manager: RecordTreeHook;
+    dragManager: DragManagerHook<RecordContainer>;
+    treeManager: RecordTreeHook;
     container: RecordContainer;
 }
 
+interface TreeItemEditorProps {
+    treeManager: RecordTreeHook;
+    container: RecordContainer;
+}
+
+const TreeItemEditor = (
+    { treeManager, container }: TreeItemEditorProps,
+) => {
+    const name = useSignal(container.name);
+    const errorMessages = useSignal("");
+
+    useEffect(() => {
+        name.value = container.name;
+    }, [container.name]);
+
+    const handleAccept = async (e: Event) => {
+        treeManager.setName(container, name.value);
+        await treeManager.save(container);
+        treeManager.setDisplayMode(container, "view");
+        e.stopPropagation();
+    };
+
+    const handleCancel = (e: Event) => {
+        treeManager.setDisplayMode(container, "view");
+        e.stopPropagation();
+    };
+
+    return (
+        <div class="group-item-editor relative flex">
+            {!container.is_processing && (
+                <div class="absolute inset-y-0 right-0 flex items-center pr-2 text-gray-400">
+                    <span
+                        class="hover:text-white cursor-pointer"
+                        title="Accept"
+                        onClick={handleAccept}
+                    >
+                        <Icon name="check" />
+                    </span>
+                    <span
+                        class="hover:text-white cursor-pointer"
+                        title="Cancel"
+                        onClick={handleCancel}
+                    >
+                        <Icon name="block" />
+                    </span>
+                </div>
+            )}
+            <div class="absolute inset-y-0 left-0 flex items-center pl-2 text-gray-400">
+                <Icon name="folder" />
+            </div>
+            <input
+                ref={(el) => el?.focus()}
+                type="text"
+                class="outline-none border-1 pl-9 pr-14 border-gray-900 bg-gray-700 p-2 w-full"
+                placeholder="Enter group name..."
+                disabled={container.is_processing}
+                value={name.value}
+                onKeyPress={(e) => {
+                    if (e.key == "Enter") {
+                        handleAccept(e);
+                    }
+                }}
+                onInput={(e) =>
+                    name.value = (e.target as HTMLInputElement).value}
+            />
+            {errorMessages.value.length > 0 && (
+                <div class="text-red-900 right-0 absolute bottom-10 left-0 z-50 border-1 border-solid bg-red-400">
+                    {errorMessages.value}
+                </div>
+            )}
+        </div>
+    );
+};
+
 export default function TreeItem({
-    tree_manager,
-    drag_manager,
+    treeManager,
+    dragManager,
     container,
 }: TreeItemProps) {
     return (
         <div
             class={`group-item-container select-none ${
-                drag_manager.target === container ? "bg-red-600" : ""
+                dragManager.target === container ? "bg-red-600" : ""
             }`}
+            draggable={true}
+            onDragStart={(e) => {
+                dragManager.drag(container);
+                e.stopPropagation();
+            }}
+            onDragLeave={(e) => {
+                dragManager.setDropTarget(null);
+                e.stopPropagation();
+            }}
+            onDragOver={(e) => {
+                e.stopPropagation();
+                if (dragManager.canDropTo(container)) {
+                    dragManager.setDropTarget(container);
+                    e.preventDefault();
+                    return;
+                }
+            }}
+            onDragEnd={(e) => {
+                e.stopPropagation();
+                if (
+                    dragManager.target &&
+                    dragManager.canDropTo(dragManager.target)
+                ) {
+                    treeManager.changeParent(
+                        dragManager.source!,
+                        dragManager.target,
+                    );
+                }
+                dragManager.reset();
+            }}
+            onDblClick={(e) => {
+                e.stopPropagation();
+                if (container.type === "note") {
+                    redirectTo.viewNote({ noteId: +container.id! });
+                } else if (
+                    container.type === "group" && container.has_children
+                ) {
+                    treeManager.toggleOpen(container);
+                }
+            }}
             onClick={(e) => {
                 if (container.type === "note") {
                     redirectTo.viewNote({ noteId: +container.id! });
@@ -34,68 +150,83 @@ export default function TreeItem({
                 class={`relative group-item hover:bg-gray-600`}
                 title={container.name}
             >
-                <div class="absolute right-0 flex items-center group-item-actions pr-1">
-                    {container.type === "group" && (
-                        <span
-                            class="hover:text-gray-300 cursor-pointer"
-                            title="Add Note"
-                            onClick={(e) => {
-                                redirectTo.newNote({
-                                    groupId: container.id || undefined,
-                                });
-                                e.stopPropagation();
-                            }}
-                        >
-                            <Icon name="plus" />
-                        </span>
-                    )}
-                    {container.type === "note" && (
-                        <span
-                            class="hover:text-gray-300 cursor-pointer"
-                            title="Open Note"
-                            onClick={(e) => {
-                                redirectTo.editNote({
-                                    noteId: container.id!,
-                                });
-                                e.stopPropagation();
-                            }}
-                        >
-                            <Icon name="pencil" />
-                        </span>
-                    )}
-                    {
-                        /* <MoreMenu
+                {container.display_mode !== "edit" &&
+                    !container.is_processing && (
+                    <div class="absolute right-0 flex items-center group-item-actions pr-1">
+                        {container.type === "group" && (
+                            <span
+                                class="hover:text-gray-300 cursor-pointer"
+                                title="Add Note"
+                                onClick={(e) => {
+                                    redirectTo.newNote({
+                                        groupId: container.id || undefined,
+                                    });
+                                    e.stopPropagation();
+                                }}
+                            >
+                                <Icon name="plus" />
+                            </span>
+                        )}
+                        {container.type === "note" && (
+                            <span
+                                class="hover:text-gray-300 cursor-pointer"
+                                title="Open Note"
+                                onClick={(e) => {
+                                    redirectTo.editNote({
+                                        noteId: container.id!,
+                                    });
+                                    e.stopPropagation();
+                                }}
+                            >
+                                <Icon name="pencil" />
+                            </span>
+                        )}
+                        {
+                            /* <MoreMenu
                             record={container.record}
                             onAction={handleIconMenuAction}
                         /> */
-                    }
-                </div>
+                        }
+                    </div>
+                )}
                 {container.is_processing && (
                     <div class="absolute inset-y-0 right-0 flex items-center pl-2 pr-2 text-gray-400">
                         <Icon name="loader-alt" animation="spin" />
                     </div>
                 )}
-
-                <span class="group-item-name pl-2 pr-2">
-                    <Icon
-                        name={container.type == "group"
-                            ? (container.is_open ? "folder-open" : "folder")
-                            : "file"}
-                        type={container.type == "group" &&
-                                container.has_children
-                            ? "solid"
-                            : "regular"}
-                    />{" "}
-                    <span class="name-text">{container.name}</span>
-                </span>
+                {container.display_mode == "edit"
+                    ? (
+                        <TreeItemEditor
+                            treeManager={treeManager}
+                            container={container}
+                        />
+                    )
+                    : (
+                        <span class="group-item-name pl-2 pr-2">
+                            <Icon
+                                name={container.type == "group"
+                                    ? `folder${
+                                        container.is_open ? "-open" : ""
+                                    }`
+                                    : "file"}
+                                type={container.type == "group" &&
+                                        container.has_children
+                                    ? "solid"
+                                    : "regular"}
+                            />{" "}
+                            <span class="name-text">
+                                {container.name}
+                            </span>
+                        </span>
+                    )}
             </div>
             {container.is_open && (
                 <div class="group-item-children">
                     {container.children.map((child) => (
                         <TreeItem
                             container={child}
-                            tree_manager={tree_manager}
-                            drag_manager={drag_manager}
+                            treeManager={treeManager}
+                            dragManager={dragManager}
                         />
                     ))}
                 </div>
