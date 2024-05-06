@@ -7,6 +7,7 @@ import { redirectTo } from "$frontend/redirection-manager.ts";
 import { Icon } from "$components/Icon.tsx";
 import { useSignal } from "@preact/signals";
 import { useEffect, useLayoutEffect } from "preact/hooks";
+import { MoreMenu, MoreMenuItemAction } from "$islands/tree/MoreMenu.tsx";
 
 export interface TreeItemProps {
     dragManager: DragManagerHook<RecordContainer>;
@@ -93,58 +94,91 @@ export default function TreeItem({
     dragManager,
     container,
 }: TreeItemProps) {
+    const handleDragStart = (e: DragEvent) => {
+        dragManager.drag(container);
+        e.stopPropagation();
+    };
+
+    const handleDragLeave = (e: DragEvent) => {
+        dragManager.setDropTarget(null);
+        e.stopPropagation();
+    };
+
+    const handleDragOver = (e: DragEvent) => {
+        e.stopPropagation();
+        if (dragManager.canDropTo(container)) {
+            dragManager.setDropTarget(container);
+            e.preventDefault();
+            return;
+        }
+    };
+
+    const handleDragEnd = (e: DragEvent) => {
+        e.stopPropagation();
+
+        if (
+            dragManager.target &&
+            dragManager.canDropTo(dragManager.target)
+        ) {
+            treeManager.changeParent(
+                dragManager.source!,
+                dragManager.target,
+            );
+        }
+        dragManager.reset();
+    };
+
+    const handleDblClick = (e: MouseEvent) => {
+        e.stopPropagation();
+
+        if (container.type === "note") {
+            redirectTo.viewNote({ noteId: +container.id! });
+            return;
+        }
+
+        if (container.type === "group" && container.has_children) {
+            treeManager.toggleOpen(container);
+        }
+    };
+
+    const handleClick = (e: MouseEvent) => {
+        if (container.type === "note") {
+            redirectTo.viewNote({ noteId: +container.id! });
+            return;
+        }
+        e.stopPropagation();
+    };
+
+    const handleAddNote = (e: MouseEvent) => {
+        redirectTo.newNote({
+            groupId: container.id || undefined,
+        });
+        e.stopPropagation();
+    };
+
+    const handleEditNote = (e: MouseEvent) => {
+        redirectTo.editNote({
+            noteId: container.id!,
+        });
+        e.stopPropagation();
+    };
+
+    const handleMoreMenuAction = (action: MoreMenuItemAction) => {
+        // TODO: Implement actions
+    };
+
     return (
         <div
             class={`group-item-container select-none ${
                 dragManager.target === container ? "bg-red-600" : ""
             }`}
             draggable={true}
-            onDragStart={(e) => {
-                dragManager.drag(container);
-                e.stopPropagation();
-            }}
-            onDragLeave={(e) => {
-                dragManager.setDropTarget(null);
-                e.stopPropagation();
-            }}
-            onDragOver={(e) => {
-                e.stopPropagation();
-                if (dragManager.canDropTo(container)) {
-                    dragManager.setDropTarget(container);
-                    e.preventDefault();
-                    return;
-                }
-            }}
-            onDragEnd={(e) => {
-                e.stopPropagation();
-                if (
-                    dragManager.target &&
-                    dragManager.canDropTo(dragManager.target)
-                ) {
-                    treeManager.changeParent(
-                        dragManager.source!,
-                        dragManager.target,
-                    );
-                }
-                dragManager.reset();
-            }}
-            onDblClick={(e) => {
-                e.stopPropagation();
-                if (container.type === "note") {
-                    redirectTo.viewNote({ noteId: +container.id! });
-                } else if (
-                    container.type === "group" && container.has_children
-                ) {
-                    treeManager.toggleOpen(container);
-                }
-            }}
-            onClick={(e) => {
-                if (container.type === "note") {
-                    redirectTo.viewNote({ noteId: +container.id! });
-                    return;
-                }
-                e.stopPropagation();
-            }}
+            onDragStart={handleDragStart}
+            onDragLeave={handleDragLeave}
+            onDragOver={handleDragOver}
+            onDragEnd={handleDragEnd}
+            onDblClick={handleDblClick}
+            onClick={handleClick}
         >
             <div
                 class={`relative group-item hover:bg-gray-600`}
@@ -157,12 +191,7 @@ export default function TreeItem({
                             <span
                                 class="hover:text-gray-300 cursor-pointer"
                                 title="Add Note"
-                                onClick={(e) => {
-                                    redirectTo.newNote({
-                                        groupId: container.id || undefined,
-                                    });
-                                    e.stopPropagation();
-                                }}
+                                onClick={handleAddNote}
                             >
                                 <Icon name="plus" />
                             </span>
@@ -171,22 +200,15 @@ export default function TreeItem({
                             <span
                                 class="hover:text-gray-300 cursor-pointer"
                                 title="Open Note"
-                                onClick={(e) => {
-                                    redirectTo.editNote({
-                                        noteId: container.id!,
-                                    });
-                                    e.stopPropagation();
-                                }}
+                                onClick={handleEditNote}
                             >
                                 <Icon name="pencil" />
                             </span>
                         )}
-                        {
-                            /* <MoreMenu
-                            record={container.record}
-                            onAction={handleIconMenuAction}
-                        /> */
-                        }
+                        <MoreMenu
+                            container={container}
+                            onAction={handleMoreMenuAction}
+                        />
                     </div>
                 )}
                 {container.is_processing && (

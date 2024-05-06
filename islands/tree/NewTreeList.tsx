@@ -25,7 +25,7 @@ export const NewTreeList = ({
         <>
             <RootGroupBar
                 dragManager={dragManager}
-                recordTree={tree}
+                treeManager={tree}
                 switcherComponent={switcherComponent}
             />
             <div class="overflow-auto group-list">

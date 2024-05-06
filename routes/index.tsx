@@ -49,6 +49,7 @@ export const handler: Handlers<LoginResult> = {
         });
 
         writeSessionCookie(
+            req.headers,
             response.headers,
             await createSessionState<AppSessionData>(user.id, {
                 user,

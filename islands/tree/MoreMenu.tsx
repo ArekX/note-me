@@ -1,14 +1,18 @@
 import { Icon } from "$components/Icon.tsx";
 import { createRef } from "preact";
 import { createPortal } from "preact/compat";
-import { TreeRecord } from "$backend/repository/tree-list.repository.ts";
 import { useSinglePopover } from "$frontend/hooks/use-single-popover.ts";
 import { useWindowResize } from "$frontend/hooks/use-window-resize.ts";
+import {
+    RecordContainer,
+    RecordTreeHook,
+} from "$islands/tree/hooks/use-record-tree.ts";
 
 export interface MenuItem {
     icon: string;
     name: string;
-    onClick: () => void;
+    types: RecordContainer["type"][];
+    action: MoreMenuItemAction;
 }
 
 export type MoreMenuItemAction =
@@ -24,12 +28,15 @@ export type MoreMenuItemAction =
     | "delete";
 
 interface MoreMenuProps {
-    record: TreeRecord;
+    container: RecordContainer;
     onAction: (action: MoreMenuItemAction) => void;
 }
 
 export const MoreMenu = (
-    { record, onAction }: MoreMenuProps,
+    {
+        container,
+        onAction,
+    }: MoreMenuProps,
 ) => {
     const menuRef = createRef<HTMLDivElement>();
     const iconRef = createRef<HTMLSpanElement>();
@@ -51,7 +58,7 @@ export const MoreMenu = (
     };
 
     const { isOpen, open, close } = useSinglePopover(
-        `${record.type}-${record.id}`,
+        `${container.type.toString()}-${container.id ?? -1}`,
         menuRef,
         () => repositionMenu(innerWidth, innerHeight),
     );
@@ -63,60 +70,62 @@ export const MoreMenu = (
 
     useWindowResize(menuRef, repositionMenu);
 
-    const groupMenu = [
+    const menu: MenuItem[] = [
         {
             name: "Add Note",
             icon: "plus",
-            onClick: () => onAction("add-note"),
+            types: ["group"],
+            action: "add-note",
         },
         {
             name: "Add Group",
             icon: "folder-plus",
-            onClick: () => onAction("add-group"),
+            types: ["group"],
+            action: "add-group",
         },
         {
             name: "Refresh",
             icon: "refresh",
-            onClick: () => onAction("refresh"),
+            types: ["group"],
+            action: "refresh",
         },
-    ];
-
-    const noteMenu = [
         {
             name: "Details",
             icon: "detail",
-            onClick: () => onAction("details"),
+            types: ["note"],
+            action: "details",
         },
         {
             name: "History",
             icon: "history",
-            onClick: () => onAction("history"),
+            types: ["note"],
+            action: "history",
         },
         {
             name: "Share",
             icon: "share-alt",
-            onClick: () => onAction("share"),
+            types: ["note"],
+            action: "share",
         },
         {
             name: "Remind me",
             icon: "alarm",
-            onClick: () => onAction("remind-me"),
+            types: ["note"],
+            action: "remind-me",
         },
-    ];
-
-    const menuItems = [
-        ...(record.type === "group" ? groupMenu : noteMenu),
         {
             name: "Rename",
             icon: "edit",
-            onClick: () => onAction("rename"),
+            types: ["group", "note"],
+            action: "rename",
         },
         {
             name: "Delete",
             icon: "minus-circle",
-            onClick: () => onAction("delete"),
+            types: ["group", "note"],
+            action: "delete",
         },
-    ];
+    ].filter((m) => m.types.includes(container.type)) as MenuItem[];
 
     return (
         <div
@@ -134,11 +143,11 @@ export const MoreMenu = (
                         ref={menuRef}
                         class={`text-white icon-menu-items drop-shadow-lg fixed bg-gray-800 rounded-lg shadow-lg p-2 whitespace-nowrap break-keep`}
                     >
-                        {menuItems.map((item) => (
+                        {menu.map((item) => (
                             <div
                                 class="hover:bg-gray-700 cursor-pointer p-1 pr-2 pl-2"
                                 onClick={(e) => {
-                                    item.onClick();
+                                    onAction(item.action);
                                     close();
                                     e.stopPropagation();
                                 }}

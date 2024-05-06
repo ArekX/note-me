@@ -5,23 +5,23 @@ import { DragManagerHook } from "$islands/tree/hooks/use-drag-manager.ts";
 import { redirectTo } from "$frontend/redirection-manager.ts";
 
 interface RootGroupBarProps {
-    recordTree: RecordTreeHook;
+    treeManager: RecordTreeHook;
     dragManager: DragManagerHook<RecordContainer>;
     switcherComponent: ComponentChild;
 }
 
 const RootGroupBar = ({
-    recordTree,
+    treeManager,
     dragManager,
     switcherComponent,
 }: RootGroupBarProps) => {
     const handleDrop = (e: DragEvent) => {
-        recordTree.changeParent(dragManager.source!, recordTree.root);
+        treeManager.changeParent(dragManager.source!, treeManager.root);
     };
 
     const handleDragOver = (e: DragEvent) => {
-        if (dragManager.canDropTo(recordTree.root)) {
-            dragManager.setDropTarget(recordTree.root);
+        if (dragManager.canDropTo(treeManager.root)) {
+            dragManager.setDropTarget(treeManager.root);
             e.preventDefault();
             return;
         }
@@ -36,7 +36,7 @@ const RootGroupBar = ({
     return (
         <div
             class={`flex pl-2 select-none  ${
-                target === recordTree.root ? "bg-red-500" : ""
+                target === treeManager.root ? "bg-red-500" : ""
             }`}
         >
             <div
@@ -61,7 +61,7 @@ const RootGroupBar = ({
                     class="cursor-pointer hover:text-gray-300"
                     title="Add Group"
                     onClick={() =>
-                        recordTree.addNew(recordTree.root, {
+                        treeManager.addNew(treeManager.root, {
                             type: "group",
                             display_mode: "edit",
                         })}
@@ -71,7 +71,7 @@ const RootGroupBar = ({
                 <span
                     class="cursor-pointer hover:text-gray-300"
                     title="Reload"
-                    onClick={() => recordTree.reloadTree()}
+                    onClick={() => treeManager.reload(treeManager.root)}
                 >
                     <Icon name="refresh" />
                 </span>

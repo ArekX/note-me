@@ -1,4 +1,3 @@
-import { TreeRecord } from "$backend/repository/tree-list.repository.ts";
 import { useSignal } from "@preact/signals";
 import {
     GetTreeMessage,
@@ -34,14 +33,6 @@ export interface RecordContainer {
     children: RecordContainer[];
 }
 
-interface ContainerData {
-    record?: TreeRecord | null;
-    parent?: RecordContainer;
-    type?: RecordType | null;
-    has_children?: boolean;
-    name?: string;
-}
-
 const createContainer = (
     overrides: Partial<RecordContainer>,
 ): RecordContainer => ({
@@ -61,7 +52,7 @@ const createContainer = (
 export interface RecordTreeHook {
     root: RecordContainer;
     root_loader: LoaderHook;
-    reloadTree: () => Promise<void>;
+    reload: (container: RecordContainer) => Promise<void>;
     setDisplayMode: (
         container: RecordContainer,
         display_mode: DisplayMode,
@@ -105,10 +96,17 @@ export const useRecordTree = (): RecordTreeHook => {
         tree.value = { ...root, is_open: true };
     };
 
-    const reloadTree = async () => {
-        // TODO: Clear tree storage
-        setRootValue(createRootContainer());
-        await loadChildren(tree.value);
+    const reload = async (container: RecordContainer) => {
+        if (container.type === "root") {
+            // TODO: Clear tree storage
+            setRootValue(createRootContainer());
+            await loadChildren(tree.value);
+            return;
+        }
+
+        container.children_loaded = false;
+        container.children = [];
+        await loadChildren(container);
     };
 
     const updateContainer = (
@@ -336,7 +334,7 @@ export const useRecordTree = (): RecordTreeHook => {
     return {
         root: tree.value,
         root_loader: rootLoader,
-        reloadTree,
+        reload,
         setDisplayMode,
         setName,
         loadChildren,

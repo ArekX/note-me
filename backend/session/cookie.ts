@@ -16,21 +16,30 @@ export const resolveCookies = (req: Request): RequestCookies => {
     };
 };
 
-export const createSessionCookie = (sessionId: string): Cookie => {
+export const createSessionCookie = (
+    sessionId: string,
+    headers: Headers,
+): Cookie => {
     return {
         name: "session",
         value: sessionId,
         maxAge: +(Deno.env.get("COOKIE_MAX_AGE_SECONDS") ?? monthInSeconds),
         sameSite: "Strict",
-        domain: Deno.env.get("COOKIE_DOMAIN") ?? "localhost",
+        domain: Deno.env.get("COOKIE_DOMAIN") ??
+            headers.get("Host")?.split(":")?.[0] ??
+            "localhost",
         path: "/",
         secure: (Deno.env.get("COOKIE_MAX_AGE_SECONDS") ?? "0") == "1",
     };
 };
 
 export const writeSessionCookie = <T>(
-    headers: Headers,
+    requestHeaders: Headers,
+    responseHeaders: Headers,
     session: SessionStateWithId<T>,
 ): void => {
-    setCookie(headers, createSessionCookie(session.getId()));
+    setCookie(
+        responseHeaders,
+        createSessionCookie(session.getId(), requestHeaders),
+    );
 };
