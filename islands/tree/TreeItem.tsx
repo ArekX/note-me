@@ -1,221 +1,244 @@
-import { Icon } from "$components/Icon.tsx";
-import { Signal, signal, useSignal } from "@preact/signals";
-import { useEffect } from "preact/hooks";
-import ConfirmDialog from "$islands/ConfirmDialog.tsx";
-import { TreeRecord } from "$backend/repository/tree-list.repository.ts";
-import { MoreMenuItemAction } from "./MoreMenu.tsx";
-import { MoreMenu } from "./MoreMenu.tsx";
-import { isPopoverOpen } from "$frontend/hooks/use-single-popover.ts";
-import { closeAllPopovers } from "$frontend/hooks/use-single-popover.ts";
-import { ContainerRecord } from "$islands/tree/container.ts";
+import {
+    RecordContainer,
+    RecordTreeHook,
+} from "$islands/tree/hooks/use-record-tree.ts";
+import { DragManagerHook } from "$islands/tree/hooks/use-drag-manager.ts";
 import { redirectTo } from "$frontend/redirection-manager.ts";
-
-const draggedContainer: Signal<ContainerRecord | null> = signal(null);
-const selectedTo: Signal<ContainerRecord | null> = signal(null);
+import { Icon } from "$components/Icon.tsx";
+import { useSignal } from "@preact/signals";
+import { useEffect, useLayoutEffect } from "preact/hooks";
+import { MoreMenu, MoreMenuItemAction } from "$islands/tree/MoreMenu.tsx";
 
 export interface TreeItemProps {
-    parent: ContainerRecord | null;
-    container: ContainerRecord;
-    onAcceptEdit: (container: ContainerRecord, newName: string) => void;
-    onCancelEdit: (
-        container: ContainerRecord,
-        parent: ContainerRecord | null,
-    ) => void;
-    onAddNote: (
-        container: ContainerRecord,
-        parent: ContainerRecord | null,
-    ) => void;
-    onAddGroup: (
-        container: ContainerRecord,
-        parent: ContainerRecord | null,
-    ) => void;
-    onRename: (container: ContainerRecord) => void;
-    onDelete: (container: ContainerRecord) => void;
-    onDrop: (toContainer: ContainerRecord) => void;
-    onDraggingStart: (container: ContainerRecord) => void;
-    onDraggingEnd: (container: ContainerRecord) => void;
-    onOpen: (container: ContainerRecord) => void;
-    onClose: (container: ContainerRecord) => void;
-    onRefresh: (container: ContainerRecord) => void;
+    dragManager: DragManagerHook<RecordContainer>;
+    treeManager: RecordTreeHook;
+    container: RecordContainer;
 }
 
-export default function TreeItem({
-    parent,
-    container,
-    onAcceptEdit,
-    onAddNote,
-    onAddGroup,
-    onCancelEdit,
-    onRename,
-    onDelete,
-    onOpen,
-    onRefresh,
-    onClose,
-    onDraggingStart,
-    onDraggingEnd,
-    onDrop,
-}: TreeItemProps) {
+interface TreeItemEditorProps {
+    treeManager: RecordTreeHook;
+    container: RecordContainer;
+}
+
+const TreeItemEditor = (
+    { treeManager, container }: TreeItemEditorProps,
+) => {
     const name = useSignal(container.name);
-    const isConfirmingDelete = useSignal(false);
-
-    const handleCancel = () => {
-        const newRecordCount =
-            container.children.filter((c) => c.is_new_record).length;
-
-        if (newRecordCount === container.children.length) {
-            onClose(container);
-        }
-
-        name.value = container.name;
-        onCancelEdit(container, parent);
-    };
-
-    const handleOpenFolder = () => {
-        const { edit_mode, record, children, is_open } = container;
-
-        if (edit_mode || (!record.has_children && children.length == 0)) {
-            return;
-        }
-
-        if (is_open) {
-            onClose(container);
-        } else {
-            onOpen(container);
-        }
-    };
-
-    const handleDragOver = (e: DragEvent) => {
-        if (
-            draggedContainer.value === container ||
-            draggedContainer.value?.parent === container ||
-            draggedContainer.value?.children.includes(container) ||
-            container.record.type === "note"
-        ) {
-            selectedTo.value = null;
-            e.stopPropagation();
-            return;
-        }
-
-        selectedTo.value = container;
-        e.preventDefault();
-        e.stopPropagation();
-    };
-
-    const handleDrop = () => {
-        if (!selectedTo.value || !draggedContainer.value) {
-            return;
-        }
-
-        onDrop(selectedTo.value);
-        draggedContainer.value = null;
-        selectedTo.value = null;
-    };
-
-    const handleDragStart = (e: DragEvent) => {
-        draggedContainer.value = container;
-        onDraggingStart(container);
-        e.stopPropagation();
-    };
-
-    const handleDragEnd = () => {
-        onDraggingEnd(draggedContainer.value!);
-        draggedContainer.value = null;
-        selectedTo.value = null;
-    };
-
-    const handleIconMenuAction = (action: MoreMenuItemAction) => {
-        switch (action) {
-            case "add-note":
-                onOpen(container);
-                onAddNote(container, parent);
-                break;
-            case "add-group":
-                onOpen(container);
-                onAddGroup(container, parent);
-                break;
-            case "refresh":
-                onRefresh(container);
-                break;
-            case "rename":
-                onRename(container);
-                break;
-            case "delete":
-                isConfirmingDelete.value = true;
-                break;
-            case "edit":
-                redirectTo.editNote({ noteId: container.record.id });
-                break;
-        }
-    };
+    const errorMessages = useSignal("");
 
     useEffect(() => {
         name.value = container.name;
     }, [container.name]);
 
+    const handleAccept = async (e: Event) => {
+        treeManager.setName(container, name.value);
+        await treeManager.save(container);
+        treeManager.setDisplayMode(container, "view");
+        e.stopPropagation();
+    };
+
+    const handleCancel = (e: Event) => {
+        treeManager.setDisplayMode(container, "view");
+        e.stopPropagation();
+    };
+
+    return (
+        <div class="group-item-editor relative flex">
+            {!container.is_processing && (
+                <div class="absolute inset-y-0 right-0 flex items-center pr-2 text-gray-400">
+                    <span
+                        class="hover:text-white cursor-pointer"
+                        title="Accept"
+                        onClick={handleAccept}
+                    >
+                        <Icon name="check" />
+                    </span>
+                    <span
+                        class="hover:text-white cursor-pointer"
+                        title="Cancel"
+                        onClick={handleCancel}
+                    >
+                        <Icon name="block" />
+                    </span>
+                </div>
+            )}
+            <div class="absolute inset-y-0 left-0 flex items-center pl-2 text-gray-400">
+                <Icon name="folder" />
+            </div>
+            <input
+                ref={(el) => el?.focus()}
+                type="text"
+                class="outline-none border-1 pl-9 pr-14 border-gray-900 bg-gray-700 p-2 w-full"
+                placeholder="Enter group name..."
+                disabled={container.is_processing}
+                value={name.value}
+                onKeyPress={(e) => {
+                    if (e.key == "Enter") {
+                        handleAccept(e);
+                    }
+                }}
+                onInput={(e) =>
+                    name.value = (e.target as HTMLInputElement).value}
+            />
+            {errorMessages.value.length > 0 && (
+                <div class="text-red-900 right-0 absolute bottom-10 left-0 z-50 border-1 border-solid bg-red-400">
+                    {errorMessages.value}
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default function TreeItem({
+    treeManager,
+    dragManager,
+    container,
+}: TreeItemProps) {
+    const handleDragStart = (e: DragEvent) => {
+        dragManager.drag(container);
+        e.stopPropagation();
+    };
+
+    const handleDragLeave = (e: DragEvent) => {
+        dragManager.setDropTarget(null);
+        e.stopPropagation();
+    };
+
+    const handleDragOver = (e: DragEvent) => {
+        e.stopPropagation();
+        if (container.type === "group" && dragManager.canDropTo(container)) {
+            dragManager.setDropTarget(container);
+            e.preventDefault();
+            return;
+        }
+    };
+
+    const handleDragEnd = (e: DragEvent) => {
+        e.stopPropagation();
+
+        if (
+            dragManager.target &&
+            dragManager.canDropTo(dragManager.target)
+        ) {
+            treeManager.changeParent(
+                dragManager.source!,
+                dragManager.target,
+            );
+        }
+        dragManager.reset();
+    };
+
+    const handleDblClick = (e: MouseEvent) => {
+        e.stopPropagation();
+
+        if (container.type === "note") {
+            redirectTo.viewNote({ noteId: +container.id! });
+            return;
+        }
+
+        if (container.type === "group" && container.has_children) {
+            treeManager.toggleOpen(container);
+        }
+    };
+
+    const handleClick = (e: MouseEvent) => {
+        if (container.type === "note") {
+            redirectTo.viewNote({ noteId: +container.id! });
+            return;
+        }
+        e.stopPropagation();
+    };
+
+    const handleAddNote = (e: MouseEvent) => {
+        redirectTo.newNote({
+            groupId: container.id || undefined,
+        });
+        e.stopPropagation();
+    };
+
+    const handleEditNote = (e: MouseEvent) => {
+        redirectTo.editNote({
+            noteId: container.id!,
+        });
+        e.stopPropagation();
+    };
+
+    const handleMoreMenuAction = (action: MoreMenuItemAction) => {
+        switch (action) {
+            case "add-note":
+                redirectTo.newNote({
+                    groupId: container.id || undefined,
+                });
+                break;
+            case "add-group":
+                treeManager.addNew(container, {
+                    type: "group",
+                    name: "",
+                    display_mode: "edit",
+                });
+                break;
+            case "refresh":
+                treeManager.reload(container);
+                break;
+            case "details":
+                // TODO: Details
+                break;
+            case "history":
+                // TODO: History
+                break;
+            case "share":
+                // TODO: Share
+                break;
+            case "remind-me":
+                // TODO: Reminde Me
+                break;
+            case "rename":
+                treeManager.setDisplayMode(container, "edit");
+                break;
+        }
+    };
+
     return (
         <div
             class={`group-item-container select-none ${
-                selectedTo.value === container ? "bg-red-600" : ""
+                dragManager.target === container ? "bg-red-600" : ""
             }`}
-            onClick={(e) => {
-                e.stopPropagation();
-                if (container.record.type === "note") {
-                    redirectTo.viewNote({ noteId: container.record.id });
-                    return;
-                }
-
-                closeAllPopovers();
-                handleOpenFolder();
-            }}
+            draggable={true}
+            onDragStart={handleDragStart}
+            onDragLeave={handleDragLeave}
+            onDragOver={handleDragOver}
+            onDragEnd={handleDragEnd}
+            onDblClick={handleDblClick}
+            onClick={handleClick}
         >
             <div
-                draggable={true}
-                onDragStart={handleDragStart}
-                onDrop={handleDrop}
-                onDragOver={handleDragOver}
-                onDragLeave={() => selectedTo.value = null}
-                onDragEnd={handleDragEnd}
-                class={`relative group-item hover:bg-gray-600 ${
-                    isPopoverOpen(
-                            `${container.record.type}-${container.record.id}`,
-                        )
-                        ? "opened-menu"
-                        : ""
-                }`}
+                class={`relative group-item hover:bg-gray-600`}
                 title={container.name}
             >
-                {!container.edit_mode && !container.is_processing && (
+                {container.display_mode !== "edit" &&
+                    !container.is_processing && (
                     <div class="absolute right-0 flex items-center group-item-actions pr-1">
-                        {container.record.type === "group" && (
+                        {container.type === "group" && (
                             <span
                                 class="hover:text-gray-300 cursor-pointer"
                                 title="Add Note"
-                                onClick={(e) => {
-                                    onAddNote(container, parent);
-                                    closeAllPopovers();
-                                    e.stopPropagation();
-                                }}
+                                onClick={handleAddNote}
                             >
                                 <Icon name="plus" />
                             </span>
                         )}
-                        {container.record.type === "note" && (
+                        {container.type === "note" && (
                             <span
                                 class="hover:text-gray-300 cursor-pointer"
                                 title="Open Note"
-                                onClick={(e) => {
-                                    redirectTo.editNote({
-                                        noteId: container.record.id,
-                                    });
-                                    e.stopPropagation();
-                                }}
+                                onClick={handleEditNote}
                             >
                                 <Icon name="pencil" />
                             </span>
                         )}
                         <MoreMenu
-                            record={container.record}
-                            onAction={handleIconMenuAction}
+                            container={container}
+                            onAction={handleMoreMenuAction}
                         />
                     </div>
                 )}
@@ -224,75 +247,29 @@ export default function TreeItem({
                         <Icon name="loader-alt" animation="spin" />
                     </div>
                 )}
-
-                {container.edit_mode
+                {container.display_mode == "edit"
                     ? (
-                        <div class="group-item-editor relative flex">
-                            {!container.is_processing && (
-                                <div class="absolute inset-y-0 right-0 flex items-center pr-2 text-gray-400">
-                                    <span
-                                        class="hover:text-white cursor-pointer"
-                                        title="Accept"
-                                        onClick={(e) => {
-                                            onAcceptEdit(container, name.value);
-                                            e.stopPropagation();
-                                        }}
-                                    >
-                                        <Icon name="check" />
-                                    </span>
-                                    <span
-                                        class="hover:text-white cursor-pointer"
-                                        title="Cancel"
-                                        onClick={(e) => {
-                                            handleCancel();
-                                            e.stopPropagation();
-                                        }}
-                                    >
-                                        <Icon name="block" />
-                                    </span>
-                                </div>
-                            )}
-                            <div class="absolute inset-y-0 left-0 flex items-center pl-2 text-gray-400">
-                                <Icon name="folder" />
-                            </div>
-                            <input
-                                type="text"
-                                class="outline-none border-1 pl-9 pr-14 border-gray-900 bg-gray-700 p-2 w-full"
-                                placeholder="Enter group name..."
-                                autoFocus={true}
-                                disabled={container.is_processing}
-                                value={name.value}
-                                onKeyPress={(e) => {
-                                    if (e.key == "Enter") {
-                                        onAcceptEdit(container, name.value);
-                                    }
-                                }}
-                                onInput={(e) =>
-                                    name.value =
-                                        (e.target as HTMLInputElement).value}
-                            />
-                            {container.error_message.length > 0 && (
-                                <div class="text-red-900 right-0 absolute bottom-10 left-0 z-50 border-1 border-solid bg-red-400">
-                                    {container.error_message}
-                                </div>
-                            )}
-                        </div>
+                        <TreeItemEditor
+                            treeManager={treeManager}
+                            container={container}
+                        />
                     )
                     : (
                         <span class="group-item-name pl-2 pr-2">
                             <Icon
-                                name={container.record.type == "group"
-                                    ? (container.is_open
-                                        ? "folder-open"
-                                        : "folder")
+                                name={container.type == "group"
+                                    ? `folder${
+                                        container.is_open ? "-open" : ""
+                                    }`
                                     : "file"}
-                                type={container.record.type == "group" &&
-                                        (container.record.has_children ||
-                                            container.children.length > 0)
+                                type={container.type == "group" &&
+                                        container.has_children
                                     ? "solid"
                                     : "regular"}
                             />{" "}
-                            <span class="name-text">{container.name}</span>
+                            <span class="name-text">
+                                {container.name}
+                            </span>
                         </span>
                     )}
             </div>
@@ -301,36 +278,12 @@ export default function TreeItem({
                     {container.children.map((child) => (
                         <TreeItem
                             container={child}
-                            parent={container}
-                            onAcceptEdit={onAcceptEdit}
-                            onCancelEdit={onCancelEdit}
-                            onAddNote={onAddNote}
-                            onAddGroup={onAddGroup}
-                            onRename={onRename}
-                            onDelete={onDelete}
-                            onOpen={onOpen}
-                            onClose={onClose}
-                            onRefresh={onRefresh}
-                            onDraggingStart={onDraggingStart}
-                            onDraggingEnd={onDraggingEnd}
-                            onDrop={onDrop}
+                            treeManager={treeManager}
+                            dragManager={dragManager}
                         />
                     ))}
                 </div>
             )}
-            <ConfirmDialog
-                prompt={`Are you sure that you want to delete this ${container.record.type}?`}
-                onConfirm={() => {
-                    isConfirmingDelete.value = false;
-                    onDelete(container);
-                }}
-                confirmColor="danger"
-                confirmText={`Delete ${container.record.type}`}
-                onCancel={() => {
-                    isConfirmingDelete.value = false;
-                }}
-                visible={isConfirmingDelete.value}
-            />
         </div>
     );
 }

@@ -1,7 +1,7 @@
 import { RemindersList } from "$islands/sidebar/RemindersList.tsx";
 import { SharedNotesList } from "$islands/sidebar/SharedNotesList.tsx";
 import { ComponentChild, VNode } from "preact";
-import { NewTreeList } from "$islands/tree/NewTreeList.tsx";
+import { NewTreeList } from "../tree/TreeList.tsx";
 
 interface RendererProps {
     searchQuery: string;

@@ -66,8 +66,6 @@ import * as $sidebar_SideBarPanel from "./islands/sidebar/SideBarPanel.tsx";
 import * as $tags_EditTagForm from "./islands/tags/EditTagForm.tsx";
 import * as $tags_TagsList from "./islands/tags/TagsList.tsx";
 import * as $tree_MoreMenu from "./islands/tree/MoreMenu.tsx";
-import * as $tree_NewTreeItem from "./islands/tree/NewTreeItem.tsx";
-import * as $tree_NewTreeList from "./islands/tree/NewTreeList.tsx";
 import * as $tree_RootGroupBar from "./islands/tree/RootGroupBar.tsx";
 import * as $tree_TreeItem from "./islands/tree/TreeItem.tsx";
 import * as $tree_TreeList from "./islands/tree/TreeList.tsx";
@@ -169,8 +167,6 @@ const manifest = {
         "./islands/tags/EditTagForm.tsx": $tags_EditTagForm,
         "./islands/tags/TagsList.tsx": $tags_TagsList,
         "./islands/tree/MoreMenu.tsx": $tree_MoreMenu,
-        "./islands/tree/NewTreeItem.tsx": $tree_NewTreeItem,
-        "./islands/tree/NewTreeList.tsx": $tree_NewTreeList,
         "./islands/tree/RootGroupBar.tsx": $tree_RootGroupBar,
         "./islands/tree/TreeItem.tsx": $tree_TreeItem,
         "./islands/tree/TreeList.tsx": $tree_TreeList,

@@ -3,10 +3,7 @@ import { createRef } from "preact";
 import { createPortal } from "preact/compat";
 import { useSinglePopover } from "$frontend/hooks/use-single-popover.ts";
 import { useWindowResize } from "$frontend/hooks/use-window-resize.ts";
-import {
-    RecordContainer,
-    RecordTreeHook,
-} from "$islands/tree/hooks/use-record-tree.ts";
+import { RecordContainer } from "$islands/tree/hooks/use-record-tree.ts";
 
 export interface MenuItem {
     icon: string;
@@ -25,6 +22,7 @@ export type MoreMenuItemAction =
     | "history"
     | "share"
     | "remind-me"
+    | "move"
     | "delete";
 
 interface MoreMenuProps {
@@ -112,6 +110,12 @@ export const MoreMenu = (
             icon: "alarm",
             types: ["note"],
             action: "remind-me",
+        },
+        {
+            name: "Move",
+            icon: "transfer-alt",
+            types: ["group", "note"],
+            action: "move",
         },
         {
             name: "Rename",
