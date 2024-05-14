@@ -10,14 +10,29 @@ export interface DragManagerHook<T> {
 }
 
 export const useDragManager = <
-    T extends { id: number | null; parent: T | null; children: T[] },
+    T extends {
+        id: number | null;
+        parent: T | null;
+        children: T[];
+        type: unknown;
+    },
 >(): DragManagerHook<T> => {
     const dragSource = useSignal<T | null>(null);
     const dropTarget = useSignal<T | null>(null);
 
     const canDropTo = (target: T) => {
+        if (
+            target.type === dragSource.value?.type &&
+            target.id === dragSource.value?.id
+        ) {
+            return false;
+        }
+
         return dragSource.value !== null &&
-            dragSource.value.id !== target.id &&
+            !(
+                target.type === dragSource.value?.type &&
+                target.id === dragSource.value?.id
+            ) &&
             dragSource.value.parent?.id !== target.id;
     };
 

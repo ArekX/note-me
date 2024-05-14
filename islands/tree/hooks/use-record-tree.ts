@@ -234,9 +234,7 @@ export const useRecordTree = (): RecordTreeHook => {
 
         if (container.parent) {
             updateContainer(container.parent, {
-                children: container.parent.children.filter(
-                    (child) => child !== container,
-                ),
+                children: removeFromList(container, container.parent.children),
             });
         }
     };
@@ -246,7 +244,7 @@ export const useRecordTree = (): RecordTreeHook => {
         newParent: RecordContainer,
     ) => {
         if (container.id === null) {
-            throw new Error("Cannot swap parent for a new container");
+            throw new Error("Cannot cahnge parent to a new container");
         }
 
         if (newParent.has_children && !newParent.children_loaded) {
@@ -268,9 +266,7 @@ export const useRecordTree = (): RecordTreeHook => {
         const oldParent = container.parent;
 
         if (oldParent) {
-            oldParent.children = oldParent.children.filter(
-                (child) => child !== container,
-            );
+            oldParent.children = removeFromList(container, oldParent.children);
 
             if (oldParent.children.length === 0) {
                 oldParent.has_children = false;
@@ -278,7 +274,7 @@ export const useRecordTree = (): RecordTreeHook => {
             }
         }
 
-        newParent.children = [...newParent.children, container];
+        newParent.children = addSorted(container, newParent.children);
         newParent.has_children = true;
         newParent.is_open = true;
 
@@ -320,10 +316,40 @@ export const useRecordTree = (): RecordTreeHook => {
         // TODO: Add proper sorting.
         updateContainer(parent, {
             is_open: true,
-            children: [...parent.children, newContainer],
+            children: addSorted(newContainer, parent.children),
         });
 
         return newContainer;
+    };
+
+    const removeFromList = (
+        container: RecordContainer,
+        list: RecordContainer[],
+    ) => list.filter(
+        (child) => {
+            return !(child.id === container.id &&
+                child.type === container.type);
+        },
+    );
+
+    const addSorted = (
+        container: RecordContainer,
+        containers: RecordContainer[],
+    ) => {
+        const newId = Math.max(...containers.map((c) => c.id ?? -1)) + 1;
+
+        return [...containers, container]
+            .sort((a, b) => a.type.localeCompare(b.type))
+            .sort((a, b) => {
+                if (a.type !== b.type) {
+                    return 0;
+                }
+
+                const aId = a.id ?? newId;
+                const bId = b.id ?? newId;
+
+                return aId - bId;
+            });
     };
 
     useEffect(() => {
