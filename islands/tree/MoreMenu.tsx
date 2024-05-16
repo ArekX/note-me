@@ -3,7 +3,7 @@ import { createRef } from "preact";
 import { createPortal } from "preact/compat";
 import { useSinglePopover } from "$frontend/hooks/use-single-popover.ts";
 import { useWindowResize } from "$frontend/hooks/use-window-resize.ts";
-import { RecordContainer } from "$islands/tree/hooks/use-record-tree.ts";
+import { RecordContainer } from "$islands/tree/hooks/record-container.ts";
 
 export interface MenuItem {
     icon: string;

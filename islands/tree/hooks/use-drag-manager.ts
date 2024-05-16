@@ -12,7 +12,6 @@ export interface DragManagerHook<T> {
 export const useDragManager = <
     T extends {
         id: number | null;
-        parent: T | null;
         children: T[];
         type: unknown;
     },
@@ -32,8 +31,7 @@ export const useDragManager = <
             !(
                 target.type === dragSource.value?.type &&
                 target.id === dragSource.value?.id
-            ) &&
-            dragSource.value.parent?.id !== target.id;
+            );
     };
 
     const drag = (value: T) => {

@@ -12,7 +12,6 @@ type NamespaceMap<T extends Message> = Partial<
 >;
 
 interface WebSocketEventOptions<T extends Message> {
-    messageNamespace: T["namespace"];
     eventMap?: NamespaceMap<T>;
 }
 
@@ -47,26 +46,33 @@ export const useWebsocketService = <T extends Message>(
     }
 
     const dispatchMessage = <T extends Message>(
-        message: T | Omit<T, "namespace" | "requestId">,
+        namespace: T["namespace"],
+        type: T["type"],
+        message?: Omit<T, "requestId" | "namespace" | "type">,
     ) => send({
         requestId: crypto.randomUUID(),
-        namespace: options.messageNamespace,
+        namespace,
+        type,
         ...message,
     });
 
     const sendMessage = <
         Request extends Message,
         Response extends Message,
-    >(data: {
-        request: Request | Omit<Request, "namespace" | "requestId">;
-        require: Response["type"];
-        requireNamespace?: Response["namespace"];
-    }): Promise<Response> => {
+    >(
+        namespace: Request["namespace"],
+        type: Request["type"],
+        payload: {
+            data: Omit<Request, "requestId" | "namespace" | "type">;
+            expect: Response["type"];
+            expectNamespace?: Response["namespace"];
+        },
+    ): Promise<Response> => {
         const {
-            request,
-            require,
-            requireNamespace = null,
-        } = data;
+            data,
+            expect,
+            expectNamespace = namespace,
+        } = payload;
 
         const requestId = crypto.randomUUID();
 
@@ -87,8 +93,8 @@ export const useWebsocketService = <T extends Message>(
                 }
 
                 if (
-                    data.type !== require ||
-                    (requireNamespace && data.namespace !== requireNamespace)
+                    data.type !== expect ||
+                    (expectNamespace && data.namespace !== expectNamespace)
                 ) {
                     reject({
                         error: `Unexpected response type: ${data.type}`,
@@ -102,11 +108,7 @@ export const useWebsocketService = <T extends Message>(
             };
 
             addListener(responseHandler);
-            send({
-                requestId,
-                namespace: options.messageNamespace,
-                ...request,
-            });
+            send({ requestId, namespace, type, ...data });
         });
 
         return Promise.race([

@@ -1,13 +1,12 @@
 import { ComponentChild } from "preact";
-import { RecordContainer, useRecordTree } from "./hooks/use-record-tree.ts";
+import { useRecordTree } from "./hooks/use-record-tree.ts";
 import RootGroupBar from "$islands/tree/RootGroupBar.tsx";
 import { redirectTo } from "$frontend/redirection-manager.ts";
-import { useSignal } from "@preact/signals";
 import Loader from "$islands/Loader.tsx";
-import { useLoader } from "$frontend/hooks/use-loading.ts";
 import { useDragManager } from "$islands/tree/hooks/use-drag-manager.ts";
 import NewTreeItem from "./TreeItem.tsx";
 import { Icon } from "$components/Icon.tsx";
+import { RecordContainer } from "$islands/tree/hooks/record-container.ts";
 
 interface TreeListProps {
     searchQuery: string;

@@ -1,8 +1,9 @@
 import { Icon } from "$components/Icon.tsx";
 import { ComponentChild } from "preact";
-import { RecordContainer, RecordTreeHook } from "./hooks/use-record-tree.ts";
+import { RecordTreeHook } from "./hooks/use-record-tree.ts";
 import { DragManagerHook } from "$islands/tree/hooks/use-drag-manager.ts";
 import { redirectTo } from "$frontend/redirection-manager.ts";
+import { RecordContainer } from "$islands/tree/hooks/record-container.ts";
 
 interface RootGroupBarProps {
     treeManager: RecordTreeHook;

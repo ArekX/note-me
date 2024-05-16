@@ -69,10 +69,10 @@ import * as $tree_MoreMenu from "./islands/tree/MoreMenu.tsx";
 import * as $tree_RootGroupBar from "./islands/tree/RootGroupBar.tsx";
 import * as $tree_TreeItem from "./islands/tree/TreeItem.tsx";
 import * as $tree_TreeList from "./islands/tree/TreeList.tsx";
-import * as $tree_container from "./islands/tree/container.ts";
-import * as $tree_helpers from "./islands/tree/helpers.ts";
+import * as $tree_hooks_record_container from "./islands/tree/hooks/record-container.ts";
 import * as $tree_hooks_use_drag_manager from "./islands/tree/hooks/use-drag-manager.ts";
 import * as $tree_hooks_use_record_tree from "./islands/tree/hooks/use-record-tree.ts";
+import * as $tree_hooks_use_tree_state from "./islands/tree/hooks/use-tree-state.ts";
 import * as $users_EditUserForm from "./islands/users/EditUserForm.tsx";
 import * as $users_UserList from "./islands/users/UserList.tsx";
 import * as $viewer_Viewer from "./islands/viewer/Viewer.tsx";
@@ -170,11 +170,12 @@ const manifest = {
         "./islands/tree/RootGroupBar.tsx": $tree_RootGroupBar,
         "./islands/tree/TreeItem.tsx": $tree_TreeItem,
         "./islands/tree/TreeList.tsx": $tree_TreeList,
-        "./islands/tree/container.ts": $tree_container,
-        "./islands/tree/helpers.ts": $tree_helpers,
+        "./islands/tree/hooks/record-container.ts":
+            $tree_hooks_record_container,
         "./islands/tree/hooks/use-drag-manager.ts":
             $tree_hooks_use_drag_manager,
         "./islands/tree/hooks/use-record-tree.ts": $tree_hooks_use_record_tree,
+        "./islands/tree/hooks/use-tree-state.ts": $tree_hooks_use_tree_state,
         "./islands/users/EditUserForm.tsx": $users_EditUserForm,
         "./islands/users/UserList.tsx": $users_UserList,
         "./islands/viewer/Viewer.tsx": $viewer_Viewer,

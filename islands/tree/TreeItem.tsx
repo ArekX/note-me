@@ -1,13 +1,11 @@
-import {
-    RecordContainer,
-    RecordTreeHook,
-} from "$islands/tree/hooks/use-record-tree.ts";
+import { RecordTreeHook } from "$islands/tree/hooks/use-record-tree.ts";
 import { DragManagerHook } from "$islands/tree/hooks/use-drag-manager.ts";
 import { redirectTo } from "$frontend/redirection-manager.ts";
 import { Icon } from "$components/Icon.tsx";
 import { useSignal } from "@preact/signals";
-import { useEffect, useLayoutEffect } from "preact/hooks";
+import { useEffect } from "preact/hooks";
 import { MoreMenu, MoreMenuItemAction } from "$islands/tree/MoreMenu.tsx";
+import { RecordContainer } from "$islands/tree/hooks/record-container.ts";
 
 export interface TreeItemProps {
     dragManager: DragManagerHook<RecordContainer>;
@@ -72,6 +70,11 @@ const TreeItemEditor = (
                 placeholder="Enter group name..."
                 disabled={container.is_processing}
                 value={name.value}
+                onKeyDown={(e) => {
+                    if (e.key == "Escape") {
+                        handleCancel(e);
+                    }
+                }}
                 onKeyPress={(e) => {
                     if (e.key == "Enter") {
                         handleAccept(e);
@@ -128,9 +131,8 @@ export default function TreeItem({
         dragManager.reset();
     };
 
-    const handleDblClick = (e: MouseEvent) => {
+    const handleClick = (e: MouseEvent) => {
         e.stopPropagation();
-
         if (container.type === "note") {
             redirectTo.viewNote({ noteId: +container.id! });
             return;
@@ -139,14 +141,6 @@ export default function TreeItem({
         if (container.type === "group" && container.has_children) {
             treeManager.toggleOpen(container);
         }
-    };
-
-    const handleClick = (e: MouseEvent) => {
-        if (container.type === "note") {
-            redirectTo.viewNote({ noteId: +container.id! });
-            return;
-        }
-        e.stopPropagation();
     };
 
     const handleAddNote = (e: MouseEvent) => {
@@ -208,7 +202,6 @@ export default function TreeItem({
             onDragLeave={handleDragLeave}
             onDragOver={handleDragOver}
             onDragEnd={handleDragEnd}
-            onDblClick={handleDblClick}
             onClick={handleClick}
         >
             <div

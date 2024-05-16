@@ -29,7 +29,6 @@ export default function Notifications(props: NotificationsProps) {
     const { dispatchMessage } = useWebsocketService<
         NotificationFrontendResponse
     >({
-        messageNamespace: "notifications",
         eventMap: {
             notifications: {
                 notificationsList: (data): void => {
@@ -75,32 +74,31 @@ export default function Notifications(props: NotificationsProps) {
     });
 
     useScriptsReadyEffect(() => {
-        dispatchMessage<GetMyNotificationsMessage>({
-            type: "getMyNotifications",
-        });
+        dispatchMessage<GetMyNotificationsMessage>(
+            "notifications",
+            "getMyNotifications",
+        );
     });
 
     const handleDeleteSingle = (notification: NotificationRecord) =>
-        dispatchMessage<DeleteSingleMessage>({
-            type: "deleteSingle",
+        dispatchMessage<DeleteSingleMessage>("notifications", "deleteSingle", {
             id: notification.id,
         });
 
     const handleDeleteAll = () =>
-        dispatchMessage<DeleteAllMessage>({
-            type: "deleteAll",
-        });
+        dispatchMessage<DeleteAllMessage>("notifications", "deleteAll");
 
     const handleMarkAllRead = () =>
-        dispatchMessage<MarkAllReadMessage>({
-            type: "markAllRead",
-        });
+        dispatchMessage<MarkAllReadMessage>("notifications", "markAllRead");
 
     const handleMarkSingleAsRead = (notification: NotificationRecord) =>
-        dispatchMessage<MarkSingleReadMessage>({
-            type: "markSingleRead",
-            id: notification.id,
-        });
+        dispatchMessage<MarkSingleReadMessage>(
+            "notifications",
+            "markSingleRead",
+            {
+                id: notification.id,
+            },
+        );
 
     const menuRef = createRef<HTMLDivElement>();
 
