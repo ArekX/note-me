@@ -61,7 +61,7 @@ const TreeItemEditor = (
                 </div>
             )}
             <div class="absolute inset-y-0 left-0 flex items-center pl-2 text-gray-400">
-                <Icon name="folder" />
+                <Icon name={container.type === "group" ? "folder" : "file"} />
             </div>
             <input
                 ref={(el) => el?.focus()}
@@ -173,6 +173,15 @@ export default function TreeItem({
                 break;
             case "refresh":
                 treeManager.reload(container);
+                break;
+            case "delete":
+                treeManager.deleteContainer(container);
+                break;
+            case "edit":
+                treeManager.setDisplayMode(container, "edit");
+                break;
+            case "move":
+                // TODO: Move
                 break;
             case "details":
                 // TODO: Details

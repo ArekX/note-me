@@ -3,6 +3,7 @@ import { useMemo, useState } from "preact/hooks";
 import {
     createRootContainer,
     RecordContainer,
+    RecordType,
 } from "$islands/tree/hooks/record-container.ts";
 
 export const useTreeState = () => {
@@ -25,6 +26,29 @@ export const useTreeState = () => {
         values: Partial<RecordContainer>,
     ) => {
         Object.assign(container, values);
+    };
+
+    const findContainerById = (
+        id: number,
+        type: RecordType,
+    ): RecordContainer | null => {
+        const find = (container: RecordContainer): RecordContainer | null => {
+            if (container.id === id && container.type === type) {
+                return container;
+            }
+
+            for (const child of container.children) {
+                const result = find(child);
+
+                if (result) {
+                    return result;
+                }
+            }
+
+            return null;
+        };
+
+        return find(tree);
     };
 
     const findParent = (
@@ -113,6 +137,7 @@ export const useTreeState = () => {
         findParent,
         removeFromParent,
         setContainer,
+        findContainerById,
         propagateChanges,
     };
 };

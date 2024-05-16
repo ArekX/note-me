@@ -1,17 +1,17 @@
 import {
     GetTreeMessage,
     GetTreeResponse,
-    TreeFrontendResponse,
 } from "$workers/websocket/api/tree/messages.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import {
     CreateGroupMessage,
     CreateGroupResponse,
     DeleteGroupMessage,
+    GroupFrontendResponse,
     UpdateGroupMessage,
     UpdateGroupResponse,
 } from "$workers/websocket/api/group/messages.ts";
-import { deleteNote, updateGroup, updateNote } from "$frontend/api.ts";
+import { updateGroup, updateNote } from "$frontend/api.ts";
 import { useEffect } from "preact/hooks";
 import { LoaderHook, useLoader } from "$frontend/hooks/use-loading.ts";
 import { useTreeState } from "./use-tree-state.ts";
@@ -21,6 +21,12 @@ import {
     fromTreeRecord,
     RecordContainer,
 } from "$islands/tree/hooks/record-container.ts";
+import {
+    DeleteNoteMessage,
+    NoteFrontendResponse,
+    UpdateNoteMessage,
+    UpdateNoteResponse,
+} from "$workers/websocket/api/notes/messages.ts";
 
 export interface RecordTreeHook {
     root: RecordContainer;
@@ -40,7 +46,7 @@ export interface RecordTreeHook {
         overrides: Partial<RecordContainer>,
     ) => Promise<RecordContainer>;
     save: (container: RecordContainer) => Promise<void>;
-    deleteContainer: (container: RecordContainer) => Promise<void>;
+    deleteContainer: (container: RecordContainer) => void;
     changeParent: (
         container: RecordContainer,
         newParent: RecordContainer,
@@ -54,6 +60,7 @@ export const useRecordTree = (): RecordTreeHook => {
         setRoot,
         setContainer,
         removeFromParent,
+        findContainerById,
         findParent,
         propagateChanges,
     } = useTreeState();
@@ -64,10 +71,30 @@ export const useRecordTree = (): RecordTreeHook => {
     const rootLoader = useLoader(false);
 
     const { sendMessage, dispatchMessage } = useWebsocketService<
-        TreeFrontendResponse
+        NoteFrontendResponse | GroupFrontendResponse
     >({
         eventMap: {
-            // TODO: Propagate events for notes and groups
+            notes: {
+                deleteNoteResponse: (data) => {
+                    const container = findContainerById(data.deletedId, "note");
+                    if (container) {
+                        removeFromParent(container);
+                        propagateChanges();
+                    }
+                },
+            },
+            groups: {
+                deleteGroupResponse: (data) => {
+                    const container = findContainerById(
+                        data.deletedId,
+                        "group",
+                    );
+                    if (container) {
+                        removeFromParent(container);
+                        propagateChanges();
+                    }
+                },
+            },
         },
     });
 
@@ -87,10 +114,15 @@ export const useRecordTree = (): RecordTreeHook => {
     const setDisplayMode = (
         container: RecordContainer,
         display_mode: DisplayMode,
-    ) => setContainer(container, { display_mode });
+    ) => {
+        setContainer(container, { display_mode });
+        propagateChanges();
+    };
 
-    const setName = (container: RecordContainer, name: string) =>
+    const setName = (container: RecordContainer, name: string) => {
         setContainer(container, { name });
+        propagateChanges();
+    };
 
     const loadChildren = async (container: RecordContainer) => {
         if (!container.has_children || container.children_loaded) {
@@ -119,7 +151,19 @@ export const useRecordTree = (): RecordTreeHook => {
 
     const save = async (container: RecordContainer) => {
         if (container.type !== "group") {
-            // TODO: Note rename should work here
+            await sendMessage<UpdateNoteMessage, UpdateNoteResponse>(
+                "notes",
+                "updateNote",
+                {
+                    data: {
+                        id: container.id!,
+                        data: {
+                            title: container.name,
+                        },
+                    },
+                    expect: "updateNoteResponse",
+                },
+            );
             return;
         }
 
@@ -168,26 +212,26 @@ export const useRecordTree = (): RecordTreeHook => {
         propagateChanges();
     };
 
-    const deleteContainer = async (container: RecordContainer) => {
+    const deleteContainer = (container: RecordContainer) => {
         if (container.type === "root") {
             return;
         }
 
         setContainer(container, { is_processing: true });
 
+        propagateChanges();
+
         if (container.id !== null) {
-            // TODO: Implement via socket properly
             if (container.type === "note") {
-                await deleteNote(container.id);
+                dispatchMessage<DeleteNoteMessage>("notes", "deleteNote", {
+                    id: container.id,
+                });
             } else {
                 dispatchMessage<DeleteGroupMessage>("groups", "deleteGroup", {
                     id: container.id,
                 });
             }
         }
-
-        removeFromParent(container);
-        propagateChanges();
     };
 
     const changeParent = async (
@@ -244,9 +288,7 @@ export const useRecordTree = (): RecordTreeHook => {
     ): Promise<RecordContainer> => {
         await loadChildren(parent);
 
-        const newContainer = createContainer({
-            ...overrides,
-        });
+        const newContainer = createContainer({ ...overrides });
 
         setContainer(parent, { is_open: true });
         addChild(parent, newContainer);

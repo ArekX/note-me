@@ -10,20 +10,40 @@ export const loadSessionState = async <T>(
     }
 
     const result = await db.selectFrom("session")
-        .select(["data", "user_id"])
+        .select(["key", "data", "user_id"])
         .where("key", "=", sessionId)
         .where("expires_at", ">", (new Date()).getTime())
         .orderBy("expires_at", "desc")
         .limit(1)
-        .executeTakeFirst();
+        .executeTakeFirst() ?? null;
 
+    return toSessionObject(result);
+};
+
+export const loadSessionStateByUserId = async <T>(
+    userId: number,
+): Promise<SessionState<T> | null> => {
+    const result = await db.selectFrom("session")
+        .select(["key", "data", "user_id"])
+        .where("user_id", "=", userId)
+        .where("expires_at", ">", (new Date()).getTime())
+        .orderBy("expires_at", "desc")
+        .limit(1)
+        .executeTakeFirst() ?? null;
+
+    return toSessionObject(result);
+};
+
+const toSessionObject = <T>(
+    result: { key: string; data: string; user_id: number } | null,
+): SessionState<T> | null => {
     try {
         if (!result) {
             return null;
         }
 
         const data = result ? JSON.parse(result.data) : null;
-        return createSessionStateObject(sessionId, result.user_id, data);
+        return createSessionStateObject(result.key, result.user_id, data);
     } catch {
         return null;
     }

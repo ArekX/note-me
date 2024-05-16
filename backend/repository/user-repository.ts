@@ -7,7 +7,7 @@ import { applyFilters } from "../../lib/kysely-sqlite-dialect/filters.ts";
 import { Paged } from "../../lib/kysely-sqlite-dialect/pagination.ts";
 import { pageResults } from "../../lib/kysely-sqlite-dialect/pagination.ts";
 
-type UserId = { id: number };
+export type UserId = { id: number };
 
 export type UserRecord =
     & Pick<
