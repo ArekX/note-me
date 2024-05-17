@@ -1,9 +1,13 @@
 import ConfirmDialog from "$islands/ConfirmDialog.tsx";
 import { useLoader } from "$frontend/hooks/use-loading.ts";
 import Loader from "$islands/Loader.tsx";
-import { deleteNote } from "$frontend/api.ts";
 import { clearStorage } from "$frontend/session-storage.ts";
 import { redirectTo } from "$frontend/redirection-manager.ts";
+import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
+import {
+    DeleteNoteMessage,
+    DeleteNoteResponse,
+} from "$workers/websocket/api/notes/messages.ts";
 
 interface NoteDeleteProps {
     noteId: number;
@@ -13,11 +17,23 @@ interface NoteDeleteProps {
 
 export const NoteDelete = ({ noteId, show, onClose }: NoteDeleteProps) => {
     const deleteLoader = useLoader();
+
+    const { sendMessage } = useWebsocketService();
+
     const handleConfirmedDelete = async () => {
         deleteLoader.start();
-        await deleteNote(noteId);
+        await sendMessage<DeleteNoteMessage, DeleteNoteResponse>(
+            "notes",
+            "deleteNote",
+            {
+                data: {
+                    id: noteId,
+                },
+                expect: "deleteNoteResponse",
+            },
+        );
         deleteLoader.stop();
-        clearStorage();
+        clearStorage(); // TODO: Remove this when we have a better way to handle this
         redirectTo.root();
     };
 

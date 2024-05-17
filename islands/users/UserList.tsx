@@ -6,7 +6,6 @@ import { Icon } from "$components/Icon.tsx";
 import { Pagination } from "$islands/Pagination.tsx";
 import { EditableUser, EditUserForm } from "$islands/users/EditUserForm.tsx";
 import { useEffect } from "preact/hooks";
-import { deleteUser, findUsers } from "$frontend/api.ts";
 import {
     roleDropDownList,
     roleLabelMap,
@@ -15,6 +14,13 @@ import { getUserData } from "$frontend/user-data.ts";
 import { FindUserRequest } from "$backend/api-handlers/users/find-users.ts";
 import { useFilterFactory } from "$components/filters/FilterFactory.tsx";
 import { CanManageUsers } from "$backend/rbac/permissions.ts";
+import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
+import {
+    DeleteUserMessage,
+    DeleteUserResponse,
+    FindUsersMessage,
+    FindUsersResponse,
+} from "$workers/websocket/api/users/messages.ts";
 
 export function UserList() {
     const userToDelete = useSignal<EditableUser | null>(null);
@@ -31,15 +37,29 @@ export function UserList() {
 
     const userList = useSignal<EditableUser[]>([]);
 
+    const { sendMessage } = useWebsocketService();
+
     const loadUsers = async () => {
         isLoading.value = true;
-        const { data } = await findUsers({
-            ...filters.value,
-            page: currentPage.value,
-        });
-        userList.value = data.results;
-        totalUsers.value = data.total;
-        perPage.value = data.perPage;
+
+        const { records } = await sendMessage<
+            FindUsersMessage,
+            FindUsersResponse
+        >(
+            "users",
+            "findUsers",
+            {
+                data: {
+                    filters: filters.value,
+                    page: currentPage.value,
+                },
+                expect: "findUsersResponse",
+            },
+        );
+
+        userList.value = records.results;
+        totalUsers.value = records.total;
+        perPage.value = records.perPage;
         isLoading.value = false;
     };
 
@@ -65,7 +85,16 @@ export function UserList() {
     };
 
     const handleConfirmDelete = async () => {
-        await deleteUser(userToDelete.value!.id!);
+        await sendMessage<DeleteUserMessage, DeleteUserResponse>(
+            "users",
+            "deleteUser",
+            {
+                data: {
+                    id: userToDelete.value!.id!,
+                },
+                expect: "deleteUserResponse",
+            },
+        );
         userToDelete.value = null;
         await loadUsers();
     };

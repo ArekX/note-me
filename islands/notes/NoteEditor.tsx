@@ -8,12 +8,10 @@ import Loader from "$islands/Loader.tsx";
 import { useEffect } from "preact/hooks";
 import { MenuItemActions } from "$islands/notes/MoreMenu.tsx";
 import { inputHandler } from "$frontend/methods.ts";
-import { createNote } from "$frontend/api.ts";
 import { addNoteRequestSchema } from "$schemas/notes.ts";
 import { validateSchema } from "$schemas/mod.ts";
 import { ZodIssue } from "$schemas/deps.ts";
 import { ErrorDisplay } from "$components/ErrorDisplay.tsx";
-import { updateNote } from "$frontend/api.ts";
 import Viewer from "$islands/viewer/Viewer.tsx";
 import NoteWindow, { NoteWindowTypes } from "$islands/notes/NoteWindow.tsx";
 import { NoteTextArea } from "./NoteTextArea.tsx";
@@ -21,6 +19,13 @@ import TagInput from "$islands/notes/TagInput.tsx";
 import { useLoader } from "$frontend/hooks/use-loading.ts";
 import { clearStorage } from "$frontend/session-storage.ts";
 import { redirectTo } from "$frontend/redirection-manager.ts";
+import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
+import {
+    CreateNoteMessage,
+    CreateNoteResponse,
+    UpdateNoteMessage,
+    UpdateNoteResponse,
+} from "$workers/websocket/api/notes/messages.ts";
 
 interface NoteData extends Pick<NoteRecord, "title" | "note"> {
     id?: number;
@@ -44,6 +49,8 @@ export const NoteEditor = ({
     const isPreviewMode = useSignal(false);
     const validationErrors = useSignal<ZodIssue[]>([]);
 
+    const { sendMessage } = useWebsocketService();
+
     const handleSave = async () => {
         isSaving.start();
 
@@ -64,11 +71,35 @@ export const NoteEditor = ({
         }
 
         if (note.id) {
-            await updateNote(note.id, noteToSave);
+            await sendMessage<UpdateNoteMessage, UpdateNoteResponse>(
+                "notes",
+                "updateNote",
+                {
+                    data: {
+                        id: note.id,
+                        data: noteToSave,
+                    },
+                    expect: "updateNoteResponse",
+                },
+            );
+
+            // TODO: Handle websocket event
         } else {
-            const note = await createNote(noteToSave);
-            clearStorage();
-            redirectTo.viewNote({ noteId: note.data.id });
+            const { record } = await sendMessage<
+                CreateNoteMessage,
+                CreateNoteResponse
+            >(
+                "notes",
+                "createNote",
+                {
+                    data: {
+                        data: noteToSave,
+                    },
+                    expect: "createNoteResponse",
+                },
+            );
+            clearStorage(); // TODO: Remove this when websocket event is implemented
+            redirectTo.viewNote({ noteId: record.id });
         }
 
         isSaving.stop();

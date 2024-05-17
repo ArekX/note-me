@@ -7,8 +7,14 @@ import { UserRecord } from "$backend/repository/user-repository.ts";
 import { DropdownList } from "$components/DropdownList.tsx";
 import { roleDropDownList } from "$backend/rbac/role-definitions.ts";
 import { getUserData } from "$frontend/user-data.ts";
-import { createUser, updateUser } from "$frontend/api.ts";
 import { supportedTimezoneList } from "$backend/time.ts";
+import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
+import {
+    CreateUserMessage,
+    CreateUserResponse,
+    UpdateUserMessage,
+    UpdateUserResponse,
+} from "$workers/websocket/api/users/messages.ts";
 
 export interface EditableUser extends Omit<UserRecord, "id" | "password"> {
     id: number | null;
@@ -25,6 +31,8 @@ export function EditUserForm(
 ) {
     const user = useSignal<EditableUser>({ ...editUser } as EditableUser);
 
+    const { sendMessage } = useWebsocketService();
+
     useEffect(() => {
         user.value = { ...editUser } as EditableUser;
     }, [editUser]);
@@ -39,17 +47,36 @@ export function EditUserForm(
             user.value;
 
         if (id === null) {
-            await createUser({
-                ...userData,
-                username,
-                role,
-                password: new_password!,
-            });
+            await sendMessage<CreateUserMessage, CreateUserResponse>(
+                "users",
+                "createUser",
+                {
+                    data: {
+                        data: {
+                            ...userData,
+                            username,
+                            role,
+                            password: new_password!,
+                        },
+                    },
+                    expect: "createUserResponse",
+                },
+            );
         } else {
-            await updateUser(+id, {
-                new_password: new_password!,
-                ...userData,
-            });
+            await sendMessage<UpdateUserMessage, UpdateUserResponse>(
+                "users",
+                "updateUser",
+                {
+                    data: {
+                        id: +id,
+                        data: {
+                            new_password: new_password!,
+                            ...userData,
+                        },
+                    },
+                    expect: "updateUserResponse",
+                },
+            );
         }
 
         onDone("ok");

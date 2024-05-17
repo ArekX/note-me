@@ -3,11 +3,9 @@ import { useEffect } from "preact/hooks";
 import { useSignal } from "@preact/signals";
 import { useLoader } from "$frontend/hooks/use-loading.ts";
 import Loader from "$islands/Loader.tsx";
-import { getNoteDetails } from "$frontend/api.ts";
 import { NoteDetailsRecord } from "$backend/repository/note-repository.ts";
 import { getUserData } from "$frontend/user-data.ts";
 import { Button } from "$components/Button.tsx";
-import { unixToDate } from "$frontend/time.ts";
 
 interface NoteDetailsProps {
     show: boolean;
@@ -20,15 +18,15 @@ export const NoteDetails = ({ show, noteId, onClose }: NoteDetailsProps) => {
 
     const isNoteLoading = useLoader();
 
-    const loadNoteDetails = async () => {
+    const loadNoteDetails = () => {
         if (isNoteLoading.running) {
             return;
         }
 
         isNoteLoading.start();
 
-        const { data } = await getNoteDetails(noteId);
-        noteData.value = data;
+        // const { data } = await getNoteDetails(noteId);
+        // noteData.value = data;
         isNoteLoading.stop();
     };
 

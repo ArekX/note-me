@@ -21,9 +21,9 @@ export interface ErrorResponse<T> {
 }
 
 export const useWebsocketService = <T extends Message>(
-    options: WebSocketEventOptions<T>,
+    options?: WebSocketEventOptions<T>,
 ) => {
-    const { eventMap } = options;
+    const { eventMap } = options ?? {};
 
     if (eventMap) {
         useScriptsReadyEffect(() => {

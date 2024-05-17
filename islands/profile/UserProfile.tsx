@@ -2,9 +2,13 @@ import { useSignal } from "@preact/signals";
 import { EditUserProfile } from "$schemas/users.ts";
 import { Input } from "$components/Input.tsx";
 import { Button } from "$components/Button.tsx";
-import { updateProfile } from "$frontend/api.ts";
 import { DropdownList } from "$components/DropdownList.tsx";
 import { supportedTimezoneList } from "$backend/time.ts";
+import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
+import {
+    UpdateProfileMessage,
+    UpdateProfileResponse,
+} from "$workers/websocket/api/users/messages.ts";
 
 interface UserProfileProps {
     initialProfileData: EditUserProfile;
@@ -15,9 +19,20 @@ export function UserProfile({ initialProfileData }: UserProfileProps) {
         ...initialProfileData,
     });
 
+    const { sendMessage } = useWebsocketService();
+
     const handleSubmit = async (event: Event) => {
         event.preventDefault();
-        await updateProfile(userData.value);
+        await sendMessage<UpdateProfileMessage, UpdateProfileResponse>(
+            "users",
+            "updateProfile",
+            {
+                data: {
+                    data: userData.value,
+                },
+                expect: "updateProfileResponse",
+            },
+        );
     };
 
     const handlePropertyChange =

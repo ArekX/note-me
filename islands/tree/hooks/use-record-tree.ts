@@ -11,7 +11,6 @@ import {
     UpdateGroupMessage,
     UpdateGroupResponse,
 } from "$workers/websocket/api/group/messages.ts";
-import { updateGroup, updateNote } from "$frontend/api.ts";
 import { useEffect } from "preact/hooks";
 import { LoaderHook, useLoader } from "$frontend/hooks/use-loading.ts";
 import { useTreeState } from "./use-tree-state.ts";
@@ -249,13 +248,33 @@ export const useRecordTree = (): RecordTreeHook => {
         setContainer(container, { is_processing: true });
 
         if (container.type === "note") {
-            await updateNote(container.id, {
-                group_id: newParent?.id ?? null,
-            });
+            await sendMessage<UpdateNoteMessage, UpdateNoteResponse>(
+                "notes",
+                "updateNote",
+                {
+                    data: {
+                        id: container.id,
+                        data: {
+                            group_id: newParent?.id ?? null,
+                        },
+                    },
+                    expect: "updateNoteResponse",
+                },
+            );
         } else {
-            await updateGroup(container.id, {
-                parent_id: newParent?.id ?? null,
-            });
+            await sendMessage<UpdateGroupMessage, UpdateGroupResponse>(
+                "groups",
+                "updateGroup",
+                {
+                    data: {
+                        id: container.id,
+                        data: {
+                            parent_id: newParent?.id ?? null,
+                        },
+                    },
+                    expect: "updateGroupResponse",
+                },
+            );
         }
 
         removeFromParent(container);

@@ -8,8 +8,14 @@ import { getUserData } from "$frontend/user-data.ts";
 import { CanManageTags } from "$backend/rbac/permissions.ts";
 import { EditableTag, EditTagForm } from "$islands/tags/EditTagForm.tsx";
 import { Input } from "$components/Input.tsx";
-import { deleteTag, findTags } from "$frontend/api.ts";
 import { debounce } from "$frontend/deps.ts";
+import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
+import {
+    DeleteTagMessage,
+    DeleteTagResponse,
+    FindTagsMessage,
+    FindTagsResponse,
+} from "$workers/websocket/api/tags/messages.ts";
 
 export function TagsList() {
     const tagToDelete = useSignal<EditableTag | null>(null);
@@ -22,15 +28,27 @@ export function TagsList() {
 
     const tagList = useSignal<EditableTag[]>([]);
 
+    const { sendMessage } = useWebsocketService();
+
     const loadTags = async () => {
         isLoading.value = true;
-        const { data } = await findTags({
-            name: tagNameFilter.value,
-            page: currentPage.value,
+
+        const { records } = await sendMessage<
+            FindTagsMessage,
+            FindTagsResponse
+        >("tags", "findTags", {
+            data: {
+                filters: {
+                    name: tagNameFilter.value,
+                },
+                page: currentPage.value,
+            },
+            expect: "findTagsResponse",
         });
-        tagList.value = data.results;
-        totalTags.value = data.total;
-        perPage.value = data.perPage;
+
+        tagList.value = records.results;
+        totalTags.value = records.total;
+        perPage.value = records.perPage;
         isLoading.value = false;
     };
 
@@ -53,7 +71,17 @@ export function TagsList() {
     }, 500);
 
     const handleConfirmDelete = async () => {
-        await deleteTag(tagToDelete.value!.id!);
+        await sendMessage<DeleteTagMessage, DeleteTagResponse>(
+            "tags",
+            "deleteTag",
+            {
+                data: {
+                    id: tagToDelete.value!.id!,
+                },
+                expect: "deleteTagResponse",
+            },
+        );
+
         tagToDelete.value = null;
         await loadTags();
     };

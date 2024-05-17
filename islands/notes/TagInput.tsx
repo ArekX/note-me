@@ -6,7 +6,11 @@ import Loader from "$islands/Loader.tsx";
 import { useSinglePopover } from "$frontend/hooks/use-single-popover.ts";
 import { useLoader } from "$frontend/hooks/use-loading.ts";
 import { debounce } from "$frontend/deps.ts";
-import { findTags } from "$frontend/api.ts";
+import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
+import {
+    FindTagsMessage,
+    FindTagsResponse,
+} from "$workers/websocket/api/tags/messages.ts";
 
 interface TagInputProps {
     initialTags: string[];
@@ -137,6 +141,8 @@ export default function TagInput({
     const selectedTagIndex = useSignal<number | null>(null);
     const autocompleteTags = useSignal<string[]>([]);
 
+    const { sendMessage } = useWebsocketService();
+
     const handleKeyDown = (e: KeyboardEvent) => {
         if (autocompleteTags.value.length == 0) {
             return;
@@ -197,12 +203,20 @@ export default function TagInput({
         }
         isSearching.start();
         open();
-
-        const { data } = await findTags({
-            name: tag,
-            page: 1,
+        const { records } = await sendMessage<
+            FindTagsMessage,
+            FindTagsResponse
+        >("tags", "findTags", {
+            data: {
+                filters: {
+                    name: tag,
+                },
+                page: 1,
+            },
+            expect: "findTagsResponse",
         });
-        autocompleteTags.value = data.results.map((r) => r.name);
+
+        autocompleteTags.value = records.results.map((r) => r.name);
         selectedTagIndex.value = 0;
         isSearching.stop();
     }, 500);

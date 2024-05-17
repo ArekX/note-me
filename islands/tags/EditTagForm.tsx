@@ -3,11 +3,13 @@ import Dialog from "$islands/Dialog.tsx";
 import { Input } from "$components/Input.tsx";
 import { Button } from "$components/Button.tsx";
 import { useEffect } from "preact/hooks";
-import { DropdownList } from "$components/DropdownList.tsx";
-import { roleDropDownList } from "$backend/rbac/role-definitions.ts";
-import { getUserData } from "$frontend/user-data.ts";
-import { createTag, createUser, updateTag, updateUser } from "$frontend/api.ts";
-import { supportedTimezoneList } from "$backend/time.ts";
+import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
+import {
+    CreateTagMessage,
+    CreateTagResponse,
+    UpdateTagMessage,
+    UpdateTagResponse,
+} from "$workers/websocket/api/tags/messages.ts";
 
 export interface EditableTag {
     id: number | null;
@@ -24,6 +26,8 @@ export function EditTagForm(
 ) {
     const tag = useSignal<EditableTag>({ ...editTag } as EditableTag);
 
+    const { sendMessage } = useWebsocketService();
+
     useEffect(() => {
         tag.value = { ...editTag } as EditableTag;
     }, [editTag]);
@@ -38,9 +42,30 @@ export function EditTagForm(
         const { id, name } = tag.value;
 
         if (id === null) {
-            await createTag({ name });
+            await sendMessage<CreateTagMessage, CreateTagResponse>(
+                "tags",
+                "createTag",
+                {
+                    data: {
+                        data: {
+                            name,
+                        },
+                    },
+                    "expect": "createTagResponse",
+                },
+            );
         } else {
-            await updateTag(+id, { name });
+            await sendMessage<UpdateTagMessage, UpdateTagResponse>(
+                "tags",
+                "updateTag",
+                {
+                    data: {
+                        id: +id,
+                        data: { name },
+                    },
+                    "expect": "updateTagResponse",
+                },
+            );
         }
 
         onDone("ok");
