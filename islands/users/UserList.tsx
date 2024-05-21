@@ -11,7 +11,6 @@ import {
     roleLabelMap,
 } from "$backend/rbac/role-definitions.ts";
 import { getUserData } from "$frontend/user-data.ts";
-import { FindUserRequest } from "$backend/api-handlers/users/find-users.ts";
 import { useFilterFactory } from "$components/filters/FilterFactory.tsx";
 import { CanManageUsers } from "$backend/rbac/permissions.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
@@ -29,7 +28,7 @@ export function UserList() {
     const currentPage = useSignal(1);
     const totalUsers = useSignal(0);
     const perPage = useSignal(20);
-    const filters = useSignal<Partial<FindUserRequest>>({
+    const filters = useSignal<Partial<FindUsersMessage["filters"]>>({
         name: "",
         username: "",
         role: "",
@@ -65,7 +64,7 @@ export function UserList() {
 
     const filterFactory = useFilterFactory(
         filters.value,
-        (newFilters: Partial<FindUserRequest>) => {
+        (newFilters: Partial<FindUsersMessage["filters"]>) => {
             filters.value = newFilters;
             currentPage.value = 1;
             loadUsers();
