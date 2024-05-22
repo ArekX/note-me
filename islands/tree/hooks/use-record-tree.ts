@@ -2,12 +2,10 @@ import {
     GetTreeMessage,
     GetTreeResponse,
 } from "$workers/websocket/api/tree/messages.ts";
-import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import {
     CreateGroupMessage,
     CreateGroupResponse,
     DeleteGroupMessage,
-    GroupFrontendResponse,
     UpdateGroupMessage,
     UpdateGroupResponse,
 } from "$workers/websocket/api/group/messages.ts";
@@ -22,10 +20,10 @@ import {
 } from "$islands/tree/hooks/record-container.ts";
 import {
     DeleteNoteMessage,
-    NoteFrontendResponse,
     UpdateNoteMessage,
     UpdateNoteResponse,
 } from "$workers/websocket/api/notes/messages.ts";
+import { useTreeWebsocket } from "$islands/tree/hooks/use-tree-websocket.ts";
 
 export interface RecordTreeHook {
     root: RecordContainer;
@@ -53,48 +51,25 @@ export interface RecordTreeHook {
 }
 
 export const useRecordTree = (): RecordTreeHook => {
+    const treeState = useTreeState();
+
     const {
         tree,
         addChild,
         setRoot,
         setContainer,
         removeFromParent,
-        findContainerById,
         findParent,
         propagateChanges,
-    } = useTreeState();
+    } = treeState;
 
     const createRootContainer = () =>
         createContainer({ type: "root", has_children: true, is_open: true });
 
     const rootLoader = useLoader(false);
 
-    const { sendMessage, dispatchMessage } = useWebsocketService<
-        NoteFrontendResponse | GroupFrontendResponse
-    >({
-        eventMap: {
-            notes: {
-                deleteNoteResponse: (data) => {
-                    const container = findContainerById(data.deletedId, "note");
-                    if (container) {
-                        removeFromParent(container);
-                        propagateChanges();
-                    }
-                },
-            },
-            groups: {
-                deleteGroupResponse: (data) => {
-                    const container = findContainerById(
-                        data.deletedId,
-                        "group",
-                    );
-                    if (container) {
-                        removeFromParent(container);
-                        propagateChanges();
-                    }
-                },
-            },
-        },
+    const { sendMessage, dispatchMessage } = useTreeWebsocket({
+        treeState,
     });
 
     const reload = async (container: RecordContainer) => {

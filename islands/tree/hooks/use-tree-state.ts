@@ -6,7 +6,24 @@ import {
     RecordType,
 } from "$islands/tree/hooks/record-container.ts";
 
-export const useTreeState = () => {
+export interface TreeStateHook {
+    tree: RecordContainer;
+    setRoot: (container: RecordContainer) => void;
+    addChild: (parent: RecordContainer, child: RecordContainer) => void;
+    findParent: (searchContainer: RecordContainer) => RecordContainer | null;
+    removeFromParent: (container: RecordContainer) => void;
+    setContainer: (
+        container: RecordContainer,
+        values: Partial<RecordContainer>,
+    ) => void;
+    findContainerById: (
+        id: number,
+        type: RecordType,
+    ) => RecordContainer | null;
+    propagateChanges: () => void;
+}
+
+export const useTreeState = (): TreeStateHook => {
     const restoredTree = useMemo(
         (): RecordContainer | null =>
             restore<RecordContainer>(

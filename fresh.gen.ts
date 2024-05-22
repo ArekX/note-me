@@ -34,6 +34,7 @@ import * as $notes_NoteTextArea from "./islands/notes/NoteTextArea.tsx";
 import * as $notes_NoteWindow from "./islands/notes/NoteWindow.tsx";
 import * as $notes_TagInput from "./islands/notes/TagInput.tsx";
 import * as $notes_ViewNote from "./islands/notes/ViewNote.tsx";
+import * as $notes_hooks_use_note_websocket from "./islands/notes/hooks/use-note-websocket.ts";
 import * as $notes_insert_components_InsertImage from "./islands/notes/insert-components/InsertImage.tsx";
 import * as $notes_insert_components_InsertLink from "./islands/notes/insert-components/InsertLink.tsx";
 import * as $notes_windows_Help from "./islands/notes/windows/Help.tsx";
@@ -57,9 +58,9 @@ import * as $tree_RootGroupBar from "./islands/tree/RootGroupBar.tsx";
 import * as $tree_TreeItem from "./islands/tree/TreeItem.tsx";
 import * as $tree_TreeList from "./islands/tree/TreeList.tsx";
 import * as $tree_hooks_record_container from "./islands/tree/hooks/record-container.ts";
-import * as $tree_hooks_use_drag_manager from "./islands/tree/hooks/use-drag-manager.ts";
 import * as $tree_hooks_use_record_tree from "./islands/tree/hooks/use-record-tree.ts";
 import * as $tree_hooks_use_tree_state from "./islands/tree/hooks/use-tree-state.ts";
+import * as $tree_hooks_use_tree_websocket from "./islands/tree/hooks/use-tree-websocket.ts";
 import * as $users_EditUserForm from "./islands/users/EditUserForm.tsx";
 import * as $users_UserList from "./islands/users/UserList.tsx";
 import * as $viewer_Viewer from "./islands/viewer/Viewer.tsx";
@@ -117,6 +118,8 @@ const manifest = {
         "./islands/notes/NoteWindow.tsx": $notes_NoteWindow,
         "./islands/notes/TagInput.tsx": $notes_TagInput,
         "./islands/notes/ViewNote.tsx": $notes_ViewNote,
+        "./islands/notes/hooks/use-note-websocket.ts":
+            $notes_hooks_use_note_websocket,
         "./islands/notes/insert-components/InsertImage.tsx":
             $notes_insert_components_InsertImage,
         "./islands/notes/insert-components/InsertLink.tsx":
@@ -146,10 +149,10 @@ const manifest = {
         "./islands/tree/TreeList.tsx": $tree_TreeList,
         "./islands/tree/hooks/record-container.ts":
             $tree_hooks_record_container,
-        "./islands/tree/hooks/use-drag-manager.ts":
-            $tree_hooks_use_drag_manager,
         "./islands/tree/hooks/use-record-tree.ts": $tree_hooks_use_record_tree,
         "./islands/tree/hooks/use-tree-state.ts": $tree_hooks_use_tree_state,
+        "./islands/tree/hooks/use-tree-websocket.ts":
+            $tree_hooks_use_tree_websocket,
         "./islands/users/EditUserForm.tsx": $users_EditUserForm,
         "./islands/users/UserList.tsx": $users_UserList,
         "./islands/viewer/Viewer.tsx": $viewer_Viewer,

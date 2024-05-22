@@ -23,9 +23,11 @@ import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import {
     CreateNoteMessage,
     CreateNoteResponse,
+    NoteFrontendResponse,
     UpdateNoteMessage,
     UpdateNoteResponse,
 } from "$workers/websocket/api/notes/messages.ts";
+import { useNoteWebsocket } from "./hooks/use-note-websocket.ts";
 
 interface NoteData extends Pick<NoteRecord, "title" | "note"> {
     id?: number;
@@ -49,7 +51,7 @@ export const NoteEditor = ({
     const isPreviewMode = useSignal(false);
     const validationErrors = useSignal<ZodIssue[]>([]);
 
-    const { sendMessage } = useWebsocketService();
+    const { sendMessage } = useNoteWebsocket({ noteId: +note.id! });
 
     const handleSave = async () => {
         isSaving.start();

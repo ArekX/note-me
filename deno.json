@@ -29,7 +29,7 @@
         "tailwindcss": "npm:tailwindcss@3.3.5",
         "tailwindcss/": "npm:/tailwindcss@3.3.5/",
         "tailwindcss/plugin": "npm:/tailwindcss@3.3.5/plugin.js",
-        "$std/": "https://deno.land/std@0.222.1/",
+        "$std/": "https://deno.land/std@0.224.0/",
         "$components/": "./components/",
         "$islands/": "./islands/",
         "$backend/": "./backend/",

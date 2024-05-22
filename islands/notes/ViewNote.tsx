@@ -6,6 +6,7 @@ import { MenuItemActions, MoreMenu } from "$islands/notes/MoreMenu.tsx";
 import NoteWindow, { NoteWindowTypes } from "$islands/notes/NoteWindow.tsx";
 import { useSignal } from "@preact/signals";
 import { redirectTo } from "$frontend/redirection-manager.ts";
+import { useNoteWebsocket } from "$islands/notes/hooks/use-note-websocket.ts";
 
 export interface ViewNoteProps {
     readonly?: boolean;
@@ -16,6 +17,8 @@ export function ViewNote(
     { readonly = false, record }: ViewNoteProps,
 ) {
     const windowMode = useSignal<NoteWindowTypes | null>(null);
+
+    useNoteWebsocket({ noteId: record.id });
 
     const handleMenuItemClicked = (action: MenuItemActions) => {
         switch (action) {
