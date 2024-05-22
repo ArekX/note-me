@@ -1,6 +1,6 @@
 import { zod } from "./deps.ts";
 
-export const validateRequest = async <
+export const requireValidSchema = async <
     V,
 >(
     schema: zod.ZodTypeAny,

@@ -27,11 +27,13 @@ import {
     destroySession,
     loadSessionStateByUserId,
 } from "$backend/session/mod.ts";
+import { requireValidSchema } from "$schemas/mod.ts";
+import { addUserSchema, updateUserSchema } from "$schemas/users.ts";
 
 const createUserRequest: ListenerFn<CreateUserMessage> = async (
     { message: { data }, respond },
 ) => {
-    // TODO: validate the request
+    await requireValidSchema(addUserSchema, data);
 
     const record = await createUserRecord(
         data as CreateUserData,
@@ -46,7 +48,7 @@ const createUserRequest: ListenerFn<CreateUserMessage> = async (
 const updateUserRequest: ListenerFn<UpdateUserMessage> = async (
     { message: { id, data }, respond },
 ) => {
-    // TODO: validate the request
+    await requireValidSchema(updateUserSchema, data);
 
     await updateUserRecord(id, data as UpdateUserData);
 
@@ -60,8 +62,6 @@ const updateUserRequest: ListenerFn<UpdateUserMessage> = async (
 const deleteUserRequest: ListenerFn<DeleteUserMessage> = async (
     { message: { id }, sourceClient, respond },
 ) => {
-    // TODO: validate the request
-
     if (id === sourceClient?.userId) {
         throw new Deno.errors.InvalidData("You cannot delete your own user.");
     }
@@ -78,8 +78,6 @@ const deleteUserRequest: ListenerFn<DeleteUserMessage> = async (
 const findUsersRequest: ListenerFn<FindUsersMessage> = async (
     { message: { filters, page }, respond },
 ) => {
-    // TODO: validate the request
-
     const records = await findUsers(filters, page);
 
     respond<FindUsersResponse>({

@@ -23,11 +23,13 @@ import {
 import { linkNoteWithTags } from "$backend/repository/note-tags-repository.ts";
 import { assignNoteToGroup } from "$backend/repository/group-repository.ts";
 import { when } from "$backend/promise.ts";
+import { requireValidSchema } from "$schemas/mod.ts";
+import { addNoteRequestSchema, updateNoteSchema } from "$schemas/notes.ts";
 
 const createNoteRequest: ListenerFn<CreateNoteMessage> = async (
     { message: { data }, sourceClient, respond },
 ) => {
-    // TODO: validate the request
+    await requireValidSchema(addNoteRequestSchema, data);
 
     await beginTransaction();
 
@@ -58,7 +60,7 @@ const createNoteRequest: ListenerFn<CreateNoteMessage> = async (
 const updateNoteRequest: ListenerFn<UpdateNoteMessage> = async (
     { message: { id, data }, sourceClient, respond },
 ) => {
-    // TODO: validate the request
+    await requireValidSchema(updateNoteSchema, data);
 
     await beginTransaction();
 
@@ -112,8 +114,6 @@ const updateNoteRequest: ListenerFn<UpdateNoteMessage> = async (
 const deleteNoteRequest: ListenerFn<DeleteNoteMessage> = async (
     { message: { id }, sourceClient, respond },
 ) => {
-    // TODO: validate the request
-
     await deleteNote(id, sourceClient!.userId);
 
     respond<DeleteNoteResponse>({

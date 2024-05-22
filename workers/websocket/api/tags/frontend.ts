@@ -19,11 +19,13 @@ import {
     UpdateTagData,
     updateTagRecord,
 } from "$backend/repository/note-tags-repository.ts";
+import { requireValidSchema } from "$schemas/mod.ts";
+import { addTagSchema, updateTagSchema } from "$schemas/tags.ts";
 
 const createTagRequest: ListenerFn<CreateTagMessage> = async (
     { message: { data }, sourceClient, respond },
 ) => {
-    // TODO: validate the request
+    await requireValidSchema(addTagSchema, data);
 
     const record = await createTagRecord(
         data as CreateTagData,
@@ -39,7 +41,7 @@ const createTagRequest: ListenerFn<CreateTagMessage> = async (
 const updateTagRequest: ListenerFn<UpdateTagMessage> = async (
     { message: { id, data }, respond },
 ) => {
-    // TODO: validate the request
+    await requireValidSchema(updateTagSchema, data);
 
     await updateTagRecord(id, data as UpdateTagData);
 
@@ -53,8 +55,6 @@ const updateTagRequest: ListenerFn<UpdateTagMessage> = async (
 const deleteTagRequest: ListenerFn<DeleteTagMessage> = async (
     { message: { id }, respond },
 ) => {
-    // TODO: validate the request
-
     await deleteTagRecord(id);
 
     respond<DeleteTagResponse>({
@@ -66,8 +66,6 @@ const deleteTagRequest: ListenerFn<DeleteTagMessage> = async (
 const findTagsRequest: ListenerFn<FindTagsMessage> = async (
     { message: { filters, page }, respond },
 ) => {
-    // TODO: validate the request
-
     const records = await findTags(filters, page);
 
     respond<FindTagsResponse>({

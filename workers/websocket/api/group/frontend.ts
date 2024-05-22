@@ -13,11 +13,16 @@ import {
     deleteGroup,
     updateGroup,
 } from "$backend/repository/group-repository.ts";
+import { requireValidSchema } from "$schemas/mod.ts";
+import {
+    addGroupRequestSchema,
+    updateGroupRequestSchema,
+} from "$schemas/groups.ts";
 
 const createGroupRequest: ListenerFn<CreateGroupMessage> = async (
     { message: { data }, sourceClient, respond },
 ) => {
-    // TODO: validate the request
+    await requireValidSchema(addGroupRequestSchema, data);
 
     respond<CreateGroupResponse>({
         type: "createGroupResponse",
@@ -31,7 +36,7 @@ const createGroupRequest: ListenerFn<CreateGroupMessage> = async (
 const updateGroupRequest: ListenerFn<UpdateGroupMessage> = async (
     { message: { id, data }, sourceClient, respond },
 ) => {
-    // TODO: validate the request
+    await requireValidSchema(updateGroupRequestSchema, data);
 
     await updateGroup(sourceClient!.userId, {
         ...data,
@@ -48,8 +53,6 @@ const updateGroupRequest: ListenerFn<UpdateGroupMessage> = async (
 const deleteGroupRequest: ListenerFn<DeleteGroupMessage> = async (
     { message: { id }, sourceClient, respond },
 ) => {
-    // TODO: validate the request
-
     await deleteGroup(id, sourceClient!.userId);
 
     respond<DeleteGroupResponse>({
