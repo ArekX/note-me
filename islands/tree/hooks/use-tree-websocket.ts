@@ -24,10 +24,6 @@ export const useTreeWebsocket = (options: TreeWebsocketOptions) => {
         eventMap: {
             notes: {
                 createNoteResponse: (data) => {
-                    if (data.group_id === null) {
-                        return;
-                    }
-
                     const parent = data.group_id
                         ? findContainerById(data.group_id, "group")
                         : tree;
