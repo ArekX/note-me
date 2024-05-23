@@ -1,4 +1,4 @@
-import { Input } from "../Input.tsx";
+import Input from "../Input.tsx";
 
 interface InputFilterProps<T extends object> {
     filters: T;
@@ -6,9 +6,9 @@ interface InputFilterProps<T extends object> {
     onChange: (filters: T) => void;
 }
 
-export const TextFilter = <T extends object>(
+export default function TextFilter<T extends object>(
     { filters, filterKey, onChange }: InputFilterProps<T>,
-) => {
+) {
     return (
         <Input
             value={filters[filterKey] as string ?? ""}
@@ -17,4 +17,4 @@ export const TextFilter = <T extends object>(
             }}
         />
     );
-};
+}

@@ -1,13 +1,13 @@
 import ConfirmDialog from "$islands/ConfirmDialog.tsx";
 import { useSignal } from "@preact/signals";
-import { Button } from "$components/Button.tsx";
-import { Icon } from "$components/Icon.tsx";
-import { Pagination } from "$islands/Pagination.tsx";
+import Button from "$components/Button.tsx";
+import Icon from "$components/Icon.tsx";
+import Pagination from "$islands/Pagination.tsx";
 import { useEffect } from "preact/hooks";
 import { getUserData } from "$frontend/user-data.ts";
 import { CanManageTags } from "$backend/rbac/permissions.ts";
-import { EditableTag, EditTagForm } from "$islands/tags/EditTagForm.tsx";
-import { Input } from "$components/Input.tsx";
+import EditTagForm, { EditableTag } from "$islands/tags/EditTagForm.tsx";
+import Input from "$components/Input.tsx";
 import { debounce } from "$frontend/deps.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import {
@@ -17,7 +17,7 @@ import {
     FindTagsResponse,
 } from "$workers/websocket/api/tags/messages.ts";
 
-export function TagsList() {
+export default function TagsList() {
     const tagToDelete = useSignal<EditableTag | null>(null);
     const tagToEdit = useSignal<EditableTag | null>(null);
     const isLoading = useSignal<boolean>(true);

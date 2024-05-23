@@ -14,7 +14,7 @@ interface DropDownListProps {
     onInput?: (value: string) => void;
 }
 
-export function DropdownList(
+export default function DropdownList(
     { label, items, name, value, onInput, disabled = false }: DropDownListProps,
 ) {
     return (

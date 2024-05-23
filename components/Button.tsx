@@ -29,7 +29,7 @@ export type ButtonColors = keyof typeof buttonColors;
 
 export type ButtonSize = keyof typeof sizeTypes;
 
-export function Button(
+export default function Button(
     {
         disabled = false,
         setAsDefault,

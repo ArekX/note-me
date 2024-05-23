@@ -1,5 +1,5 @@
-import { Panel } from "$components/Panel.tsx";
-import { UserProfile } from "$islands/profile/UserProfile.tsx";
+import Panel from "$components/Panel.tsx";
+import UserProfile from "$islands/profile/UserProfile.tsx";
 import { AppState } from "$types";
 import { PageProps } from "$fresh/server.ts";
 

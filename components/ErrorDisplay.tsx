@@ -1,11 +1,11 @@
-import { zod, ZodIssue } from "$schemas/deps.ts";
+import { ZodIssue } from "$schemas/deps.ts";
 
 interface ErrorDisplayProps<T> {
     path: string;
     errors: ZodIssue[] | null;
 }
 
-export function ErrorDisplay<T>(
+export default function ErrorDisplay<T>(
     {
         path,
         errors,

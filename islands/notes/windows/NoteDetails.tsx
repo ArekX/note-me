@@ -5,7 +5,7 @@ import { useLoader } from "$frontend/hooks/use-loading.ts";
 import Loader from "$islands/Loader.tsx";
 import { NoteDetailsRecord } from "$backend/repository/note-repository.ts";
 import { getUserData } from "$frontend/user-data.ts";
-import { Button } from "$components/Button.tsx";
+import Button from "$components/Button.tsx";
 
 interface NoteDetailsProps {
     show: boolean;
@@ -13,7 +13,9 @@ interface NoteDetailsProps {
     onClose: () => void;
 }
 
-export const NoteDetails = ({ show, noteId, onClose }: NoteDetailsProps) => {
+export default function NoteDetails(
+    { show, noteId, onClose }: NoteDetailsProps,
+) {
     const noteData = useSignal<NoteDetailsRecord | null>(null);
 
     const isNoteLoading = useLoader();
@@ -71,4 +73,4 @@ export const NoteDetails = ({ show, noteId, onClose }: NoteDetailsProps) => {
                 )}
         </Dialog>
     );
-};
+}

@@ -1,4 +1,4 @@
-import { TagsList } from "$islands/tags/TagsList.tsx";
+import TagsList from "$islands/tags/TagsList.tsx";
 import { guardHandler } from "$backend/rbac/authorizer.ts";
 import { FreshContext, Handlers } from "$fresh/server.ts";
 import { AppState } from "$types";

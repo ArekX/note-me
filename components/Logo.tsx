@@ -4,7 +4,7 @@ interface LogoProps {
     white?: boolean;
 }
 
-export function Logo(props: LogoProps) {
+export default function Logo(props: LogoProps) {
     return (
         <img
             src={`/logo${props.white ? "-white" : ""}.svg`}

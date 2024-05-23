@@ -7,7 +7,7 @@ interface CodeBlockProps {
     node: Extract<AstNode, { type: "codeBlock" }>;
 }
 
-export const CodeBlock = ({ node }: CodeBlockProps) => {
+export default function CodeBlock({ node }: CodeBlockProps) {
     const viewerRef = useRef<HTMLPreElement>(null);
 
     useEffect(() => {
@@ -33,4 +33,4 @@ export const CodeBlock = ({ node }: CodeBlockProps) => {
             class={`lang-${node.data.language}`}
         >{renderChildren(node)}</pre>
     );
-};
+}

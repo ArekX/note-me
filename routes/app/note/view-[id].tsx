@@ -4,7 +4,7 @@ import {
     getNote,
     ViewNoteRecord,
 } from "$backend/repository/note-repository.ts";
-import { ViewNote } from "$islands/notes/ViewNote.tsx";
+import ViewNote from "$islands/notes/ViewNote.tsx";
 
 interface PageData {
     note: ViewNoteRecord | null;

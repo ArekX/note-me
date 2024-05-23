@@ -7,6 +7,6 @@ interface FootnoteDefinitionProps {
     >;
 }
 
-export const Footnote = ({ node }: FootnoteDefinitionProps) => {
+export default function Footnote({ node }: FootnoteDefinitionProps) {
     return <div class="footnote-definition">{node.type}</div>;
-};
+}

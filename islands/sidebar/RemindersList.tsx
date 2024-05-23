@@ -4,13 +4,13 @@ interface ReminderListProps {
     switcherComponent: ComponentChild;
 }
 
-export const RemindersList = ({
+export default function RemindersList({
     switcherComponent,
-}: ReminderListProps) => {
+}: ReminderListProps) {
     return (
         <div>
             {switcherComponent}
             <div>Reminders list</div>
         </div>
     );
-};
+}

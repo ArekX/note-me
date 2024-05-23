@@ -5,7 +5,7 @@ import { redirectTo } from "$frontend/redirection-manager.ts";
 import Loader from "$islands/Loader.tsx";
 import { useDragManager } from "../../frontend/hooks/use-drag-manager.ts";
 import NewTreeItem from "./TreeItem.tsx";
-import { Icon } from "$components/Icon.tsx";
+import Icon from "$components/Icon.tsx";
 import { RecordContainer } from "$islands/tree/hooks/record-container.ts";
 
 interface TreeListProps {
@@ -13,10 +13,10 @@ interface TreeListProps {
     switcherComponent: ComponentChild;
 }
 
-export const NewTreeList = ({
+export default function NewTreeList({
     switcherComponent,
     searchQuery,
-}: TreeListProps) => {
+}: TreeListProps) {
     const tree = useRecordTree();
     const dragManager = useDragManager<RecordContainer>();
 
@@ -59,4 +59,4 @@ export const NewTreeList = ({
             </div>
         </>
     );
-};
+}

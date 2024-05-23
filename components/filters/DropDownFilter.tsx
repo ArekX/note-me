@@ -1,4 +1,4 @@
-import { DropDownItem, DropdownList } from "$components/DropdownList.tsx";
+import DropdownList, { DropDownItem } from "$components/DropdownList.tsx";
 
 interface DropDownFilterProps<T extends object> {
     filters: T;
@@ -7,9 +7,9 @@ interface DropDownFilterProps<T extends object> {
     onChange: (filters: T) => void;
 }
 
-export const DropDownFilter = <T extends object>(
+export default function DropDownFilter<T extends object>(
     { filters, filterKey, items, onChange }: DropDownFilterProps<T>,
-) => {
+) {
     return (
         <DropdownList
             value={filters[filterKey] as string ?? ""}
@@ -19,4 +19,4 @@ export const DropDownFilter = <T extends object>(
             }}
         />
     );
-};
+}

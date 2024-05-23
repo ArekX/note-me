@@ -1,6 +1,6 @@
-import { Help } from "$islands/notes/windows/Help.tsx";
-import { NoteDelete } from "$islands/notes/windows/NoteDelete.tsx";
-import { NoteDetails } from "./windows/NoteDetails.tsx";
+import Help from "$islands/notes/windows/Help.tsx";
+import NoteDelete from "$islands/notes/windows/NoteDelete.tsx";
+import NoteDetails from "./windows/NoteDetails.tsx";
 
 export type NoteWindowTypes =
     | "details"

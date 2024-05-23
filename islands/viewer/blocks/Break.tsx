@@ -1,3 +1,3 @@
-export const Break = () => {
+export default function Break() {
     return <br />;
-};
+}

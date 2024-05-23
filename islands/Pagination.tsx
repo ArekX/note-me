@@ -1,4 +1,4 @@
-import { Icon } from "$components/Icon.tsx";
+import Icon from "$components/Icon.tsx";
 
 interface PaginationProps {
     total: number;
@@ -7,7 +7,7 @@ interface PaginationProps {
     onChange: (page: number) => void;
 }
 
-export function Pagination({
+export default function Pagination({
     total,
     perPage,
     currentPage,

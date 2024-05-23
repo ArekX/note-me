@@ -4,7 +4,7 @@ interface PanelProps {
     children: ComponentChildren;
 }
 
-export function Panel(
+export default function Panel(
     props: PanelProps,
 ) {
     return (

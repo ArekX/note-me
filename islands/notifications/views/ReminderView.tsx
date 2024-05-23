@@ -3,9 +3,9 @@ import {
     NotificationViewProps,
 } from "$islands/notifications/NotificationItem.tsx";
 
-export const ReminderView = ({
+export default function ReminderView({
     data,
-}: NotificationViewProps<NoteReminder>) => {
+}: NotificationViewProps<NoteReminder>) {
     return (
         <div className=" p-4 rounded-md">
             <h3 className="text-sm font-bold mb-2">
@@ -13,4 +13,4 @@ export const ReminderView = ({
             </h3>
         </div>
     );
-};
+}

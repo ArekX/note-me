@@ -1,5 +1,5 @@
-import { Button } from "$components/Button.tsx";
-import { Icon } from "$components/Icon.tsx";
+import Button from "$components/Button.tsx";
+import Icon from "$components/Icon.tsx";
 import { createRef } from "preact";
 import { useSinglePopover } from "$frontend/hooks/use-single-popover.ts";
 
@@ -28,9 +28,9 @@ interface MoreMenuProps {
     onMenuItemClick?: (name: MenuItemActions) => void;
 }
 
-export const MoreMenu = (
+export default function MoreMenu(
     { mode, inPreviewMode, onMenuItemClick }: MoreMenuProps,
-) => {
+) {
     const menuRef = createRef<HTMLDivElement>();
 
     const {
@@ -122,4 +122,4 @@ export const MoreMenu = (
             )}
         </div>
     );
-};
+}

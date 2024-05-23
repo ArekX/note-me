@@ -5,6 +5,6 @@ interface RootProps {
     node: Extract<AstNode, { type: "root" }>;
 }
 
-export const Root = ({ node }: RootProps) => {
+export default function Root({ node }: RootProps) {
     return <>{renderChildren(node)}</>;
-};
+}

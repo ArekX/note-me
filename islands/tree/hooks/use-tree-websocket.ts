@@ -2,6 +2,7 @@ import { NoteFrontendResponse } from "$workers/websocket/api/notes/messages.ts";
 import { GroupFrontendResponse } from "$workers/websocket/api/group/messages.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import { TreeStateHook } from "$islands/tree/hooks/use-tree-state.ts";
+import { fromTreeRecord } from "$islands/tree/hooks/record-container.ts";
 
 interface TreeWebsocketOptions {
     treeState: TreeStateHook;
@@ -9,6 +10,7 @@ interface TreeWebsocketOptions {
 
 export const useTreeWebsocket = (options: TreeWebsocketOptions) => {
     const {
+        tree,
         removeFromParent,
         propagateChanges,
         addChild,
@@ -21,6 +23,26 @@ export const useTreeWebsocket = (options: TreeWebsocketOptions) => {
     >({
         eventMap: {
             notes: {
+                createNoteResponse: (data) => {
+                    if (data.group_id === null) {
+                        return;
+                    }
+
+                    const parent = data.group_id
+                        ? findContainerById(data.group_id, "group")
+                        : tree;
+                    if (parent) {
+                        const newNote = fromTreeRecord({
+                            type: "note",
+                            id: data.record.id,
+                            name: data.record.title,
+                            has_children: 0,
+                        });
+
+                        addChild(parent, newNote);
+                        propagateChanges();
+                    }
+                },
                 deleteNoteResponse: (data) => {
                     const container = findContainerById(data.deletedId, "note");
                     if (container) {
@@ -39,6 +61,22 @@ export const useTreeWebsocket = (options: TreeWebsocketOptions) => {
                 },
             },
             groups: {
+                createGroupResponse: (data) => {
+                    const parent = data.record.parent_id
+                        ? findContainerById(data.record.parent_id, "group")
+                        : tree;
+                    if (parent) {
+                        const newGroup = fromTreeRecord({
+                            type: "group",
+                            id: data.record.id,
+                            name: data.record.name,
+                            has_children: 0,
+                        });
+
+                        addChild(parent, newGroup);
+                        propagateChanges();
+                    }
+                },
                 deleteGroupResponse: (data) => {
                     const container = findContainerById(
                         data.deletedId,

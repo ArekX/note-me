@@ -1,4 +1,4 @@
-import { Icon } from "$components/Icon.tsx";
+import Icon from "$components/Icon.tsx";
 import { createRef } from "preact";
 import { createPortal } from "preact/compat";
 import { useSinglePopover } from "$frontend/hooks/use-single-popover.ts";
@@ -30,12 +30,12 @@ interface MoreMenuProps {
     onAction: (action: MoreMenuItemAction) => void;
 }
 
-export const MoreMenu = (
+export default function MoreMenu(
     {
         container,
         onAction,
     }: MoreMenuProps,
-) => {
+) {
     const menuRef = createRef<HTMLDivElement>();
     const iconRef = createRef<HTMLSpanElement>();
 
@@ -164,4 +164,4 @@ export const MoreMenu = (
                 )}
         </div>
     );
-};
+}

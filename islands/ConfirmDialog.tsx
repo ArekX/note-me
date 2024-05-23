@@ -1,5 +1,5 @@
 import { ComponentChildren } from "preact";
-import { Button, ButtonColors } from "$components/Button.tsx";
+import Button, { ButtonColors } from "$components/Button.tsx";
 import Dialog from "$islands/Dialog.tsx";
 
 interface ConfirmDialogProps {

@@ -5,22 +5,22 @@ import {
 } from "$frontend/markdown.ts";
 import { JSX } from "preact/jsx-runtime";
 
-import { Text } from "./blocks/Text.tsx";
-import { Root } from "./blocks/Root.tsx";
-import { List } from "./blocks/List.tsx";
-import { Link } from "./blocks/Link.tsx";
-import { Image } from "./blocks/Image.tsx";
-import { Heading } from "./blocks/Heading.tsx";
-import { Checkbox } from "./blocks/Checkbox.tsx";
-import { Blockquote } from "./blocks/Blockquote.tsx";
-import { Footnote } from "./blocks/Footnote.tsx";
-import { ChildrenNode } from "./blocks/ChildrenNode.tsx";
+import Text from "./blocks/Text.tsx";
+import Root from "./blocks/Root.tsx";
+import List from "./blocks/List.tsx";
+import Link from "./blocks/Link.tsx";
+import Image from "./blocks/Image.tsx";
+import Heading from "./blocks/Heading.tsx";
+import Checkbox from "./blocks/Checkbox.tsx";
+import Blockquote from "./blocks/Blockquote.tsx";
+import Footnote from "./blocks/Footnote.tsx";
+import ChildrenNode from "./blocks/ChildrenNode.tsx";
 
-import { Code } from "./blocks/Code.tsx";
-import { Break } from "./blocks/Break.tsx";
-import { HorizontalLine } from "./blocks/HorizontalLine.tsx";
-import { CodeBlock } from "./blocks/CodeBlock.tsx";
-import { Extension } from "./blocks/Extension.tsx";
+import Code from "./blocks/Code.tsx";
+import Break from "./blocks/Break.tsx";
+import HorizontalLine from "./blocks/HorizontalLine.tsx";
+import CodeBlock from "./blocks/CodeBlock.tsx";
+import Extension from "./blocks/Extension.tsx";
 
 type RendererFunctions = RendererFn<AstNode["type"]>;
 

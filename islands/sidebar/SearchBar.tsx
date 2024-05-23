@@ -1,4 +1,4 @@
-import { Icon } from "$components/Icon.tsx";
+import Icon from "$components/Icon.tsx";
 import Dialog from "$islands/Dialog.tsx";
 import { ComponentChild } from "preact";
 

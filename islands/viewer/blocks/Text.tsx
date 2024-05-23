@@ -4,6 +4,6 @@ interface TextProps {
     node: Extract<AstNode, { type: "text" }>;
 }
 
-export const Text = ({ node }: TextProps) => {
+export default function Text({ node }: TextProps) {
     return <span>{node.content}</span>;
-};
+}

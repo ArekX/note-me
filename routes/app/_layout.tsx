@@ -2,7 +2,7 @@ import { FreshContext } from "$fresh/server.ts";
 import { AppState } from "$types";
 import ScriptsLoader from "../../islands/ScriptLoader.tsx";
 import { getUserNotifications } from "$backend/repository/notification-repository.ts";
-import { Sidebar } from "$components/Sidebar.tsx";
+import Sidebar from "$components/Sidebar.tsx";
 import { canAccessSettings } from "$backend/rbac/role-definitions.ts";
 
 export default async function Layout(

@@ -1,7 +1,7 @@
 import { useSignal } from "@preact/signals";
 import Dialog from "$islands/Dialog.tsx";
-import { Input } from "$components/Input.tsx";
-import { Button } from "$components/Button.tsx";
+import Input from "$components/Input.tsx";
+import Button from "$components/Button.tsx";
 import { useEffect } from "preact/hooks";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import {
@@ -21,7 +21,7 @@ interface EditTagFormProps {
     onDone: (reason: "ok" | "cancel") => void;
 }
 
-export function EditTagForm(
+export default function EditTagForm(
     { editTag, onDone }: EditTagFormProps,
 ) {
     const tag = useSignal<EditableTag>({ ...editTag } as EditableTag);

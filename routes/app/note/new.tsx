@@ -5,7 +5,7 @@ import {
     getSingleUserGroup,
     GroupRecord,
 } from "$backend/repository/group-repository.ts";
-import { NoteEditor } from "$islands/notes/NoteEditor.tsx";
+import NoteEditor from "$islands/notes/NoteEditor.tsx";
 
 interface PageData {
     group: GroupRecord | null;

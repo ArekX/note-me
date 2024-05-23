@@ -1,4 +1,4 @@
-import { Icon } from "$components/Icon.tsx";
+import Icon from "$components/Icon.tsx";
 import { useSignal } from "@preact/signals";
 import { createRef } from "preact";
 import { useEffect } from "preact/hooks";
@@ -15,11 +15,11 @@ interface ListSwitcherProps {
     items: ListSwitcherItem[];
 }
 
-export const ListSwitcher = ({
+export default function ListSwitcher({
     items,
     currentItem,
     currentIcon,
-}: ListSwitcherProps) => {
+}: ListSwitcherProps) {
     const isVisible = useSignal(false);
     const menuRef = createRef<HTMLDivElement>();
 
@@ -73,4 +73,4 @@ export const ListSwitcher = ({
             )}
         </div>
     );
-};
+}

@@ -1,9 +1,9 @@
 import Notifications from "../islands/notifications/NotificationList.tsx";
-import { Logo } from "$components/Logo.tsx";
+import Logo from "$components/Logo.tsx";
 import { NotificationRecord } from "$backend/repository/notification-repository.ts";
-import { Icon } from "$components/Icon.tsx";
-import { ListPanel } from "../islands/sidebar/SideBarPanel.tsx";
-import { LogoutButton } from "$islands/sidebar/LogoutButton.tsx";
+import Icon from "$components/Icon.tsx";
+import ListPanel from "../islands/sidebar/SideBarPanel.tsx";
+import LogoutButton from "$islands/sidebar/LogoutButton.tsx";
 import { getCurrentMonthWallpaper } from "$frontend/wallpaper.ts";
 
 export interface SidebarProps {
@@ -11,7 +11,7 @@ export interface SidebarProps {
     initialNotifications: NotificationRecord[];
 }
 
-export function Sidebar(
+export default function Sidebar(
     { initialNotifications, showSettings }: SidebarProps,
 ) {
     const wallpaper = getCurrentMonthWallpaper();

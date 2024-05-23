@@ -1,8 +1,8 @@
 import { NotificationRecord } from "$backend/repository/notification-repository.ts";
-import { ReminderView } from "$islands/notifications/views/ReminderView.tsx";
+import ReminderView from "$islands/notifications/views/ReminderView.tsx";
 import { JSX } from "preact/jsx-runtime";
-import { Button } from "$components/Button.tsx";
-import { Icon } from "$components/Icon.tsx";
+import Button from "$components/Button.tsx";
+import Icon from "$components/Icon.tsx";
 
 export interface NotificationViewProps<T> {
     data: T;
@@ -27,11 +27,11 @@ const notificationViewComponents: NotificationViewMap = {
     "reminder-received": ReminderView,
 };
 
-export const NotificationItem = ({
+export default function NotificationItem({
     notification,
     onDelete,
     onMarkRead,
-}: NotificationItemProps) => {
+}: NotificationItemProps) {
     const { data } = notification;
 
     const NotificationView = notificationViewComponents[data.type];
@@ -76,4 +76,4 @@ export const NotificationItem = ({
             </div>
         </div>
     );
-};
+}

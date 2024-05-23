@@ -1,4 +1,4 @@
-import { Icon } from "$components/Icon.tsx";
+import Icon from "$components/Icon.tsx";
 import { ComponentChild } from "preact";
 import { RecordTreeHook } from "./hooks/use-record-tree.ts";
 import { DragManagerHook } from "../../frontend/hooks/use-drag-manager.ts";
@@ -11,11 +11,11 @@ interface RootGroupBarProps {
     switcherComponent: ComponentChild;
 }
 
-const RootGroupBar = ({
+export default function RootGroupBar({
     treeManager,
     dragManager,
     switcherComponent,
-}: RootGroupBarProps) => {
+}: RootGroupBarProps) {
     const handleDrop = (e: DragEvent) => {
         treeManager.changeParent(dragManager.source!, treeManager.root);
     };
@@ -79,6 +79,4 @@ const RootGroupBar = ({
             </div>
         </div>
     );
-};
-
-export default RootGroupBar;
+}

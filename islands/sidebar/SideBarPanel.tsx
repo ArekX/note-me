@@ -1,6 +1,5 @@
 import SearchBar from "./SearchBar.tsx";
-import {
-    ListSwitcher,
+import ListSwitcher, {
     ListSwitcherItem,
 } from "$islands/sidebar/ListSwitcher.tsx";
 import { useSignal } from "@preact/signals";
@@ -13,7 +12,7 @@ interface ListView {
     placeholder: string;
 }
 
-export const ListPanel = () => {
+export default function ListPanel() {
     const showAdvancedSearch = useSignal(false);
     const searchQuery = useSignal("");
     const currentType = useSignal<ListView>({
@@ -89,4 +88,4 @@ export const ListPanel = () => {
             />
         </div>
     );
-};
+}

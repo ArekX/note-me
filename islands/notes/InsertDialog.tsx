@@ -1,5 +1,5 @@
-import { Button } from "$components/Button.tsx";
-import { Icon } from "$components/Icon.tsx";
+import Button from "$components/Button.tsx";
+import Icon from "$components/Icon.tsx";
 import Dialog from "$islands/Dialog.tsx";
 import { InsertLinkDef } from "$islands/notes/insert-components/InsertLink.tsx";
 import { useSignal } from "@preact/signals";
@@ -26,11 +26,11 @@ const insertComponents: InsertComponent[] = [
     InsertImageDef,
 ];
 
-export const InsertDialog = ({
+export default function InsertDialog({
     show,
     onShowRequest,
     onInsert,
-}: InsertDialogProps) => {
+}: InsertDialogProps) {
     const selectedComponentIndex = useSignal(0);
     const textToInsert = useSignal("");
 
@@ -94,4 +94,4 @@ export const InsertDialog = ({
             </Dialog>
         </div>
     );
-};
+}

@@ -11,7 +11,9 @@ interface TabPanelProps {
     children: ComponentChildren;
 }
 
-export function TabPanel({ links, children, activeLink }: TabPanelProps) {
+export default function TabPanel(
+    { links, children, activeLink }: TabPanelProps,
+) {
     return (
         <div class="flex flex-col">
             <div class="flex">

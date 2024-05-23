@@ -1,4 +1,4 @@
-import { Icon } from "$components/Icon.tsx";
+import Icon from "$components/Icon.tsx";
 
 export interface MenuItem {
     icon: string;
@@ -19,7 +19,7 @@ function isActiveItem(route: string, item: MenuItem): boolean {
     return route == item.link;
 }
 
-export function Nav(props: NavProps) {
+export default function Nav(props: NavProps) {
     return (
         <nav>
             <ul>

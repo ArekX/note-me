@@ -1,9 +1,9 @@
 import { GroupRecord } from "$backend/repository/group-repository.ts";
 import { useSignal } from "@preact/signals";
 import { NoteRecord } from "$backend/repository/note-repository.ts";
-import { Button } from "$components/Button.tsx";
-import { Icon } from "$components/Icon.tsx";
-import { MoreMenu } from "$islands/notes/MoreMenu.tsx";
+import Button from "$components/Button.tsx";
+import Icon from "$components/Icon.tsx";
+import MoreMenu from "$islands/notes/MoreMenu.tsx";
 import Loader from "$islands/Loader.tsx";
 import { useEffect } from "preact/hooks";
 import { MenuItemActions } from "$islands/notes/MoreMenu.tsx";
@@ -11,19 +11,16 @@ import { inputHandler } from "$frontend/methods.ts";
 import { addNoteRequestSchema } from "$schemas/notes.ts";
 import { validateSchema } from "$schemas/mod.ts";
 import { ZodIssue } from "$schemas/deps.ts";
-import { ErrorDisplay } from "$components/ErrorDisplay.tsx";
+import ErrorDisplay from "$components/ErrorDisplay.tsx";
 import Viewer from "$islands/viewer/Viewer.tsx";
 import NoteWindow, { NoteWindowTypes } from "$islands/notes/NoteWindow.tsx";
-import { NoteTextArea } from "./NoteTextArea.tsx";
+import NoteTextArea from "./NoteTextArea.tsx";
 import TagInput from "$islands/notes/TagInput.tsx";
 import { useLoader } from "$frontend/hooks/use-loading.ts";
-import { clearStorage } from "$frontend/session-storage.ts";
 import { redirectTo } from "$frontend/redirection-manager.ts";
-import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import {
     CreateNoteMessage,
     CreateNoteResponse,
-    NoteFrontendResponse,
     UpdateNoteMessage,
     UpdateNoteResponse,
 } from "$workers/websocket/api/notes/messages.ts";
@@ -39,10 +36,10 @@ interface NoteEditorProps {
     group: GroupRecord | null;
 }
 
-export const NoteEditor = ({
+export default function NoteEditor({
     group,
     note,
-}: NoteEditorProps) => {
+}: NoteEditorProps) {
     const name = useSignal(note.title);
     const text = useSignal(note.note);
     const tags = useSignal<string[]>(note.tags);
@@ -84,8 +81,6 @@ export const NoteEditor = ({
                     expect: "updateNoteResponse",
                 },
             );
-
-            // TODO: Handle websocket event
         } else {
             const { record } = await sendMessage<
                 CreateNoteMessage,
@@ -100,7 +95,6 @@ export const NoteEditor = ({
                     expect: "createNoteResponse",
                 },
             );
-            clearStorage(); // TODO: Remove this when websocket event is implemented
             redirectTo.viewNote({ noteId: record.id });
         }
 
@@ -245,4 +239,4 @@ export const NoteEditor = ({
             )}
         </div>
     );
-};
+}

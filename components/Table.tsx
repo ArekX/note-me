@@ -36,7 +36,7 @@ interface TableProps<T extends object> {
     bodyRowProps?: object | ((row: T, rowIndex: number) => object);
 }
 
-export function Table<T extends object>(
+export default function Table<T extends object>(
     {
         columns,
         rows,

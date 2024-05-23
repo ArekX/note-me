@@ -1,10 +1,10 @@
 import { useSignal } from "@preact/signals";
 import Dialog from "$islands/Dialog.tsx";
-import { Input } from "$components/Input.tsx";
-import { Button } from "$components/Button.tsx";
+import Input from "$components/Input.tsx";
+import Button from "$components/Button.tsx";
 import { useEffect } from "preact/hooks";
 import { UserRecord } from "$backend/repository/user-repository.ts";
-import { DropdownList } from "$components/DropdownList.tsx";
+import DropdownList from "$components/DropdownList.tsx";
 import { roleDropDownList } from "$backend/rbac/role-definitions.ts";
 import { getUserData } from "$frontend/user-data.ts";
 import { supportedTimezoneList } from "$backend/time.ts";
@@ -26,7 +26,7 @@ interface EditUserFormProps {
     onDone: (reason: "ok" | "cancel") => void;
 }
 
-export function EditUserForm(
+export default function EditUserForm(
     { editUser, onDone }: EditUserFormProps,
 ) {
     const user = useSignal<EditableUser>({ ...editUser } as EditableUser);

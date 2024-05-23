@@ -5,6 +5,6 @@ interface BlockquoteProps {
     node: Extract<AstNode, { type: "blockQuote" }>;
 }
 
-export const Blockquote = ({ node }: BlockquoteProps) => {
+export default function Blockquote({ node }: BlockquoteProps) {
     return <blockquote>{renderChildren(node)}</blockquote>;
-};
+}

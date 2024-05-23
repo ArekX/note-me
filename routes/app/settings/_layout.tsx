@@ -1,5 +1,5 @@
 import { PageProps } from "$fresh/server.ts";
-import { TabLink, TabPanel } from "$components/TabPanel.tsx";
+import TabPanel, { TabLink } from "$components/TabPanel.tsx";
 import { AppState } from "$types";
 import { CanManageSettings } from "$backend/rbac/permissions.ts";
 import { hasPermission } from "$backend/rbac/authorizer.ts";

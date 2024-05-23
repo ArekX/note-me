@@ -1,15 +1,15 @@
-import { Logo } from "../components/Logo.tsx";
+import Logo from "../components/Logo.tsx";
 import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
 import {
     createSessionState,
     writeSessionCookie,
 } from "$backend/session/mod.ts";
 import { AppSessionData, AppState } from "$types";
-import { Alert } from "$components/Alert.tsx";
-import { Icon } from "$components/Icon.tsx";
+import Alert from "$components/Alert.tsx";
+import Icon from "$components/Icon.tsx";
 import { getUserByLogin } from "$backend/repository/user-repository.ts";
-import { Button } from "$components/Button.tsx";
-import { Input } from "$components/Input.tsx";
+import Button from "$components/Button.tsx";
+import Input from "$components/Input.tsx";
 import InvalidateData from "$islands/InvalidateData.tsx";
 
 interface LoginResult {

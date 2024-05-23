@@ -4,7 +4,7 @@ interface AlertProps {
     message: string;
 }
 
-export function Alert(
+export default function Alert(
     props: JSX.HTMLAttributes<Element> & AlertProps,
 ) {
     return props.message

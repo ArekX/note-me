@@ -1,5 +1,5 @@
-import { TextFilter } from "./TextFilter.tsx";
-import { DropDownFilter } from "./DropDownFilter.tsx";
+import TextFilter from "./TextFilter.tsx";
+import DropDownFilter from "./DropDownFilter.tsx";
 import { DropDownItem } from "../DropdownList.tsx";
 import { ComponentChildren } from "preact";
 import { debounce } from "$frontend/deps.ts";

@@ -15,7 +15,7 @@ interface IconProps {
         | "fade-down";
 }
 
-export function Icon(
+export default function Icon(
     {
         name,
         type = "regular",

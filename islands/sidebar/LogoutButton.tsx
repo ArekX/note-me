@@ -1,8 +1,8 @@
 import { clearStorage } from "$frontend/session-storage.ts";
-import { Icon } from "$components/Icon.tsx";
+import Icon from "$components/Icon.tsx";
 import { redirectTo } from "$frontend/redirection-manager.ts";
 
-export const LogoutButton = () => {
+export default function LogoutButton() {
     const handleLogOut = () => {
         clearStorage();
         redirectTo.logout();
@@ -17,4 +17,4 @@ export const LogoutButton = () => {
             <Icon name="log-out" />
         </a>
     );
-};
+}

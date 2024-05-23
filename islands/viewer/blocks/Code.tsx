@@ -4,6 +4,6 @@ interface CodeProps {
     node: Extract<AstNode, { type: "code" }>;
 }
 
-export const Code = ({ node }: CodeProps) => {
+export default function Code({ node }: CodeProps) {
     return <span>{node.content}</span>;
-};
+}

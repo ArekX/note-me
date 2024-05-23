@@ -29,10 +29,10 @@ const nodeElementMap: Record<ChildNodeTypes, string> = {
     tableCell: "td",
 };
 
-export const ChildrenNode = ({ node }: ChildrenNodeProps) => {
+export default function ChildrenNode({ node }: ChildrenNodeProps) {
     return createElement(
         nodeElementMap[node.type],
         { className: `node-${node.type}` },
         renderChildren(node),
     );
-};
+}

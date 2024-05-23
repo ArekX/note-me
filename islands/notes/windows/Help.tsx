@@ -1,12 +1,12 @@
 import Dialog from "$islands/Dialog.tsx";
-import { Button } from "$components/Button.tsx";
+import Button from "$components/Button.tsx";
 
 interface HelpProps {
     show: boolean;
     onClose: () => void;
 }
 
-export const Help = ({ show, onClose }: HelpProps) => {
+export default function Help({ show, onClose }: HelpProps) {
     return (
         <Dialog visible={show}>
             <table>
@@ -57,4 +57,4 @@ export const Help = ({ show, onClose }: HelpProps) => {
             </div>
         </Dialog>
     );
-};
+}

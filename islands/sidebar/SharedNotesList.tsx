@@ -4,13 +4,13 @@ interface SharedNotesListProps {
     switcherComponent: ComponentChild;
 }
 
-export const SharedNotesList = ({
+export default function SharedNotesList({
     switcherComponent,
-}: SharedNotesListProps) => {
+}: SharedNotesListProps) {
     return (
         <div>
             {switcherComponent}
             <div>Shared notes</div>
         </div>
     );
-};
+}

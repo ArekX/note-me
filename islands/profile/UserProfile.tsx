@@ -1,8 +1,8 @@
 import { useSignal } from "@preact/signals";
 import { EditUserProfile } from "$schemas/users.ts";
-import { Input } from "$components/Input.tsx";
-import { Button } from "$components/Button.tsx";
-import { DropdownList } from "$components/DropdownList.tsx";
+import Input from "$components/Input.tsx";
+import Button from "$components/Button.tsx";
+import DropdownList from "$components/DropdownList.tsx";
 import { supportedTimezoneList } from "$backend/time.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import {
@@ -14,7 +14,7 @@ interface UserProfileProps {
     initialProfileData: EditUserProfile;
 }
 
-export function UserProfile({ initialProfileData }: UserProfileProps) {
+export default function UserProfile({ initialProfileData }: UserProfileProps) {
     const userData = useSignal<EditUserProfile>({
         ...initialProfileData,
     });

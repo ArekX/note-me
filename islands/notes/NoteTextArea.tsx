@@ -2,10 +2,7 @@ import { useSignal } from "@preact/signals";
 import { createRef } from "preact";
 import { useEffect } from "preact/hooks";
 import { autosize, insertTextIntoField } from "$frontend/deps.ts";
-import { Button } from "$components/Button.tsx";
-import { Icon } from "$components/Icon.tsx";
-import Dialog from "$islands/Dialog.tsx";
-import { InsertDialog } from "$islands/notes/InsertDialog.tsx";
+import InsertDialog from "$islands/notes/InsertDialog.tsx";
 
 interface NoteInputProps {
     isSaving: boolean;
@@ -13,11 +10,11 @@ interface NoteInputProps {
     onChange: (text: string) => void;
 }
 
-export const NoteTextArea = ({
+export default function NoteTextArea({
     isSaving,
     initialText,
     onChange,
-}: NoteInputProps) => {
+}: NoteInputProps) {
     const text = useSignal(initialText);
     const showInsertDialog = useSignal(false);
     const lastCursorPosition = useSignal(0);
@@ -110,4 +107,4 @@ export const NoteTextArea = ({
             </textarea>
         </div>
     );
-};
+}

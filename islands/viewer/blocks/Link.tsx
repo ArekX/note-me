@@ -5,10 +5,10 @@ interface LinkProps {
     node: Extract<AstNode, { type: "link" }>;
 }
 
-export const Link = ({ node }: LinkProps) => {
+export default function Link({ node }: LinkProps) {
     return (
         <a href={node.data.url} title={node.data.title}>
             {renderChildren(node)}
         </a>
     );
-};
+}

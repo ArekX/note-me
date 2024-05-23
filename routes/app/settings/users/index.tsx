@@ -1,5 +1,5 @@
 import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
-import { UserList } from "$islands/users/UserList.tsx";
+import UserList from "$islands/users/UserList.tsx";
 import { AppState } from "$types";
 import { CanManageUsers } from "$backend/rbac/permissions.ts";
 import { guardHandler } from "$backend/rbac/authorizer.ts";

@@ -50,6 +50,7 @@ const createNoteRequest: ListenerFn<CreateNoteMessage> = async (
         respond<CreateNoteResponse>({
             type: "createNoteResponse",
             record,
+            group_id: data.group_id,
         });
     } catch (e) {
         await rollbackTransaction();

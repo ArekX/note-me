@@ -1,6 +1,6 @@
 import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
 import { AppState } from "$types";
-import { NoteEditor } from "$islands/notes/NoteEditor.tsx";
+import NoteEditor from "$islands/notes/NoteEditor.tsx";
 import {
     getNote,
     ViewNoteRecord,

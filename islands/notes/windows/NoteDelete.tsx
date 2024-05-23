@@ -15,7 +15,7 @@ interface NoteDeleteProps {
     onClose: () => void;
 }
 
-export const NoteDelete = ({ noteId, show, onClose }: NoteDeleteProps) => {
+export default function NoteDelete({ noteId, show, onClose }: NoteDeleteProps) {
     const deleteLoader = useLoader();
 
     const { sendMessage } = useWebsocketService();
@@ -59,4 +59,4 @@ export const NoteDelete = ({ noteId, show, onClose }: NoteDeleteProps) => {
             onConfirm={handleConfirmedDelete}
         />
     );
-};
+}

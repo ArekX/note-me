@@ -4,11 +4,11 @@ interface ImageProps {
     node: Extract<AstNode, { type: "image" }>;
 }
 
-export const Image = ({ node }: ImageProps) => {
+export default function Image({ node }: ImageProps) {
     return (
         <img
             src={node.url}
             alt={node.title}
         />
     );
-};
+}

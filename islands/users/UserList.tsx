@@ -1,10 +1,10 @@
-import { Table } from "$components/Table.tsx";
+import Table from "$components/Table.tsx";
 import ConfirmDialog from "$islands/ConfirmDialog.tsx";
 import { useSignal } from "@preact/signals";
-import { Button } from "$components/Button.tsx";
-import { Icon } from "$components/Icon.tsx";
-import { Pagination } from "$islands/Pagination.tsx";
-import { EditableUser, EditUserForm } from "$islands/users/EditUserForm.tsx";
+import Button from "$components/Button.tsx";
+import Icon from "$components/Icon.tsx";
+import Pagination from "$islands/Pagination.tsx";
+import EditUserForm, { EditableUser } from "$islands/users/EditUserForm.tsx";
 import { useEffect } from "preact/hooks";
 import {
     roleDropDownList,
@@ -21,7 +21,7 @@ import {
     FindUsersResponse,
 } from "$workers/websocket/api/users/messages.ts";
 
-export function UserList() {
+export default function UserList() {
     const userToDelete = useSignal<EditableUser | null>(null);
     const userToEdit = useSignal<EditableUser | null>(null);
     const isLoading = useSignal<boolean>(true);

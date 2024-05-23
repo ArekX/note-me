@@ -1,4 +1,4 @@
-import { Icon } from "$components/Icon.tsx";
+import Icon from "$components/Icon.tsx";
 import { IS_BROWSER } from "$fresh/runtime.ts";
 
 interface InputProps {
@@ -12,7 +12,7 @@ interface InputProps {
     placeholder?: string;
 }
 
-export function Input(
+export default function Input(
     {
         icon,
         label,

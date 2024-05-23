@@ -5,9 +5,9 @@ interface ListProps {
     node: Extract<AstNode, { type: "list" }>;
 }
 
-export const List = ({ node }: ListProps) => {
+export default function List({ node }: ListProps) {
     if (node.data.type === "ordered") {
         return <ol>{renderChildren(node)}</ol>;
     }
     return <ul>{renderChildren(node)}</ul>;
-};
+}

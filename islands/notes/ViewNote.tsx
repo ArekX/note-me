@@ -1,8 +1,8 @@
 import Viewer from "../viewer/Viewer.tsx";
 import { ViewNoteRecord } from "$backend/repository/note-repository.ts";
-import { Button } from "$components/Button.tsx";
-import { Icon } from "$components/Icon.tsx";
-import { MenuItemActions, MoreMenu } from "$islands/notes/MoreMenu.tsx";
+import Button from "$components/Button.tsx";
+import Icon from "$components/Icon.tsx";
+import MoreMenu, { MenuItemActions } from "$islands/notes/MoreMenu.tsx";
 import NoteWindow, { NoteWindowTypes } from "$islands/notes/NoteWindow.tsx";
 import { useSignal } from "@preact/signals";
 import { redirectTo } from "$frontend/redirection-manager.ts";
@@ -13,7 +13,7 @@ export interface ViewNoteProps {
     record: ViewNoteRecord;
 }
 
-export function ViewNote(
+export default function ViewNote(
     { readonly = false, record }: ViewNoteProps,
 ) {
     const windowMode = useSignal<NoteWindowTypes | null>(null);

@@ -1,11 +1,11 @@
 import { useSignal } from "@preact/signals";
-import { Icon } from "$components/Icon.tsx";
+import Icon from "$components/Icon.tsx";
 import { useScriptsReadyEffect } from "../../frontend/hooks/use-scripts-ready.ts";
 
 import { NotificationRecord } from "$backend/repository/notification-repository.ts";
 import { createRef } from "preact";
-import { NotificationItem } from "$islands/notifications/NotificationItem.tsx";
-import { Button } from "$components/Button.tsx";
+import NotificationItem from "$islands/notifications/NotificationItem.tsx";
+import Button from "$components/Button.tsx";
 import { useSinglePopover } from "$frontend/hooks/use-single-popover.ts";
 import { useWebsocketService } from "../../frontend/hooks/use-websocket-service.ts";
 import {

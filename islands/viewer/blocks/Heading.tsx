@@ -6,10 +6,10 @@ interface HeadingProps {
     node: Extract<AstNode, { type: "heading" }>;
 }
 
-export const Heading = ({ node }: HeadingProps) => {
+export default function Heading({ node }: HeadingProps) {
     return createElement(
         `h${Math.min(6, node.data.level)}`,
         {},
         renderChildren(node),
     );
-};
+}

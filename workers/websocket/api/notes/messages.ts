@@ -15,7 +15,7 @@ export type CreateNoteMessage = NoteMessage<
 
 export type CreateNoteResponse = NoteMessage<
     "createNoteResponse",
-    { record: NoteRecord }
+    { record: NoteRecord; group_id: number | null }
 >;
 
 export type UpdateNoteMessage = NoteMessage<
