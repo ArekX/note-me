@@ -35,8 +35,11 @@ import * as $notes_NoteWindow from "./islands/notes/NoteWindow.tsx";
 import * as $notes_TagInput from "./islands/notes/TagInput.tsx";
 import * as $notes_ViewNote from "./islands/notes/ViewNote.tsx";
 import * as $notes_hooks_use_note_websocket from "./islands/notes/hooks/use-note-websocket.ts";
+import * as $notes_insert_components_InsertFile from "./islands/notes/insert-components/InsertFile.tsx";
+import * as $notes_insert_components_InsertGroupList from "./islands/notes/insert-components/InsertGroupList.tsx";
 import * as $notes_insert_components_InsertImage from "./islands/notes/insert-components/InsertImage.tsx";
 import * as $notes_insert_components_InsertLink from "./islands/notes/insert-components/InsertLink.tsx";
+import * as $notes_insert_components_InsertNoteLink from "./islands/notes/insert-components/InsertNoteLink.tsx";
 import * as $notes_windows_Help from "./islands/notes/windows/Help.tsx";
 import * as $notes_windows_NoteDelete from "./islands/notes/windows/NoteDelete.tsx";
 import * as $notes_windows_NoteDetails from "./islands/notes/windows/NoteDetails.tsx";
@@ -120,10 +123,16 @@ const manifest = {
         "./islands/notes/ViewNote.tsx": $notes_ViewNote,
         "./islands/notes/hooks/use-note-websocket.ts":
             $notes_hooks_use_note_websocket,
+        "./islands/notes/insert-components/InsertFile.tsx":
+            $notes_insert_components_InsertFile,
+        "./islands/notes/insert-components/InsertGroupList.tsx":
+            $notes_insert_components_InsertGroupList,
         "./islands/notes/insert-components/InsertImage.tsx":
             $notes_insert_components_InsertImage,
         "./islands/notes/insert-components/InsertLink.tsx":
             $notes_insert_components_InsertLink,
+        "./islands/notes/insert-components/InsertNoteLink.tsx":
+            $notes_insert_components_InsertNoteLink,
         "./islands/notes/windows/Help.tsx": $notes_windows_Help,
         "./islands/notes/windows/NoteDelete.tsx": $notes_windows_NoteDelete,
         "./islands/notes/windows/NoteDetails.tsx": $notes_windows_NoteDetails,

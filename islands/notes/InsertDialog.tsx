@@ -5,6 +5,9 @@ import { InsertLinkDef } from "$islands/notes/insert-components/InsertLink.tsx";
 import { useSignal } from "@preact/signals";
 import { JSX } from "preact/jsx-runtime";
 import { InsertImageDef } from "$islands/notes/insert-components/InsertImage.tsx";
+import { InsertFileDef } from "$islands/notes/insert-components/InsertFile.tsx";
+import { InsertGroupListDef } from "$islands/notes/insert-components/InsertGroupList.tsx";
+import { InsertNoteLinkDef } from "$islands/notes/insert-components/InsertNoteLink.tsx";
 
 interface InsertDialogProps {
     show: boolean;
@@ -24,6 +27,9 @@ export interface InsertComponent {
 const insertComponents: InsertComponent[] = [
     InsertLinkDef,
     InsertImageDef,
+    InsertFileDef,
+    InsertGroupListDef,
+    InsertNoteLinkDef,
 ];
 
 export default function InsertDialog({

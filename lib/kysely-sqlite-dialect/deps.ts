@@ -25,6 +25,6 @@ export {
     type StringReference,
     Transaction,
     type TransactionSettings,
-} from "npm:kysely@0.26.3";
+} from "npm:kysely@0.27.3";
 
 export { Semaphore } from "https://deno.land/x/semaphore@v1.1.1/mod.ts";

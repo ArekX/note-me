@@ -19,6 +19,7 @@ export class KyselyMigrationManager<T> {
     ) {
         this.#migrator = new Migrator({
             db: this.db,
+            allowUnorderedMigrations: true,
             migrationLockTableName: "migration_lock",
             migrationTableName: "migration",
             provider: new FileMigrationProvider({

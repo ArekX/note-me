@@ -53,6 +53,15 @@ const handleConnectionRequest = async (request: Request): Promise<Response> => {
     });
 
     socket.addEventListener("message", (event) => {
+        if (event.data[0] === "|") {
+            // TODO: Binary message handling
+            // format:
+            // limit the payload size by .env variable
+            // also limit the json size
+            // |<header size: 2 bytes><payload size: 4 bytes><header data: size bytes><payload data: size bytes>
+            return;
+        }
+
         handleClientRequest(clients[id]!, JSON.parse(event.data));
     });
 
