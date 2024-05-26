@@ -7,7 +7,9 @@ export interface NoteWebsocketOptions {
 }
 
 export const useNoteWebsocket = (options: NoteWebsocketOptions) => {
-    const { sendMessage } = useWebsocketService<NoteFrontendResponse>({
+    const { sendMessage, sendBinaryMessage } = useWebsocketService<
+        NoteFrontendResponse
+    >({
         eventMap: {
             notes: {
                 deleteNoteResponse: (response) => {
@@ -21,5 +23,6 @@ export const useNoteWebsocket = (options: NoteWebsocketOptions) => {
 
     return {
         sendMessage,
+        sendBinaryMessage,
     };
 };

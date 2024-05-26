@@ -10,7 +10,7 @@ type SocketHandler = (message: unknown) => void;
 let socket: WebSocket | null = null;
 
 let pendingRequestsPropagationTicket: TicketId | null = null;
-let pendingRequests: string[] = [];
+let pendingRequests: (string | ArrayBuffer)[] = [];
 
 const handlers: Set<SocketHandler> = new Set();
 
@@ -53,6 +53,15 @@ export const send = <T>(message: T) => {
     }
 
     socket?.send(JSON.stringify(message));
+};
+
+export const sendBinary = (data: ArrayBuffer) => {
+    if (!socket || socket.readyState !== WebSocket.OPEN) {
+        pendingRequests.push(data);
+        return;
+    }
+
+    socket?.send(data);
 };
 
 export const addListener = <T>(handler: (message: T) => void) => {

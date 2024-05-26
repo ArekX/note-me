@@ -12,11 +12,24 @@ export type SocketClientMap = { [key: SocketClient["id"]]: SocketClient };
 export type ClientEvent = "connected" | "disconnected";
 export type ClientEventFn = (event: ClientEvent, client: SocketClient) => void;
 
-export type Message<Namespace = string, Type = string, Data = unknown> = {
+export type MessageHeader<Namespace = string, Type = string> = {
     requestId: string;
     type: Type;
     namespace: Namespace;
-} & Data;
+};
+
+export type Message<Namespace = string, Type = string, Data = unknown> =
+    & MessageHeader<Namespace, Type>
+    & Data;
+
+export type BinaryMessage<Namespace = string, Type = string, Data = unknown> =
+    & MessageHeader<Namespace, Type>
+    & Data
+    & {
+        binaryData: ArrayBuffer;
+    };
+
+export type SocketMessage = BinaryMessage | Message;
 
 export type ErrorMessage = Message<"system", "error", { message: string }>;
 
@@ -33,7 +46,7 @@ export type ListenerFn<T = unknown> = (data: {
     message: T;
     service: WebsocketService;
     sourceClient?: SocketClient;
-    respond: <R extends Message>(
+    respond: <R extends SocketMessage>(
         data: Omit<R, "namespace" | "requestId">,
     ) => void;
 }) => void;
@@ -47,16 +60,16 @@ export type RegisterListenerMap<T extends Message> = {
 };
 
 export type RegisterKindMap<
-    BackendMessages extends Message,
-    FrontendMessages extends Message,
+    BackendMessages extends SocketMessage,
+    FrontendMessages extends SocketMessage,
 > = {
     backend?: RegisterListenerMap<BackendMessages>;
     frontend?: RegisterListenerMap<FrontendMessages>;
 };
 
-export type RegisterFrontendKindMap<T extends Message> = Required<
+export type RegisterFrontendKindMap<T extends SocketMessage> = Required<
     Pick<RegisterKindMap<T, T>, "frontend">
 >;
-export type RegisterBackendKindMap<T extends Message> = Required<
+export type RegisterBackendKindMap<T extends SocketMessage> = Required<
     Pick<RegisterKindMap<T, T>, "backend">
 >;

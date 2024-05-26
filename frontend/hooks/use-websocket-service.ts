@@ -1,6 +1,11 @@
 import { useScriptsReadyEffect } from "$frontend/hooks/use-scripts-ready.ts";
-import { Message } from "$workers/websocket/types.ts";
-import { addListener, removeListener, send } from "$frontend/socket-manager.ts";
+import { BinaryMessage, Message } from "$workers/websocket/types.ts";
+import {
+    addListener,
+    removeListener,
+    send,
+    sendBinary,
+} from "$frontend/socket-manager.ts";
 
 type EventMap<T extends Message> = Partial<
     { [K in T["type"]]: (data: Extract<T, { type: K }>) => void }
@@ -117,5 +122,36 @@ export const useWebsocketService = <T extends Message>(
         ]);
     };
 
-    return { dispatchMessage, sendMessage };
+    const sendBinaryMessage = <T extends BinaryMessage>(
+        namespace: string,
+        type: string,
+        request: Omit<T, "requestId" | "namespace" | "type" | "binaryData">,
+        data: ArrayBuffer,
+    ) => {
+        const headers = JSON.stringify({
+            requestId: crypto.randomUUID(),
+            namespace,
+            type,
+            ...request,
+        });
+        const encodedHeaders = new TextEncoder().encode(headers);
+        const headerLength = encodedHeaders.byteLength;
+        const dataLength = data.byteLength;
+
+        const payload = new Uint8Array(6 + headerLength + dataLength);
+
+        payload[0] = headerLength >> 8;
+        payload[1] = headerLength & 0xff;
+        payload[2] = dataLength >> 24;
+        payload[3] = (dataLength >> 16) & 0xff;
+        payload[4] = (dataLength >> 8) & 0xff;
+        payload[5] = dataLength & 0xff;
+
+        payload.set(encodedHeaders, 6);
+        payload.set(new Uint8Array(data), 6 + headerLength);
+
+        sendBinary(payload);
+    };
+
+    return { dispatchMessage, sendMessage, sendBinaryMessage };
 };

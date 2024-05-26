@@ -3,6 +3,7 @@ import { loadSessionState } from "$backend/session/session.ts";
 import { AppSessionData } from "$types";
 import { workerLogger } from "$backend/logger.ts";
 import {
+    BinaryMessage,
     ClientEvent,
     ClientEventFn,
     ErrorMessage,
@@ -15,10 +16,9 @@ import {
     SocketClient,
     SocketClientMap,
 } from "./types.ts";
+import { readMessage } from "$workers/websocket/reader/mod.ts";
 
 const clients: SocketClientMap = {};
-
-const MAXIMUM_MESSAGE_SIZE = 2048 * 1024; // 2MB
 
 const handleConnectionRequest = async (request: Request): Promise<Response> => {
     if (request.headers.get("upgrade") != "websocket") {
@@ -57,33 +57,29 @@ const handleConnectionRequest = async (request: Request): Promise<Response> => {
     socket.addEventListener("message", (event) => {
         const client = clients[id]!;
 
-        if (event.data.length > MAXIMUM_MESSAGE_SIZE) {
+        const message = readMessage(event.data);
+
+        if (!message) {
             workerLogger.error(
-                `Client {id} sent a message that exceeds the maximum payload size of {MAXIMUM_PAYLOAD_SIZE} bytes.`,
-                { id, MAXIMUM_MESSAGE_SIZE },
+                `Client {id} sent an invalid message of type: {type}`,
+                {
+                    id,
+                    type: event.data instanceof ArrayBuffer
+                        ? "binary"
+                        : "string",
+                },
             );
             client.send<ErrorMessage>({
                 requestId: crypto.randomUUID(),
                 namespace: "system",
                 type: "error",
                 message:
-                    `Message exceeds the maximum size of ${MAXIMUM_MESSAGE_SIZE} bytes.`,
+                    `Could not parse message properly or over the allowed size.`,
             });
             return;
         }
 
-        
-
-        if (event.data[0] === "|") {
-            // TODO: Binary message handling
-            // format:
-            // limit the payload size by .env variable
-            // also limit the json size
-            // |<header size: 2 bytes><payload size: 4 bytes><header data: size bytes><payload data: size bytes>
-            return;
-        }
-
-        handleClientRequest(client, JSON.parse(event.data));
+        handleClientRequest(client, message!);
     });
 
     return response;
@@ -142,7 +138,10 @@ const handleClientDisconnected = (client: SocketClient) => {
     }
 };
 
-const handleClientRequest = (client: SocketClient, message: Message) => {
+const handleClientRequest = (
+    client: SocketClient,
+    message: Message | BinaryMessage,
+) => {
     const { namespace, type } = message;
     const listeners = frontendListeners[namespace]?.[type] ?? [];
 

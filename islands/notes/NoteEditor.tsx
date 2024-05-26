@@ -25,6 +25,7 @@ import {
     UpdateNoteResponse,
 } from "$workers/websocket/api/notes/messages.ts";
 import { useNoteWebsocket } from "./hooks/use-note-websocket.ts";
+import { SendFileDataMessage } from "$workers/websocket/api/file/messages.ts";
 
 interface NoteData extends Pick<NoteRecord, "title" | "note"> {
     id?: number;
@@ -48,7 +49,9 @@ export default function NoteEditor({
     const isPreviewMode = useSignal(false);
     const validationErrors = useSignal<ZodIssue[]>([]);
 
-    const { sendMessage } = useNoteWebsocket({ noteId: +note.id! });
+    const { sendMessage, sendBinaryMessage } = useNoteWebsocket({
+        noteId: +note.id!,
+    });
 
     const handleSave = async () => {
         isSaving.start();
@@ -139,6 +142,15 @@ export default function NoteEditor({
                 handleTogglePreview();
             }
         };
+
+        sendBinaryMessage<SendFileDataMessage>(
+            "files",
+            "sendFileData",
+            {
+                targetId: "ovo je nako neki target",
+            },
+            new TextEncoder().encode("IDEMO NIIIS!~"),
+        );
 
         document.addEventListener("keydown", handleHotkeys);
 

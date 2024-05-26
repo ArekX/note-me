@@ -1,6 +1,12 @@
-import { Message } from "$workers/websocket/types.ts";
+import { BinaryMessage, Message } from "$workers/websocket/types.ts";
 
 type FileMessage<Type, Data = unknown> = Message<
+    "files",
+    Type,
+    Data
+>;
+
+type BinaryFileMessage<Type, Data = unknown> = BinaryMessage<
     "files",
     Type,
     Data
@@ -15,9 +21,9 @@ export type BeginFileResponse = FileMessage<
     { targetId: string }
 >;
 
-export type SendFileDataMessage = FileMessage<
+export type SendFileDataMessage = BinaryFileMessage<
     "sendFileData",
-    { targetId: string; chunk: string }
+    { targetId: string }
 >;
 
 export type SendFileDataResponse = FileMessage<
