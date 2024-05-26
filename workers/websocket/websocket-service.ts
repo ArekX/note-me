@@ -18,6 +18,8 @@ import {
 
 const clients: SocketClientMap = {};
 
+const MAXIMUM_MESSAGE_SIZE = 2048 * 1024; // 2MB
+
 const handleConnectionRequest = async (request: Request): Promise<Response> => {
     if (request.headers.get("upgrade") != "websocket") {
         return new Response(null, { status: 501 });
@@ -53,6 +55,25 @@ const handleConnectionRequest = async (request: Request): Promise<Response> => {
     });
 
     socket.addEventListener("message", (event) => {
+        const client = clients[id]!;
+
+        if (event.data.length > MAXIMUM_MESSAGE_SIZE) {
+            workerLogger.error(
+                `Client {id} sent a message that exceeds the maximum payload size of {MAXIMUM_PAYLOAD_SIZE} bytes.`,
+                { id, MAXIMUM_MESSAGE_SIZE },
+            );
+            client.send<ErrorMessage>({
+                requestId: crypto.randomUUID(),
+                namespace: "system",
+                type: "error",
+                message:
+                    `Message exceeds the maximum size of ${MAXIMUM_MESSAGE_SIZE} bytes.`,
+            });
+            return;
+        }
+
+        
+
         if (event.data[0] === "|") {
             // TODO: Binary message handling
             // format:
@@ -62,7 +83,7 @@ const handleConnectionRequest = async (request: Request): Promise<Response> => {
             return;
         }
 
-        handleClientRequest(clients[id]!, JSON.parse(event.data));
+        handleClientRequest(client, JSON.parse(event.data));
     });
 
     return response;
