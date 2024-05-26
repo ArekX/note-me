@@ -22,7 +22,15 @@ export const connect = (host: string): Promise<void> => {
 
         socket = new WebSocket(host);
         socket.onmessage = (event) => processHandlers(event.data);
-        socket.onclose = () => socket = null;
+        socket.onclose = (event) => {
+            socket = null;
+
+            if (!event.wasClean) {
+                // TODO: Add some notification that connection was lost.
+                // TODO: Add connection retry logic and attempt to reconnect.
+                setTimeout(() => connect(host), 1000);
+            }
+        };
         socket.onopen = () => {
             for (const request of pendingRequests) {
                 socket?.send(request);
@@ -43,21 +51,26 @@ const processHandlers = (message: string) => {
     });
 };
 
+const pushToPendingRequests = (message: string | ArrayBuffer) => {
+    pendingRequests.push(message);
+    if (!pendingRequestsPropagationTicket) {
+        pendingRequestsPropagationTicket = createPropagationTicket();
+    }
+};
+
 export const send = <T>(message: T) => {
+    const jsonMessage = JSON.stringify(message);
     if (!socket || socket.readyState !== WebSocket.OPEN) {
-        pendingRequests.push(JSON.stringify(message));
-        if (!pendingRequestsPropagationTicket) {
-            pendingRequestsPropagationTicket = createPropagationTicket();
-        }
+        pushToPendingRequests(jsonMessage);
         return;
     }
 
-    socket?.send(JSON.stringify(message));
+    socket?.send(jsonMessage);
 };
 
 export const sendBinary = (data: ArrayBuffer) => {
     if (!socket || socket.readyState !== WebSocket.OPEN) {
-        pendingRequests.push(data);
+        pushToPendingRequests(data);
         return;
     }
 
