@@ -1,18 +1,21 @@
 import { PageProps, RouteConfig } from "$fresh/server.ts";
-import NewPage from "./new.tsx";
+import ViewPage from "../view-[id].tsx";
 import { Partial } from "$fresh/runtime.ts";
+import NoteLayout from "$components/NoteLayout.tsx";
 
 export const config: RouteConfig = {
     skipAppWrapper: true,
     skipInheritedLayouts: true,
 };
 
-export { handler } from "./new.tsx";
+export { handler } from "../view-[id].tsx";
 
 export default function Page(props: PageProps) {
     return (
-        <Partial name="noteBody">
-            <NewPage {...props} />
+        <Partial name="body">
+            <NoteLayout>
+                <ViewPage {...props} />
+            </NoteLayout>
         </Partial>
     );
 }

@@ -11,17 +11,17 @@ const paths = {
     logout: () => ({ url: "/app/logout", fullRender: true }),
     newNote: (data: { groupId?: number } = {}) => ({
         url: `/app/note/new${data.groupId ? `?group_id=${data.groupId}` : ""}`,
-        partialUrl: `/app/note/new-partial${
+        partialUrl: `/app/note/partial/new${
             data.groupId ? `?group_id=${data.groupId}` : ""
         }`,
     }),
     viewNote: (data: { noteId: number }) => ({
         url: `/app/note/view-${data.noteId}`,
-        partialUrl: `/app/note/view-${data.noteId}-partial`,
+        partialUrl: `/app/note/partial/view-${data.noteId}`,
     }),
     editNote: (data: { noteId: number }) => ({
         url: `/app/note/edit-${data.noteId}`,
-        partialUrl: `/app/note/edit-${data.noteId}-partial`,
+        partialUrl: `/app/note/partial/edit-${data.noteId}`,
     }),
 } as const;
 

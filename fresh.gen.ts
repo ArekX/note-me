@@ -11,12 +11,12 @@ import * as $app_middleware from "./routes/app/_middleware.ts";
 import * as $app_index from "./routes/app/index.tsx";
 import * as $app_logout from "./routes/app/logout.tsx";
 import * as $app_note_layout from "./routes/app/note/_layout.tsx";
-import * as $app_note_edit_id_partial from "./routes/app/note/edit-[id]-partial.tsx";
 import * as $app_note_edit_id_ from "./routes/app/note/edit-[id].tsx";
 import * as $app_note_index from "./routes/app/note/index.tsx";
-import * as $app_note_new_partial from "./routes/app/note/new-partial.tsx";
 import * as $app_note_new from "./routes/app/note/new.tsx";
-import * as $app_note_view_id_partial from "./routes/app/note/view-[id]-partial.tsx";
+import * as $app_note_partial_edit_id_ from "./routes/app/note/partial/edit-[id].tsx";
+import * as $app_note_partial_new from "./routes/app/note/partial/new.tsx";
+import * as $app_note_partial_view_id_ from "./routes/app/note/partial/view-[id].tsx";
 import * as $app_note_view_id_ from "./routes/app/note/view-[id].tsx";
 import * as $app_profile from "./routes/app/profile.tsx";
 import * as $app_settings_layout from "./routes/app/settings/_layout.tsx";
@@ -99,12 +99,12 @@ const manifest = {
         "./routes/app/index.tsx": $app_index,
         "./routes/app/logout.tsx": $app_logout,
         "./routes/app/note/_layout.tsx": $app_note_layout,
-        "./routes/app/note/edit-[id]-partial.tsx": $app_note_edit_id_partial,
         "./routes/app/note/edit-[id].tsx": $app_note_edit_id_,
         "./routes/app/note/index.tsx": $app_note_index,
-        "./routes/app/note/new-partial.tsx": $app_note_new_partial,
         "./routes/app/note/new.tsx": $app_note_new,
-        "./routes/app/note/view-[id]-partial.tsx": $app_note_view_id_partial,
+        "./routes/app/note/partial/edit-[id].tsx": $app_note_partial_edit_id_,
+        "./routes/app/note/partial/new.tsx": $app_note_partial_new,
+        "./routes/app/note/partial/view-[id].tsx": $app_note_partial_view_id_,
         "./routes/app/note/view-[id].tsx": $app_note_view_id_,
         "./routes/app/profile.tsx": $app_profile,
         "./routes/app/settings/_layout.tsx": $app_settings_layout,
