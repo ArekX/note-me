@@ -6,7 +6,7 @@ import {
 } from "$backend/repository/note-repository.ts";
 import ViewNote from "$islands/notes/ViewNote.tsx";
 
-interface PageData {
+export interface PageData {
     note: ViewNoteRecord | null;
 }
 
@@ -30,5 +30,5 @@ export const handler: Handlers<PageData> = {
 };
 
 export default function Page(props: PageProps<PageData, AppState>) {
-    return <ViewNote initialRecord={props.data.note!} />;
+    return <ViewNote record={props.data.note!} />;
 }

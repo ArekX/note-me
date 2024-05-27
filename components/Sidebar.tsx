@@ -11,7 +11,7 @@ export interface SidebarProps {
     initialNotifications: NotificationRecord[];
 }
 
-export function Sidebar(
+export default function Sidebar(
     { initialNotifications, showSettings }: SidebarProps,
 ) {
     const wallpaper = getCurrentMonthWallpaper();

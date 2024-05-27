@@ -7,20 +7,25 @@ import NoteWindow, { NoteWindowTypes } from "$islands/notes/NoteWindow.tsx";
 import { useSignal } from "@preact/signals";
 import { redirectTo } from "$frontend/redirection-manager.ts";
 import { useNoteWebsocket } from "$islands/notes/hooks/use-note-websocket.ts";
+import { useEffect } from "preact/hooks";
 
 export interface ViewNoteProps {
     readonly?: boolean;
-    initialRecord: ViewNoteRecord;
+    record: ViewNoteRecord;
 }
 
 export default function ViewNote(
-    { readonly = false, initialRecord }: ViewNoteProps,
+    { readonly = false, record }: ViewNoteProps,
 ) {
     const windowMode = useSignal<NoteWindowTypes | null>(null);
-    const recordData = useSignal<ViewNoteRecord>(initialRecord);
+    const recordData = useSignal<ViewNoteRecord>(record);
+
+    useEffect(() => {
+        recordData.value = record;
+    }, [record]);
 
     useNoteWebsocket({
-        noteId: initialRecord.id,
+        noteId: record.id,
         onRenamed: (newName) => {
             recordData.value = { ...recordData.value, title: newName };
         },
