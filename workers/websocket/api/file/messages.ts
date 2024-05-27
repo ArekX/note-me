@@ -13,7 +13,8 @@ type BinaryFileMessage<Type, Data = unknown> = BinaryMessage<
 >;
 
 export type BeginFileMessage = FileMessage<
-    "beginFile"
+    "beginFile",
+    { size: number; name: string; mimeType: string }
 >;
 
 export type BeginFileResponse = FileMessage<
@@ -27,7 +28,7 @@ export type SendFileDataMessage = BinaryFileMessage<
 >;
 
 export type SendFileDataResponse = FileMessage<
-    "updateNoteResponse"
+    "sendFileDataResponse"
 >;
 
 export type EndFileMessage = FileMessage<

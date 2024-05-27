@@ -143,15 +143,6 @@ export default function NoteEditor({
             }
         };
 
-        sendBinaryMessage<SendFileDataMessage>(
-            "files",
-            "sendFileData",
-            {
-                targetId: "ovo je nako neki target",
-            },
-            new TextEncoder().encode("IDEMO NIIIS!~"),
-        );
-
         document.addEventListener("keydown", handleHotkeys);
 
         return () => {
