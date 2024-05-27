@@ -2,8 +2,9 @@ import { FreshContext } from "$fresh/server.ts";
 import { AppState } from "$types";
 import ScriptsLoader from "../../islands/ScriptLoader.tsx";
 import { getUserNotifications } from "$backend/repository/notification-repository.ts";
-import Sidebar from "$components/Sidebar.tsx";
+import { Sidebar } from "$components/Sidebar.tsx";
 import { canAccessSettings } from "$backend/rbac/role-definitions.ts";
+import { Partial } from "$fresh/runtime.ts";
 
 export default async function Layout(
     _req: Request,
@@ -18,7 +19,7 @@ export default async function Layout(
     const initialNotifications = await getUserNotifications(id!);
 
     return (
-        <div className="flex h-screen">
+        <div id="clientNav" className="flex h-screen" f-client-nav>
             <Sidebar
                 initialNotifications={initialNotifications}
                 showSettings={canAccessSettings(role)}
@@ -34,7 +35,9 @@ export default async function Layout(
                         permissions,
                     }}
                 />
-                <ctx.Component />
+                <Partial name="body">
+                    <ctx.Component />
+                </Partial>
             </div>
         </div>
     );

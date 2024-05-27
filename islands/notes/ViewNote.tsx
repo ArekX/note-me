@@ -10,15 +10,21 @@ import { useNoteWebsocket } from "$islands/notes/hooks/use-note-websocket.ts";
 
 export interface ViewNoteProps {
     readonly?: boolean;
-    record: ViewNoteRecord;
+    initialRecord: ViewNoteRecord;
 }
 
 export default function ViewNote(
-    { readonly = false, record }: ViewNoteProps,
+    { readonly = false, initialRecord }: ViewNoteProps,
 ) {
     const windowMode = useSignal<NoteWindowTypes | null>(null);
+    const recordData = useSignal<ViewNoteRecord>(initialRecord);
 
-    useNoteWebsocket({ noteId: record.id });
+    useNoteWebsocket({
+        noteId: initialRecord.id,
+        onRenamed: (newName) => {
+            recordData.value = { ...recordData.value, title: newName };
+        },
+    });
 
     const handleMenuItemClicked = (action: MenuItemActions) => {
         switch (action) {
@@ -37,7 +43,7 @@ export default function ViewNote(
         <div class="view-note flex flex-col">
             <div class="flex flex-row">
                 <div class="title w-10/12">
-                    {record.title}
+                    {recordData.value.title}
                 </div>
                 {!readonly && (
                     <div class="text-md ml-2 w-2/12 text-right">
@@ -45,7 +51,9 @@ export default function ViewNote(
                             color="success"
                             title="Edit"
                             onClick={() => {
-                                redirectTo.editNote({ noteId: record.id });
+                                redirectTo.editNote({
+                                    noteId: recordData.value.id,
+                                });
                             }}
                         >
                             <Icon name="pencil" size="lg" />
@@ -61,23 +69,25 @@ export default function ViewNote(
                 )}
             </div>
             <div>
-                {record.tags.map((tag) => (
+                {recordData.value.tags.map((tag) => (
                     <a href={`/notes?tag=${tag}`} class="tag">
                         {`#${tag}`}
                     </a>
                 ))}
             </div>
-            {record.group_name && (
-                <div class="text-sm">&rarr; in {record.group_name}</div>
+            {recordData.value.group_name && (
+                <div class="text-sm">
+                    &rarr; in {recordData.value.group_name}
+                </div>
             )}
             <div>
-                <Viewer text={record.note} />
+                <Viewer text={recordData.value.note} />
             </div>
-            {record.id && (
+            {recordData.value.id && (
                 <NoteWindow
                     onClose={() => windowMode.value = null}
                     type={windowMode.value}
-                    noteId={record.id}
+                    noteId={recordData.value.id}
                 />
             )}
         </div>

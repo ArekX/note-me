@@ -4,6 +4,7 @@ import { redirectTo } from "$frontend/redirection-manager.ts";
 
 export interface NoteWebsocketOptions {
     noteId?: number | null;
+    onRenamed?: (newName: string) => void;
 }
 
 export const useNoteWebsocket = (options: NoteWebsocketOptions) => {
@@ -12,6 +13,14 @@ export const useNoteWebsocket = (options: NoteWebsocketOptions) => {
     >({
         eventMap: {
             notes: {
+                updateNoteResponse: (response) => {
+                    if (
+                        response.updatedData.title &&
+                        response.updatedId === options.noteId
+                    ) {
+                        options.onRenamed?.(response.updatedData.title);
+                    }
+                },
                 deleteNoteResponse: (response) => {
                     if (response.deletedId === options.noteId) {
                         redirectTo.root();

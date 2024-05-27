@@ -11,7 +11,7 @@ export interface SidebarProps {
     initialNotifications: NotificationRecord[];
 }
 
-export default function Sidebar(
+export function Sidebar(
     { initialNotifications, showSettings }: SidebarProps,
 ) {
     const wallpaper = getCurrentMonthWallpaper();
@@ -28,7 +28,7 @@ export default function Sidebar(
             <div class="mt-5">
                 <div class="flex">
                     <div class="flex-1 w-1/3 text-left pl-2">
-                        <a href="/app">
+                        <a href="/app" f-partial={"/app"}>
                             <Logo white={true} height={25} width={25} /> NoteMe
                         </a>
                     </div>

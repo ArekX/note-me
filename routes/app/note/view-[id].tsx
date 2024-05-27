@@ -30,5 +30,5 @@ export const handler: Handlers<PageData> = {
 };
 
 export default function Page(props: PageProps<PageData, AppState>) {
-    return <ViewNote record={props.data.note!} />;
+    return <ViewNote initialRecord={props.data.note!} />;
 }
