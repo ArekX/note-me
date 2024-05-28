@@ -26,19 +26,20 @@ import {
 } from "$workers/websocket/api/notes/messages.ts";
 import { useNoteWebsocket } from "./hooks/use-note-websocket.ts";
 import { SendFileDataMessage } from "$workers/websocket/api/file/messages.ts";
+import { record } from "https://deno.land/x/zod@v3.22.4/types.ts";
 
 interface NoteData extends Pick<NoteRecord, "title" | "note"> {
     id?: number;
     tags: string[];
+    group_id: number;
+    group_name: string;
 }
 
 interface NoteEditorProps {
     note: NoteData;
-    group: GroupRecord | null;
 }
 
 export default function NoteEditor({
-    group,
     note,
 }: NoteEditorProps) {
     const name = useSignal(note.title);
@@ -57,7 +58,7 @@ export default function NoteEditor({
         isSaving.start();
 
         const noteToSave = {
-            group_id: group ? +group.id : null,
+            group_id: note.group_id,
             tags: tags.value,
             text: text.value,
             title: name.value,
@@ -219,7 +220,9 @@ export default function NoteEditor({
                     path="tags"
                 />
             </div>
-            {group && <div class="text-sm">&rarr; in {group.name}</div>}
+            {note.group_id && (
+                <div class="text-sm">&rarr; in {note.group_name}</div>
+            )}
             <div class="mt-2">
                 <ErrorDisplay
                     errors={validationErrors.value}

@@ -31,12 +31,13 @@ export default function Page(props: PageProps<PageData, AppState>) {
 
     return (
         <NoteEditor
-            group={null}
             note={{
                 id: note.id,
                 title: note.title,
                 note: note.note,
                 tags: note.tags,
+                group_id: note.group_id,
+                group_name: note.group_name,
             }}
         />
     );

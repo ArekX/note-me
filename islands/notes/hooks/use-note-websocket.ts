@@ -15,10 +15,10 @@ export const useNoteWebsocket = (options: NoteWebsocketOptions) => {
             notes: {
                 updateNoteResponse: (response) => {
                     if (
-                        response.updatedData.title &&
+                        ("title" in response.updatedData) &&
                         response.updatedId === options.noteId
                     ) {
-                        options.onRenamed?.(response.updatedData.title);
+                        options.onRenamed?.(response.updatedData.title ?? "");
                     }
                 },
                 deleteNoteResponse: (response) => {

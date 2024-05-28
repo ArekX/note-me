@@ -39,11 +39,12 @@ export const handler: Handlers<PageData> = {
 export default function Page(props: PageProps<PageData, AppState>) {
     return (
         <NoteEditor
-            group={props.data.group}
             note={{
                 title: "",
                 note: "",
                 tags: [],
+                group_id: props.data.group?.id ?? 0,
+                group_name: props.data.group?.name ?? "",
             }}
         />
     );
