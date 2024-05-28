@@ -1,4 +1,3 @@
-import { GroupRecord } from "$backend/repository/group-repository.ts";
 import { useSignal } from "@preact/signals";
 import { NoteRecord } from "$backend/repository/note-repository.ts";
 import Button from "$components/Button.tsx";
@@ -25,13 +24,11 @@ import {
     UpdateNoteResponse,
 } from "$workers/websocket/api/notes/messages.ts";
 import { useNoteWebsocket } from "./hooks/use-note-websocket.ts";
-import { SendFileDataMessage } from "$workers/websocket/api/file/messages.ts";
-import { record } from "https://deno.land/x/zod@v3.22.4/types.ts";
 
 interface NoteData extends Pick<NoteRecord, "title" | "note"> {
     id?: number;
     tags: string[];
-    group_id: number;
+    group_id: number | null;
     group_name: string;
 }
 
@@ -50,7 +47,7 @@ export default function NoteEditor({
     const isPreviewMode = useSignal(false);
     const validationErrors = useSignal<ZodIssue[]>([]);
 
-    const { sendMessage, sendBinaryMessage } = useNoteWebsocket({
+    const { sendMessage } = useNoteWebsocket({
         noteId: +note.id!,
     });
 

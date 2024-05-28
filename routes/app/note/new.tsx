@@ -43,7 +43,7 @@ export default function Page(props: PageProps<PageData, AppState>) {
                 title: "",
                 note: "",
                 tags: [],
-                group_id: props.data.group?.id ?? 0,
+                group_id: props.data.group?.id ?? null,
                 group_name: props.data.group?.name ?? "",
             }}
         />
