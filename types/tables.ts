@@ -36,7 +36,7 @@ export interface NoteAttachmentTable {
     id: Generated<number>;
     note_id: number;
     user_id: number;
-    data: string;
+    data: Uint8Array;
     mime_type: string;
     created_at: number;
 }

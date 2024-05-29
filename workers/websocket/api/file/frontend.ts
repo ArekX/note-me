@@ -1,4 +1,5 @@
 import { ListenerFn, RegisterListenerMap } from "$workers/websocket/types.ts";
+import { appendToTempFile, createTempFile } from "$backend/file-upload.ts";
 
 import {
     BeginFileMessage,
@@ -10,7 +11,7 @@ import {
     SendFileDataResponse,
 } from "./messages.ts";
 
-const handleBeginFile: ListenerFn<BeginFileMessage> = (
+const handleBeginFile: ListenerFn<BeginFileMessage> = async (
     { message: { size, name, mimeType }, respond },
 ) => {
     console.log("begin file", {
@@ -19,21 +20,24 @@ const handleBeginFile: ListenerFn<BeginFileMessage> = (
         mimeType,
     });
 
+    const targetId = await createTempFile();
+
     respond<BeginFileResponse>({
-        targetId: crypto.randomUUID(),
+        targetId,
         type: "beginFileResponse",
     });
 };
 
-const handleSendFileData: ListenerFn<SendFileDataMessage> = (
+const handleSendFileData: ListenerFn<SendFileDataMessage> = async (
     { message, respond },
 ) => {
     // Handle the file data
     // TODO: keep checking if over file size
-    console.log("got target", message.targetId);
-    console.log(" start of chunk #######################################");
-    console.log(message.binaryData.byteLength);
-    console.log(" end of chunk #######################################");
+
+    await appendToTempFile(
+        message.targetId,
+        new Uint8Array(message.binaryData),
+    );
 
     respond<SendFileDataResponse>({
         type: "sendFileDataResponse",

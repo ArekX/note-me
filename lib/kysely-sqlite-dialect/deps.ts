@@ -1,7 +1,7 @@
 export {
     DB,
     type QueryParameterSet,
-} from "https://deno.land/x/sqlite@v3.7.0/mod.ts";
+} from "https://deno.land/x/sqlite@v3.8/mod.ts";
 
 export {
     CompiledQuery,
