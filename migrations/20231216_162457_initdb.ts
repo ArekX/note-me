@@ -62,16 +62,22 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     await db.schema.createTable("file")
         .ifNotExists()
         .addColumn("id", "integer", (col) => col.autoIncrement().primaryKey())
+        .addColumn("identifier", "varchar(255)", (col) => col.notNull())
         .addColumn("name", "varchar(255)", (col) => col.notNull())
-        .addColumn("type", "varchar(255)", (col) => col.notNull())
         .addColumn(
             "user_id",
             "integer",
             (col) => col.notNull().references("user.id"),
         )
-        .addColumn("data", "blob", (col) => col.notNull())
+        .addColumn("size", "int8", (col) => col.notNull())
+        .addColumn("data", "blob")
         .addColumn("mime_type", "varchar(255)", (col) => col.notNull())
         .addColumn("created_at", "int8", (col) => col.notNull())
+        .addColumn(
+            "is_ready",
+            "boolean",
+            (col) => col.notNull().defaultTo(false),
+        )
         .execute();
 
     await db.schema.createTable("note_history")

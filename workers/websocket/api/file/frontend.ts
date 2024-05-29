@@ -1,5 +1,10 @@
 import { ListenerFn, RegisterListenerMap } from "$workers/websocket/types.ts";
-import { appendToTempFile, createTempFile } from "$backend/file-upload.ts";
+import {
+    appendToTempFile,
+    createTempFile,
+    readTempFile,
+    removeTempFile,
+} from "$backend/file-upload.ts";
 
 import {
     BeginFileMessage,
@@ -10,9 +15,13 @@ import {
     SendFileDataMessage,
     SendFileDataResponse,
 } from "./messages.ts";
+import {
+    createFile,
+    setFileData,
+} from "$backend/repository/file-repository.ts";
 
 const handleBeginFile: ListenerFn<BeginFileMessage> = async (
-    { message: { size, name, mimeType }, respond },
+    { message: { size, name, mimeType }, sourceClient, respond },
 ) => {
     console.log("begin file", {
         size,
@@ -21,6 +30,14 @@ const handleBeginFile: ListenerFn<BeginFileMessage> = async (
     });
 
     const targetId = await createTempFile();
+
+    await createFile({
+        identifier: targetId,
+        name,
+        mime_type: mimeType,
+        size,
+        user_id: sourceClient!.userId,
+    });
 
     respond<BeginFileResponse>({
         targetId,
@@ -44,11 +61,15 @@ const handleSendFileData: ListenerFn<SendFileDataMessage> = async (
     });
 };
 
-const handleEndFile: ListenerFn<EndFileMessage> = (
+const handleEndFile: ListenerFn<EndFileMessage> = async (
     { message: { targetId }, respond },
 ) => {
     console.log("end of file", targetId);
     // TODO: reject file if under size
+
+    await setFileData(targetId, await readTempFile(targetId));
+    await removeTempFile(targetId);
+
     respond<EndFileResponse>({
         type: "endFileResponse",
     });

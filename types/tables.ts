@@ -32,13 +32,16 @@ export interface NoteReminderTable {
     repeat_amount: number;
 }
 
-export interface NoteAttachmentTable {
+export interface FileTable {
     id: Generated<number>;
-    note_id: number;
+    identifier: string;
+    name: string;
     user_id: number;
-    data: Uint8Array;
+    data?: Uint8Array;
+    size: number;
     mime_type: string;
     created_at: number;
+    is_ready?: boolean;
 }
 
 export interface NoteHistoryTable {
@@ -98,7 +101,7 @@ export interface GroupNoteTable {
 export interface Tables {
     note: NoteTable;
     note_reminder: NoteReminderTable;
-    note_attachment: NoteAttachmentTable;
+    file: FileTable;
     note_history: NoteHistoryTable;
     note_tag: NoteTagTable;
     note_tag_note: NoteTagNoteTable;

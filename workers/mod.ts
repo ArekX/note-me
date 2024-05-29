@@ -14,7 +14,7 @@ const checkServiceDisabled = (serviceName: string): boolean => {
         },
     );
 
-    const isServiceDisabled = !!Deno.env.get(serviceDisabledEnvName);
+    const isServiceDisabled = Deno.env.get(serviceDisabledEnvName) == "1";
 
     if (isServiceDisabled) {
         webLogger.info(

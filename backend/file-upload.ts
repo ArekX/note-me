@@ -19,6 +19,15 @@ export const appendToTempFile = async (
     await Deno.writeFile(location, data, { append: true });
 };
 
+export const removeTempFile = async (fileTarget: string): Promise<void> => {
+    try {
+        const location = `${tempLocation}/${fileTarget}`;
+        await Deno.remove(location);
+    } catch {
+        // Skip empty file.
+    }
+};
+
 export const readTempFile = async (fileTarget: string): Promise<Uint8Array> => {
     const location = `${tempLocation}/${fileTarget}`;
     return await Deno.readFile(location);

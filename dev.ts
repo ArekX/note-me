@@ -8,6 +8,6 @@ import { initializeWorkers } from "$workers/mod.ts";
 import { initializeBackend } from "$backend/initialize.ts";
 
 initializeWorkers();
-await initializeBackend("development");
+await initializeBackend();
 
 await dev(import.meta.url, "./main.ts", config);

@@ -3,9 +3,7 @@ import { webLogger } from "$backend/logger.ts";
 import { initTempLocation } from "$backend/file-upload.ts";
 import { createUserRecord } from "$backend/repository/user-repository.ts";
 
-type InitializeMode = "development" | "production";
-
-const initializeProduction = async () => {
+const runMigrations = async () => {
     const isFirstRun = await migrator.isFirstRun();
     await migrator.migrateUp();
 
@@ -27,14 +25,12 @@ const initializeFirstRun = async () => {
     });
 };
 
-export const initializeBackend = async (
-    mode: InitializeMode = "production",
-) => {
+export const initializeBackend = async () => {
     webLogger.info("Initializing backend...");
     await initTempLocation();
 
-    if (mode === "production") {
-        await initializeProduction();
+    if ((Deno.env.get("RUN_MIGRATIONS_ON_STARTUP") ?? "1") == "1") {
+        await runMigrations();
     }
 
     webLogger.info("Backend initialized.");
