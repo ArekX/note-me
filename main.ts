@@ -9,23 +9,10 @@ import "$std/dotenv/load.ts";
 import { start } from "$fresh/server.ts";
 import manifest from "./fresh.gen.ts";
 import config from "./fresh.config.ts";
-import { migrator } from "$backend/migration-manager.ts";
-import { startBackgroundServices } from "./workers/mod.ts";
-import { initializeFirstRun } from "$backend/first-run.ts";
-import { webLogger } from "$backend/logger.ts";
-import { initTempLocation } from "$backend/file-upload.ts";
+import { initializeWorkers } from "./workers/mod.ts";
+import { initializeBackend } from "$backend/initialize.ts";
 
-startBackgroundServices();
-
-await initTempLocation();
-
-const isFirstRun = await migrator.isFirstRun();
-await migrator.migrateUp();
-
-if (isFirstRun) {
-    webLogger.info("Setting up initial data on first run.");
-    await initializeFirstRun();
-    webLogger.info("First time setup complete!");
-}
+initializeWorkers();
+await initializeBackend();
 
 await start(manifest, config);

@@ -32,7 +32,7 @@ const checkServiceDisabled = (serviceName: string): boolean => {
     return false;
 };
 
-export const startBackgroundServices = (): void => {
+export const initializeWorkers = (): void => {
     for (const [serviceName, service] of Object.entries(services)) {
         if (checkServiceDisabled(serviceName)) {
             continue;
