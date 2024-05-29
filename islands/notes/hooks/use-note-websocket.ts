@@ -14,6 +14,7 @@ export const useNoteWebsocket = (options: NoteWebsocketOptions) => {
         eventMap: {
             notes: {
                 updateNoteResponse: (response) => {
+                    // TODO: Check if group changed and update groupname
                     if (
                         ("title" in response.updatedData) &&
                         response.updatedId === options.noteId
