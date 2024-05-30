@@ -62,7 +62,11 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     await db.schema.createTable("file")
         .ifNotExists()
         .addColumn("id", "integer", (col) => col.autoIncrement().primaryKey())
-        .addColumn("identifier", "varchar(255)", (col) => col.notNull())
+        .addColumn(
+            "identifier",
+            "varchar(255)",
+            (col) => col.notNull().unique(),
+        )
         .addColumn("name", "varchar(255)", (col) => col.notNull())
         .addColumn(
             "user_id",
