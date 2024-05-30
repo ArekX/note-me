@@ -33,6 +33,12 @@ export const readTempFile = async (fileTarget: string): Promise<Uint8Array> => {
     return await Deno.readFile(location);
 };
 
+export const getTempFileSize = async (fileTarget: string): Promise<number> => {
+    const location = `${tempLocation}/${fileTarget}`;
+    const { size } = await Deno.stat(location);
+    return size!;
+};
+
 const maxOldFileAge = 1000 * 60 * 60;
 
 export const cleanupOldTempFiles = async (): Promise<void> => {

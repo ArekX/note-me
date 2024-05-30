@@ -42,6 +42,7 @@ export interface FileTable {
     mime_type: string;
     created_at: number;
     is_ready?: boolean;
+    is_public?: boolean;
 }
 
 export interface NoteHistoryTable {

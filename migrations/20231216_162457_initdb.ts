@@ -78,6 +78,11 @@ export async function up(db: Kysely<unknown>): Promise<void> {
             "boolean",
             (col) => col.notNull().defaultTo(false),
         )
+        .addColumn(
+            "is_public",
+            "boolean",
+            (col) => col.notNull().defaultTo(false),
+        )
         .execute();
 
     await db.schema.createTable("note_history")

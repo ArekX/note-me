@@ -2,6 +2,7 @@ import { ListenerFn, RegisterListenerMap } from "$workers/websocket/types.ts";
 import {
     appendToTempFile,
     createTempFile,
+    getTempFileSize,
     readTempFile,
     removeTempFile,
 } from "$backend/file-upload.ts";
@@ -16,26 +17,32 @@ import {
     SendFileDataResponse,
 } from "./messages.ts";
 import {
-    createFile,
-    setFileData,
+    createFileRecord,
+    deleteFileRecord,
+    getFileRecordSize,
+    setFileRecordData,
 } from "$backend/repository/file-repository.ts";
+import { requireValidSchema } from "$schemas/mod.ts";
+import { addFileRequestSchema } from "$schemas/file.ts";
+
+const MAX_FILE_SIZE = 1024 * 1024 * 50; // 50MB
 
 const handleBeginFile: ListenerFn<BeginFileMessage> = async (
     { message: { size, name, mimeType }, sourceClient, respond },
 ) => {
-    console.log("begin file", {
-        size,
-        name,
-        mimeType,
-    });
-
     const targetId = await createTempFile();
 
-    await createFile({
-        identifier: targetId,
+    const data = {
         name,
         mime_type: mimeType,
         size,
+    };
+
+    await requireValidSchema(addFileRequestSchema, data);
+
+    await createFileRecord({
+        ...data,
+        identifier: targetId,
         user_id: sourceClient!.userId,
     });
 
@@ -48,13 +55,16 @@ const handleBeginFile: ListenerFn<BeginFileMessage> = async (
 const handleSendFileData: ListenerFn<SendFileDataMessage> = async (
     { message, respond },
 ) => {
-    // Handle the file data
-    // TODO: keep checking if over file size
-
     await appendToTempFile(
         message.targetId,
         new Uint8Array(message.binaryData),
     );
+
+    const newSize = await getTempFileSize(message.targetId);
+
+    if (newSize > MAX_FILE_SIZE) {
+        throw new Error("File size is over the allowable limit.");
+    }
 
     respond<SendFileDataResponse>({
         type: "sendFileDataResponse",
@@ -64,10 +74,16 @@ const handleSendFileData: ListenerFn<SendFileDataMessage> = async (
 const handleEndFile: ListenerFn<EndFileMessage> = async (
     { message: { targetId }, respond },
 ) => {
-    console.log("end of file", targetId);
-    // TODO: reject file if under size
+    const storedSize = await getFileRecordSize(targetId);
+    const tempSize = await getTempFileSize(targetId);
 
-    await setFileData(targetId, await readTempFile(targetId));
+    if (storedSize !== null && storedSize !== tempSize) {
+        await removeTempFile(targetId);
+        await deleteFileRecord(targetId);
+        throw new Error("File size mismatch.");
+    }
+
+    await setFileRecordData(targetId, await readTempFile(targetId));
     await removeTempFile(targetId);
 
     respond<EndFileResponse>({
