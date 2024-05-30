@@ -61,6 +61,9 @@ export default function InsertDialog({
                 visible={show}
                 canCancel={true}
                 onCancel={() => onShowRequest(false)}
+                props={{
+                    class: "w-2/3",
+                }}
             >
                 <div class="w-96">
                     <select

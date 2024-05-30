@@ -30,6 +30,8 @@ import * as $InvalidateData from "./islands/InvalidateData.tsx";
 import * as $Loader from "./islands/Loader.tsx";
 import * as $Pagination from "./islands/Pagination.tsx";
 import * as $ScriptLoader from "./islands/ScriptLoader.tsx";
+import * as $files_FilePicker from "./islands/files/FilePicker.tsx";
+import * as $files_FileUpload from "./islands/files/FileUpload.tsx";
 import * as $notes_InsertDialog from "./islands/notes/InsertDialog.tsx";
 import * as $notes_MoreMenu from "./islands/notes/MoreMenu.tsx";
 import * as $notes_NoteEditor from "./islands/notes/NoteEditor.tsx";
@@ -120,6 +122,8 @@ const manifest = {
         "./islands/Loader.tsx": $Loader,
         "./islands/Pagination.tsx": $Pagination,
         "./islands/ScriptLoader.tsx": $ScriptLoader,
+        "./islands/files/FilePicker.tsx": $files_FilePicker,
+        "./islands/files/FileUpload.tsx": $files_FileUpload,
         "./islands/notes/InsertDialog.tsx": $notes_InsertDialog,
         "./islands/notes/MoreMenu.tsx": $notes_MoreMenu,
         "./islands/notes/NoteEditor.tsx": $notes_NoteEditor,
