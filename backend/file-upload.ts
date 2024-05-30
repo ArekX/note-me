@@ -1,4 +1,7 @@
-const tempLocation = "./temp"; // TODO: Handle proper path.
+const tempLocation = new URL(
+    `../temp`,
+    import.meta.url,
+).pathname;
 
 export const initTempLocation = async (): Promise<void> => {
     await Deno.mkdir(tempLocation, { recursive: true });
