@@ -4,7 +4,7 @@ import RootGroupBar from "$islands/tree/RootGroupBar.tsx";
 import { redirectTo } from "$frontend/redirection-manager.ts";
 import Loader from "$islands/Loader.tsx";
 import { useDragManager } from "../../frontend/hooks/use-drag-manager.ts";
-import NewTreeItem from "./TreeItem.tsx";
+import TreeItem from "./TreeItem.tsx";
 import Icon from "$components/Icon.tsx";
 import { RecordContainer } from "$islands/tree/hooks/record-container.ts";
 
@@ -50,7 +50,7 @@ export default function NewTreeList({
                         </div>
                     )}
                 {tree.root.children.map((container) => (
-                    <NewTreeItem
+                    <TreeItem
                         container={container}
                         dragManager={dragManager}
                         treeManager={tree}
