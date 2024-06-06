@@ -15,7 +15,6 @@ interface TreeListProps {
 
 export default function TreeList({
     switcherComponent,
-    searchQuery,
 }: TreeListProps) {
     const tree = useRecordTree();
     const dragManager = useDragManager<RecordContainer>();

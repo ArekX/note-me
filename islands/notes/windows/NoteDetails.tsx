@@ -14,7 +14,7 @@ interface NoteDetailsProps {
 }
 
 export default function NoteDetails(
-    { show, noteId, onClose }: NoteDetailsProps,
+    { show, onClose }: NoteDetailsProps,
 ) {
     const noteData = useSignal<NoteDetailsRecord | null>(null);
 

@@ -1,4 +1,4 @@
-import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
+import { FreshContext, Handlers } from "$fresh/server.ts";
 import { destroySession } from "$backend/session/mod.ts";
 import { AppState } from "$types";
 

@@ -1,4 +1,4 @@
-import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
+import { FreshContext, Handlers } from "$fresh/server.ts";
 import UserList from "$islands/users/UserList.tsx";
 import { AppState } from "$types";
 import { CanManageUsers } from "$backend/rbac/permissions.ts";
@@ -13,7 +13,7 @@ export const handler: Handlers<string> = {
     ),
 };
 
-export default function Page(props: PageProps<never, AppState>) {
+export default function Page() {
     return (
         <div>
             <UserList />

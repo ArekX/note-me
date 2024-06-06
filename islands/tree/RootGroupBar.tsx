@@ -16,7 +16,7 @@ export default function RootGroupBar({
     dragManager,
     switcherComponent,
 }: RootGroupBarProps) {
-    const handleDrop = (e: DragEvent) => {
+    const handleDrop = () => {
         treeManager.changeParent(dragManager.source!, treeManager.root);
     };
 

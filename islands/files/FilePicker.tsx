@@ -8,7 +8,7 @@ interface FilePickerProps {
     onFilePicked?: (file: PickedFile) => void;
 }
 
-export default function FilePicker(props: FilePickerProps) {
+export default function FilePicker(_props: FilePickerProps) {
     return (
         <div class="w-52">
             FilePicker

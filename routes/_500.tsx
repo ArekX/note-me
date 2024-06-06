@@ -1,5 +1,5 @@
 import { Head } from "$fresh/runtime.ts";
-import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
+import { FreshContext, PageProps } from "$fresh/server.ts";
 import { AppState } from "../types/app-state.ts";
 
 export const handler = (_req: Request, ctx: FreshContext<AppState>) => {

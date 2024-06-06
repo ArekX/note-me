@@ -49,7 +49,7 @@ export const useTreeWebsocket = (options: TreeWebsocketOptions) => {
                 updateNoteResponse: (data) => {
                     const container = findContainerById(data.updatedId, "note");
                     if (container) {
-                        if ('title' in data.updatedData) {
+                        if ("title" in data.updatedData) {
                             setContainer(container, {
                                 name: data.updatedData.title,
                             });

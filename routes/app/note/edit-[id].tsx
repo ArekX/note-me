@@ -11,7 +11,7 @@ interface PageData {
 }
 
 export const handler: Handlers<PageData> = {
-    async GET(req, ctx: FreshContext<AppState, PageData>) {
+    async GET(_, ctx: FreshContext<AppState, PageData>) {
         const userId = ctx.state.session?.getUserId() ?? 0;
 
         const note = await getNote(+ctx.params.id, userId);
