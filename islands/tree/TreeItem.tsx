@@ -279,7 +279,7 @@ export default function TreeItem({
                 <div class="group-item-children">
                     {container.children.map((child) => (
                         <TreeItem
-                            key={child.type + "-" + child.id}
+                            key={child.key}
                             container={child}
                             treeManager={treeManager}
                             dragManager={dragManager}

@@ -6,6 +6,7 @@ export type RecordType = "root" | "group" | "note";
 
 export interface RecordContainer {
     id: number | null;
+    key: string;
     name: string;
     type: RecordType;
     is_processing: boolean;
@@ -34,6 +35,7 @@ export const createContainer = (
 ): RecordContainer => ({
     id: null,
     name: "",
+    key: crypto.randomUUID(),
     type: "root",
     is_open: false,
     is_processing: false,

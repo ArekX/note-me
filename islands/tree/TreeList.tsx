@@ -13,7 +13,7 @@ interface TreeListProps {
     switcherComponent: ComponentChild;
 }
 
-export default function NewTreeList({
+export default function TreeList({
     switcherComponent,
     searchQuery,
 }: TreeListProps) {
@@ -51,6 +51,7 @@ export default function NewTreeList({
                     )}
                 {tree.root.children.map((container) => (
                     <TreeItem
+                        key={container.key}
                         container={container}
                         dragManager={dragManager}
                         treeManager={tree}
