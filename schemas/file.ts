@@ -5,7 +5,10 @@ const fileSchema = zod.object({
     identifier: zod.string(),
     name: zod.string({
         required_error: "Name is required",
-    }).min(1, "Name must be at least 1 character long")
+    }).min(1, "Name must be at least 1 character long").regex(
+        /^[a-zA-Z0-9_ .-]+$/,
+        "Name must only contain letters, numbers, dots, spaces, hyphens, and underscores.",
+    )
         .max(255, "Group name must be at most 255 characters long"),
     size: zod.number(),
     mime_type: zod.string(),

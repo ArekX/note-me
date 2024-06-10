@@ -10,32 +10,42 @@ import {
 import {
     BeginFileMessage,
     BeginFileResponse,
+    DeleteFileMessage,
+    DeleteFileResponse,
     EndFileMessage,
     EndFileResponse,
     FileFrontendMessage,
+    FindFilesMessage,
+    FindFilesResponse,
     SendFileDataMessage,
     SendFileDataResponse,
 } from "./messages.ts";
 import {
     createFileRecord,
     deleteFileRecord,
+    deleteUserFile,
+    fileExistsForUser,
+    findUserFiles,
     getFileRecordSize,
     setFileRecordData,
 } from "$backend/repository/file-repository.ts";
 import { requireValidSchema } from "$schemas/mod.ts";
 import { addFileRequestSchema } from "$schemas/file.ts";
 
-const MAX_FILE_SIZE = 1024 * 1024 * 50; // 50MB
+const MAX_FILE_SIZE = +(Deno.env.get("MAX_FILE_SIZE") ?? "52428800");
+
+const sanitizeTargetId = (targetId: string) =>
+    targetId.replace(/[^a-zA-Z0-9-]/g, "");
 
 const handleBeginFile: ListenerFn<BeginFileMessage> = async (
     { message: { size, name, mimeType }, sourceClient, respond },
 ) => {
-    const targetId = await createTempFile();
+    const targetId = await createTempFile(sourceClient?.userId.toString()!);
 
     const data = {
-        name,
-        mime_type: mimeType,
-        size,
+        name: name.replace(/[^a-zA-Z0-9_ .-]+/g, "-"),
+        mime_type: mimeType.replace(/[^a-zA-Z0-9+._/-]/g, ""),
+        size: +size,
     };
 
     await requireValidSchema(addFileRequestSchema, data);
@@ -53,14 +63,24 @@ const handleBeginFile: ListenerFn<BeginFileMessage> = async (
 };
 
 const handleSendFileData: ListenerFn<SendFileDataMessage> = async (
-    { message, respond },
+    {
+        message: { targetId: unsafeTargetId, binaryData },
+        respond,
+        sourceClient,
+    },
 ) => {
+    const targetId = sanitizeTargetId(unsafeTargetId);
+
     await appendToTempFile(
-        message.targetId,
-        new Uint8Array(message.binaryData),
+        sourceClient?.userId.toString()!,
+        targetId,
+        new Uint8Array(binaryData),
     );
 
-    const newSize = await getTempFileSize(message.targetId);
+    const newSize = await getTempFileSize(
+        sourceClient?.userId.toString()!,
+        targetId,
+    );
 
     if (newSize > MAX_FILE_SIZE) {
         throw new Error("File size is over the allowable limit.");
@@ -72,22 +92,61 @@ const handleSendFileData: ListenerFn<SendFileDataMessage> = async (
 };
 
 const handleEndFile: ListenerFn<EndFileMessage> = async (
-    { message: { targetId }, respond },
+    { message: { targetId: unsafeTargetId }, respond, sourceClient },
 ) => {
+    const targetId = sanitizeTargetId(unsafeTargetId);
+    const exists = await fileExistsForUser(targetId, sourceClient?.userId!);
+
+    if (!exists) {
+        throw new Error("File not found.");
+    }
+
     const storedSize = await getFileRecordSize(targetId);
-    const tempSize = await getTempFileSize(targetId);
+    const tempSize = await getTempFileSize(
+        sourceClient?.userId.toString()!,
+        targetId,
+    );
 
     if (storedSize !== null && storedSize !== tempSize) {
-        await removeTempFile(targetId);
+        await removeTempFile(sourceClient?.userId.toString()!, targetId);
         await deleteFileRecord(targetId);
         throw new Error("File size mismatch.");
     }
 
-    await setFileRecordData(targetId, await readTempFile(targetId));
-    await removeTempFile(targetId);
+    await setFileRecordData(
+        targetId,
+        await readTempFile(sourceClient?.userId.toString()!, targetId),
+    );
+    await removeTempFile(sourceClient?.userId.toString()!, targetId);
 
     respond<EndFileResponse>({
         type: "endFileResponse",
+    });
+};
+
+const handleFindFiles: ListenerFn<FindFilesMessage> = async (
+    { message: { filters, page }, respond, sourceClient },
+) => {
+    const results = await findUserFiles(
+        filters,
+        sourceClient!.userId,
+        page ?? 1,
+    );
+
+    respond<FindFilesResponse>({
+        records: results,
+        type: "findFilesResponse",
+    });
+};
+
+const handleDeleteFile: ListenerFn<DeleteFileMessage> = async (
+    { message: { identifier }, respond, sourceClient },
+) => {
+    const success = await deleteUserFile(identifier, sourceClient!.userId);
+
+    respond<DeleteFileResponse>({
+        success,
+        type: "deleteFileResponse",
     });
 };
 
@@ -95,4 +154,6 @@ export const frontendMap: RegisterListenerMap<FileFrontendMessage> = {
     beginFile: handleBeginFile,
     endFile: handleEndFile,
     sendFileData: handleSendFileData,
+    findFiles: handleFindFiles,
+    deleteFile: handleDeleteFile,
 };

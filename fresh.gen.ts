@@ -23,6 +23,7 @@ import * as $app_settings_layout from "./routes/app/settings/_layout.tsx";
 import * as $app_settings_index from "./routes/app/settings/index.tsx";
 import * as $app_settings_tags_index from "./routes/app/settings/tags/index.tsx";
 import * as $app_settings_users_index from "./routes/app/settings/users/index.tsx";
+import * as $file_identifier_ from "./routes/file/[identifier].tsx";
 import * as $index from "./routes/index.tsx";
 import * as $ConfirmDialog from "./islands/ConfirmDialog.tsx";
 import * as $Dialog from "./islands/Dialog.tsx";
@@ -113,6 +114,7 @@ const manifest = {
         "./routes/app/settings/index.tsx": $app_settings_index,
         "./routes/app/settings/tags/index.tsx": $app_settings_tags_index,
         "./routes/app/settings/users/index.tsx": $app_settings_users_index,
+        "./routes/file/[identifier].tsx": $file_identifier_,
         "./routes/index.tsx": $index,
     },
     islands: {

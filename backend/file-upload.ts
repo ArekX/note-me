@@ -3,41 +3,53 @@ const tempLocation = new URL(
     import.meta.url,
 ).pathname;
 
+const getFileLocation = (prefix: string, fileTarget: string): string =>
+    `${tempLocation}/${prefix}-${fileTarget}`;
+
 export const initTempLocation = async (): Promise<void> => {
     await Deno.mkdir(tempLocation, { recursive: true });
 };
 
-export const createTempFile = async (): Promise<string> => {
+export const createTempFile = async (prefix: string): Promise<string> => {
     const fileTarget = crypto.randomUUID();
-    const location = `${tempLocation}/${fileTarget}`;
-    await Deno.create(location);
+    await Deno.create(getFileLocation(prefix, fileTarget));
     return fileTarget;
 };
 
 export const appendToTempFile = async (
+    prefix: string,
     fileTarget: string,
     data: Uint8Array,
 ): Promise<void> => {
-    const location = `${tempLocation}/${fileTarget}`;
+    const location = getFileLocation(prefix, fileTarget);
     await Deno.writeFile(location, data, { append: true });
 };
 
-export const removeTempFile = async (fileTarget: string): Promise<void> => {
+export const removeTempFile = async (
+    prefix: string,
+    fileTarget: string,
+): Promise<void> => {
     try {
-        const location = `${tempLocation}/${fileTarget}`;
+        const location = getFileLocation(prefix, fileTarget);
         await Deno.remove(location);
     } catch {
         // Skip empty file.
     }
 };
 
-export const readTempFile = async (fileTarget: string): Promise<Uint8Array> => {
-    const location = `${tempLocation}/${fileTarget}`;
+export const readTempFile = async (
+    prefix: string,
+    fileTarget: string,
+): Promise<Uint8Array> => {
+    const location = getFileLocation(prefix, fileTarget);
     return await Deno.readFile(location);
 };
 
-export const getTempFileSize = async (fileTarget: string): Promise<number> => {
-    const location = `${tempLocation}/${fileTarget}`;
+export const getTempFileSize = async (
+    prefix: string,
+    fileTarget: string,
+): Promise<number> => {
+    const location = getFileLocation(prefix, fileTarget);
     const { size } = await Deno.stat(location);
     return size!;
 };

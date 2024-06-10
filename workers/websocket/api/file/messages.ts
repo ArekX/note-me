@@ -1,4 +1,9 @@
 import { BinaryMessage, Message } from "$workers/websocket/types.ts";
+import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
+import {
+    FileMetaRecord,
+    FindFileFilters,
+} from "$backend/repository/file-repository.ts";
 
 type FileMessage<Type, Data = unknown> = Message<
     "files",
@@ -40,12 +45,36 @@ export type EndFileResponse = FileMessage<
     "endFileResponse"
 >;
 
+export type FindFilesMessage = FileMessage<
+    "findFiles",
+    { filters: FindFileFilters; page?: number }
+>;
+
+export type FindFilesResponse = FileMessage<
+    "findFilesResponse",
+    { records: Paged<FileMetaRecord> }
+>;
+
+export type DeleteFileMessage = FileMessage<
+    "deleteFile",
+    { identifier: string }
+>;
+
+export type DeleteFileResponse = FileMessage<
+    "deleteFileResponse",
+    { success: boolean }
+>;
+
 export type FileFrontendResponse =
     | BeginFileResponse
     | SendFileDataResponse
-    | EndFileResponse;
+    | EndFileResponse
+    | FindFilesResponse
+    | DeleteFileResponse;
 
 export type FileFrontendMessage =
     | BeginFileMessage
     | SendFileDataMessage
-    | EndFileMessage;
+    | EndFileMessage
+    | FindFilesMessage
+    | DeleteFileMessage;

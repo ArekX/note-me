@@ -2,6 +2,9 @@ import { BusEvents } from "$backend/event-bus/bus-events.ts";
 import { workerLogger } from "$backend/logger.ts";
 import { Message } from "$workers/websocket/types.ts";
 
+interface BackgroundServiceOptions {
+    required: boolean;
+}
 export class BackgroundService {
     #worker: Worker | null = null;
     #started: boolean = false;
@@ -9,6 +12,9 @@ export class BackgroundService {
 
     constructor(
         private readonly workerPath: string,
+        public readonly options: BackgroundServiceOptions = {
+            required: false,
+        },
     ) {}
 
     send<T extends Message>(message: T | Omit<T, "requestId">) {

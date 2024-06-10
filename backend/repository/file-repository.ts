@@ -1,5 +1,8 @@
 import { FileTable } from "../../types/tables.ts";
 import { db } from "$backend/database.ts";
+import { applyFilters } from "$lib/kysely-sqlite-dialect/filters.ts";
+import { Paged, pageResults } from "$lib/kysely-sqlite-dialect/pagination.ts";
+import { sql } from "$lib/kysely-sqlite-dialect/deps.ts";
 
 export type NewFileRecord = Pick<
     FileTable,
@@ -26,6 +29,17 @@ export const setFileRecordData = async (
         .execute();
 };
 
+export const fileExistsForUser = async (
+    identifier: string,
+    user_id: number,
+): Promise<boolean> => {
+    return (await db.selectFrom("file")
+        .select(sql`1`.as("exists"))
+        .where("identifier", "=", identifier)
+        .where("user_id", "=", user_id)
+        .executeTakeFirst()) !== null;
+};
+
 export const getFileRecordSize = async (
     identifier: string,
 ): Promise<number | null> => {
@@ -43,4 +57,75 @@ export const deleteFileRecord = async (
         .executeTakeFirst();
 
     return result.numDeletedRows > 0;
+};
+
+export type FileMetaRecord = Pick<
+    FileTable,
+    "identifier" | "name" | "mime_type" | "size" | "is_public" | "created_at"
+>;
+
+export interface FindFileFilters {
+    name?: string;
+}
+
+export const findUserFiles = async (
+    filters: FindFileFilters,
+    user_id: number,
+    page: number,
+): Promise<Paged<FileMetaRecord>> => {
+    let query = db.selectFrom("file")
+        .select([
+            "identifier",
+            "name",
+            "mime_type",
+            "size",
+            "is_public",
+            "created_at",
+        ])
+        .where("user_id", "=", user_id)
+        .where("is_ready", "=", true);
+
+    query = applyFilters(query, {
+        name: { type: "text", value: filters.name },
+    });
+
+    return await pageResults(query, page);
+};
+
+export const deleteUserFile = async (
+    identifier: string,
+    user_id: number,
+): Promise<boolean> => {
+    const result = await db.deleteFrom("file")
+        .where("identifier", "=", identifier)
+        .where("user_id", "=", user_id)
+        .executeTakeFirst();
+
+    return result.numDeletedRows > 0;
+};
+
+export type FileWithData = Pick<
+    FileTable,
+    "name" | "size" | "mime_type" | "data"
+>;
+
+export const getFileData = async (
+    identifier: string,
+    user_id: number,
+): Promise<FileWithData | null> => {
+    return await db.selectFrom("file")
+        .select([
+            "name",
+            "size",
+            "mime_type",
+            "data",
+        ])
+        .where("identifier", "=", identifier)
+        .where(({ or, eb }) =>
+            or([
+                eb("is_public", "=", true),
+                eb("user_id", "=", user_id),
+            ])
+        )
+        .executeTakeFirst() ?? null;
 };

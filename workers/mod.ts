@@ -34,7 +34,7 @@ const checkServiceDisabled = (serviceName: string): boolean => {
 
 export const initializeWorkers = (): void => {
     for (const [serviceName, service] of Object.entries(services)) {
-        if (checkServiceDisabled(serviceName)) {
+        if (!service.options.required && checkServiceDisabled(serviceName)) {
             continue;
         }
 
