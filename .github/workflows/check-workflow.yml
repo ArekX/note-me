@@ -4,7 +4,7 @@ permissions:
     contents: read
 
 env:
-  DENO_VERSION: "1.42"
+  DENO_VERSION: "1.44.1"
   DENO_DIR: /home/runner/.deno-cache
   SQLITE_DATABASE_LOCATION: ":memory:"
   COOKIE_HOSTNAME: localhost
@@ -16,7 +16,7 @@ env:
   WEBSERVER_PORT: 8000
   LOGGING_LEVEL: INFO
   SHOW_LOG_COLORS: 1
-  DISABLE_SERVICE_WEBSOCKET: 0
+  MAX_FILE_SIZE: 52428800
   RUN_MIGRATIONS_ON_STARTUP: 0
 
 
