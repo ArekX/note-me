@@ -1,6 +1,6 @@
 import { FreshContext } from "$fresh/server.ts";
 import { getFileData } from "$backend/repository/file-repository.ts";
-import { AppState } from "../../types/app-state.ts";
+import { AppState } from "$types";
 
 export const handler = async (_req: Request, ctx: FreshContext<AppState>) => {
     const identifier: string = ctx.params.identifier ?? "";
@@ -13,10 +13,15 @@ export const handler = async (_req: Request, ctx: FreshContext<AppState>) => {
         throw new Deno.errors.NotFound("Requested file not found.");
     }
 
+    const disposition = ctx.url.searchParams.has("download")
+        ? "attachment"
+        : "inline";
+
     return new Response(file.data, {
         headers: {
             "Content-Type": file.mime_type,
-            "Content-Disposition": `inline; filename="${file.name}"`,
+            "Content-Disposition": `${disposition}; filename="${file.name}"`,
+            "Content-Length": file.size.toString(),
         },
     });
 };
