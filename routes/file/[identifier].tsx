@@ -22,6 +22,8 @@ export const handler = async (_req: Request, ctx: FreshContext<AppState>) => {
             "Content-Type": file.mime_type,
             "Content-Disposition": `${disposition}; filename="${file.name}"`,
             "Content-Length": file.size.toString(),
+            "Cache-Control": "public, max-age=604800, immutable", // 1 week
+            "ETag": identifier,
         },
     });
 };

@@ -83,7 +83,8 @@ export const findUserFiles = async (
             "created_at",
         ])
         .where("user_id", "=", user_id)
-        .where("is_ready", "=", true);
+        .where("is_ready", "=", true)
+        .orderBy("created_at", "desc");
 
     query = applyFilters(query, {
         name: { type: "text", value: filters.name },

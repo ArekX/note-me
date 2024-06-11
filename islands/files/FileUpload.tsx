@@ -8,7 +8,13 @@ import {
 } from "$workers/websocket/api/file/messages.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 
-export default function FileUpload() {
+interface FileUploadProps {
+    onFileUploadDone?: () => void;
+}
+
+export default function FileUpload({
+    onFileUploadDone,
+}: FileUploadProps) {
     const { sendBinaryMessage, sendMessage } = useWebsocketService();
 
     const transferFile = async (file: File) => {
@@ -65,16 +71,22 @@ export default function FileUpload() {
             return;
         }
 
-        const file = target.files[0];
-        if (file) {
+        let anyFileUploaded = false;
+
+        for (const file of Array.from(target.files)) {
             await transferFile(file);
+            anyFileUploaded = true;
         }
 
         target.value = "";
+
+        if (anyFileUploaded) {
+            onFileUploadDone?.();
+        }
     };
     return (
         <div>
-            <input type="file" onChange={handleFileChange} />
+            <input type="file" multiple onChange={handleFileChange} />
         </div>
     );
 }
