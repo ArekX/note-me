@@ -19,6 +19,8 @@ import {
     FindFilesResponse,
     SendFileDataMessage,
     SendFileDataResponse,
+    UpdateFileMessage,
+    UpdateFileResponse,
 } from "./messages.ts";
 import {
     createFileRecord,
@@ -28,6 +30,7 @@ import {
     findUserFiles,
     getFileRecordSize,
     setFileRecordData,
+    updateFileRecord,
 } from "$backend/repository/file-repository.ts";
 import { requireValidSchema } from "$schemas/mod.ts";
 import { addFileRequestSchema } from "$schemas/file.ts";
@@ -142,11 +145,26 @@ const handleFindFiles: ListenerFn<FindFilesMessage> = async (
 const handleDeleteFile: ListenerFn<DeleteFileMessage> = async (
     { message: { identifier }, respond, sourceClient },
 ) => {
-    const success = await deleteUserFile(identifier, sourceClient!.userId);
+    await deleteUserFile(identifier, sourceClient!.userId);
 
     respond<DeleteFileResponse>({
-        success,
+        identifier,
         type: "deleteFileResponse",
+    });
+};
+
+const handleUpdateFile: ListenerFn<UpdateFileMessage> = async (
+    { message: { identifier, is_public }, respond, sourceClient },
+) => {
+    await updateFileRecord(
+        identifier,
+        is_public,
+        sourceClient!.userId,
+    );
+
+    respond<UpdateFileResponse>({
+        data: { identifier, is_public },
+        type: "updateFileResponse",
     });
 };
 
@@ -156,4 +174,5 @@ export const frontendMap: RegisterListenerMap<FileFrontendMessage> = {
     sendFileData: handleSendFileData,
     findFiles: handleFindFiles,
     deleteFile: handleDeleteFile,
+    updateFile: handleUpdateFile,
 };

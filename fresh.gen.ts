@@ -31,6 +31,7 @@ import * as $InvalidateData from "./islands/InvalidateData.tsx";
 import * as $Loader from "./islands/Loader.tsx";
 import * as $Pagination from "./islands/Pagination.tsx";
 import * as $ScriptLoader from "./islands/ScriptLoader.tsx";
+import * as $files_FileItem from "./islands/files/FileItem.tsx";
 import * as $files_FilePicker from "./islands/files/FilePicker.tsx";
 import * as $files_FileUpload from "./islands/files/FileUpload.tsx";
 import * as $notes_InsertDialog from "./islands/notes/InsertDialog.tsx";
@@ -124,6 +125,7 @@ const manifest = {
         "./islands/Loader.tsx": $Loader,
         "./islands/Pagination.tsx": $Pagination,
         "./islands/ScriptLoader.tsx": $ScriptLoader,
+        "./islands/files/FileItem.tsx": $files_FileItem,
         "./islands/files/FilePicker.tsx": $files_FilePicker,
         "./islands/files/FileUpload.tsx": $files_FileUpload,
         "./islands/notes/InsertDialog.tsx": $notes_InsertDialog,

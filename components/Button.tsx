@@ -8,6 +8,7 @@ interface ButtonProps {
     title?: string;
     color?: ButtonColors;
     type?: "button" | "submit";
+    addClass?: string;
     tabIndex?: number;
     onClick?: (event: Event) => void;
 }
@@ -39,6 +40,7 @@ export default function Button(
         color = "primary",
         type = "button",
         tabIndex,
+        addClass,
         onClick,
     }: ButtonProps,
 ) {
@@ -52,7 +54,7 @@ export default function Button(
             onClick={(e) => !disabled && onClick?.(e)}
             class={`${sizeTypes[size]} ${
                 buttonColors[color]
-            } transition-colors rounded-md`}
+            } transition-colors rounded-md ${addClass ?? ""}`}
         >
             {children}
         </button>

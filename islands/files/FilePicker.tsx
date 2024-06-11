@@ -3,6 +3,7 @@ import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import { useSignal } from "@preact/signals";
 import { FileMetaRecord } from "$backend/repository/file-repository.ts";
 import {
+    FileFrontendResponse,
     FindFilesMessage,
     FindFilesResponse,
 } from "$workers/websocket/api/file/messages.ts";
@@ -10,9 +11,7 @@ import { useLoader } from "$frontend/hooks/use-loading.ts";
 import Loader from "$islands/Loader.tsx";
 import Pagination from "$islands/Pagination.tsx";
 import { useScriptsReadyEffect } from "$frontend/hooks/use-scripts-ready.ts";
-import { getUserData } from "$frontend/user-data.ts";
-import Button from "$components/Button.tsx";
-import Icon from "$components/Icon.tsx";
+import FileItem from "$islands/files/FileItem.tsx";
 
 export interface PickedFile {
     name: string;
@@ -22,35 +21,74 @@ interface FilePickerProps {
     onFilePicked?: (file: PickedFile) => void;
 }
 
-const isImage = (file: FileMetaRecord) => {
-    return file.mime_type.startsWith("image/");
-};
-
-const renderClosestDisplaySize = (size: number) => {
-    if (size < 1024) {
-        return `${size} bytes`;
-    } else if (size < 1024 * 1024) {
-        return `${(size / 1024).toFixed(2)} KB`;
-    } else {
-        return `${(size / 1024 / 1024).toFixed(2)} MB`;
-    }
-};
+interface ExtendedFileMetaRecord extends FileMetaRecord {
+    is_processing: boolean;
+}
 
 export default function FilePicker({}: FilePickerProps) {
-    const { sendMessage } = useWebsocketService();
+    const { sendMessage } = useWebsocketService<
+        FileFrontendResponse
+    >({
+        eventMap: {
+            files: {
+                updateFileResponse: (response) => {
+                    if ("is_public" in response.data) {
+                        files.value = files.value.map((file) => {
+                            if (file.identifier === response.data.identifier) {
+                                return {
+                                    ...file,
+                                    is_public: response.data.is_public,
+                                    is_processing: false,
+                                };
+                            }
+                            return file;
+                        });
+                    }
+                },
+                deleteFileResponse: async (response) => {
+                    files.value = files.value.filter((file) =>
+                        file.identifier !== response.identifier
+                    );
+
+                    if (
+                        selectedFile.value &&
+                        selectedFile.value.identifier === response.identifier
+                    ) {
+                        selectedFile.value = null;
+                    }
+
+                    if (files.value.length === 0 && currentPage.value > 1) {
+                        currentPage.value -= 1;
+                    }
+
+                    await loadFiles();
+                },
+                findFilesResponse: (response) => {
+                    files.value = response.records.results.map((f) => ({
+                        ...f,
+                        is_processing: false,
+                    }));
+
+                    totalFiles.value = response.records.total;
+                    perPage.value = response.records.perPage;
+                    currentPage.value = response.records.page;
+
+                    loader.stop();
+                },
+            },
+        },
+    });
     const loader = useLoader();
 
-    const selectedFile = useSignal<FileMetaRecord | null>(null);
+    const selectedFile = useSignal<ExtendedFileMetaRecord | null>(null);
 
-    const files = useSignal<FileMetaRecord[]>([]);
+    const files = useSignal<ExtendedFileMetaRecord[]>([]);
     const totalFiles = useSignal(0);
     const perPage = useSignal(0);
     const currentPage = useSignal(1);
 
     const loadFiles = async () => {
-        loader.start();
-
-        const response = await sendMessage<FindFilesMessage, FindFilesResponse>(
+        await sendMessage<FindFilesMessage, FindFilesResponse>(
             "files",
             "findFiles",
             {
@@ -61,47 +99,60 @@ export default function FilePicker({}: FilePickerProps) {
                 expect: "findFilesResponse",
             },
         );
-
-        files.value = response.records.results;
-        totalFiles.value = response.records.total;
-        perPage.value = response.records.perPage;
-        currentPage.value = response.records.page;
-
-        loader.stop();
     };
 
     const handlePageChange = (page: number) => {
         currentPage.value = page;
+        loader.start();
         loadFiles();
     };
 
-    const handleDeleteFile = async (file: FileMetaRecord) => {
-        loader.start();
-
+    const handleDeleteFile = async (file: ExtendedFileMetaRecord) => {
+        file.is_processing = true;
         await sendMessage("files", "deleteFile", {
             data: {
                 identifier: file.identifier,
             },
             expect: "deleteFileResponse",
         });
+    };
 
-        loadFiles();
+    const toggleFileVisibility = async (file: ExtendedFileMetaRecord) => {
+        file.is_processing = true;
+        await sendMessage("files", "updateFile", {
+            data: {
+                identifier: file.identifier,
+                is_public: !file.is_public,
+            },
+            expect: "updateFileResponse",
+        });
     };
 
     useScriptsReadyEffect(() => {
+        loader.start();
         loadFiles();
     });
 
     return (
         <div class="w-full">
-            FilePicker
-
-            <FileUpload onFileUploadDone={() => loadFiles()} />
-            {selectedFile.value && (
-                <div>
-                    Selected file: {selectedFile.value.name}
+            <div class="mb-2 flex flex-row content-between w-full">
+                <div class="flex-grow">
+                    {selectedFile.value && (
+                        <span>
+                            Selected:{" "}
+                            <a
+                                title={`Download ${selectedFile.value.name}`}
+                                href={`/file/${selectedFile.value.identifier}?download`}
+                                target="_blank"
+                                class="underline text-gray-900"
+                            >
+                                {selectedFile.value.name}
+                            </a>
+                        </span>
+                    )}
                 </div>
-            )}
+                <FileUpload onFileUploadDone={() => loadFiles()} />
+            </div>
 
             {loader.running && (
                 <div class="text-center">
@@ -112,80 +163,14 @@ export default function FilePicker({}: FilePickerProps) {
                 <>
                     <div class="grid grid-cols-5 gap-4">
                         {files.value.map((file) => (
-                            <div
+                            <FileItem
                                 key={file.identifier}
-                                class={`group rounded border-2 border-solid  cursor-pointer  relative ${
-                                    selectedFile.value?.identifier ===
-                                            file.identifier
-                                        ? "border-blue-500"
-                                        : "border-gray-300 hover:border-gray-500"
-                                }`}
-                                onClick={() => {
-                                    if (selectedFile.value !== file) {
-                                        selectedFile.value = file;
-                                    } else {
-                                        selectedFile.value = null;
-                                    }
-                                }}
-                            >
-                                <div class="block text-center bg-slate-400">
-                                    {isImage(file) && (
-                                        <img
-                                            src={`/file/${file.identifier}`}
-                                            class="h-40 inline-block"
-                                            alt={file.name}
-                                        />
-                                    )}
-                                </div>
-
-                                <div
-                                    class="p-2 h-10 whitespace-nowrap overflow-hidden text-ellipsis"
-                                    title={file.name}
-                                >
-                                    {file.name}
-                                </div>
-
-                                <div class="text-xs p-2">
-                                    Type: {file.mime_type} <br />
-                                    Size: {renderClosestDisplaySize(file.size)}
-                                    {" "}
-                                    <br />
-                                    Public: {file.is_public ? "Yes" : "No"}{" "}
-                                    <br />
-                                    Uploaded at: {getUserData().formatDateTime(
-                                        file.created_at,
-                                    )}
-                                </div>
-
-                                <div class="absolute top-0 right-0 pr-2 pt-2 opacity-0 group-hover:opacity-30 group-hover:hover:opacity-100 ">
-                                    <Button
-                                        color="danger"
-                                        size="xs"
-                                        onClick={(e: Event) => {
-                                            handleDeleteFile(file);
-                                            e.stopPropagation();
-                                        }}
-                                    >
-                                        <Icon name="minus-circle" />
-                                    </Button>
-                                    <div class="pt-1">
-                                        <Button
-                                            color="primary"
-                                            size="xs"
-                                            onClick={(e: Event) => {
-                                                handleDeleteFile(file);
-                                                e.stopPropagation();
-                                            }}
-                                        >
-                                            <Icon
-                                                name={file.is_public
-                                                    ? "hide"
-                                                    : "show"}
-                                            />
-                                        </Button>
-                                    </div>
-                                </div>
-                            </div>
+                                file={file}
+                                isSelected={selectedFile.value === file}
+                                onSelect={(f) => selectedFile.value = f}
+                                onDelete={handleDeleteFile}
+                                onToggleVisibility={toggleFileVisibility}
+                            />
                         ))}
                     </div>
                     <Pagination

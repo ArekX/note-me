@@ -130,3 +130,17 @@ export const getFileData = async (
         )
         .executeTakeFirst() ?? null;
 };
+
+export const updateFileRecord = async (
+    identifier: string,
+    is_public: boolean,
+    user_id: number,
+): Promise<boolean> => {
+    const result = await db.updateTable("file")
+        .set("is_public", !!is_public)
+        .where("identifier", "=", identifier)
+        .where("user_id", "=", user_id)
+        .executeTakeFirst();
+
+    return result.numUpdatedRows > 0;
+};

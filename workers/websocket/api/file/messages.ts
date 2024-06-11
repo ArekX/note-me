@@ -62,7 +62,19 @@ export type DeleteFileMessage = FileMessage<
 
 export type DeleteFileResponse = FileMessage<
     "deleteFileResponse",
-    { success: boolean }
+    { identifier: string }
+>;
+
+export type UpdateData = { identifier: string; is_public: boolean };
+
+export type UpdateFileMessage = FileMessage<
+    "updateFile",
+    UpdateData
+>;
+
+export type UpdateFileResponse = FileMessage<
+    "updateFileResponse",
+    { data: UpdateData }
 >;
 
 export type FileFrontendResponse =
@@ -70,11 +82,13 @@ export type FileFrontendResponse =
     | SendFileDataResponse
     | EndFileResponse
     | FindFilesResponse
-    | DeleteFileResponse;
+    | DeleteFileResponse
+    | UpdateFileResponse;
 
 export type FileFrontendMessage =
     | BeginFileMessage
     | SendFileDataMessage
     | EndFileMessage
     | FindFilesMessage
-    | DeleteFileMessage;
+    | DeleteFileMessage
+    | UpdateFileMessage;

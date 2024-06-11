@@ -17,9 +17,15 @@ export const handler = async (_req: Request, ctx: FreshContext<AppState>) => {
         ? "attachment"
         : "inline";
 
+    let mimeType = file.mime_type;
+
+    if (mimeType === "text/html") {
+        mimeType = "text/plain";
+    }
+
     return new Response(file.data, {
         headers: {
-            "Content-Type": file.mime_type,
+            "Content-Type": mimeType,
             "Content-Disposition": `${disposition}; filename="${file.name}"`,
             "Content-Length": file.size.toString(),
             "Cache-Control": "public, max-age=604800, immutable", // 1 week

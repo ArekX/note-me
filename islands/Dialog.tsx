@@ -2,7 +2,7 @@ import { useEffect } from "preact/hooks";
 import { ComponentChildren, createRef } from "preact";
 
 interface DialogProps {
-    visible: boolean;
+    visible?: boolean;
     canCancel?: boolean;
     props?: Record<string, unknown>;
     children: ComponentChildren;
@@ -10,7 +10,7 @@ interface DialogProps {
 }
 
 export default function Dialog({
-    visible,
+    visible = true,
     children,
     canCancel = false,
     onCancel,

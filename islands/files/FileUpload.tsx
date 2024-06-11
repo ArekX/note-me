@@ -7,6 +7,10 @@ import {
     SendFileDataResponse,
 } from "$workers/websocket/api/file/messages.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
+import Button from "$components/Button.tsx";
+import Icon from "$components/Icon.tsx";
+import Dialog from "$islands/Dialog.tsx";
+import { useSignal } from "@preact/signals";
 
 interface FileUploadProps {
     onFileUploadDone?: () => void;
@@ -16,6 +20,10 @@ export default function FileUpload({
     onFileUploadDone,
 }: FileUploadProps) {
     const { sendBinaryMessage, sendMessage } = useWebsocketService();
+
+    const isUploading = useSignal(false);
+    const toUploadCount = useSignal(0);
+    const uploadedCount = useSignal(0);
 
     const transferFile = async (file: File) => {
         const { targetId } = await sendMessage<
@@ -73,8 +81,13 @@ export default function FileUpload({
 
         let anyFileUploaded = false;
 
+        toUploadCount.value = target.files.length;
+        uploadedCount.value = 0;
+        isUploading.value = true;
+
         for (const file of Array.from(target.files)) {
             await transferFile(file);
+            uploadedCount.value++;
             anyFileUploaded = true;
         }
 
@@ -83,10 +96,35 @@ export default function FileUpload({
         if (anyFileUploaded) {
             onFileUploadDone?.();
         }
+
+        isUploading.value = false;
     };
     return (
-        <div>
-            <input type="file" multiple onChange={handleFileChange} />
-        </div>
+        <>
+            <Button addClass="relative" size="sm" title="Upload files...">
+                <input
+                    class="absolute left-0 right-0 top-0 bottom-0 opacity-0 cursor-pointer"
+                    type="file"
+                    title="Upload files..."
+                    multiple
+                    onChange={handleFileChange}
+                />
+                <Icon name="cloud-upload" />
+            </Button>
+            {isUploading.value && (
+                <Dialog>
+                    <p class="text-center">
+                        Uploading {uploadedCount.value} of{" "}
+                        {toUploadCount.value}...
+                    </p>
+                    <progress
+                        class="w-full"
+                        max={toUploadCount.value}
+                        min="0"
+                        value={uploadedCount.value}
+                    />
+                </Dialog>
+            )}
+        </>
     );
 }

@@ -84,10 +84,6 @@ export default function InsertDialog({
                         ))}
                     </select>
 
-                    <SelectedComponent
-                        onInput={(text) => textToInsert.value = text}
-                    />
-
                     <div class="pt-6">
                         <Button color="success" onClick={handleInsert}>
                             Insert
@@ -100,6 +96,10 @@ export default function InsertDialog({
                         </Button>
                     </div>
                 </div>
+
+                <SelectedComponent
+                    onInput={(text) => textToInsert.value = text}
+                />
             </Dialog>
         </div>
     );
