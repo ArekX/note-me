@@ -16,12 +16,16 @@ interface FileUploadProps {
     onFileUploadDone?: () => void;
 }
 
+const getPercentage = (uploaded: number, total: number) =>
+    total != 0 ? Math.floor((uploaded / total) * 100).toFixed(2) : 0;
+
 export default function FileUpload({
     onFileUploadDone,
 }: FileUploadProps) {
     const { sendBinaryMessage, sendMessage } = useWebsocketService();
 
     const isUploading = useSignal(false);
+    const fileToUploadCount = useSignal(0);
     const toUploadCount = useSignal(0);
     const uploadedCount = useSignal(0);
 
@@ -60,8 +64,10 @@ export default function FileUpload({
                     expect: "sendFileDataResponse",
                 },
             );
+            uploadedCount.value += chunk.byteLength;
         }
 
+        // TODO: Handle when file is over limit
         await sendMessage<EndFileMessage, EndFileResponse>(
             "files",
             "endFile",
@@ -70,6 +76,7 @@ export default function FileUpload({
                 expect: "endFileResponse",
             },
         );
+        fileToUploadCount.value--;
     };
 
     const handleFileChange = async (event: Event) => {
@@ -81,11 +88,13 @@ export default function FileUpload({
 
         let anyFileUploaded = false;
 
-        toUploadCount.value = target.files.length;
+        const files = Array.from(target.files);
+        toUploadCount.value = files.reduce((a, f) => a + f.size, 0);
         uploadedCount.value = 0;
+        fileToUploadCount.value = files.length;
         isUploading.value = true;
 
-        for (const file of Array.from(target.files)) {
+        for (const file of files) {
             await transferFile(file);
             uploadedCount.value++;
             anyFileUploaded = true;
@@ -114,8 +123,10 @@ export default function FileUpload({
             {isUploading.value && (
                 <Dialog>
                     <p class="text-center">
-                        Uploading {uploadedCount.value} of{" "}
-                        {toUploadCount.value}...
+                        Uploading progress {getPercentage(
+                            uploadedCount.value,
+                            toUploadCount.value,
+                        )}%
                     </p>
                     <progress
                         class="w-full"
