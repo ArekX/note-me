@@ -138,6 +138,25 @@ const handleClientDisconnected = (client: SocketClient) => {
     }
 };
 
+const handleClientError = (
+    requestId: string,
+    type: string,
+    namespace: string,
+    client: SocketClient,
+    error: Error,
+) => {
+    workerLogger.error(
+        `Error while handling message of type '{type}' in namespace '{namespace}': {error}`,
+        { type, namespace, error },
+    );
+    client.send<ErrorMessage>({
+        requestId,
+        namespace: "system",
+        type: "error",
+        message: error.message,
+    });
+};
+
 const handleClientRequest = (
     client: SocketClient,
     message: Message | BinaryMessage,
@@ -148,33 +167,52 @@ const handleClientRequest = (
     let wasRequestHandled = false;
 
     for (const listener of listeners) {
-        listener({
-            message,
-            service: websocketService,
-            sourceClient: client,
-            respond: (responseMessage) => {
-                client.send({
-                    requestId: message.requestId,
-                    namespace,
-                    ...responseMessage,
+        try {
+            const result = listener({
+                message,
+                service: websocketService,
+                sourceClient: client,
+                respond: (responseMessage) => {
+                    client.send({
+                        requestId: message.requestId,
+                        namespace,
+                        ...responseMessage,
+                    });
+                },
+            }) as unknown;
+            if (result instanceof Promise) {
+                result.catch((error) => {
+                    handleClientError(
+                        message.requestId,
+                        type,
+                        namespace,
+                        client,
+                        error as Error,
+                    );
                 });
-            },
-        });
+            }
+        } catch (error) {
+            handleClientError(
+                message.requestId,
+                type,
+                namespace,
+                client,
+                error as Error,
+            );
+            return;
+        }
+
         wasRequestHandled = true;
     }
 
     if (!wasRequestHandled) {
-        workerLogger.debug(
-            `No handler for frontend message of type '{type}' in namespace '{namespace}' was found.`,
-            { type, namespace },
+        handleClientError(
+            message.requestId,
+            type,
+            namespace,
+            client,
+            new Error("No handler found"),
         );
-        client.send<ErrorMessage>({
-            requestId: message.requestId,
-            namespace: "system",
-            type: "error",
-            message:
-                `No handler for message of type '${type}' in namespace '${namespace}' was found.`,
-        });
     }
 };
 

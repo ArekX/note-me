@@ -6,11 +6,16 @@ import {
     SendFileDataMessage,
     SendFileDataResponse,
 } from "$workers/websocket/api/file/messages.ts";
-import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
+import {
+    ErrorResponse,
+    useWebsocketService,
+} from "$frontend/hooks/use-websocket-service.ts";
 import Button from "$components/Button.tsx";
 import Icon from "$components/Icon.tsx";
 import Dialog from "$islands/Dialog.tsx";
 import { useSignal } from "@preact/signals";
+import { addMessage } from "$frontend/toast-message.ts";
+import { ErrorMessage } from "$workers/websocket/types.ts";
 
 interface FileUploadProps {
     onFileUploadDone?: () => void;
@@ -30,17 +35,11 @@ export default function FileUpload({
     const uploadedCount = useSignal(0);
 
     const transferFile = async (file: File) => {
-        const { targetId } = await sendMessage<
-            BeginFileMessage,
-            BeginFileResponse
-        >("files", "beginFile", {
-            data: {
-                size: file.size,
-                name: file.name,
-                mimeType: file.type,
-            },
-            expect: "beginFileResponse",
-        });
+        const targetId = await startFileUpload(file);
+
+        if (targetId === null) {
+            return;
+        }
 
         const fileBuffer = await file.arrayBuffer();
 
@@ -67,16 +66,53 @@ export default function FileUpload({
             uploadedCount.value += chunk.byteLength;
         }
 
-        // TODO: Handle when file is over limit
-        await sendMessage<EndFileMessage, EndFileResponse>(
-            "files",
-            "endFile",
-            {
-                data: { targetId },
-                expect: "endFileResponse",
-            },
-        );
-        fileToUploadCount.value--;
+        await finalizeFile(file.name, targetId);
+    };
+
+    const startFileUpload = async (file: File) => {
+        try {
+            const { targetId } = await sendMessage<
+                BeginFileMessage,
+                BeginFileResponse
+            >("files", "beginFile", {
+                data: {
+                    size: file.size,
+                    name: file.name,
+                    mimeType: file.type,
+                },
+                expect: "beginFileResponse",
+            });
+            return targetId;
+        } catch (e) {
+            const error = e as ErrorResponse<ErrorMessage>;
+
+            addMessage({
+                type: "error",
+                text:
+                    `Failed to upload file '${file.name}': ${error.data.message}`,
+            });
+        }
+
+        return null;
+    };
+
+    const finalizeFile = async (name: string, targetId: string) => {
+        try {
+            await sendMessage<EndFileMessage, EndFileResponse>(
+                "files",
+                "endFile",
+                {
+                    data: { targetId },
+                    expect: "endFileResponse",
+                },
+            );
+        } catch (e) {
+            const error = e as ErrorResponse<ErrorMessage>;
+            addMessage({
+                type: "error",
+                text: `Failed to upload file '${name}': ${error.data.message}`,
+            });
+        }
     };
 
     const handleFileChange = async (event: Event) => {
@@ -96,6 +132,7 @@ export default function FileUpload({
 
         for (const file of files) {
             await transferFile(file);
+            fileToUploadCount.value--;
             uploadedCount.value++;
             anyFileUploaded = true;
         }

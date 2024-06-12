@@ -51,6 +51,10 @@ const handleBeginFile: ListenerFn<BeginFileMessage> = async (
         size: +size,
     };
 
+    if (data.size > MAX_FILE_SIZE) {
+        throw new Error("File size is over the allowable limit.");
+    }
+
     await requireValidSchema(addFileRequestSchema, data);
 
     await createFileRecord({
