@@ -19,13 +19,16 @@ export interface PickedFile {
 
 interface FilePickerProps {
     onFilePicked?: (file: PickedFile) => void;
+    color?: "black" | "white";
 }
 
 interface ExtendedFileMetaRecord extends FileMetaRecord {
     is_processing: boolean;
 }
 
-export default function FilePicker({}: FilePickerProps) {
+export default function FilePicker({
+    color,
+}: FilePickerProps) {
     const { sendMessage } = useWebsocketService<
         FileFrontendResponse
     >({
@@ -156,7 +159,7 @@ export default function FilePicker({}: FilePickerProps) {
 
             {loader.running && (
                 <div class="text-center">
-                    <Loader>Loading files...</Loader>
+                    <Loader color={color}>Loading files...</Loader>
                 </div>
             )}
             {!loader.running && (

@@ -7,7 +7,7 @@ import FilePicker from "$islands/files/FilePicker.tsx";
 const Component = ({}: InsertComponentProps) => {
     return (
         <div class="w-full">
-            <FilePicker />
+            <FilePicker color="white" />
         </div>
     );
 };

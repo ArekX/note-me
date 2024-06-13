@@ -16,7 +16,6 @@ export default function NoteTextArea({
     onChange,
 }: NoteInputProps) {
     const text = useSignal(initialText);
-    const showInsertDialog = useSignal(false);
     const lastCursorPosition = useSignal(0);
     const textAreaRef = createRef<HTMLTextAreaElement>();
 
@@ -69,28 +68,10 @@ export default function NoteTextArea({
         };
     }, [textAreaRef]);
 
-    useEffect(() => {
-        const handleHotkeys = (e: KeyboardEvent) => {
-            if (e.ctrlKey && e.key === "i") {
-                showInsertDialog.value = true;
-                e.preventDefault();
-            }
-        };
-
-        document.addEventListener("keydown", handleHotkeys);
-
-        return () => {
-            document.removeEventListener("keydown", handleHotkeys);
-        };
-    }, []);
-
     return (
         <div class="flex-grow block basis-auto">
             <InsertDialog
-                show={showInsertDialog.value}
                 onInsert={handleDialogInsert}
-                onShowRequest={(shouldShow) =>
-                    showInsertDialog.value = shouldShow}
             />
             <textarea
                 ref={textAreaRef}
