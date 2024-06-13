@@ -16,7 +16,7 @@ interface InsertDialogProps {
 }
 
 export interface InsertComponentProps {
-    onInput: (text: string) => void;
+    onInsert: (text: string) => void;
 }
 
 export interface InsertComponent {
@@ -38,12 +38,6 @@ export default function InsertDialog({
     onInsert,
 }: InsertDialogProps) {
     const selectedComponentIndex = useSignal(0);
-    const textToInsert = useSignal("");
-
-    const handleInsert = () => {
-        onInsert(textToInsert.value);
-        onShowRequest(false);
-    };
 
     const SelectedComponent =
         insertComponents[selectedComponentIndex.value].component;
@@ -85,9 +79,6 @@ export default function InsertDialog({
                     </select>
 
                     <div class="pt-6">
-                        <Button color="success" onClick={handleInsert}>
-                            Insert
-                        </Button>{" "}
                         <Button
                             color="danger"
                             onClick={() => onShowRequest(false)}
@@ -98,7 +89,10 @@ export default function InsertDialog({
                 </div>
 
                 <SelectedComponent
-                    onInput={(text) => textToInsert.value = text}
+                    onInsert={(text) => {
+                        onInsert(text);
+                        onShowRequest(false);
+                    }}
                 />
             </Dialog>
         </div>
