@@ -1,5 +1,9 @@
 import { useScriptsReadyEffect } from "$frontend/hooks/use-scripts-ready.ts";
-import { BinaryMessage, Message } from "$workers/websocket/types.ts";
+import {
+    BinaryMessage,
+    ErrorMessage,
+    Message,
+} from "$workers/websocket/types.ts";
 import {
     addListener,
     removeListener,
@@ -40,6 +44,8 @@ export interface ErrorResponse<T> {
     error: string;
     data: T;
 }
+
+export type SystemErrorMessage = ErrorResponse<ErrorMessage>;
 
 export const useWebsocketService = <T extends Message>(
     options?: WebSocketEventOptions<T>,

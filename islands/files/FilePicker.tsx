@@ -10,9 +10,11 @@ import {
 import { useLoader } from "$frontend/hooks/use-loading.ts";
 import Loader from "$islands/Loader.tsx";
 import Pagination from "$islands/Pagination.tsx";
-import { useScriptsReadyEffect } from "$frontend/hooks/use-scripts-ready.ts";
 import FileItem from "$islands/files/FileItem.tsx";
 import ConfirmDialog from "$islands/ConfirmDialog.tsx";
+import { useFileUploader } from "./hooks/use-file-uploader.ts";
+import Dialog from "$islands/Dialog.tsx";
+import { useEffect } from "preact/hooks";
 
 interface FilePickerProps {
     selectedFileId?: string;
@@ -88,6 +90,8 @@ export default function FilePicker({
     const currentPage = useSignal(1);
     const fileToDelete = useSignal<ExtendedFileMetaRecord | null>(null);
 
+    const fileUploader = useFileUploader();
+
     const loadFiles = async () => {
         await sendMessage<FindFilesMessage, FindFilesResponse>(
             "files",
@@ -122,7 +126,7 @@ export default function FilePicker({
         fileToDelete.value = null;
     };
 
-    const toggleFileVisibility = async (file: ExtendedFileMetaRecord) => {
+    const handleToggleFileVisibility = async (file: ExtendedFileMetaRecord) => {
         file.is_processing = true;
         await sendMessage("files", "updateFile", {
             data: {
@@ -133,15 +137,72 @@ export default function FilePicker({
         });
     };
 
-    useScriptsReadyEffect(() => {
+    const isDroppingFile = useSignal(false);
+
+    const handleDragOver = (e: DragEvent) => {
+        if (!e.dataTransfer) {
+            return;
+        }
+
+        e.preventDefault();
+        isDroppingFile.value = true;
+    };
+
+    const handleDragLeave = (e: DragEvent) => {
+        e.preventDefault();
+        isDroppingFile.value = false;
+    };
+
+    const handleDrop = async (e: DragEvent) => {
+        e.preventDefault();
+
+        if (!e.dataTransfer) {
+            return;
+        }
+
+        const files = Array.from(e.dataTransfer.files);
+        await fileUploader.uploadFiles(files);
+        await loadFiles();
+        isDroppingFile.value = false;
+    };
+
+    useEffect(() => {
         loader.start();
         loadFiles();
-    });
+    }, []);
 
     return (
-        <div class="w-full">
+        <div
+            class="w-full relative"
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+        >
+            {isDroppingFile.value && (
+                <div
+                    onDragLeave={handleDragLeave}
+                    class="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50"
+                >
+                    <p class="text-white text-2xl">Drop files to upload</p>
+                </div>
+            )}
             <div class="w-full text-right mb-2">
-                <FileUpload onFileUploadDone={() => loadFiles()} />
+                <FileUpload
+                    onFileUploadDone={() => loadFiles()}
+                    fileUploader={fileUploader}
+                />
+                {fileUploader.isUploading.value && (
+                    <Dialog>
+                        <p class="text-center">
+                            Uploading progress {fileUploader.donePercentage}%
+                        </p>
+                        <progress
+                            class="w-full"
+                            max={fileUploader.totalSizeToUpload.value}
+                            min="0"
+                            value={fileUploader.uploadedSize.value}
+                        />
+                    </Dialog>
+                )}
             </div>
 
             {loader.running && (
@@ -159,7 +220,7 @@ export default function FilePicker({
                                 isSelected={selectedFileId === file.identifier}
                                 onSelect={(f) => onFilePicked?.(f)}
                                 onDelete={(f) => fileToDelete.value = f}
-                                onToggleVisibility={toggleFileVisibility}
+                                onToggleVisibility={handleToggleFileVisibility}
                             />
                         ))}
                     </div>

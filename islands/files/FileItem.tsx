@@ -162,7 +162,7 @@ export default function FileItem({
                             }}
                         >
                             <Icon
-                                name={file.is_public ? "hide" : "show"}
+                                name={file.is_public ? "show" : "hide"}
                             />
                         </Button>
                     </div>
