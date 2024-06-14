@@ -15,6 +15,7 @@ interface InsertDialogProps {
 }
 
 export interface InsertComponentProps {
+    onCancel: () => void;
     onInsert: (text: string) => void;
 }
 
@@ -113,6 +114,7 @@ export default function InsertDialog({
                             onInsert(text);
                             handleCancel();
                         }}
+                         onCancel={handleCancel}
                     />
                 </Dialog>
             )}

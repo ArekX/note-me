@@ -141,17 +141,17 @@ export default function FilePicker({
             <div class="mb-2 flex flex-row content-between w-full">
                 <div class="flex-grow">
                     {selectedFile.value && (
-                        <span>
+                        <div>
                             Selected:{" "}
                             <a
                                 title={`Download ${selectedFile.value.name}`}
                                 href={`/file/${selectedFile.value.identifier}?download`}
                                 target="_blank"
-                                class="underline text-gray-900"
+                                class="underline"
                             >
                                 {selectedFile.value.name}
                             </a>
-                        </span>
+                        </div>
                     )}
                 </div>
                 <FileUpload onFileUploadDone={() => loadFiles()} />
