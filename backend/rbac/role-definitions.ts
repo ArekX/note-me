@@ -1,5 +1,6 @@
 import {
     AppPermissions,
+    CanManageFiles,
     CanManageSettings,
     CanManageTags,
     CanManageUsers,
@@ -19,6 +20,7 @@ export const roleDefinitions = {
             ...Object.values(CanManageUsers),
             ...Object.values(CanManageSettings),
             ...Object.values(CanManageTags),
+            ...Object.values(CanManageFiles),
         ],
     },
     user: {
@@ -31,6 +33,7 @@ const settingsPermissions = [
     CanManageUsers.List,
     CanManageSettings.Update,
     CanManageTags.List,
+    CanManageFiles.AllFiles,
 ];
 
 export type Roles = keyof typeof roleDefinitions;

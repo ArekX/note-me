@@ -17,6 +17,7 @@ import {
     SocketClientMap,
 } from "./types.ts";
 import { readMessage } from "$workers/websocket/reader/mod.ts";
+import { canRole, roleRequire } from "$backend/rbac/authorizer.ts";
 
 const clients: SocketClientMap = {};
 
@@ -43,6 +44,13 @@ const handleConnectionRequest = async (request: Request): Promise<Response> => {
             socket,
             userId,
             send: <T>(data: T) => socket.send(JSON.stringify(data)),
+            role: session.data.user!.role,
+            auth: {
+                require: (permission) =>
+                    roleRequire(session.data.user!.role, permission),
+                can: (permission) =>
+                    canRole(session.data.user!.role, permission),
+            },
         };
         clients[id] = client;
 

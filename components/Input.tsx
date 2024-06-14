@@ -3,6 +3,7 @@ import { IS_BROWSER } from "$fresh/runtime.ts";
 
 interface InputProps {
     type?: "text" | "password" | "email";
+    labelColor?: "white" | "black";
     label?: string;
     icon?: string;
     name?: string;
@@ -20,6 +21,7 @@ export default function Input(
         type,
         value,
         onInput,
+        labelColor = "white",
         placeholder,
         disabled = false,
     }: InputProps,
@@ -28,7 +30,7 @@ export default function Input(
         <div class={`${icon ? "relative" : ""} text-white`}>
             {label && (
                 <label
-                    class="bloc text-sm font-bold mb-2 text-white"
+                    class={`bloc text-sm font-bold mb-2 text-${labelColor}`}
                     for={name}
                 >
                     {label}

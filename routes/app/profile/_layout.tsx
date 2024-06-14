@@ -1,0 +1,27 @@
+import { PageProps } from "$fresh/server.ts";
+import TabPanel from "$components/TabPanel.tsx";
+import { AppState } from "$types";
+
+export default function Layout(
+    { Component, route }: PageProps<never, AppState>,
+) {
+    const settings = [
+        {
+            "name": "Profile",
+            "link": "/app/profile",
+        },
+        {
+            "name": "Files",
+            "link": "/app/profile/files",
+        },
+    ];
+
+    return (
+        <TabPanel
+            links={settings}
+            activeLink={route}
+        >
+            <Component />
+        </TabPanel>
+    );
+}

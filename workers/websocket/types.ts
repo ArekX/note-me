@@ -1,10 +1,17 @@
 import { WebsocketService } from "$workers/websocket/websocket-service.ts";
+import { Roles } from "$backend/rbac/role-definitions.ts";
+import { AppPermissions } from "$backend/rbac/permissions.ts";
 
 export interface SocketClient {
     id: string;
     userId: number;
     socket: WebSocket;
     send<T>(data: T): void;
+    role: Roles;
+    auth: {
+        require: (permission: AppPermissions) => void;
+        can: (permission: AppPermissions) => boolean;
+    };
 }
 
 export type SocketClientMap = { [key: SocketClient["id"]]: SocketClient };

@@ -7,6 +7,7 @@ export interface DropDownItem {
 
 interface DropDownListProps {
     label?: string;
+    labelColor?: "white" | "black";
     name?: string;
     value?: string;
     disabled?: boolean;
@@ -15,13 +16,21 @@ interface DropDownListProps {
 }
 
 export default function DropdownList(
-    { label, items, name, value, onInput, disabled = false }: DropDownListProps,
+    {
+        label,
+        items,
+        name,
+        value,
+        onInput,
+        disabled = false,
+        labelColor = "white",
+    }: DropDownListProps,
 ) {
     return (
         <div class="text-white">
             {label && (
                 <label
-                    class="bloc text-sm font-bold mb-2 text-white"
+                    class={`bloc text-sm font-bold mb-2 text-${labelColor}`}
                     for={name}
                 >
                     {label}

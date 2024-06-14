@@ -111,6 +111,7 @@ export default function TagsList() {
             )}
             <Input
                 label="Tag name"
+                labelColor="black"
                 value={tagNameFilter.value}
                 onInput={(value) => handleFilterChanged(value)}
             />
@@ -129,10 +130,15 @@ export default function TagsList() {
                         class="rounded-r-lg bg-red-900 text-white p-4 cursor-pointer hover:bg-red-700"
                         onClick={() => tagToDelete.value = tag}
                     >
-                        x
+                        <Icon name="minus-circle" size="2xl" />
                     </span>
                 </div>
             ))}
+            {!isLoading.value && tagList.value.length === 0 && (
+                <div class="text-center text-black p-4">
+                    No tags available
+                </div>
+            )}
             {!isLoading.value && (
                 <Pagination
                     total={totalTags.value}
@@ -145,7 +151,7 @@ export default function TagsList() {
                 visible={tagToDelete.value !== null}
                 prompt="Are you sure you want to delete this tag? This action cannot be undone."
                 confirmColor="danger"
-                confirmText="Delete user"
+                confirmText="Delete this tag"
                 onConfirm={handleConfirmDelete}
                 onCancel={() => tagToDelete.value = null}
             />

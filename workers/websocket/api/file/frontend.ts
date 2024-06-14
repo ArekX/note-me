@@ -23,6 +23,7 @@ import {
     UpdateFileResponse,
 } from "./messages.ts";
 import {
+    BackendRestrictions,
     createFileRecord,
     deleteFileRecord,
     deleteUserFile,
@@ -34,6 +35,7 @@ import {
 } from "$backend/repository/file-repository.ts";
 import { requireValidSchema } from "$schemas/mod.ts";
 import { addFileRequestSchema } from "$schemas/file.ts";
+import { CanManageFiles } from "$backend/rbac/permissions.ts";
 
 const MAX_FILE_SIZE = +(Deno.env.get("MAX_FILE_SIZE") ?? "52428800");
 
@@ -134,8 +136,13 @@ const handleEndFile: ListenerFn<EndFileMessage> = async (
 const handleFindFiles: ListenerFn<FindFilesMessage> = async (
     { message: { filters, page }, respond, sourceClient },
 ) => {
+    const restrictions: BackendRestrictions = {
+        allowAllFiles: sourceClient!.auth.can(CanManageFiles.AllFiles),
+    };
+
     const results = await findUserFiles(
         filters,
+        restrictions,
         sourceClient!.userId,
         page ?? 1,
     );

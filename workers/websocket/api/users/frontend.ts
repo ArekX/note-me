@@ -29,11 +29,13 @@ import {
 } from "$backend/session/mod.ts";
 import { requireValidSchema } from "$schemas/mod.ts";
 import { addUserSchema, updateUserSchema } from "$schemas/users.ts";
+import { CanManageUsers } from "$backend/rbac/permissions.ts";
 
 const createUserRequest: ListenerFn<CreateUserMessage> = async (
-    { message: { data }, respond },
+    { message: { data }, respond, sourceClient },
 ) => {
     await requireValidSchema(addUserSchema, data);
+    sourceClient!.auth.require(CanManageUsers.Create);
 
     const record = await createUserRecord(
         data as CreateUserData,
@@ -46,9 +48,10 @@ const createUserRequest: ListenerFn<CreateUserMessage> = async (
 };
 
 const updateUserRequest: ListenerFn<UpdateUserMessage> = async (
-    { message: { id, data }, respond },
+    { message: { id, data }, respond, sourceClient },
 ) => {
     await requireValidSchema(updateUserSchema, data);
+    sourceClient!.auth.require(CanManageUsers.Update);
 
     await updateUserRecord(id, data as UpdateUserData);
 
@@ -62,6 +65,7 @@ const updateUserRequest: ListenerFn<UpdateUserMessage> = async (
 const deleteUserRequest: ListenerFn<DeleteUserMessage> = async (
     { message: { id }, sourceClient, respond },
 ) => {
+    sourceClient!.auth.require(CanManageUsers.Delete);
     if (id === sourceClient?.userId) {
         throw new Deno.errors.InvalidData("You cannot delete your own user.");
     }
@@ -76,8 +80,10 @@ const deleteUserRequest: ListenerFn<DeleteUserMessage> = async (
 };
 
 const findUsersRequest: ListenerFn<FindUsersMessage> = async (
-    { message: { filters, page }, respond },
+    { message: { filters, page }, respond, sourceClient },
 ) => {
+    sourceClient!.auth.require(CanManageUsers.List);
+
     const records = await findUsers(filters, page);
 
     respond<FindUsersResponse>({

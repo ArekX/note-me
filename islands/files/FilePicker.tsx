@@ -17,6 +17,7 @@ import Dialog from "$islands/Dialog.tsx";
 import { useEffect } from "preact/hooks";
 
 interface FilePickerProps {
+    allFiles?: boolean;
     selectedFileId?: string;
     onFilePicked?: (file: FileMetaRecord | null) => void;
     color?: "black" | "white";
@@ -30,6 +31,7 @@ export default function FilePicker({
     color,
     onFilePicked,
     selectedFileId,
+    allFiles = false,
 }: FilePickerProps) {
     const { sendMessage } = useWebsocketService<
         FileFrontendResponse
@@ -98,7 +100,10 @@ export default function FilePicker({
             "findFiles",
             {
                 data: {
-                    filters: {},
+                    filters: {
+                        name: "",
+                        allFiles,
+                    },
                     page: currentPage.value,
                 },
                 expect: "findFilesResponse",

@@ -66,10 +66,16 @@ export type FileMetaRecord = Pick<
 
 export interface FindFileFilters {
     name?: string;
+    allFiles?: boolean;
+}
+
+export interface BackendRestrictions {
+    allowAllFiles: boolean;
 }
 
 export const findUserFiles = async (
     filters: FindFileFilters,
+    restrictions: BackendRestrictions,
     user_id: number,
     page: number,
 ): Promise<Paged<FileMetaRecord>> => {
@@ -82,9 +88,16 @@ export const findUserFiles = async (
             "is_public",
             "created_at",
         ])
-        .where("user_id", "=", user_id)
         .where("is_ready", "=", true)
         .orderBy("created_at", "desc");
+
+    if (
+        !filters.allFiles || (filters.allFiles && !restrictions.allowAllFiles)
+    ) {
+        query = query.where("user_id", "=", user_id);
+    }
+
+    // TODO: Fix permissions
 
     query = applyFilters(query, {
         name: { type: "text", value: filters.name },

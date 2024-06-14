@@ -44,10 +44,11 @@ export default function UserProfile({ initialProfileData }: UserProfileProps) {
         };
 
     return (
-        <div>
+        <div class="text-black">
             <form onSubmit={handleSubmit}>
                 <Input
                     label="Name"
+                    labelColor="black"
                     type="text"
                     value={userData.value.name}
                     onInput={handlePropertyChange("name")}
@@ -55,6 +56,7 @@ export default function UserProfile({ initialProfileData }: UserProfileProps) {
                 <br />
                 <DropdownList
                     label="Timezone"
+                    labelColor="black"
                     items={supportedTimezoneList}
                     value={userData.value.timezone}
                     onInput={handlePropertyChange("timezone")}
@@ -63,6 +65,7 @@ export default function UserProfile({ initialProfileData }: UserProfileProps) {
                 <Input
                     label="Old Password"
                     type="password"
+                    labelColor="black"
                     value={userData.value.old_password}
                     onInput={handlePropertyChange("old_password")}
                 />
@@ -70,6 +73,7 @@ export default function UserProfile({ initialProfileData }: UserProfileProps) {
                 <Input
                     label="New Password"
                     type="password"
+                    labelColor="black"
                     value={userData.value.new_password}
                     onInput={handlePropertyChange("new_password")}
                 />
@@ -77,6 +81,7 @@ export default function UserProfile({ initialProfileData }: UserProfileProps) {
                 <Input
                     label="Confirm Password"
                     type="password"
+                    labelColor="black"
                     value={userData.value.confirm_password}
                     onInput={handlePropertyChange("confirm_password")}
                 />

@@ -18,11 +18,14 @@ import * as $app_note_partial_edit_id_ from "./routes/app/note/partial/edit-[id]
 import * as $app_note_partial_new from "./routes/app/note/partial/new.tsx";
 import * as $app_note_partial_view_id_ from "./routes/app/note/partial/view-[id].tsx";
 import * as $app_note_view_id_ from "./routes/app/note/view-[id].tsx";
-import * as $app_profile from "./routes/app/profile.tsx";
+import * as $app_profile_layout from "./routes/app/profile/_layout.tsx";
+import * as $app_profile_files from "./routes/app/profile/files.tsx";
+import * as $app_profile_index from "./routes/app/profile/index.tsx";
 import * as $app_settings_layout from "./routes/app/settings/_layout.tsx";
+import * as $app_settings_files from "./routes/app/settings/files.tsx";
 import * as $app_settings_index from "./routes/app/settings/index.tsx";
-import * as $app_settings_tags_index from "./routes/app/settings/tags/index.tsx";
-import * as $app_settings_users_index from "./routes/app/settings/users/index.tsx";
+import * as $app_settings_tags from "./routes/app/settings/tags.tsx";
+import * as $app_settings_users from "./routes/app/settings/users.tsx";
 import * as $file_identifier_ from "./routes/file/[identifier].tsx";
 import * as $index from "./routes/index.tsx";
 import * as $ConfirmDialog from "./islands/ConfirmDialog.tsx";
@@ -113,11 +116,14 @@ const manifest = {
         "./routes/app/note/partial/new.tsx": $app_note_partial_new,
         "./routes/app/note/partial/view-[id].tsx": $app_note_partial_view_id_,
         "./routes/app/note/view-[id].tsx": $app_note_view_id_,
-        "./routes/app/profile.tsx": $app_profile,
+        "./routes/app/profile/_layout.tsx": $app_profile_layout,
+        "./routes/app/profile/files.tsx": $app_profile_files,
+        "./routes/app/profile/index.tsx": $app_profile_index,
         "./routes/app/settings/_layout.tsx": $app_settings_layout,
+        "./routes/app/settings/files.tsx": $app_settings_files,
         "./routes/app/settings/index.tsx": $app_settings_index,
-        "./routes/app/settings/tags/index.tsx": $app_settings_tags_index,
-        "./routes/app/settings/users/index.tsx": $app_settings_users_index,
+        "./routes/app/settings/tags.tsx": $app_settings_tags,
+        "./routes/app/settings/users.tsx": $app_settings_users,
         "./routes/file/[identifier].tsx": $file_identifier_,
         "./routes/index.tsx": $index,
     },

@@ -4,7 +4,6 @@ export enum CanManageUsers {
     Read = "canUpdateUser",
     Update = "canUpdateUser",
     Delete = "canDeleteUser",
-    CanManageUsers = "CanManageUsers",
 }
 
 export enum CanManageTags {
@@ -19,4 +18,12 @@ export enum CanManageSettings {
     Update = "canUpdateGeneralSettings",
 }
 
-export type AppPermissions = CanManageUsers | CanManageTags | CanManageSettings;
+export enum CanManageFiles {
+    AllFiles = "canManageAllFiles",
+}
+
+export type AppPermissions =
+    | CanManageUsers
+    | CanManageTags
+    | CanManageSettings
+    | CanManageFiles;
