@@ -12,6 +12,7 @@ import Loader from "$islands/Loader.tsx";
 import Pagination from "$islands/Pagination.tsx";
 import { useScriptsReadyEffect } from "$frontend/hooks/use-scripts-ready.ts";
 import FileItem from "$islands/files/FileItem.tsx";
+import ConfirmDialog from "$islands/ConfirmDialog.tsx";
 
 interface FilePickerProps {
     selectedFileId?: string;
@@ -85,6 +86,7 @@ export default function FilePicker({
     const totalFiles = useSignal(0);
     const perPage = useSignal(0);
     const currentPage = useSignal(1);
+    const fileToDelete = useSignal<ExtendedFileMetaRecord | null>(null);
 
     const loadFiles = async () => {
         await sendMessage<FindFilesMessage, FindFilesResponse>(
@@ -106,14 +108,18 @@ export default function FilePicker({
         loadFiles();
     };
 
-    const handleDeleteFile = async (file: ExtendedFileMetaRecord) => {
-        file.is_processing = true;
+    const handleDeleteFile = async () => {
+        if (!fileToDelete.value) {
+            return;
+        }
+        fileToDelete.value.is_processing = true;
         await sendMessage("files", "deleteFile", {
             data: {
-                identifier: file.identifier,
+                identifier: fileToDelete.value.identifier,
             },
             expect: "deleteFileResponse",
         });
+        fileToDelete.value = null;
     };
 
     const toggleFileVisibility = async (file: ExtendedFileMetaRecord) => {
@@ -152,7 +158,7 @@ export default function FilePicker({
                                 file={file}
                                 isSelected={selectedFileId === file.identifier}
                                 onSelect={(f) => onFilePicked?.(f)}
-                                onDelete={handleDeleteFile}
+                                onDelete={(f) => fileToDelete.value = f}
                                 onToggleVisibility={toggleFileVisibility}
                             />
                         ))}
@@ -165,6 +171,23 @@ export default function FilePicker({
                     />
                 </>
             )}
+            <ConfirmDialog
+                visible={fileToDelete.value !== null}
+                prompt={
+                    <div>
+                        Are you sure you want to delete '{fileToDelete.value
+                            ?.name}' file?
+                        <p>
+                            This action cannot be undone and all notes
+                            referencing this file will not be able to show it.
+                        </p>
+                    </div>
+                }
+                confirmColor="danger"
+                confirmText="Delete this file"
+                onConfirm={handleDeleteFile}
+                onCancel={() => fileToDelete.value = null}
+            />
         </div>
     );
 }

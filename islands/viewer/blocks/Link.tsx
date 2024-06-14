@@ -7,7 +7,7 @@ interface LinkProps {
 
 export default function Link({ node }: LinkProps) {
     return (
-        <a href={node.data.url} title={node.data.title}>
+        <a href={node.data.url} title={node.data.title} target="_blank">
             {renderChildren(node)}
         </a>
     );

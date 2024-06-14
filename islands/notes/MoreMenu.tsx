@@ -1,4 +1,5 @@
 import DropdownMenu from "$islands/DropdownMenu.tsx";
+import { closeAllPopovers } from "$frontend/hooks/use-single-popover.ts";
 
 type ModeType = "view" | "edit-new" | "edit-existing";
 
@@ -30,7 +31,7 @@ export default function MoreMenu(
 ) {
     const sendAction = (action: MenuItemActions) => {
         onMenuItemClick?.(action);
-        close();
+        closeAllPopovers();
     };
 
     const items: MoreMenuItem[] = [
