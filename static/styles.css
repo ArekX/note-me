@@ -239,3 +239,7 @@ dialog::backdrop {
 .markdown-viewer a:hover {
     text-decoration: underline;
 }
+
+.file-picker {
+    min-height: 20em;
+}

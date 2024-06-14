@@ -173,7 +173,7 @@ export default function FilePicker({
 
     return (
         <div
-            class="w-full relative"
+            class="file-picker w-full relative"
             onDragOver={handleDragOver}
             onDrop={handleDrop}
         >
