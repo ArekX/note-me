@@ -155,7 +155,7 @@ export default function FileUpload({
                     multiple
                     onChange={handleFileChange}
                 />
-                <Icon name="cloud-upload" />
+                <Icon name="cloud-upload" /> Upload
             </Button>
             {isUploading.value && (
                 <Dialog>

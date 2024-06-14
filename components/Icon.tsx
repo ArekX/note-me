@@ -1,7 +1,17 @@
+export type IconSize =
+    | "sm"
+    | "md"
+    | "lg"
+    | "xl"
+    | "2xl"
+    | "3xl"
+    | "4xl"
+    | "5xl";
+
 interface IconProps {
     name: string;
     type?: "regular" | "solid";
-    size?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl";
+    size?: IconSize;
     onClick?: () => void;
     className?: string;
     animation?:

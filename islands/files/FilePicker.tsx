@@ -13,12 +13,9 @@ import Pagination from "$islands/Pagination.tsx";
 import { useScriptsReadyEffect } from "$frontend/hooks/use-scripts-ready.ts";
 import FileItem from "$islands/files/FileItem.tsx";
 
-export interface PickedFile {
-    name: string;
-}
-
 interface FilePickerProps {
-    onFilePicked?: (file: PickedFile) => void;
+    selectedFileId?: string;
+    onFilePicked?: (file: FileMetaRecord | null) => void;
     color?: "black" | "white";
 }
 
@@ -28,6 +25,8 @@ interface ExtendedFileMetaRecord extends FileMetaRecord {
 
 export default function FilePicker({
     color,
+    onFilePicked,
+    selectedFileId,
 }: FilePickerProps) {
     const { sendMessage } = useWebsocketService<
         FileFrontendResponse
@@ -54,10 +53,9 @@ export default function FilePicker({
                     );
 
                     if (
-                        selectedFile.value &&
-                        selectedFile.value.identifier === response.identifier
+                        selectedFileId === response.identifier
                     ) {
-                        selectedFile.value = null;
+                        onFilePicked?.(null);
                     }
 
                     if (files.value.length === 0 && currentPage.value > 1) {
@@ -82,8 +80,6 @@ export default function FilePicker({
         },
     });
     const loader = useLoader();
-
-    const selectedFile = useSignal<ExtendedFileMetaRecord | null>(null);
 
     const files = useSignal<ExtendedFileMetaRecord[]>([]);
     const totalFiles = useSignal(0);
@@ -138,22 +134,7 @@ export default function FilePicker({
 
     return (
         <div class="w-full">
-            <div class="mb-2 flex flex-row content-between w-full">
-                <div class="flex-grow">
-                    {selectedFile.value && (
-                        <div>
-                            Selected:{" "}
-                            <a
-                                title={`Download ${selectedFile.value.name}`}
-                                href={`/file/${selectedFile.value.identifier}?download`}
-                                target="_blank"
-                                class="underline"
-                            >
-                                {selectedFile.value.name}
-                            </a>
-                        </div>
-                    )}
-                </div>
+            <div class="w-full text-right mb-2">
                 <FileUpload onFileUploadDone={() => loadFiles()} />
             </div>
 
@@ -169,8 +150,8 @@ export default function FilePicker({
                             <FileItem
                                 key={file.identifier}
                                 file={file}
-                                isSelected={selectedFile.value === file}
-                                onSelect={(f) => selectedFile.value = f}
+                                isSelected={selectedFileId === file.identifier}
+                                onSelect={(f) => onFilePicked?.(f)}
                                 onDelete={handleDeleteFile}
                                 onToggleVisibility={toggleFileVisibility}
                             />

@@ -1,9 +1,5 @@
-import Icon from "$components/Icon.tsx";
-import { createRef } from "preact";
-import { createPortal } from "preact/compat";
-import { useSinglePopover } from "$frontend/hooks/use-single-popover.ts";
-import { useWindowResize } from "$frontend/hooks/use-window-resize.ts";
 import { RecordContainer } from "$islands/tree/hooks/record-container.ts";
+import DropdownMenu from "$islands/DropdownMenu.tsx";
 
 export interface MenuItem {
     icon: string;
@@ -36,38 +32,6 @@ export default function MoreMenu(
         onAction,
     }: MoreMenuProps,
 ) {
-    const menuRef = createRef<HTMLDivElement>();
-    const iconRef = createRef<HTMLSpanElement>();
-
-    const repositionMenu = (_width: number, height: number) => {
-        if (!menuRef.current || !iconRef.current) {
-            return;
-        }
-
-        const rect = menuRef.current.getBoundingClientRect();
-        const iconRefRect = iconRef.current!.getBoundingClientRect();
-
-        const diff = Math.max(0, iconRefRect.top + rect.height - height);
-
-        menuRef.current.style.top = `${iconRefRect.top - diff}px`;
-        menuRef.current.style.left = `${
-            iconRefRect.left + iconRefRect.width
-        }px`;
-    };
-
-    const { isOpen, open, close } = useSinglePopover(
-        `${container.type.toString()}-${container.id ?? -1}`,
-        menuRef,
-        () => repositionMenu(innerWidth, innerHeight),
-    );
-
-    const handleOpenMenu = (e: Event) => {
-        e.stopPropagation();
-        open();
-    };
-
-    useWindowResize(menuRef, repositionMenu);
-
     const menu: MenuItem[] = [
         {
             name: "Add Note",
@@ -132,36 +96,17 @@ export default function MoreMenu(
     ].filter((m) => m.types.includes(container.type)) as MenuItem[];
 
     return (
-        <div
-            class={`inline-block relative sh cursor-pointer icon-menu ${
-                isOpen ? "show-items" : ""
-            }`}
-            onClick={handleOpenMenu}
-        >
-            <span ref={iconRef}>
-                <Icon name="dots-horizontal-rounded" />
-            </span>
-            {isOpen &&
-                createPortal(
-                    <div
-                        ref={menuRef}
-                        class={`text-white icon-menu-items drop-shadow-lg fixed bg-gray-800 rounded-lg shadow-lg p-2 whitespace-nowrap break-keep`}
-                    >
-                        {menu.map((item) => (
-                            <div
-                                class="hover:bg-gray-700 cursor-pointer p-1 pr-2 pl-2"
-                                onClick={(e) => {
-                                    onAction(item.action);
-                                    close();
-                                    e.stopPropagation();
-                                }}
-                            >
-                                <Icon name={item.icon} /> {item.name}
-                            </div>
-                        ))}
-                    </div>,
-                    document.getElementById("icon-menu")!,
-                )}
-        </div>
+        <DropdownMenu
+            popoverId={`${container.type.toString()}-${container.id ?? -1}`}
+            showDirection="right"
+            displayType="portal"
+            iconOnly={true}
+            icon="dots-horizontal-rounded"
+            items={menu.map((item) => ({
+                name: item.name,
+                icon: item.icon,
+                onClick: () => onAction(item.action),
+            }))}
+        />
     );
 }

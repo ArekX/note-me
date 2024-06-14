@@ -50,9 +50,19 @@ export default function NoteTextArea({
         const textValue = text.value;
         const cursorPosition = lastCursorPosition.value;
 
+        console.log(
+            "Inserting text",
+            insertedText,
+            "at",
+            cursorPosition,
+            "in",
+            textValue,
+        );
+
         text.value = `${textValue.slice(0, cursorPosition)}${insertedText}${
             textValue.slice(cursorPosition)
         }`;
+        console.log(text.value);
         onChange(text.value);
     };
 
@@ -67,6 +77,10 @@ export default function NoteTextArea({
             autosize.destroy(textAreaRef.current);
         };
     }, [textAreaRef]);
+
+    useEffect(() => {
+        text.value = initialText;
+    }, [initialText]);
 
     return (
         <div class="flex-grow block basis-auto">
@@ -83,9 +97,8 @@ export default function NoteTextArea({
                 onKeyDown={handleKeyDown}
                 onKeyUp={recordLastCursorPosition}
                 onInput={handleTextInput}
-            >
-                {text.value}
-            </textarea>
+                value={text}
+            />
         </div>
     );
 }

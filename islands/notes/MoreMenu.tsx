@@ -1,7 +1,4 @@
-import Button from "$components/Button.tsx";
-import Icon from "$components/Icon.tsx";
-import { createRef } from "preact";
-import { useSinglePopover } from "$frontend/hooks/use-single-popover.ts";
+import DropdownMenu from "$islands/DropdownMenu.tsx";
 
 type ModeType = "view" | "edit-new" | "edit-existing";
 
@@ -31,14 +28,6 @@ interface MoreMenuProps {
 export default function MoreMenu(
     { mode, inPreviewMode, onMenuItemClick }: MoreMenuProps,
 ) {
-    const menuRef = createRef<HTMLDivElement>();
-
-    const {
-        isOpen,
-        open,
-        close,
-    } = useSinglePopover("notesMenu-0", menuRef, () => {});
-
     const sendAction = (action: MenuItemActions) => {
         onMenuItemClick?.(action);
         close();
@@ -94,32 +83,16 @@ export default function MoreMenu(
     }
 
     return (
-        <div class="relative inline-block">
-            <Button
-                color="primary"
-                tabIndex={5}
-                onClick={open}
-            >
-                <Icon name="dots-horizontal-rounded" size="lg" />
-            </Button>
-
-            {isOpen && (
-                <div
-                    ref={menuRef}
-                    class="text-white absolute text-lg right-0 top-full mt-1 drop-shadow-lg bg-gray-800 rounded-lg shadow-lg p-2 whitespace-nowrap break-keep"
-                >
-                    {items.map(({ name, icon, onClick }, index) => (
-                        <div
-                            key={index}
-                            tabIndex={6 + index}
-                            class="hover:bg-gray-700 cursor-pointer p-1 pl-2 pr-2"
-                            onClick={onClick}
-                        >
-                            <Icon name={icon} /> {name}
-                        </div>
-                    ))}
-                </div>
-            )}
-        </div>
+        <DropdownMenu
+            popoverId="notesMenu-0"
+            icon="dots-horizontal-rounded"
+            iconSize="lg"
+            displayType="inline"
+            items={items.map(({ name, icon, onClick }) => ({
+                name,
+                icon,
+                onClick,
+            }))}
+        />
     );
 }

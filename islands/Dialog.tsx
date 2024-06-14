@@ -1,5 +1,6 @@
 import { useEffect } from "preact/hooks";
 import { ComponentChildren, createRef } from "preact";
+import { closeAllPopovers } from "$frontend/hooks/use-single-popover.ts";
 
 interface DialogProps {
     visible?: boolean;
@@ -37,7 +38,10 @@ export default function Dialog({
 
                 e.preventDefault();
             }}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+                closeAllPopovers();
+                e.stopPropagation();
+            }}
             {...props}
         >
             {children}

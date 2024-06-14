@@ -9,6 +9,7 @@ import { InsertFileDef } from "$islands/notes/insert-components/InsertFile.tsx";
 import { InsertGroupListDef } from "$islands/notes/insert-components/InsertGroupList.tsx";
 import { InsertNoteLinkDef } from "$islands/notes/insert-components/InsertNoteLink.tsx";
 import { useEffect } from "preact/hooks";
+import DropdownList from "$components/DropdownList.tsx";
 
 interface InsertDialogProps {
     onInsert: (text: string) => void;
@@ -79,34 +80,17 @@ export default function InsertDialog({
                         class: "w-2/3",
                     }}
                 >
-                    <div class="w-96">
-                        <select
-                            class="text-black w-full block mb-6"
-                            value={selectedComponentIndex}
-                            onInput={(e) =>
-                                selectedComponentIndex.value =
-                                    (e.target as HTMLSelectElement)
-                                        .selectedIndex}
-                        >
-                            {insertComponents.map((component, index) => (
-                                <option
-                                    selected={index ===
-                                        selectedComponentIndex.value}
-                                    value={index}
-                                >
-                                    {component.name}
-                                </option>
-                            ))}
-                        </select>
-
-                        <div class="pt-6">
-                            <Button
-                                color="danger"
-                                onClick={() => handleCancel()}
-                            >
-                                Cancel
-                            </Button>
-                        </div>
+                    <div class="w-96 mb-2">
+                        <DropdownList
+                            label="Insert:"
+                            items={insertComponents.map((component, index) => ({
+                                label: component.name,
+                                value: index.toString(),
+                            }))}
+                            value={selectedComponentIndex.value.toString()}
+                            onInput={(value) =>
+                                selectedComponentIndex.value = parseInt(value)}
+                        />
                     </div>
 
                     <SelectedComponent
@@ -114,7 +98,7 @@ export default function InsertDialog({
                             onInsert(text);
                             handleCancel();
                         }}
-                         onCancel={handleCancel}
+                        onCancel={handleCancel}
                     />
                 </Dialog>
             )}

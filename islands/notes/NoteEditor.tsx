@@ -42,20 +42,23 @@ export default function NoteEditor({
     const name = useSignal(note.title);
     const text = useSignal(note.note);
     const tags = useSignal<string[]>(note.tags);
+    const noteId = useSignal<number | null>(note.id ?? null);
+    const groupId = useSignal<number | null>(note.group_id ?? null);
+    const groupName = useSignal<string | null>(note.group_name ?? null);
     const isSaving = useLoader();
     const windowMode = useSignal<NoteWindowTypes | null>(null);
     const isPreviewMode = useSignal(false);
     const validationErrors = useSignal<ZodIssue[]>([]);
 
     const { sendMessage } = useNoteWebsocket({
-        noteId: +note.id!,
+        noteId: noteId.value,
     });
 
     const handleSave = async () => {
         isSaving.start();
 
         const noteToSave = {
-            group_id: note.group_id,
+            group_id: groupId.value,
             tags: tags.value,
             text: text.value,
             title: name.value,
@@ -70,13 +73,13 @@ export default function NoteEditor({
             return;
         }
 
-        if (note.id) {
+        if (noteId.value) {
             await sendMessage<UpdateNoteMessage, UpdateNoteResponse>(
                 "notes",
                 "updateNote",
                 {
                     data: {
-                        id: note.id,
+                        id: noteId.value,
                         data: noteToSave,
                     },
                     expect: "updateNoteResponse",
@@ -126,7 +129,7 @@ export default function NoteEditor({
     };
 
     const handleCancelChanges = () => {
-        redirectTo.viewNote({ noteId: +note.id! });
+        redirectTo.viewNote({ noteId: noteId.value! });
     };
 
     useEffect(() => {
@@ -147,6 +150,15 @@ export default function NoteEditor({
             document.removeEventListener("keydown", handleHotkeys);
         };
     }, []);
+
+    useEffect(() => {
+        name.value = note.title;
+        text.value = note.note;
+        tags.value = note.tags;
+        noteId.value = note.id ?? null;
+        groupId.value = note.group_id ?? null;
+        groupName.value = note.group_name ?? null;
+    }, [note]);
 
     return (
         <div class="note-editor flex flex-col">
@@ -179,7 +191,7 @@ export default function NoteEditor({
                             ? <Icon name="save" size="lg" />
                             : <Loader color="white">Saving...</Loader>}
                     </Button>{" "}
-                    {note.id && (
+                    {noteId.value && (
                         <>
                             <Button
                                 color="primary"
@@ -200,7 +212,7 @@ export default function NoteEditor({
                         <MoreMenu
                             onMenuItemClick={handleMenuItemClicked}
                             inPreviewMode={isPreviewMode.value}
-                            mode={note.id ? "edit-existing" : "edit-new"}
+                            mode={noteId.value ? "edit-existing" : "edit-new"}
                         />
                     )}
                 </div>
@@ -217,9 +229,7 @@ export default function NoteEditor({
                     path="tags"
                 />
             </div>
-            {note.group_id && (
-                <div class="text-sm">&rarr; in {note.group_name}</div>
-            )}
+            {groupId.value && <div class="text-sm">&rarr; in {groupName}</div>}
             <div class="mt-2">
                 <ErrorDisplay
                     errors={validationErrors.value}
@@ -233,11 +243,11 @@ export default function NoteEditor({
                     onChange={(newText) => text.value = newText}
                 />
             )}
-            {note.id && (
+            {noteId.value && (
                 <NoteWindow
                     onClose={() => windowMode.value = null}
                     type={windowMode.value}
-                    noteId={note.id}
+                    noteId={noteId.value}
                 />
             )}
         </div>

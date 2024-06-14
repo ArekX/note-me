@@ -27,6 +27,7 @@ import * as $file_identifier_ from "./routes/file/[identifier].tsx";
 import * as $index from "./routes/index.tsx";
 import * as $ConfirmDialog from "./islands/ConfirmDialog.tsx";
 import * as $Dialog from "./islands/Dialog.tsx";
+import * as $DropdownMenu from "./islands/DropdownMenu.tsx";
 import * as $InvalidateData from "./islands/InvalidateData.tsx";
 import * as $Loader from "./islands/Loader.tsx";
 import * as $Pagination from "./islands/Pagination.tsx";
@@ -122,6 +123,7 @@ const manifest = {
     islands: {
         "./islands/ConfirmDialog.tsx": $ConfirmDialog,
         "./islands/Dialog.tsx": $Dialog,
+        "./islands/DropdownMenu.tsx": $DropdownMenu,
         "./islands/InvalidateData.tsx": $InvalidateData,
         "./islands/Loader.tsx": $Loader,
         "./islands/Pagination.tsx": $Pagination,

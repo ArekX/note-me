@@ -40,6 +40,7 @@ export default function Page(props: PageProps<PageData, AppState>) {
     return (
         <NoteEditor
             note={{
+                id: undefined,
                 title: "",
                 note: "",
                 tags: [],

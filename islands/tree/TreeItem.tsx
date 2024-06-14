@@ -6,6 +6,7 @@ import { useSignal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
 import MoreMenu, { MoreMenuItemAction } from "$islands/tree/MoreMenu.tsx";
 import { RecordContainer } from "$islands/tree/hooks/record-container.ts";
+import { closeAllPopovers } from "$frontend/hooks/use-single-popover.ts";
 
 export interface TreeItemProps {
     dragManager: DragManagerHook<RecordContainer>;
@@ -140,6 +141,7 @@ export default function TreeItem({
 
         if (container.type === "group" && container.has_children) {
             treeManager.toggleOpen(container);
+            closeAllPopovers();
         }
     };
 
