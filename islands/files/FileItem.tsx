@@ -127,7 +127,9 @@ export default function FileItem({
             </div>
 
             <div class="text-xs p-2">
-                Type: {file.mime_type} <br />
+                Type: {file.mime_type.length > 0 ? file.mime_type : "unknown"}
+                {" "}
+                <br />
                 Size: {renderClosestDisplaySize(file.size)} <br />
                 Public: {file.is_public ? "Yes" : "No"} <br />
                 Uploaded at: {getUserData().formatDateTime(
