@@ -1,5 +1,5 @@
 import { NoteFrontendResponse } from "$workers/websocket/api/notes/messages.ts";
-import { GroupFrontendResponse } from "$workers/websocket/api/group/messages.ts";
+import { GroupFrontendResponse } from "../../../workers/websocket/api/groups/messages.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import { TreeStateHook } from "$islands/tree/hooks/use-tree-state.ts";
 import { fromTreeRecord } from "$islands/tree/hooks/record-container.ts";

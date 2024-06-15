@@ -15,7 +15,7 @@ import {
     EndFileResponse,
     SendFileDataMessage,
     SendFileDataResponse,
-} from "$workers/websocket/api/file/messages.ts";
+} from "../../../workers/websocket/api/files/messages.ts";
 import { addMessage } from "$frontend/toast-message.ts";
 
 export interface FileUploaderHook {

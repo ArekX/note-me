@@ -7,7 +7,7 @@ import {
     UpdateGroupMessage,
     UpdateGroupResponse,
 } from "./messages.ts";
-import { GroupFrontendMessage } from "$workers/websocket/api/group/messages.ts";
+import { GroupFrontendMessage } from "./messages.ts";
 import {
     createGroup,
     deleteGroup,

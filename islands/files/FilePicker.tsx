@@ -6,7 +6,7 @@ import {
     FileFrontendResponse,
     FindFilesMessage,
     FindFilesResponse,
-} from "$workers/websocket/api/file/messages.ts";
+} from "../../workers/websocket/api/files/messages.ts";
 import { useLoader } from "$frontend/hooks/use-loading.ts";
 import Loader from "$islands/Loader.tsx";
 import Pagination from "$islands/Pagination.tsx";
@@ -26,6 +26,8 @@ interface FilePickerProps {
 interface ExtendedFileMetaRecord extends FileMetaRecord {
     is_processing: boolean;
 }
+
+// TODO: ADmin mode
 
 export default function FilePicker({
     color,

@@ -26,6 +26,7 @@ export const setFileRecordData = async (
         .set("data", data)
         .set("is_ready", true)
         .where("identifier", "=", identifier)
+        .where("is_ready", "=", false)
         .execute();
 };
 
@@ -69,13 +70,8 @@ export interface FindFileFilters {
     allFiles?: boolean;
 }
 
-export interface BackendRestrictions {
-    allowAllFiles: boolean;
-}
-
-export const findUserFiles = async (
+export const findFiles = async (
     filters: FindFileFilters,
-    restrictions: BackendRestrictions,
     user_id: number,
     page: number,
 ): Promise<Paged<FileMetaRecord>> => {
@@ -92,12 +88,10 @@ export const findUserFiles = async (
         .orderBy("created_at", "desc");
 
     if (
-        !filters.allFiles || (filters.allFiles && !restrictions.allowAllFiles)
+        !filters.allFiles
     ) {
         query = query.where("user_id", "=", user_id);
     }
-
-    // TODO: Fix permissions
 
     query = applyFilters(query, {
         name: { type: "text", value: filters.name },
@@ -106,7 +100,7 @@ export const findUserFiles = async (
     return await pageResults(query, page);
 };
 
-export const deleteUserFile = async (
+export const deleteFileByUser = async (
     identifier: string,
     user_id: number,
 ): Promise<boolean> => {
@@ -120,39 +114,39 @@ export const deleteUserFile = async (
 
 export type FileWithData = Pick<
     FileTable,
-    "name" | "size" | "mime_type" | "data"
+    "name" | "size" | "mime_type" | "data" | "is_public" | "user_id"
 >;
 
 export const getFileData = async (
     identifier: string,
-    user_id: number,
 ): Promise<FileWithData | null> => {
     return await db.selectFrom("file")
         .select([
             "name",
             "size",
             "mime_type",
+            "user_id",
+            "is_public",
             "data",
         ])
         .where("identifier", "=", identifier)
-        .where(({ or, eb }) =>
-            or([
-                eb("is_public", "=", true),
-                eb("user_id", "=", user_id),
-            ])
-        )
         .executeTakeFirst() ?? null;
 };
 
 export const updateFileRecord = async (
     identifier: string,
     is_public: boolean,
-    user_id: number,
+    scope_by_user_id: number | null,
 ): Promise<boolean> => {
-    const result = await db.updateTable("file")
+    let query = db.updateTable("file")
         .set("is_public", !!is_public)
-        .where("identifier", "=", identifier)
-        .where("user_id", "=", user_id)
+        .where("identifier", "=", identifier);
+
+    if (scope_by_user_id !== null) {
+        query = query.where("user_id", "=", scope_by_user_id);
+    }
+
+    const result = await query
         .executeTakeFirst();
 
     return result.numUpdatedRows > 0;

@@ -23,12 +23,11 @@ import {
     UpdateFileResponse,
 } from "./messages.ts";
 import {
-    BackendRestrictions,
     createFileRecord,
+    deleteFileByUser,
     deleteFileRecord,
-    deleteUserFile,
     fileExistsForUser,
-    findUserFiles,
+    findFiles,
     getFileRecordSize,
     setFileRecordData,
     updateFileRecord,
@@ -136,13 +135,12 @@ const handleEndFile: ListenerFn<EndFileMessage> = async (
 const handleFindFiles: ListenerFn<FindFilesMessage> = async (
     { message: { filters, page }, respond, sourceClient },
 ) => {
-    const restrictions: BackendRestrictions = {
-        allowAllFiles: sourceClient!.auth.can(CanManageFiles.AllFiles),
-    };
+    if (!sourceClient!.auth.can(CanManageFiles.AllFiles)) {
+        filters.allFiles = false;
+    }
 
-    const results = await findUserFiles(
+    const results = await findFiles(
         filters,
-        restrictions,
         sourceClient!.userId,
         page ?? 1,
     );
@@ -156,7 +154,11 @@ const handleFindFiles: ListenerFn<FindFilesMessage> = async (
 const handleDeleteFile: ListenerFn<DeleteFileMessage> = async (
     { message: { identifier }, respond, sourceClient },
 ) => {
-    await deleteUserFile(identifier, sourceClient!.userId);
+    if (sourceClient!.auth.can(CanManageFiles.AllFiles)) {
+        await deleteFileRecord(identifier);
+    } else {
+        await deleteFileByUser(identifier, sourceClient!.userId);
+    }
 
     respond<DeleteFileResponse>({
         identifier,
@@ -167,10 +169,14 @@ const handleDeleteFile: ListenerFn<DeleteFileMessage> = async (
 const handleUpdateFile: ListenerFn<UpdateFileMessage> = async (
     { message: { identifier, is_public }, respond, sourceClient },
 ) => {
+    const scopeByUserId = sourceClient!.auth.can(CanManageFiles.AllFiles)
+        ? null
+        : sourceClient!.userId;
+
     await updateFileRecord(
         identifier,
         is_public,
-        sourceClient!.userId,
+        scopeByUserId,
     );
 
     respond<UpdateFileResponse>({
