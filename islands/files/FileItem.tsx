@@ -10,6 +10,7 @@ export interface ExtendedFileMetaRecord extends FileMetaRecord {
 interface FileItemProps {
     file: ExtendedFileMetaRecord;
     isSelected: boolean;
+    adminMode: boolean;
     onSelect: (file: ExtendedFileMetaRecord) => void;
     onDelete: (file: ExtendedFileMetaRecord) => void;
     onToggleVisibility: (file: ExtendedFileMetaRecord) => void;
@@ -94,6 +95,7 @@ const getViewerName = (file: FileMetaRecord) => {
 export default function FileItem({
     file,
     isSelected,
+    adminMode,
     onSelect,
     onDelete,
     onToggleVisibility,
@@ -134,6 +136,11 @@ export default function FileItem({
                 Public: {file.is_public ? "Yes" : "No"} <br />
                 Uploaded at: {getUserData().formatDateTime(
                     file.created_at,
+                )}
+                {adminMode && (
+                    <>
+                        <br />Created by: {file.created_by}
+                    </>
                 )}
             </div>
 

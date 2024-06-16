@@ -12,6 +12,8 @@ export default function FileUpload({
     onFileUploadDone,
 }: FileUploadProps) {
     const handleFileChange = async (event: Event) => {
+        event.preventDefault();
+        event.stopPropagation();
         const target = event.target as HTMLInputElement;
 
         if (target.files === null) {
@@ -28,6 +30,10 @@ export default function FileUpload({
         target.value = "";
     };
 
+    const handleAbort = (event: Event) => {
+        event.stopPropagation();
+    };
+
     return (
         <>
             <Button addClass="relative" size="sm" title="Upload files...">
@@ -37,6 +43,8 @@ export default function FileUpload({
                     title="Upload files..."
                     multiple
                     onChange={handleFileChange}
+                    onAbort={handleAbort}
+                    onCancel={handleAbort}
                 />
                 <Icon name="cloud-upload" /> Upload
             </Button>

@@ -60,10 +60,17 @@ export const deleteFileRecord = async (
     return result.numDeletedRows > 0;
 };
 
-export type FileMetaRecord = Pick<
-    FileTable,
-    "identifier" | "name" | "mime_type" | "size" | "is_public" | "created_at"
->;
+export type FileMetaRecord =
+    & Pick<
+        FileTable,
+        | "identifier"
+        | "name"
+        | "mime_type"
+        | "size"
+        | "is_public"
+        | "created_at"
+    >
+    & { created_by: string };
 
 export interface FindFileFilters {
     name?: string;
@@ -78,23 +85,25 @@ export const findFiles = async (
     let query = db.selectFrom("file")
         .select([
             "identifier",
-            "name",
+            "file.name",
             "mime_type",
             "size",
             "is_public",
-            "created_at",
+            "file.created_at",
+            sql`user.name`.as("created_by"),
         ])
+        .innerJoin("user", "file.user_id", "user.id")
         .where("is_ready", "=", true)
-        .orderBy("created_at", "desc");
+        .orderBy("file.created_at", "desc");
 
     if (
         !filters.allFiles
     ) {
-        query = query.where("user_id", "=", user_id);
+        query = query.where("file.user_id", "=", user_id);
     }
 
     query = applyFilters(query, {
-        name: { type: "text", value: filters.name },
+        "file.name": { type: "text", value: filters.name },
     });
 
     return await pageResults(query, page);

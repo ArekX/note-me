@@ -17,8 +17,8 @@ export const handler = async (_req: Request, ctx: FreshContext<AppState>) => {
 
     if (
         !file.is_public &&
-        !hasPermission(CanManageFiles.AllFiles, ctx.state) &&
-        file.user_id !== userId
+        file.user_id !== userId &&
+        !hasPermission(CanManageFiles.AllFiles, ctx.state)
     ) {
         throw new Deno.errors.PermissionDenied(
             "You do not have access to this file.",

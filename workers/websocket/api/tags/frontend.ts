@@ -21,6 +21,7 @@ import {
 } from "$backend/repository/note-tags-repository.ts";
 import { requireValidSchema } from "$schemas/mod.ts";
 import { addTagSchema, updateTagSchema } from "$schemas/tags.ts";
+import { CanManageTags } from "$backend/rbac/permissions.ts";
 
 const createTagRequest: ListenerFn<CreateTagMessage> = async (
     { message: { data }, sourceClient, respond },
@@ -39,9 +40,10 @@ const createTagRequest: ListenerFn<CreateTagMessage> = async (
 };
 
 const updateTagRequest: ListenerFn<UpdateTagMessage> = async (
-    { message: { id, data }, respond },
+    { message: { id, data }, respond, sourceClient },
 ) => {
     await requireValidSchema(updateTagSchema, data);
+    sourceClient!.auth.require(CanManageTags.Update);
 
     await updateTagRecord(id, data as UpdateTagData);
 
@@ -53,9 +55,10 @@ const updateTagRequest: ListenerFn<UpdateTagMessage> = async (
 };
 
 const deleteTagRequest: ListenerFn<DeleteTagMessage> = async (
-    { message: { id }, respond },
+    { message: { id }, respond, sourceClient },
 ) => {
     await deleteTagRecord(id);
+    sourceClient!.auth.require(CanManageTags.Delete);
 
     respond<DeleteTagResponse>({
         type: "deleteTagResponse",

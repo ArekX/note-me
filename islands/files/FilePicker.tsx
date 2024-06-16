@@ -15,9 +15,11 @@ import ConfirmDialog from "$islands/ConfirmDialog.tsx";
 import { useFileUploader } from "./hooks/use-file-uploader.ts";
 import Dialog from "$islands/Dialog.tsx";
 import { useEffect } from "preact/hooks";
+import Input from "$components/Input.tsx";
+import { debounce } from "$frontend/deps.ts";
 
 interface FilePickerProps {
-    allFiles?: boolean;
+    adminMode?: boolean;
     selectedFileId?: string;
     onFilePicked?: (file: FileMetaRecord | null) => void;
     color?: "black" | "white";
@@ -27,13 +29,11 @@ interface ExtendedFileMetaRecord extends FileMetaRecord {
     is_processing: boolean;
 }
 
-// TODO: ADmin mode
-
 export default function FilePicker({
-    color,
+    color = "black",
     onFilePicked,
     selectedFileId,
-    allFiles = false,
+    adminMode = false,
 }: FilePickerProps) {
     const { sendMessage } = useWebsocketService<
         FileFrontendResponse
@@ -93,6 +93,7 @@ export default function FilePicker({
     const perPage = useSignal(0);
     const currentPage = useSignal(1);
     const fileToDelete = useSignal<ExtendedFileMetaRecord | null>(null);
+    const search = useSignal("");
 
     const fileUploader = useFileUploader();
 
@@ -103,8 +104,8 @@ export default function FilePicker({
             {
                 data: {
                     filters: {
-                        name: "",
-                        allFiles,
+                        name: search.value,
+                        allFiles: adminMode,
                     },
                     page: currentPage.value,
                 },
@@ -173,6 +174,12 @@ export default function FilePicker({
         isDroppingFile.value = false;
     };
 
+    const handleSearch = debounce((value: string) => {
+        search.value = value;
+        loader.start();
+        loadFiles();
+    }, 500);
+
     useEffect(() => {
         loader.start();
         loadFiles();
@@ -192,11 +199,24 @@ export default function FilePicker({
                     <p class="text-white text-2xl">Drop files to upload</p>
                 </div>
             )}
-            <div class="w-full text-right mb-2">
-                <FileUpload
-                    onFileUploadDone={() => loadFiles()}
-                    fileUploader={fileUploader}
-                />
+            <div class="w-full flex mb-2 items-end">
+                <div class="mr-2 flex-grow">
+                    <Input
+                        icon="search"
+                        label="Search"
+                        labelColor={color}
+                        placeholder="Search..."
+                        onInput={handleSearch}
+                        value={search.value}
+                    />
+                </div>
+                <div>
+                    <FileUpload
+                        onFileUploadDone={() => loadFiles()}
+                        fileUploader={fileUploader}
+                    />
+                </div>
+
                 {fileUploader.isUploading.value && (
                     <Dialog>
                         <p class="text-center">
@@ -212,33 +232,36 @@ export default function FilePicker({
                 )}
             </div>
 
-            {loader.running && (
-                <div class="text-center">
-                    <Loader color={color}>Loading files...</Loader>
-                </div>
-            )}
-            {!loader.running && (
-                <>
-                    <div class="grid grid-cols-5 gap-4">
-                        {files.value.map((file) => (
-                            <FileItem
-                                key={file.identifier}
-                                file={file}
-                                isSelected={selectedFileId === file.identifier}
-                                onSelect={(f) => onFilePicked?.(f)}
-                                onDelete={(f) => fileToDelete.value = f}
-                                onToggleVisibility={handleToggleFileVisibility}
-                            />
-                        ))}
+            {loader.running
+                ? (
+                    <div class="text-center p-2">
+                        <Loader color={color}>Loading files...</Loader>
                     </div>
-                    <Pagination
-                        total={totalFiles.value}
-                        perPage={perPage.value}
-                        currentPage={currentPage.value}
-                        onChange={handlePageChange}
-                    />
-                </>
-            )}
+                )
+                : (
+                    <>
+                        <div class="grid grid-cols-5 gap-4">
+                            {files.value.map((file) => (
+                                <FileItem
+                                    key={file.identifier}
+                                    file={file}
+                                    adminMode={adminMode}
+                                    isSelected={selectedFileId ===
+                                        file.identifier}
+                                    onSelect={(f) => onFilePicked?.(f)}
+                                    onDelete={(f) => fileToDelete.value = f}
+                                    onToggleVisibility={handleToggleFileVisibility}
+                                />
+                            ))}
+                        </div>
+                        <Pagination
+                            total={totalFiles.value}
+                            perPage={perPage.value}
+                            currentPage={currentPage.value}
+                            onChange={handlePageChange}
+                        />
+                    </>
+                )}
             <ConfirmDialog
                 visible={fileToDelete.value !== null}
                 prompt={
