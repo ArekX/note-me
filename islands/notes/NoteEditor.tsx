@@ -1,4 +1,4 @@
-import { useSignal } from "@preact/signals";
+import { useComputed, useSignal } from "@preact/signals";
 import { NoteRecord } from "$backend/repository/note-repository.ts";
 import Button from "$components/Button.tsx";
 import Icon from "$components/Icon.tsx";
@@ -14,7 +14,11 @@ import NoteWindow, { NoteWindowTypes } from "$islands/notes/NoteWindow.tsx";
 import NoteTextArea from "./NoteTextArea.tsx";
 import TagInput from "$islands/notes/TagInput.tsx";
 import { useLoader } from "$frontend/hooks/use-loading.ts";
-import { redirectTo } from "$frontend/redirection-manager.ts";
+import {
+    addBeforeRedirectListener,
+    redirectTo,
+    removeBeforeRedirectListener,
+} from "$frontend/redirection-manager.ts";
 import {
     CreateNoteMessage,
     CreateNoteResponse,
@@ -55,6 +59,23 @@ export default function NoteEditor({
     const isSaving = useLoader();
     const windowMode = useSignal<NoteWindowTypes | null>(null);
     const isPreviewMode = useSignal(false);
+    const wasDataChanged = useComputed(() => {
+        if (noteId.value === null) {
+            return true;
+        }
+
+        if (
+            name.value !== note.title ||
+            text.value !== note.note ||
+            groupId.value !== note.group_id ||
+            note.tags.length !== tags.value.length ||
+            (tags.value.filter((x) => !note.tags.includes(x))).length > 0
+        ) {
+            return true;
+        }
+
+        return false;
+    });
 
     const [noteValidation, validateNote] = useValidation<NoteRequestData>({
         schema: addNoteRequestSchema,
@@ -150,10 +171,33 @@ export default function NoteEditor({
             }
         };
 
+        const handleConfirmChangeDiscard = (e: BeforeUnloadEvent) => {
+            if (wasDataChanged.value) {
+                e.preventDefault();
+            }
+        };
+
+        const confirmBeforeRedirect = () => {
+            if (wasDataChanged.value) {
+                return Promise.resolve(
+                    confirm("Are you sure you want to discard changes?"),
+                );
+            }
+
+            return Promise.resolve(true);
+        };
+
         document.addEventListener("keydown", handleHotkeys);
+        globalThis.addEventListener("beforeunload", handleConfirmChangeDiscard);
+        addBeforeRedirectListener(confirmBeforeRedirect);
 
         return () => {
             document.removeEventListener("keydown", handleHotkeys);
+            globalThis.removeEventListener(
+                "beforeunload",
+                handleConfirmChangeDiscard,
+            );
+            removeBeforeRedirectListener(confirmBeforeRedirect);
         };
     }, []);
 

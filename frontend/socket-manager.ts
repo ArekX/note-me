@@ -31,12 +31,12 @@ export const connect = (host: string): Promise<void> => {
                 setTimeout(() => connect(host), 1000);
             }
         };
-        socket.onopen = () => {
+        socket.onopen = async () => {
             for (const request of pendingRequests) {
                 socket?.send(request);
             }
             pendingRequests = [];
-            consumePropagationTicket(pendingRequestsPropagationTicket!);
+            await consumePropagationTicket(pendingRequestsPropagationTicket!);
             resolve();
         };
     });
@@ -48,6 +48,8 @@ const processHandlers = (message: string) => {
         for (const handler of handlers) {
             handler(data);
         }
+
+        return Promise.resolve();
     });
 };
 

@@ -26,7 +26,7 @@ const paths = {
 } as const;
 
 export const redirectToUrl = (url: PathResult) => {
-    runOnReady(() => {
+    runOnReady(async () => {
         let location = "";
         let partialLocation = "";
         let fullRender = false;
@@ -37,6 +37,13 @@ export const redirectToUrl = (url: PathResult) => {
         } else {
             location = url;
             partialLocation = location;
+        }
+
+        for (const listener of redirectListeners) {
+            const shouldRedirect = await listener(url);
+            if (!shouldRedirect) {
+                return;
+            }
         }
 
         if (fullRender) {
@@ -57,7 +64,25 @@ export const redirectToUrl = (url: PathResult) => {
 export const reload = () => {
     runOnReady(() => {
         window.location.reload();
+        return Promise.resolve();
     });
+};
+
+type RedirectListener = (
+    url: PathResult,
+) => Promise<boolean>;
+
+const redirectListeners: RedirectListener[] = [];
+
+export const addBeforeRedirectListener = (listener: RedirectListener) => {
+    redirectListeners.push(listener);
+};
+
+export const removeBeforeRedirectListener = (listener: RedirectListener) => {
+    const index = redirectListeners.indexOf(listener);
+    if (index !== -1) {
+        redirectListeners.splice(index, 1);
+    }
 };
 
 const createRedirector =

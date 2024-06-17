@@ -1,4 +1,4 @@
-type ReadyFn = () => void;
+type ReadyFn = () => Promise<void>;
 
 const propagationTickets = new Set<TicketId>();
 
@@ -15,13 +15,13 @@ export const runOnReady = (method: ReadyFn) => {
     pendingReadyMethods.add(method);
 };
 
-export const runCriticalJob = (job: () => void) => {
+export const runCriticalJob = async (job: () => Promise<void>) => {
     const ticket = createPropagationTicket();
     try {
-        job();
-        consumePropagationTicket(ticket);
+        await job();
+        await consumePropagationTicket(ticket);
     } catch (e) {
-        consumePropagationTicket(ticket);
+        await consumePropagationTicket(ticket);
         throw e;
     }
 };
@@ -32,12 +32,12 @@ export const createPropagationTicket = (): TicketId => {
     return ticket;
 };
 
-export const consumePropagationTicket = (ticketId: TicketId) => {
+export const consumePropagationTicket = async (ticketId: TicketId) => {
     propagationTickets.delete(ticketId);
 
     if (propagationTickets.size === 0) {
         for (const method of pendingReadyMethods) {
-            method();
+            await method();
         }
 
         pendingReadyMethods.clear();

@@ -87,7 +87,7 @@ export default function Table<T extends object>(
             <tbody {...bodyProps}>
                 {isLoading && (
                     <tr>
-                        <td colSpan={columns.length} class="text-center">
+                        <td colSpan={columns.length} class="text-center p-2">
                             <Loader />
                         </td>
                     </tr>
