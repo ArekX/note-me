@@ -54,6 +54,16 @@ export const getUserByLogin = async (
     return user ?? null;
 };
 
+export const getUserByUsername = async (username: string) => {
+    return await db.selectFrom("user")
+        .select([
+            "id",
+            "is_deleted",
+        ])
+        .where("username", "=", username)
+        .executeTakeFirst();
+};
+
 export const getUserById = async (
     id: number,
 ): Promise<UserRecord | null> => {
@@ -106,7 +116,7 @@ export const createUserRecord = async (
 export type UpdateUserData =
     & Pick<
         UserTable,
-        "name" | "role" | "timezone"
+        "name" | "role" | "timezone" | "is_deleted"
     >
     & { new_password?: string | null };
 
@@ -117,12 +127,18 @@ export const updateUserRecord = async (
     const userRecord: Partial<
         Pick<
             UserTable,
-            "name" | "password" | "role" | "timezone" | "updated_at"
+            | "name"
+            | "password"
+            | "role"
+            | "timezone"
+            | "updated_at"
+            | "is_deleted"
         >
     > = {
         name: user.name,
         role: user.role,
         timezone: user.timezone,
+        is_deleted: user.is_deleted,
         updated_at: getCurrentUnixTimestamp(),
     };
 

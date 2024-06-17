@@ -20,7 +20,7 @@ import {
     FindUsersMessage,
     FindUsersResponse,
 } from "$workers/websocket/api/users/messages.ts";
-
+import { getBrowserTimezone } from "$frontend/time.ts";
 export default function UserList() {
     const userToDelete = useSignal<EditableUser | null>(null);
     const userToEdit = useSignal<EditableUser | null>(null);
@@ -115,7 +115,7 @@ export default function UserList() {
                                 id: null,
                                 name: "",
                                 username: "",
-                                timezone: "",
+                                timezone: getBrowserTimezone(),
                                 new_password: "",
                                 role: "user",
                             };

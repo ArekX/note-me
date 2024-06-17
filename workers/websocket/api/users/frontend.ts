@@ -19,9 +19,11 @@ import {
     deleteUserRecord,
     findUsers,
     getUserById,
+    getUserByUsername,
     UpdateUserData,
     updateUserProfile,
     updateUserRecord,
+    UserId,
 } from "$backend/repository/user-repository.ts";
 import {
     destroySession,
@@ -37,13 +39,27 @@ const createUserRequest: ListenerFn<CreateUserMessage> = async (
     await requireValidSchema(addUserSchema, data);
     sourceClient!.auth.require(CanManageUsers.Create);
 
-    const record = await createUserRecord(
-        data as CreateUserData,
-    );
+    const existingUser = await getUserByUsername(data.username);
+
+    let createRecord: UserId | null = null;
+    if (!existingUser) {
+        createRecord = await createUserRecord(
+            data as CreateUserData,
+        );
+    } else if (existingUser.is_deleted) {
+        await updateUserRecord(existingUser.id, {
+            is_deleted: false,
+            ...data,
+        } as UpdateUserData);
+
+        createRecord = { id: existingUser.id };
+    } else {
+        throw new Error("User with this username already exists.");
+    }
 
     respond<CreateUserResponse>({
         type: "createUserResponse",
-        data: record,
+        data: createRecord,
     });
 };
 

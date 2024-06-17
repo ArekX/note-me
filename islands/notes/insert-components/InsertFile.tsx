@@ -26,7 +26,7 @@ const Component = ({
                             inlineDirection="left"
                             items={[
                                 {
-                                    name: "Insert as Image",
+                                    name: "Image",
                                     icon: "image",
                                     onClick: () =>
                                         onInsert(
@@ -34,32 +34,32 @@ const Component = ({
                                         ),
                                 },
                                 {
-                                    name: "Insert as View Link",
-                                    icon: "image",
+                                    name: "View Link",
+                                    icon: "link",
                                     onClick: () =>
                                         onInsert(
                                             `[${selectedFile.value?.name}](/file/${selectedFile.value?.identifier})`,
                                         ),
                                 },
                                 {
-                                    name: "Insert as Download Link",
-                                    icon: "image",
+                                    name: "Download Link",
+                                    icon: "down-arrow-alt",
                                     onClick: () =>
                                         onInsert(
                                             `[${selectedFile.value?.name}](/file/${selectedFile.value?.identifier}?download)`,
                                         ),
                                 },
                                 {
-                                    name: "Insert Link Text Only",
-                                    icon: "link-alt",
+                                    name: "View Link as Text",
+                                    icon: "text",
                                     onClick: () =>
                                         onInsert(
                                             `/file/${selectedFile.value?.identifier}`,
                                         ),
                                 },
                                 {
-                                    name: "Insert Download Link Text Only",
-                                    icon: "down-arrow-alt",
+                                    name: "Download Link as Text",
+                                    icon: "text",
                                     onClick: () =>
                                         onInsert(
                                             `/file/${selectedFile.value?.identifier}?download`,

@@ -193,18 +193,22 @@ export const useRecordTree = (): RecordTreeHook => {
 
         setContainer(container, { is_processing: true });
 
+        if (container.id === null) {
+            removeFromParent(container);
+            propagateChanges();
+            return;
+        }
+
         propagateChanges();
 
-        if (container.id !== null) {
-            if (container.type === "note") {
-                dispatchMessage<DeleteNoteMessage>("notes", "deleteNote", {
-                    id: container.id,
-                });
-            } else {
-                dispatchMessage<DeleteGroupMessage>("groups", "deleteGroup", {
-                    id: container.id,
-                });
-            }
+        if (container.type === "note") {
+            dispatchMessage<DeleteNoteMessage>("notes", "deleteNote", {
+                id: container.id,
+            });
+        } else {
+            dispatchMessage<DeleteGroupMessage>("groups", "deleteGroup", {
+                id: container.id,
+            });
         }
     };
 

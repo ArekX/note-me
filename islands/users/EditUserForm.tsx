@@ -8,13 +8,20 @@ import DropdownList from "$components/DropdownList.tsx";
 import { roleDropDownList } from "$backend/rbac/role-definitions.ts";
 import { getUserData } from "$frontend/user-data.ts";
 import { supportedTimezoneList } from "$backend/time.ts";
-import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
+import {
+    SystemErrorMessage,
+    useWebsocketService,
+} from "$frontend/hooks/use-websocket-service.ts";
 import {
     CreateUserMessage,
     CreateUserResponse,
     UpdateUserMessage,
     UpdateUserResponse,
 } from "$workers/websocket/api/users/messages.ts";
+import { addMessage } from "$frontend/toast-message.ts";
+import { addUserSchema, updateUserSchema } from "$schemas/users.ts";
+import { useValidation } from "$frontend/hooks/use-validation.ts";
+import ErrorDisplay from "$components/ErrorDisplay.tsx";
 
 export interface EditableUser extends Omit<UserRecord, "id" | "password"> {
     id: number | null;
@@ -31,6 +38,19 @@ export default function EditUserForm(
 ) {
     const user = useSignal<EditableUser>({ ...editUser } as EditableUser);
 
+    const [userValidation, validateUser] = useValidation<
+        | ReturnType<typeof getAddUserData>
+        | ReturnType<typeof getUpdateUserData>
+    >({
+        schema: () => {
+            if (user.value.id === null) {
+                return addUserSchema;
+            }
+
+            return updateUserSchema;
+        },
+    });
+
     const { sendMessage } = useWebsocketService();
 
     useEffect(() => {
@@ -41,42 +61,87 @@ export default function EditUserForm(
         user.value = { ...user.value, [name]: value };
     };
 
-    const handleSubmit = async (event: Event) => {
-        event.preventDefault();
-        const { id: id, username, role, new_password, ...userData } =
-            user.value;
+    const getAddUserData = () => {
+        const {
+            id: _1,
+            username,
+            role,
+            new_password,
+            ...userData
+        } = user.value;
 
-        if (id === null) {
+        return {
+            ...userData,
+            username,
+            role,
+            password: new_password!,
+        };
+    };
+
+    const getUpdateUserData = () => {
+        const {
+            id: _1,
+            username: _2,
+            role: _3,
+            new_password: _4,
+            ...userData
+        } = user.value;
+
+        return {
+            new_password: user.value.new_password!,
+            ...userData,
+        };
+    };
+
+    const saveUser = async () => {
+        if (user.value.id === null) {
             await sendMessage<CreateUserMessage, CreateUserResponse>(
                 "users",
                 "createUser",
                 {
                     data: {
-                        data: {
-                            ...userData,
-                            username,
-                            role,
-                            password: new_password!,
-                        },
+                        data: getAddUserData(),
                     },
                     expect: "createUserResponse",
                 },
             );
-        } else {
-            await sendMessage<UpdateUserMessage, UpdateUserResponse>(
-                "users",
-                "updateUser",
-                {
-                    data: {
-                        id: +id,
-                        data: {
-                            new_password: new_password!,
-                            ...userData,
-                        },
-                    },
-                    expect: "updateUserResponse",
+
+            return;
+        }
+
+        await sendMessage<UpdateUserMessage, UpdateUserResponse>(
+            "users",
+            "updateUser",
+            {
+                data: {
+                    id: +user.value.id,
+                    data: getUpdateUserData(),
                 },
-            );
+                expect: "updateUserResponse",
+            },
+        );
+    };
+
+    const handleSubmit = async (event: Event) => {
+        event.preventDefault();
+
+        const data = user.value.id === null
+            ? getAddUserData()
+            : getUpdateUserData();
+        if (!await validateUser(data)) {
+            return;
+        }
+
+        try {
+            await saveUser();
+        } catch (e) {
+            const responseError = e as SystemErrorMessage;
+            addMessage({
+                type: "error",
+                text: "Failed to save user. Reason: " +
+                    responseError.data.message,
+            });
+            return;
         }
 
         onDone("ok");
@@ -87,13 +152,19 @@ export default function EditUserForm(
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
                     {user.value.id === null && (
-                        <Input
-                            label="Username"
-                            disabled={user.value.id !== null}
-                            type="text"
-                            value={user.value.username}
-                            onInput={setProperty("username")}
-                        />
+                        <>
+                            <Input
+                                label="Username"
+                                disabled={user.value.id !== null}
+                                type="text"
+                                value={user.value.username}
+                                onInput={setProperty("username")}
+                            />
+                            <ErrorDisplay
+                                state={userValidation}
+                                path="username"
+                            />
+                        </>
                     )}
                     {user.value.id !== null && (
                         <span class="text-2xl">Edit {user.value.username}</span>
@@ -106,6 +177,10 @@ export default function EditUserForm(
                         value={user.value.name}
                         onInput={setProperty("name")}
                     />
+                    <ErrorDisplay
+                        state={userValidation}
+                        path="name"
+                    />
                 </div>
                 <div className="mb-4">
                     <DropdownList
@@ -113,6 +188,10 @@ export default function EditUserForm(
                         items={supportedTimezoneList}
                         value={user.value.timezone}
                         onInput={setProperty("timezone")}
+                    />
+                    <ErrorDisplay
+                        state={userValidation}
+                        path="timezone"
                     />
                 </div>
                 <div className="mb-4">
@@ -128,6 +207,10 @@ export default function EditUserForm(
                             You cannot change your own role.
                         </span>
                     )}
+                    <ErrorDisplay
+                        state={userValidation}
+                        path="role"
+                    />
                 </div>
                 <div className="mb-4">
                     <Input
@@ -135,6 +218,10 @@ export default function EditUserForm(
                         type="password"
                         value={user.value.new_password ?? ""}
                         onInput={setProperty("new_password")}
+                    />
+                    <ErrorDisplay
+                        state={userValidation}
+                        path="password"
                     />
                 </div>
                 <Button type="submit" color="success">Save</Button>{" "}

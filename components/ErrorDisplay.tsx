@@ -1,20 +1,22 @@
-import { ZodIssue } from "$schemas/deps.ts";
+import { ValidationState } from "$frontend/hooks/use-validation.ts";
 
 interface ErrorDisplayProps<T> {
     path: string;
-    errors: ZodIssue[] | null;
+    state: ValidationState;
 }
 
 export default function ErrorDisplay<T>(
     {
         path,
-        errors,
+        state,
     }: ErrorDisplayProps<T>,
 ) {
-    return errors
+    return !state.valid.value
         ? (
             <div class="text-red-600">
-                {errors.filter((e) => e.path.includes(path)).map((error) => (
+                {state.errors.value.filter((e) => e.path.includes(path)).map((
+                    error,
+                ) => (
                     <div>
                         {error.message}
                     </div>

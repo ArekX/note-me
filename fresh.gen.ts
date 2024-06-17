@@ -40,6 +40,7 @@ import * as $files_FileItem from "./islands/files/FileItem.tsx";
 import * as $files_FilePicker from "./islands/files/FilePicker.tsx";
 import * as $files_FileUpload from "./islands/files/FileUpload.tsx";
 import * as $files_hooks_use_file_uploader from "./islands/files/hooks/use-file-uploader.ts";
+import * as $notes_DetailsLine from "./islands/notes/DetailsLine.tsx";
 import * as $notes_InsertDialog from "./islands/notes/InsertDialog.tsx";
 import * as $notes_MoreMenu from "./islands/notes/MoreMenu.tsx";
 import * as $notes_NoteEditor from "./islands/notes/NoteEditor.tsx";
@@ -141,6 +142,7 @@ const manifest = {
         "./islands/files/FileUpload.tsx": $files_FileUpload,
         "./islands/files/hooks/use-file-uploader.ts":
             $files_hooks_use_file_uploader,
+        "./islands/notes/DetailsLine.tsx": $notes_DetailsLine,
         "./islands/notes/InsertDialog.tsx": $notes_InsertDialog,
         "./islands/notes/MoreMenu.tsx": $notes_MoreMenu,
         "./islands/notes/NoteEditor.tsx": $notes_NoteEditor,

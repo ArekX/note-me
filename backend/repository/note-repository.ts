@@ -78,6 +78,7 @@ export interface ViewNoteRecord {
     group_id: number;
     group_name: string;
     tags: string[];
+    updated_at: number;
 }
 
 export const getNote = async (
@@ -96,6 +97,7 @@ export const getNote = async (
                 FROM note_tag
                 INNER JOIN note_tag_note ON note_tag_note.note_id = note.id AND note_tag.id = note_tag_note.tag_id
             )`.as("tags"),
+            "note.updated_at",
         ])
         .where("note.id", "=", id)
         .where("note.user_id", "=", user_id)

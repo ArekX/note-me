@@ -8,8 +8,6 @@ import { useEffect } from "preact/hooks";
 import { MenuItemActions } from "$islands/notes/MoreMenu.tsx";
 import { inputHandler } from "$frontend/methods.ts";
 import { addNoteRequestSchema } from "$schemas/notes.ts";
-import { validateSchema } from "$schemas/mod.ts";
-import { ZodIssue } from "$schemas/deps.ts";
 import ErrorDisplay from "$components/ErrorDisplay.tsx";
 import Viewer from "$islands/viewer/Viewer.tsx";
 import NoteWindow, { NoteWindowTypes } from "$islands/notes/NoteWindow.tsx";
@@ -24,6 +22,8 @@ import {
     UpdateNoteResponse,
 } from "$workers/websocket/api/notes/messages.ts";
 import { useNoteWebsocket } from "./hooks/use-note-websocket.ts";
+import DetailsLine from "$islands/notes/DetailsLine.tsx";
+import { useValidation } from "$frontend/hooks/use-validation.ts";
 
 interface NoteData extends Pick<NoteRecord, "title" | "note"> {
     id?: number;
@@ -34,6 +34,13 @@ interface NoteData extends Pick<NoteRecord, "title" | "note"> {
 
 interface NoteEditorProps {
     note: NoteData;
+}
+
+interface NoteRequestData {
+    group_id: number | null;
+    tags: string[];
+    title: string;
+    text: string;
 }
 
 export default function NoteEditor({
@@ -48,7 +55,10 @@ export default function NoteEditor({
     const isSaving = useLoader();
     const windowMode = useSignal<NoteWindowTypes | null>(null);
     const isPreviewMode = useSignal(false);
-    const validationErrors = useSignal<ZodIssue[]>([]);
+
+    const [noteValidation, validateNote] = useValidation<NoteRequestData>({
+        schema: addNoteRequestSchema,
+    });
 
     const { sendMessage } = useNoteWebsocket({
         noteId: noteId.value,
@@ -57,18 +67,14 @@ export default function NoteEditor({
     const handleSave = async () => {
         isSaving.start();
 
-        const noteToSave = {
+        const noteToSave: NoteRequestData = {
             group_id: groupId.value,
             tags: tags.value,
             text: text.value,
             title: name.value,
         };
 
-        validationErrors.value = [];
-        const errors = await validateSchema(addNoteRequestSchema, noteToSave);
-
-        if (errors) {
-            validationErrors.value = errors;
+        if (!await validateNote(noteToSave)) {
             isSaving.stop();
             return;
         }
@@ -174,7 +180,7 @@ export default function NoteEditor({
                         onInput={inputHandler((value) => name.value = value)}
                     />
                     <ErrorDisplay
-                        errors={validationErrors.value}
+                        state={noteValidation}
                         path="title"
                     />
                 </div>
@@ -225,14 +231,16 @@ export default function NoteEditor({
                     initialTags={tags.value}
                 />
                 <ErrorDisplay
-                    errors={validationErrors.value}
+                    state={noteValidation}
                     path="tags"
                 />
             </div>
-            {groupId.value && <div class="text-sm">&rarr; in {groupName}</div>}
+            <DetailsLine
+                groupName={groupName.value}
+            />
             <div class="mt-2">
                 <ErrorDisplay
-                    errors={validationErrors.value}
+                    state={noteValidation}
                     path="text"
                 />
             </div>

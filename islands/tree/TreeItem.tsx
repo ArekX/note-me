@@ -37,7 +37,12 @@ const TreeItemEditor = (
     };
 
     const handleCancel = (e: Event) => {
-        treeManager.setDisplayMode(container, "view");
+        if (container.id === null) {
+            treeManager.deleteContainer(container);
+        } else {
+            treeManager.setDisplayMode(container, "view");
+        }
+
         e.stopPropagation();
     };
 

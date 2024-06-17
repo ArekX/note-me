@@ -8,6 +8,7 @@ import { useSignal } from "@preact/signals";
 import { redirectTo } from "$frontend/redirection-manager.ts";
 import { useNoteWebsocket } from "$islands/notes/hooks/use-note-websocket.ts";
 import { useEffect } from "preact/hooks";
+import DetailsLine from "$islands/notes/DetailsLine.tsx";
 
 export interface ViewNoteProps {
     readonly?: boolean;
@@ -80,11 +81,10 @@ export default function ViewNote(
                     </a>
                 ))}
             </div>
-            {recordData.value.group_name && (
-                <div class="text-sm">
-                    &rarr; in {recordData.value.group_name}
-                </div>
-            )}
+            <DetailsLine
+                groupName={recordData.value.group_name}
+                lastUpdatedUnix={recordData.value.updated_at}
+            />
             <div>
                 <Viewer text={recordData.value.note} />
             </div>
