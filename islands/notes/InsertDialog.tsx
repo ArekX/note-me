@@ -10,12 +10,15 @@ import { InsertGroupListDef } from "$islands/notes/insert-components/InsertGroup
 import { InsertNoteLinkDef } from "$islands/notes/insert-components/InsertNoteLink.tsx";
 import { useEffect } from "preact/hooks";
 import DropdownList from "$components/DropdownList.tsx";
+import { InsertTocDef } from "$islands/notes/insert-components/InsertToc.tsx";
 
 interface InsertDialogProps {
+    noteText: string;
     onInsert: (text: string) => void;
 }
 
 export interface InsertComponentProps {
+    noteText: string;
     onCancel: () => void;
     onInsert: (text: string) => void;
 }
@@ -31,9 +34,11 @@ const insertComponents: InsertComponent[] = [
     InsertFileDef,
     InsertGroupListDef,
     InsertNoteLinkDef,
+    InsertTocDef,
 ];
 
 export default function InsertDialog({
+    noteText,
     onInsert,
 }: InsertDialogProps) {
     const selectedComponentIndex = useSignal(0);
@@ -94,6 +99,7 @@ export default function InsertDialog({
                     </div>
 
                     <SelectedComponent
+                        noteText={noteText}
                         onInsert={(text) => {
                             onInsert(text);
                             handleCancel();

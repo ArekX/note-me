@@ -6,7 +6,7 @@ import {
 const Component = ({}: InsertComponentProps) => {
     return (
         <div>
-            InsertGroupList
+            TODO: This needs search capabilities
         </div>
     );
 };

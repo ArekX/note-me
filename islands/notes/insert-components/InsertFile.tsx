@@ -17,12 +17,13 @@ const Component = ({
 
     return (
         <div class="w-full">
-            <div>
+            <div class="mb-2">
                 {selectedFile.value && (
                     <>
                         <DropdownMenu
                             popoverId="insertFile-0"
                             label="Insert"
+                            iconSize="lg"
                             inlineDirection="left"
                             items={[
                                 {
@@ -76,7 +77,7 @@ const Component = ({
                     onClick={onCancel}
                     size="md"
                 >
-                    <Icon name="minus-circle" size="md" /> Cancel
+                    <Icon name="minus-circle" size="lg" /> Cancel
                 </Button>
             </div>
             <div>

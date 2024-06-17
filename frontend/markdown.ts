@@ -260,8 +260,8 @@ const pipeline: TokenPipelineFn[] = [
     groupTextTokens,
 ];
 
-export const parseMarkdown = (markdownText: string): RootAstNode =>
-    toSyntaxTree(pipeline.reduce(
+export const parsePipeline = (markdownText: string): Tokens[] =>
+    pipeline.reduce(
         (result, fn) => fn(result),
         tokens(markdownText, {
             footnotes: true,
@@ -269,4 +269,7 @@ export const parseMarkdown = (markdownText: string): RootAstNode =>
             strikethrough: true,
             tasklists: true,
         }) as Tokens[],
-    ));
+    );
+
+export const parseMarkdown = (markdownText: string): RootAstNode =>
+    toSyntaxTree(parsePipeline(markdownText));

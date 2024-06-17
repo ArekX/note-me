@@ -2,12 +2,18 @@ import {
     InsertComponent,
     InsertComponentProps,
 } from "$islands/notes/InsertDialog.tsx";
+import LinkForm from "$islands/notes/insert-components/LinkForm.tsx";
 
-const Component = ({}: InsertComponentProps) => {
+const Component = ({
+    onCancel,
+    onInsert,
+}: InsertComponentProps) => {
     return (
-        <div>
-            InsertLink
-        </div>
+        <LinkForm
+            iconName="link"
+            onCancel={onCancel}
+            onInsert={(name, url) => onInsert(`[${name}](${url})`)}
+        />
     );
 };
 

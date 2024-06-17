@@ -6,7 +6,7 @@ import {
 const Component = ({}: InsertComponentProps) => {
     return (
         <div>
-            InsertNoteLink
+            TODO: This needs search capabilities
         </div>
     );
 };

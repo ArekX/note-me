@@ -85,6 +85,7 @@ export default function NoteTextArea({
     return (
         <div class="flex-grow block basis-auto">
             <InsertDialog
+                noteText={text.value}
                 onInsert={handleDialogInsert}
             />
             <textarea
