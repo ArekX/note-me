@@ -4,6 +4,7 @@ import {
     runCriticalJob,
     TicketId,
 } from "$frontend/propagation-manager.ts";
+import { addMessage } from "$frontend/toast-message.ts";
 
 type SocketHandler = (message: unknown) => void;
 
@@ -13,6 +14,8 @@ let pendingRequestsPropagationTicket: TicketId | null = null;
 let pendingRequests: (string | ArrayBuffer)[] = [];
 
 const handlers: Set<SocketHandler> = new Set();
+let isReconnecting = false;
+let connectionRetries = 0;
 
 export const connect = (host: string): Promise<void> => {
     return new Promise((resolve) => {
@@ -26,12 +29,39 @@ export const connect = (host: string): Promise<void> => {
             socket = null;
 
             if (!event.wasClean) {
-                // TODO: Add some notification that connection was lost.
-                // TODO: Add connection retry logic and attempt to reconnect.
+                if (!isReconnecting) {
+                    addMessage({
+                        type: "warning",
+                        text:
+                            "Connection to the server was lost. Attempting to reconnect...",
+                    });
+                }
+                isReconnecting = true;
                 setTimeout(() => connect(host), 1000);
             }
         };
+        socket.onerror = () => {
+            if (isReconnecting && connectionRetries < 5) {
+                connectionRetries++;
+                setTimeout(() => connect(host), 1000);
+                return;
+            }
+
+            addMessage({
+                type: "error",
+                text: "Connection to the server failed after 5 attempts.",
+            });
+        };
         socket.onopen = async () => {
+            if (isReconnecting) {
+                addMessage({
+                    type: "success",
+                    text: "Connection to the server was restored.",
+                });
+                isReconnecting = false;
+                connectionRetries = 0;
+            }
+
             for (const request of pendingRequests) {
                 socket?.send(request);
             }

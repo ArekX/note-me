@@ -3,6 +3,7 @@ import Icon from "$components/Icon.tsx";
 import Button from "$components/Button.tsx";
 
 const typeColorMap = {
+    warning: "bg-yellow-700",
     success: "bg-green-700",
     error: "bg-red-700",
 };

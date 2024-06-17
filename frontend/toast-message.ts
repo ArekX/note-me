@@ -2,7 +2,7 @@ import { signal } from "@preact/signals";
 
 export interface ToastMessage {
     text: string;
-    type: "success" | "error";
+    type: "warning" | "success" | "error";
 }
 
 const MAXIMUM_MESSAGE_DURATION = 5000;
