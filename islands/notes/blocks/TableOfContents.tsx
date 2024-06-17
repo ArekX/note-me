@@ -25,13 +25,21 @@ const List = ({ item }: ListProps) => (
 
 export default function TableOfContents({ text }: TableOfContentsProps) {
     const items = parseTableOfContents(text);
-    return (
-        <ul class="list-disc">
-            {items.map((item, index) => (
-                <li key={index}>
-                    <List item={item} />
-                </li>
-            ))}
-        </ul>
-    );
+    return items.length > 0
+        ? (
+            <div>
+                <ul class="list-disc ml-4">
+                    {items.map((item, index) => (
+                        <li key={index}>
+                            <List item={item} />
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+        : (
+            <div class="text-center p-4">
+                No table of contents available.
+            </div>
+        );
 }
