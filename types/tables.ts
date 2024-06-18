@@ -48,8 +48,10 @@ export interface FileTable {
 export interface NoteHistoryTable {
     id: Generated<number>;
     note_id: number;
-    user_id: number;
     note: string;
+    title: string;
+    tags: string;
+    version: string;
     created_at: number;
 }
 

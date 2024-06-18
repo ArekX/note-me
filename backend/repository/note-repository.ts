@@ -174,3 +174,16 @@ export const deleteNote = async (
 
     return result.numUpdatedRows > 0;
 };
+
+export const noteExists = async (
+    note_id: number,
+    user_id: number,
+): Promise<boolean> => {
+    const result = await db.selectFrom("note")
+        .select(sql<number>`1`.as("exists"))
+        .where("id", "=", note_id)
+        .where("user_id", "=", user_id)
+        .executeTakeFirst();
+
+    return (result?.exists ?? 0) > 0;
+};

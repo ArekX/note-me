@@ -12,6 +12,7 @@ import { CreateNoteMessage } from "$workers/websocket/api/notes/messages.ts";
 import {
     createNote,
     deleteNote,
+    noteExists,
     updateNote,
     updateNoteParent,
 } from "$backend/repository/note-repository.ts";
@@ -25,6 +26,7 @@ import { assignNoteToGroup } from "$backend/repository/group-repository.ts";
 import { when } from "$backend/promise.ts";
 import { requireValidSchema } from "$schemas/mod.ts";
 import { addNoteRequestSchema, updateNoteSchema } from "$schemas/notes.ts";
+import { addHistory } from "$backend/repository/note-history-repository.ts";
 
 const createNoteRequest: ListenerFn<CreateNoteMessage> = async (
     { message: { data }, sourceClient, respond },
@@ -61,13 +63,31 @@ const createNoteRequest: ListenerFn<CreateNoteMessage> = async (
 const updateNoteRequest: ListenerFn<UpdateNoteMessage> = async (
     { message: { id, data }, sourceClient, respond },
 ) => {
+    if (Object.keys(data).length === 0) {
+        respond<UpdateNoteResponse>({
+            type: "updateNoteResponse",
+            updatedId: id,
+            updatedData: data,
+        });
+        return;
+    }
+
     await requireValidSchema(updateNoteSchema, data);
+
+    if (!await noteExists(id, sourceClient!.userId)) {
+        throw new Error("Note does not exist.");
+    }
 
     await beginTransaction();
 
     const userId = sourceClient!.userId;
 
     try {
+        await addHistory({
+            note_id: id,
+            user_id: sourceClient!.userId,
+        });
+
         await Promise.all([
             when(
                 () => "group_id" in data,
@@ -115,6 +135,10 @@ const updateNoteRequest: ListenerFn<UpdateNoteMessage> = async (
 const deleteNoteRequest: ListenerFn<DeleteNoteMessage> = async (
     { message: { id }, sourceClient, respond },
 ) => {
+    if (!await noteExists(id, sourceClient!.userId)) {
+        throw new Error("Note does not exist.");
+    }
+
     await deleteNote(id, sourceClient!.userId);
 
     respond<DeleteNoteResponse>({

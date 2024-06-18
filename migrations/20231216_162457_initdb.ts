@@ -97,11 +97,9 @@ export async function up(db: Kysely<unknown>): Promise<void> {
             "integer",
             (col) => col.notNull().references("note.id"),
         )
-        .addColumn(
-            "user_id",
-            "integer",
-            (col) => col.notNull().references("user.id"),
-        )
+        .addColumn("version", "varchar(255)", (col) => col.notNull())
+        .addColumn("title", "varchar(255)", (col) => col.notNull())
+        .addColumn("tags", "text", (col) => col.notNull())
         .addColumn("note", "text", (col) => col.notNull())
         .addColumn("created_at", "int8", (col) => col.notNull())
         .execute();
