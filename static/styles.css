@@ -250,4 +250,5 @@ dialog::backdrop {
     @apply rounded-sm;
     @apply text-sm;
     @apply text-gray-300;
+    display: inline-block;
 }
