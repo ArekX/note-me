@@ -41,7 +41,7 @@ export default function RootGroupBar({
             }`}
         >
             <div
-                class={`flex-1 pt-1 text-sm`}
+                class={`flex-1`}
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}

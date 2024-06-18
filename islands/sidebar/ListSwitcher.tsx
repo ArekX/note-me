@@ -49,8 +49,13 @@ export default function ListSwitcher({
 
     return (
         <div class="cursor-pointer relative inline-block">
-            <div onClick={() => isVisible.value = !isVisible.value}>
-                <Icon name={currentIcon} size="sm" />
+            <div
+                onClick={() => isVisible.value = !isVisible.value}
+                class="text-sm p-1"
+            >
+                <span class="pr-1">
+                    <Icon name={currentIcon} size="sm" />
+                </span>
                 {currentItem}{" "}
                 <Icon name="chevron-down" size="sm" type="solid" />
             </div>

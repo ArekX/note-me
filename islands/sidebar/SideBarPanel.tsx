@@ -59,6 +59,18 @@ export default function ListPanel() {
                 };
             },
         },
+        {
+            name: "Recycle Bin",
+            icon: "recycle",
+            onClick: () => {
+                currentType.value = {
+                    type: "shared",
+                    label: "Recycle Bin",
+                    icon: "recycle",
+                    placeholder: "Search recycle bin items...",
+                };
+            },
+        },
     ];
 
     const RenderView = RendererViews[currentType.value.type];

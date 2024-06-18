@@ -40,6 +40,12 @@ import * as $files_FileItem from "./islands/files/FileItem.tsx";
 import * as $files_FilePicker from "./islands/files/FilePicker.tsx";
 import * as $files_FileUpload from "./islands/files/FileUpload.tsx";
 import * as $files_hooks_use_file_uploader from "./islands/files/hooks/use-file-uploader.ts";
+import * as $markdown_NodeItem from "./islands/markdown/NodeItem.tsx";
+import * as $markdown_Viewer from "./islands/markdown/Viewer.tsx";
+import * as $markdown_nodes_CodeBlock from "./islands/markdown/nodes/CodeBlock.tsx";
+import * as $markdown_nodes_Extension from "./islands/markdown/nodes/Extension.tsx";
+import * as $markdown_nodes_Heading from "./islands/markdown/nodes/Heading.tsx";
+import * as $markdown_nodes_Link from "./islands/markdown/nodes/Link.tsx";
 import * as $notes_DetailsLine from "./islands/notes/DetailsLine.tsx";
 import * as $notes_InsertDialog from "./islands/notes/InsertDialog.tsx";
 import * as $notes_MoreMenu from "./islands/notes/MoreMenu.tsx";
@@ -83,23 +89,6 @@ import * as $tree_hooks_use_tree_state from "./islands/tree/hooks/use-tree-state
 import * as $tree_hooks_use_tree_websocket from "./islands/tree/hooks/use-tree-websocket.ts";
 import * as $users_EditUserForm from "./islands/users/EditUserForm.tsx";
 import * as $users_UserList from "./islands/users/UserList.tsx";
-import * as $viewer_Viewer from "./islands/viewer/Viewer.tsx";
-import * as $viewer_blocks_Blockquote from "./islands/viewer/blocks/Blockquote.tsx";
-import * as $viewer_blocks_Break from "./islands/viewer/blocks/Break.tsx";
-import * as $viewer_blocks_Checkbox from "./islands/viewer/blocks/Checkbox.tsx";
-import * as $viewer_blocks_ChildrenNode from "./islands/viewer/blocks/ChildrenNode.tsx";
-import * as $viewer_blocks_Code from "./islands/viewer/blocks/Code.tsx";
-import * as $viewer_blocks_CodeBlock from "./islands/viewer/blocks/CodeBlock.tsx";
-import * as $viewer_blocks_Extension from "./islands/viewer/blocks/Extension.tsx";
-import * as $viewer_blocks_Footnote from "./islands/viewer/blocks/Footnote.tsx";
-import * as $viewer_blocks_Heading from "./islands/viewer/blocks/Heading.tsx";
-import * as $viewer_blocks_HorizontalLine from "./islands/viewer/blocks/HorizontalLine.tsx";
-import * as $viewer_blocks_Image from "./islands/viewer/blocks/Image.tsx";
-import * as $viewer_blocks_Link from "./islands/viewer/blocks/Link.tsx";
-import * as $viewer_blocks_List from "./islands/viewer/blocks/List.tsx";
-import * as $viewer_blocks_Root from "./islands/viewer/blocks/Root.tsx";
-import * as $viewer_blocks_Text from "./islands/viewer/blocks/Text.tsx";
-import * as $viewer_renderer from "./islands/viewer/renderer.tsx";
 import { type Manifest } from "$fresh/server.ts";
 
 const manifest = {
@@ -145,6 +134,12 @@ const manifest = {
         "./islands/files/FileUpload.tsx": $files_FileUpload,
         "./islands/files/hooks/use-file-uploader.ts":
             $files_hooks_use_file_uploader,
+        "./islands/markdown/NodeItem.tsx": $markdown_NodeItem,
+        "./islands/markdown/Viewer.tsx": $markdown_Viewer,
+        "./islands/markdown/nodes/CodeBlock.tsx": $markdown_nodes_CodeBlock,
+        "./islands/markdown/nodes/Extension.tsx": $markdown_nodes_Extension,
+        "./islands/markdown/nodes/Heading.tsx": $markdown_nodes_Heading,
+        "./islands/markdown/nodes/Link.tsx": $markdown_nodes_Link,
         "./islands/notes/DetailsLine.tsx": $notes_DetailsLine,
         "./islands/notes/InsertDialog.tsx": $notes_InsertDialog,
         "./islands/notes/MoreMenu.tsx": $notes_MoreMenu,
@@ -202,24 +197,6 @@ const manifest = {
             $tree_hooks_use_tree_websocket,
         "./islands/users/EditUserForm.tsx": $users_EditUserForm,
         "./islands/users/UserList.tsx": $users_UserList,
-        "./islands/viewer/Viewer.tsx": $viewer_Viewer,
-        "./islands/viewer/blocks/Blockquote.tsx": $viewer_blocks_Blockquote,
-        "./islands/viewer/blocks/Break.tsx": $viewer_blocks_Break,
-        "./islands/viewer/blocks/Checkbox.tsx": $viewer_blocks_Checkbox,
-        "./islands/viewer/blocks/ChildrenNode.tsx": $viewer_blocks_ChildrenNode,
-        "./islands/viewer/blocks/Code.tsx": $viewer_blocks_Code,
-        "./islands/viewer/blocks/CodeBlock.tsx": $viewer_blocks_CodeBlock,
-        "./islands/viewer/blocks/Extension.tsx": $viewer_blocks_Extension,
-        "./islands/viewer/blocks/Footnote.tsx": $viewer_blocks_Footnote,
-        "./islands/viewer/blocks/Heading.tsx": $viewer_blocks_Heading,
-        "./islands/viewer/blocks/HorizontalLine.tsx":
-            $viewer_blocks_HorizontalLine,
-        "./islands/viewer/blocks/Image.tsx": $viewer_blocks_Image,
-        "./islands/viewer/blocks/Link.tsx": $viewer_blocks_Link,
-        "./islands/viewer/blocks/List.tsx": $viewer_blocks_List,
-        "./islands/viewer/blocks/Root.tsx": $viewer_blocks_Root,
-        "./islands/viewer/blocks/Text.tsx": $viewer_blocks_Text,
-        "./islands/viewer/renderer.tsx": $viewer_renderer,
     },
     baseUrl: import.meta.url,
 } satisfies Manifest;

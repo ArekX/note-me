@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "preact/hooks";
 import { highlightJs } from "$frontend/deps.ts";
-import { BlockProps, renderChildren } from "$islands/viewer/renderer.tsx";
+import { NodeProps } from "$islands/markdown/NodeItem.tsx";
 
 export default function CodeBlock(
-    { node, originalText }: BlockProps<"codeBlock">,
+    { node, children }: NodeProps<"codeBlock">,
 ) {
     const viewerRef = useRef<HTMLPreElement>(null);
 
@@ -28,6 +28,6 @@ export default function CodeBlock(
         <pre
             ref={viewerRef}
             class={`lang-${node.data.language}`}
-        >{renderChildren(node, originalText)}</pre>
+        >{children}</pre>
     );
 }

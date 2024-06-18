@@ -1,5 +1,5 @@
-import { BlockProps } from "$islands/viewer/renderer.tsx";
 import TableOfContents from "$islands/notes/blocks/TableOfContents.tsx";
+import { NodeProps } from "$islands/markdown/NodeItem.tsx";
 
 const TableOfContentsExtension = (props: { text: string }) => {
     return <TableOfContents text={props.text} />;
@@ -10,7 +10,7 @@ const extensionMap = {
 };
 
 export default function Extension(
-    { node, originalText }: BlockProps<"extension">,
+    { node, originalText }: NodeProps<"extension">,
 ) {
     const ExtensionComponent =
         extensionMap[node.extension as keyof typeof extensionMap];
@@ -21,7 +21,7 @@ export default function Extension(
 
     return (
         <span class="p-1 border-solid border-2">
-            Ext: {node.extension}({node.params.join(", ")})
+            Unknown extension: {node.extension}({node.params.join(", ")})
         </span>
     );
 }

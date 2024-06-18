@@ -9,7 +9,6 @@ import { MenuItemActions } from "$islands/notes/MoreMenu.tsx";
 import { inputHandler } from "$frontend/methods.ts";
 import { addNoteRequestSchema } from "$schemas/notes.ts";
 import ErrorDisplay from "$components/ErrorDisplay.tsx";
-import Viewer from "$islands/viewer/Viewer.tsx";
 import NoteWindow, { NoteWindowTypes } from "$islands/notes/NoteWindow.tsx";
 import NoteTextArea from "./NoteTextArea.tsx";
 import TagInput from "$islands/notes/TagInput.tsx";
@@ -28,6 +27,7 @@ import {
 import { useNoteWebsocket } from "./hooks/use-note-websocket.ts";
 import DetailsLine from "$islands/notes/DetailsLine.tsx";
 import { useValidation } from "$frontend/hooks/use-validation.ts";
+import Viewer from "$islands/markdown/Viewer.tsx";
 
 interface NoteData extends Pick<NoteRecord, "title" | "note"> {
     id?: number;
@@ -111,6 +111,7 @@ export default function NoteEditor({
                     expect: "createNoteResponse",
                 },
             );
+            wasDataChanged.value = false;
             redirectTo.viewNote({ noteId: record.id });
         }
 

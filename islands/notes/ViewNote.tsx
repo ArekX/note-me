@@ -1,4 +1,3 @@
-import Viewer from "../viewer/Viewer.tsx";
 import { ViewNoteRecord } from "$backend/repository/note-repository.ts";
 import Button from "$components/Button.tsx";
 import Icon from "$components/Icon.tsx";
@@ -9,6 +8,7 @@ import { redirectTo } from "$frontend/redirection-manager.ts";
 import { useNoteWebsocket } from "$islands/notes/hooks/use-note-websocket.ts";
 import { useEffect } from "preact/hooks";
 import DetailsLine from "$islands/notes/DetailsLine.tsx";
+import Viewer from "$islands/markdown/Viewer.tsx";
 
 export interface ViewNoteProps {
     readonly?: boolean;
@@ -22,7 +22,7 @@ export default function ViewNote(
     const recordData = useSignal<ViewNoteRecord>(record);
 
     useEffect(() => {
-        recordData.value = record;
+        recordData.value = { ...record };
     }, [record]);
 
     useNoteWebsocket({

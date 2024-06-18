@@ -20,7 +20,9 @@ export const getTreeList = async (
             sql<number>`COALESCE((
                 SELECT 1 FROM "group" "gc" WHERE "gc"."parent_id" = "group"."id"
                 UNION
-                SELECT 1 FROM "group_note" "gn" WHERE "gn"."group_id" = "group"."id" LIMIT 1
+                SELECT 1 FROM "group_note" "gn" WHERE "gn"."group_id" = "group"."id" AND "gn"."note_id" NOT IN (
+                    SELECT id FROM note WHERE is_deleted = true
+                ) LIMIT 1
             ), 0)`.as("has_children"),
         ])
         .where("parent_id", group_id ? "=" : "is", group_id)
