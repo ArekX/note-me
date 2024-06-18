@@ -8,9 +8,24 @@ interface ListProps {
     item: TocItem;
 }
 
+const getTitleLink = (text: string) => {
+    const slug = text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(
+        /^-+|-+$/g,
+        "",
+    );
+    return `#${slug}`;
+};
+
 const List = ({ item }: ListProps) => (
     <>
-        {item.text}
+        {item.text.length > 0 && (
+            <a
+                href={getTitleLink(item.text)}
+                class="text-blue-600 hover:underline"
+            >
+                {item.text}
+            </a>
+        )}
         {item.children.length > 0 && (
             <ul class="list-disc ml-4">
                 {item.children.map((item, index) => (

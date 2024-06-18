@@ -1,9 +1,5 @@
-import { AstNode } from "$frontend/markdown.ts";
+import { BlockProps } from "$islands/viewer/renderer.tsx";
 
-interface CodeProps {
-    node: Extract<AstNode, { type: "code" }>;
-}
-
-export default function Code({ node }: CodeProps) {
+export default function Code({ node }: BlockProps<"code">) {
     return <span>{node.content}</span>;
 }

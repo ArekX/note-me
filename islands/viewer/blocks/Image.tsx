@@ -1,10 +1,6 @@
-import { AstNode } from "$frontend/markdown.ts";
+import { BlockProps } from "$islands/viewer/renderer.tsx";
 
-interface ImageProps {
-    node: Extract<AstNode, { type: "image" }>;
-}
-
-export default function Image({ node }: ImageProps) {
+export default function Image({ node }: BlockProps<"image">) {
     return (
         <img
             src={node.url}

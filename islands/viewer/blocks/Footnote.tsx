@@ -1,12 +1,7 @@
-import { AstNode } from "$frontend/markdown.ts";
+import { BlockProps } from "$islands/viewer/renderer.tsx";
 
-interface FootnoteDefinitionProps {
-    node: Extract<
-        AstNode,
-        { type: "footnoteDefinition" | "footnoteReference" }
-    >;
-}
-
-export default function Footnote({ node }: FootnoteDefinitionProps) {
+export default function Footnote(
+    { node }: BlockProps<"footnoteDefinition" | "footnoteReference">,
+) {
     return <div class="footnote-definition">{node.type}</div>;
 }

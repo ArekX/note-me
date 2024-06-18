@@ -1,6 +1,5 @@
-import { AstNode } from "$frontend/markdown.ts";
 import { createElement } from "preact";
-import { renderChildren } from "$islands/viewer/renderer.tsx";
+import { BlockProps, renderChildren } from "$islands/viewer/renderer.tsx";
 
 type ChildNodeTypes =
     | "paragraph"
@@ -12,10 +11,6 @@ type ChildNodeTypes =
     | "strong"
     | "strikethrough"
     | "table";
-
-interface ChildrenNodeProps {
-    node: Extract<AstNode, { type: ChildNodeTypes }>;
-}
 
 const nodeElementMap: Record<ChildNodeTypes, string> = {
     strong: "strong",
@@ -29,10 +24,12 @@ const nodeElementMap: Record<ChildNodeTypes, string> = {
     tableCell: "td",
 };
 
-export default function ChildrenNode({ node }: ChildrenNodeProps) {
+export default function ChildrenNode(
+    { node, originalText }: BlockProps<ChildNodeTypes>,
+) {
     return createElement(
         nodeElementMap[node.type],
         { className: `node-${node.type}` },
-        renderChildren(node),
+        renderChildren(node, originalText),
     );
 }

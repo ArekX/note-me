@@ -24,47 +24,53 @@ import Extension from "./blocks/Extension.tsx";
 
 type RendererFunctions = RendererFn<AstNode["type"]>;
 
-export type RendererFn<T> = (
-    data: { node: Extract<AstNode, { type: T }> },
+export type RendererFn<T extends AstNode["type"]> = (
+    data: BlockProps<T>,
 ) => JSX.Element;
 
 export type RendererMap = {
     [K in AstNode["type"]]: RendererFn<K>;
 };
 
+export interface BlockProps<T extends AstNode["type"]> {
+    node: Extract<AstNode, { type: T }>;
+    originalText: string;
+}
+
 export const blockMap: RendererMap = {
-    list: (data) => <List node={data.node} />,
-    link: (data) => <Link node={data.node} />,
-    image: (data) => <Image node={data.node} />,
-    footnoteDefinition: (data) => <Footnote node={data.node} />,
-    codeBlock: (data) => <CodeBlock node={data.node} />,
-    blockQuote: (data) => <Blockquote node={data.node} />,
-    heading: (data) => <Heading node={data.node} />,
-    paragraph: (data) => <ChildrenNode node={data.node} />,
-    listItem: (data) => <ChildrenNode node={data.node} />,
-    tableHead: (data) => <ChildrenNode node={data.node} />,
-    tableRow: (data) => <ChildrenNode node={data.node} />,
-    tableCell: (data) => <ChildrenNode node={data.node} />,
-    emphasis: (data) => <ChildrenNode node={data.node} />,
-    strong: (data) => <ChildrenNode node={data.node} />,
-    strikethrough: (data) => <ChildrenNode node={data.node} />,
-    table: (data) => <ChildrenNode node={data.node} />,
-    text: (data) => <Text node={data.node} />,
-    code: (data) => <Code node={data.node} />,
-    footnoteReference: (data) => <Footnote node={data.node} />,
+    list: (data) => <List {...data} />,
+    link: (data) => <Link {...data} />,
+    image: (data) => <Image {...data} />,
+    footnoteDefinition: (data) => <Footnote {...data} />,
+    codeBlock: (data) => <CodeBlock {...data} />,
+    blockQuote: (data) => <Blockquote {...data} />,
+    heading: (data) => <Heading {...data} />,
+    paragraph: (data) => <ChildrenNode {...data} />,
+    listItem: (data) => <ChildrenNode {...data} />,
+    tableHead: (data) => <ChildrenNode {...data} />,
+    tableRow: (data) => <ChildrenNode {...data} />,
+    tableCell: (data) => <ChildrenNode {...data} />,
+    emphasis: (data) => <ChildrenNode {...data} />,
+    strong: (data) => <ChildrenNode {...data} />,
+    strikethrough: (data) => <ChildrenNode {...data} />,
+    table: (data) => <ChildrenNode {...data} />,
+    text: (data) => <Text {...data} />,
+    code: (data) => <Code {...data} />,
+    footnoteReference: (data) => <Footnote {...data} />,
     softBreak: () => <Break />,
     hardBreak: () => <Break />,
     rule: () => <HorizontalLine />,
-    taskListMarker: (data) => <Checkbox node={data.node} />,
-    extension: (data) => <Extension node={data.node} />,
-    root: (data) => <Root node={data.node} />,
+    taskListMarker: (data) => <Checkbox {...data} />,
+    extension: (data) => <Extension {...data} />,
+    root: (data) => <Root {...data} />,
 };
 
-export const renderChildren = (node: AstContainerNode) =>
-    node.children.map(renderComponent);
+export const renderChildren = (node: AstContainerNode, originalText: string) =>
+    node.children.map((n) => renderComponent(n, originalText));
 
 const renderComponent = (
     node: AstNode,
+    originalText: string,
 ): JSX.Element => {
     const render = blockMap[node.type] as RendererFunctions;
 
@@ -72,8 +78,8 @@ const renderComponent = (
         throw new Error("Unknown AST node type: " + node.type);
     }
 
-    return render({ node });
+    return render({ node, originalText });
 };
 
 export const renderMarkdown = (text: string) =>
-    renderComponent(parseMarkdown(text));
+    renderComponent(parseMarkdown(text), text);

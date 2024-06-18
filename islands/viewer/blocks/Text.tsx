@@ -1,9 +1,5 @@
-import { AstNode } from "$frontend/markdown.ts";
+import { BlockProps } from "$islands/viewer/renderer.tsx";
 
-interface TextProps {
-    node: Extract<AstNode, { type: "text" }>;
-}
-
-export default function Text({ node }: TextProps) {
+export default function Text({ node }: BlockProps<"text">) {
     return <span>{node.content}</span>;
 }

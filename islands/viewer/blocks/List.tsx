@@ -1,13 +1,8 @@
-import { AstNode } from "$frontend/markdown.ts";
-import { renderChildren } from "$islands/viewer/renderer.tsx";
+import { BlockProps, renderChildren } from "$islands/viewer/renderer.tsx";
 
-interface ListProps {
-    node: Extract<AstNode, { type: "list" }>;
-}
-
-export default function List({ node }: ListProps) {
+export default function List({ node, originalText }: BlockProps<"list">) {
     if (node.data.type === "ordered") {
-        return <ol>{renderChildren(node)}</ol>;
+        return <ol>{renderChildren(node, originalText)}</ol>;
     }
-    return <ul>{renderChildren(node)}</ul>;
+    return <ul>{renderChildren(node, originalText)}</ul>;
 }

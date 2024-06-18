@@ -1,10 +1,6 @@
-import { AstNode } from "$frontend/markdown.ts";
 import Icon from "$components/Icon.tsx";
+import { BlockProps } from "$islands/viewer/renderer.tsx";
 
-interface CheckboxProps {
-    node: Extract<AstNode, { type: "taskListMarker" }>;
-}
-
-export default function Checkbox({ node }: CheckboxProps) {
+export default function Checkbox({ node }: BlockProps<"taskListMarker">) {
     return <Icon name={node.checked ? "checkbox-checked" : "checkbox"} />;
 }

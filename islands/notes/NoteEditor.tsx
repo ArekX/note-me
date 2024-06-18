@@ -1,4 +1,4 @@
-import { useComputed, useSignal } from "@preact/signals";
+import { useSignal } from "@preact/signals";
 import { NoteRecord } from "$backend/repository/note-repository.ts";
 import Button from "$components/Button.tsx";
 import Icon from "$components/Icon.tsx";
@@ -59,23 +59,7 @@ export default function NoteEditor({
     const isSaving = useLoader();
     const windowMode = useSignal<NoteWindowTypes | null>(null);
     const isPreviewMode = useSignal(false);
-    const wasDataChanged = useComputed(() => {
-        if (noteId.value === null) {
-            return true;
-        }
-
-        if (
-            name.value !== note.title ||
-            text.value !== note.note ||
-            groupId.value !== note.group_id ||
-            note.tags.length !== tags.value.length ||
-            (tags.value.filter((x) => !note.tags.includes(x))).length > 0
-        ) {
-            return true;
-        }
-
-        return false;
-    });
+    const wasDataChanged = useSignal(false);
 
     const [noteValidation, validateNote] = useValidation<NoteRequestData>({
         schema: addNoteRequestSchema,
@@ -112,6 +96,7 @@ export default function NoteEditor({
                     expect: "updateNoteResponse",
                 },
             );
+            wasDataChanged.value = false;
         } else {
             const { record } = await sendMessage<
                 CreateNoteMessage,
@@ -201,6 +186,12 @@ export default function NoteEditor({
         };
     }, []);
 
+    const withDataChange = (setter: () => void) => {
+        const result = setter();
+        wasDataChanged.value = true;
+        return result;
+    };
+
     useEffect(() => {
         name.value = note.title;
         text.value = note.note;
@@ -221,7 +212,9 @@ export default function NoteEditor({
                         tabIndex={1}
                         value={name.value}
                         disabled={isSaving.running}
-                        onInput={inputHandler((value) => name.value = value)}
+                        onInput={inputHandler((value) =>
+                            withDataChange(() => name.value = value)
+                        )}
                     />
                     <ErrorDisplay
                         state={noteValidation}
@@ -271,7 +264,8 @@ export default function NoteEditor({
             <div class="flex-grow">
                 <TagInput
                     isSaving={isSaving.running}
-                    onChange={(newTags) => tags.value = newTags}
+                    onChange={(newTags) =>
+                        withDataChange(() => tags.value = newTags)}
                     initialTags={tags.value}
                 />
                 <ErrorDisplay
@@ -292,7 +286,8 @@ export default function NoteEditor({
                 <NoteTextArea
                     initialText={text.value}
                     isSaving={isSaving.running}
-                    onChange={(newText) => text.value = newText}
+                    onChange={(newText) =>
+                        withDataChange(() => text.value = newText)}
                 />
             )}
             {noteId.value && (
