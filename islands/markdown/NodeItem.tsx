@@ -8,7 +8,7 @@ import { JSX } from "preact";
 
 export interface NodeProps<T extends AstNode["type"]> {
     node: Extract<AstNode, { type: T }>;
-    originalText: string;
+    originalText?: string;
     children?: JSX.Element[] | null;
 }
 
@@ -78,12 +78,12 @@ export default function NodeItem({
         case "strikethrough":
             return <s>{items}</s>;
         case "link":
-            return <Link node={node} originalText={originalText} />;
+            return <Link node={node}>{items}</Link>;
         case "code":
             return <code>{node.content}</code>;
         case "heading":
             return (
-                <Heading node={node} originalText={originalText}>
+                <Heading node={node}>
                     {items}
                 </Heading>
             );
@@ -102,7 +102,7 @@ export default function NodeItem({
             return <Extension node={node} originalText={originalText} />;
         case "codeBlock":
             return (
-                <CodeBlock node={node} originalText={originalText}>
+                <CodeBlock node={node}>
                     {items}
                 </CodeBlock>
             );

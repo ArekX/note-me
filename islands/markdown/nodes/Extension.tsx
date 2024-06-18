@@ -16,7 +16,7 @@ export default function Extension(
         extensionMap[node.extension as keyof typeof extensionMap];
 
     if (ExtensionComponent) {
-        return <ExtensionComponent text={originalText} />;
+        return <ExtensionComponent text={originalText ?? ""} />;
     }
 
     return (
