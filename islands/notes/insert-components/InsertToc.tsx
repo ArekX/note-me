@@ -8,9 +8,11 @@ import TableOfContents from "$islands/notes/blocks/TableOfContents.tsx";
 
 const Component = ({
     onCancel,
+    onInsert,
     noteText,
 }: InsertComponentProps) => {
     const handleInsert = () => {
+        onInsert("{:table-of-contents}");
     };
 
     return (

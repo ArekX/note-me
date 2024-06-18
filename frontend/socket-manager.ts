@@ -28,17 +28,20 @@ export const connect = (host: string): Promise<void> => {
         socket.onclose = (event) => {
             socket = null;
 
-            if (!event.wasClean) {
-                if (!isReconnecting) {
-                    addMessage({
-                        type: "warning",
-                        text:
-                            "Connection to the server was lost. Attempting to reconnect...",
-                    });
-                }
-                isReconnecting = true;
-                setTimeout(() => connect(host), 1000);
+            if (event.wasClean) {
+                return;
             }
+
+            if (!isReconnecting) {
+                addMessage({
+                    type: "warning",
+                    text:
+                        "Connection to the server was lost. Attempting to reconnect...",
+                });
+            }
+
+            isReconnecting = true;
+            setTimeout(() => connect(host), 1000);
         };
         socket.onerror = () => {
             if (isReconnecting && connectionRetries < 5) {
