@@ -4,6 +4,25 @@ import { AppState } from "$types";
 import { CanManageFiles } from "$backend/rbac/permissions.ts";
 import { hasPermission } from "$backend/rbac/authorizer.ts";
 
+const ALLOWED_RENDER_MIME_TYPES = [
+    "text/plain",
+    "application/json",
+    "application/pdf",
+    "image/png",
+    "image/jpeg",
+    "image/gif",
+    "image/x-icon",
+    "image/webp",
+    "image/bmp",
+    "image/tiff",
+    "audio/mpeg",
+    "audio/ogg",
+    "audio/wav",
+    "video/mp4",
+    "video/ogg",
+    "video/webm",
+];
+
 export const handler = async (_req: Request, ctx: FreshContext<AppState>) => {
     const identifier: string = ctx.params.identifier ?? "";
 
@@ -25,14 +44,18 @@ export const handler = async (_req: Request, ctx: FreshContext<AppState>) => {
         );
     }
 
-    const disposition = ctx.url.searchParams.has("download")
+    let disposition = ctx.url.searchParams.has("download")
         ? "attachment"
         : "inline";
 
     let mimeType = file.mime_type;
 
-    if (mimeType === "text/html") {
+    if (mimeType.startsWith("text/")) {
         mimeType = "text/plain";
+    }
+
+    if (!ALLOWED_RENDER_MIME_TYPES.includes(mimeType)) {
+        disposition = "attachment";
     }
 
     return new Response(file.data, {
