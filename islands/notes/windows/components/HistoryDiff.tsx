@@ -60,13 +60,13 @@ export default function HistoryDiff({
                                 case "added":
                                     return (
                                         <div class="diff-added" key={index}>
-                                            +{line.value}
+                                            {line.value}
                                         </div>
                                     );
                                 case "removed":
                                     return (
                                         <div class="diff-removed" key={index}>
-                                            -{line.value}
+                                            {line.value}
                                         </div>
                                     );
                                 case "same":
@@ -77,7 +77,11 @@ export default function HistoryDiff({
                                     );
                                 case "changed":
                                     return (
-                                        <div class="diff-changed" key={index}>
+                                        <div
+                                            class="diff-changed"
+                                            key={index}
+                                            title={`From: ${line.from}`}
+                                        >
                                             {line.to}
                                         </div>
                                     );

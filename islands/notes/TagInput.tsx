@@ -229,6 +229,11 @@ export default function TagInput({
         calculateDropdownPos(dropdownRef.current, inputRef.current);
     };
 
+    const writeTags = () => {
+        tagString.value = getFormattedTagString(tagString.value);
+        onChange(getTagArray(tagString.value));
+    };
+
     const { isOpen, open, close: closeTagWindow } = useSinglePopover(
         "tagInput-0",
         dropdownRef,
@@ -238,8 +243,7 @@ export default function TagInput({
         },
         () => {
             selectedTagIndex.value = null;
-            tagString.value = getFormattedTagString(tagString.value);
-            onChange(getTagArray(tagString.value));
+            writeTags();
         },
     );
 
@@ -261,8 +265,7 @@ export default function TagInput({
             ) {
                 closeTagWindow();
             }
-            tagString.value = getFormattedTagString(tagString.value);
-            onChange(getTagArray(tagString.value));
+            writeTags();
         };
 
         document.addEventListener("click", handleInputLeave);
@@ -283,6 +286,7 @@ export default function TagInput({
                 value={tagString.value}
                 disabled={isSaving}
                 onInput={inputHandler((value) => tagString.value = value)}
+                onBlur={() => writeTags()}
                 onKeyDown={handleKeyDown}
                 onKeyUp={handleKeyUp}
             />
