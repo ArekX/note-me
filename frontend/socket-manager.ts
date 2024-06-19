@@ -32,14 +32,15 @@ export const connect = (host: string): Promise<void> => {
                 return;
             }
 
-            if (!isReconnecting) {
-                addMessage({
-                    type: "warning",
-                    text:
-                        "Connection to the server was lost. Attempting to reconnect...",
-                });
+            if (isReconnecting) {
+                return;
             }
 
+            addMessage({
+                type: "warning",
+                text:
+                    "Connection to the server was lost. Attempting to reconnect...",
+            });
             isReconnecting = true;
             setTimeout(() => connect(host), 1000);
         };
@@ -61,9 +62,10 @@ export const connect = (host: string): Promise<void> => {
                     type: "success",
                     text: "Connection to the server was restored.",
                 });
-                isReconnecting = false;
-                connectionRetries = 0;
             }
+
+            isReconnecting = false;
+            connectionRetries = 0;
 
             for (const request of pendingRequests) {
                 socket?.send(request);
