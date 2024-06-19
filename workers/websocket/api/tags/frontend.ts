@@ -49,8 +49,8 @@ const updateTagRequest: ListenerFn<UpdateTagMessage> = async (
 
     respond<UpdateTagResponse>({
         type: "updateTagResponse",
-        updatedId: id,
-        updatedData: data,
+        updated_id: id,
+        updated_data: data,
     });
 };
 
@@ -62,7 +62,7 @@ const deleteTagRequest: ListenerFn<DeleteTagMessage> = async (
 
     respond<DeleteTagResponse>({
         type: "deleteTagResponse",
-        deletedId: id,
+        deleted_id: id,
     });
 };
 

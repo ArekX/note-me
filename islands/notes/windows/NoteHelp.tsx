@@ -2,13 +2,12 @@ import Dialog from "$islands/Dialog.tsx";
 import Button from "$components/Button.tsx";
 
 interface HelpProps {
-    show: boolean;
     onClose: () => void;
 }
 
-export default function Help({ show, onClose }: HelpProps) {
+export default function NoteHelp({ onClose }: HelpProps) {
     return (
-        <Dialog visible={show}>
+        <Dialog visible={true}>
             <table>
                 <tr>
                     <td>

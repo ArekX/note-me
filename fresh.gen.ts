@@ -63,9 +63,11 @@ import * as $notes_insert_components_InsertLink from "./islands/notes/insert-com
 import * as $notes_insert_components_InsertNoteLink from "./islands/notes/insert-components/InsertNoteLink.tsx";
 import * as $notes_insert_components_InsertToc from "./islands/notes/insert-components/InsertToc.tsx";
 import * as $notes_insert_components_LinkForm from "./islands/notes/insert-components/LinkForm.tsx";
-import * as $notes_windows_Help from "./islands/notes/windows/Help.tsx";
 import * as $notes_windows_NoteDelete from "./islands/notes/windows/NoteDelete.tsx";
 import * as $notes_windows_NoteDetails from "./islands/notes/windows/NoteDetails.tsx";
+import * as $notes_windows_NoteHelp from "./islands/notes/windows/NoteHelp.tsx";
+import * as $notes_windows_NoteHistory from "./islands/notes/windows/NoteHistory.tsx";
+import * as $notes_windows_components_HistoryDiff from "./islands/notes/windows/components/HistoryDiff.tsx";
 import * as $notifications_NotificationItem from "./islands/notifications/NotificationItem.tsx";
 import * as $notifications_NotificationList from "./islands/notifications/NotificationList.tsx";
 import * as $notifications_views_ReminderView from "./islands/notifications/views/ReminderView.tsx";
@@ -166,9 +168,12 @@ const manifest = {
             $notes_insert_components_InsertToc,
         "./islands/notes/insert-components/LinkForm.tsx":
             $notes_insert_components_LinkForm,
-        "./islands/notes/windows/Help.tsx": $notes_windows_Help,
         "./islands/notes/windows/NoteDelete.tsx": $notes_windows_NoteDelete,
         "./islands/notes/windows/NoteDetails.tsx": $notes_windows_NoteDetails,
+        "./islands/notes/windows/NoteHelp.tsx": $notes_windows_NoteHelp,
+        "./islands/notes/windows/NoteHistory.tsx": $notes_windows_NoteHistory,
+        "./islands/notes/windows/components/HistoryDiff.tsx":
+            $notes_windows_components_HistoryDiff,
         "./islands/notifications/NotificationItem.tsx":
             $notifications_NotificationItem,
         "./islands/notifications/NotificationList.tsx":

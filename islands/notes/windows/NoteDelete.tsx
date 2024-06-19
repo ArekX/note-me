@@ -1,8 +1,6 @@
 import ConfirmDialog from "$islands/ConfirmDialog.tsx";
 import { useLoader } from "$frontend/hooks/use-loading.ts";
 import Loader from "$islands/Loader.tsx";
-import { clearStorage } from "$frontend/session-storage.ts";
-import { redirectTo } from "$frontend/redirection-manager.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import {
     DeleteNoteMessage,
@@ -11,11 +9,10 @@ import {
 
 interface NoteDeleteProps {
     noteId: number;
-    show: boolean;
     onClose: () => void;
 }
 
-export default function NoteDelete({ noteId, show, onClose }: NoteDeleteProps) {
+export default function NoteDelete({ noteId, onClose }: NoteDeleteProps) {
     const deleteLoader = useLoader();
 
     const { sendMessage } = useWebsocketService();
@@ -33,8 +30,6 @@ export default function NoteDelete({ noteId, show, onClose }: NoteDeleteProps) {
             },
         );
         deleteLoader.stop();
-        clearStorage(); // TODO: Remove this when we have a better way to handle this
-        redirectTo.root();
     };
 
     return (
@@ -54,7 +49,7 @@ export default function NoteDelete({ noteId, show, onClose }: NoteDeleteProps) {
             isProcessing={deleteLoader.running}
             confirmText="Delete note"
             confirmColor="danger"
-            visible={show}
+            visible={true}
             onCancel={onClose}
             onConfirm={handleConfirmedDelete}
         />

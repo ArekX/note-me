@@ -25,7 +25,7 @@ export type UpdateGroupMessage = GroupMessage<
 
 export type UpdateGroupResponse = GroupMessage<
     "updateGroupResponse",
-    { updatedId: number; updatedData: UpdateGroupRequest }
+    { updated_id: number; updated_data: UpdateGroupRequest }
 >;
 
 export type DeleteGroupMessage = GroupMessage<
@@ -35,7 +35,7 @@ export type DeleteGroupMessage = GroupMessage<
 
 export type DeleteGroupResponse = GroupMessage<
     "deleteGroupResponse",
-    { deletedId: number }
+    { deleted_id: number }
 >;
 
 export type GroupFrontendResponse =

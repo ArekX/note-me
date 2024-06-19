@@ -78,7 +78,7 @@ export default function FilePicker({
                     }));
 
                     totalFiles.value = response.records.total;
-                    perPage.value = response.records.perPage;
+                    perPage.value = response.records.per_page;
                     currentPage.value = response.records.page;
 
                     loader.stop();
@@ -253,6 +253,9 @@ export default function FilePicker({
                                     onToggleVisibility={handleToggleFileVisibility}
                                 />
                             ))}
+                            {files.value.length === 0 && (
+                                <div>No files found.</div>
+                            )}
                         </div>
                         <Pagination
                             total={totalFiles.value}

@@ -1,5 +1,4 @@
 import Dialog from "$islands/Dialog.tsx";
-import { useEffect } from "preact/hooks";
 import { useSignal } from "@preact/signals";
 import { useLoader } from "$frontend/hooks/use-loading.ts";
 import Loader from "$islands/Loader.tsx";
@@ -8,42 +7,23 @@ import { getUserData } from "$frontend/user-data.ts";
 import Button from "$components/Button.tsx";
 
 interface NoteDetailsProps {
-    show: boolean;
     noteId: number;
     onClose: () => void;
 }
 
 export default function NoteDetails(
-    { show, onClose }: NoteDetailsProps,
+    { onClose }: NoteDetailsProps,
 ) {
     const noteData = useSignal<NoteDetailsRecord | null>(null);
 
     const isNoteLoading = useLoader();
-
-    const loadNoteDetails = () => {
-        if (isNoteLoading.running) {
-            return;
-        }
-
-        isNoteLoading.start();
-
-        // const { data } = await getNoteDetails(noteId);
-        // noteData.value = data;
-        isNoteLoading.stop();
-    };
-
-    useEffect(() => {
-        if (show && !noteData.value) {
-            loadNoteDetails();
-        }
-    }, [show]);
 
     const userData = getUserData();
 
     const { group_name, created_at, updated_at, user_name } = noteData.value ??
         {};
     return (
-        <Dialog visible={show}>
+        <Dialog visible={true}>
             {isNoteLoading.running
                 ? <Loader color="white">Loading note details...</Loader>
                 : noteData.value && (

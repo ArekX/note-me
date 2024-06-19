@@ -4,6 +4,10 @@ import {
     CreateNoteResponse,
     DeleteNoteMessage,
     DeleteNoteResponse,
+    FindNoteHistoryMessage,
+    FindNoteHistoryResponse,
+    GetNoteHistoryDataMessage,
+    GetNoteHistoryDataResponse,
     NoteFrontendMessage,
     UpdateNoteMessage,
     UpdateNoteResponse,
@@ -26,7 +30,11 @@ import { assignNoteToGroup } from "$backend/repository/group-repository.ts";
 import { when } from "$backend/promise.ts";
 import { requireValidSchema } from "$schemas/mod.ts";
 import { addNoteRequestSchema, updateNoteSchema } from "$schemas/notes.ts";
-import { addHistory } from "$backend/repository/note-history-repository.ts";
+import {
+    addHistory,
+    findHistory,
+    getHistoryRecordData,
+} from "$backend/repository/note-history-repository.ts";
 
 const createNoteRequest: ListenerFn<CreateNoteMessage> = async (
     { message: { data }, sourceClient, respond },
@@ -66,8 +74,8 @@ const updateNoteRequest: ListenerFn<UpdateNoteMessage> = async (
     if (Object.keys(data).length === 0) {
         respond<UpdateNoteResponse>({
             type: "updateNoteResponse",
-            updatedId: id,
-            updatedData: data,
+            updated_id: id,
+            updated_data: data,
         });
         return;
     }
@@ -123,8 +131,8 @@ const updateNoteRequest: ListenerFn<UpdateNoteMessage> = async (
 
         respond<UpdateNoteResponse>({
             type: "updateNoteResponse",
-            updatedId: id,
-            updatedData: data,
+            updated_id: id,
+            updated_data: data,
         });
     } catch (e) {
         await rollbackTransaction();
@@ -143,7 +151,48 @@ const deleteNoteRequest: ListenerFn<DeleteNoteMessage> = async (
 
     respond<DeleteNoteResponse>({
         type: "deleteNoteResponse",
-        deletedId: id,
+        deleted_id: id,
+    });
+};
+
+const handleFindNoteHistory: ListenerFn<FindNoteHistoryMessage> = async (
+    {
+        message: { note_id, page },
+        sourceClient,
+        respond,
+    },
+) => {
+    if (!await noteExists(note_id, sourceClient!.userId)) {
+        throw new Error("Note does not exist.");
+    }
+
+    const records = await findHistory(note_id, sourceClient!.userId, page);
+
+    respond<FindNoteHistoryResponse>({
+        type: "findNoteHistoryResponse",
+        records,
+    });
+};
+
+const handleGetNoteHistoryData: ListenerFn<GetNoteHistoryDataMessage> = async (
+    {
+        message: { id },
+        sourceClient,
+        respond,
+    },
+) => {
+    const data = await getHistoryRecordData(
+        id,
+        sourceClient!.userId,
+    );
+
+    if (!data) {
+        throw new Error("Note history data does not exist.");
+    }
+
+    respond<GetNoteHistoryDataResponse>({
+        type: "getNoteHistoryDataResponse",
+        data,
     });
 };
 
@@ -151,4 +200,6 @@ export const frontendMap: RegisterListenerMap<NoteFrontendMessage> = {
     createNote: createNoteRequest,
     updateNote: updateNoteRequest,
     deleteNote: deleteNoteRequest,
+    findNoteHistory: handleFindNoteHistory,
+    getNoteHistoryData: handleGetNoteHistoryData,
 };

@@ -42,13 +42,13 @@ const sanitizeTargetId = (targetId: string) =>
     targetId.replace(/[^a-zA-Z0-9-]/g, "");
 
 const handleBeginFile: ListenerFn<BeginFileMessage> = async (
-    { message: { size, name, mimeType }, sourceClient, respond },
+    { message: { size, name, mime_type }, sourceClient, respond },
 ) => {
     const targetId = await createTempFile(sourceClient?.userId.toString()!);
 
     const data = {
         name: name.replace(/[^a-zA-Z0-9_ .-]+/g, "-"),
-        mime_type: mimeType.replace(/[^a-zA-Z0-9+._/-]/g, ""),
+        mime_type: mime_type.replace(/[^a-zA-Z0-9+._/-]/g, ""),
         size: +size,
     };
 
@@ -65,14 +65,14 @@ const handleBeginFile: ListenerFn<BeginFileMessage> = async (
     });
 
     respond<BeginFileResponse>({
-        targetId,
+        target_id: targetId,
         type: "beginFileResponse",
     });
 };
 
 const handleSendFileData: ListenerFn<SendFileDataMessage> = async (
     {
-        message: { targetId: unsafeTargetId, binaryData },
+        message: { target_id: unsafeTargetId, binaryData },
         respond,
         sourceClient,
     },
@@ -100,7 +100,7 @@ const handleSendFileData: ListenerFn<SendFileDataMessage> = async (
 };
 
 const handleEndFile: ListenerFn<EndFileMessage> = async (
-    { message: { targetId: unsafeTargetId }, respond, sourceClient },
+    { message: { target_id: unsafeTargetId }, respond, sourceClient },
 ) => {
     const targetId = sanitizeTargetId(unsafeTargetId);
     const exists = await fileExistsForUser(targetId, sourceClient?.userId!);

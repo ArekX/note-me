@@ -48,7 +48,7 @@ export default function TagsList() {
 
         tagList.value = records.results;
         totalTags.value = records.total;
-        perPage.value = records.perPage;
+        perPage.value = records.per_page;
         isLoading.value = false;
     };
 

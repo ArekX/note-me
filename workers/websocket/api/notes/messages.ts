@@ -1,6 +1,11 @@
 import { Message } from "$workers/websocket/types.ts";
 import { AddNoteRequest, UpdateNoteRequest } from "$schemas/notes.ts";
 import { NoteRecord } from "$backend/repository/note-repository.ts";
+import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
+import {
+    NoteHistoryDataRecord,
+    NoteHistoryMetaRecord,
+} from "$backend/repository/note-history-repository.ts";
 
 type NoteMessage<Type, Data = unknown> = Message<
     "notes",
@@ -25,7 +30,7 @@ export type UpdateNoteMessage = NoteMessage<
 
 export type UpdateNoteResponse = NoteMessage<
     "updateNoteResponse",
-    { updatedId: number; updatedData: UpdateNoteRequest }
+    { updated_id: number; updated_data: UpdateNoteRequest }
 >;
 
 export type DeleteNoteMessage = NoteMessage<
@@ -35,15 +40,39 @@ export type DeleteNoteMessage = NoteMessage<
 
 export type DeleteNoteResponse = NoteMessage<
     "deleteNoteResponse",
-    { deletedId: number }
+    { deleted_id: number }
+>;
+
+export type FindNoteHistoryMessage = NoteMessage<
+    "findNoteHistory",
+    { note_id: number; page: number }
+>;
+
+export type FindNoteHistoryResponse = NoteMessage<
+    "findNoteHistoryResponse",
+    { records: Paged<NoteHistoryMetaRecord> }
+>;
+
+export type GetNoteHistoryDataMessage = NoteMessage<
+    "getNoteHistoryData",
+    { id: number }
+>;
+
+export type GetNoteHistoryDataResponse = NoteMessage<
+    "getNoteHistoryDataResponse",
+    { data: NoteHistoryDataRecord }
 >;
 
 export type NoteFrontendResponse =
     | CreateNoteResponse
     | UpdateNoteResponse
-    | DeleteNoteResponse;
+    | DeleteNoteResponse
+    | FindNoteHistoryResponse
+    | GetNoteHistoryDataResponse;
 
 export type NoteFrontendMessage =
     | CreateNoteMessage
     | UpdateNoteMessage
-    | DeleteNoteMessage;
+    | DeleteNoteMessage
+    | FindNoteHistoryMessage
+    | GetNoteHistoryDataMessage;

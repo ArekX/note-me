@@ -16,14 +16,14 @@ export const useNoteWebsocket = (options: NoteWebsocketOptions) => {
                 updateNoteResponse: (response) => {
                     // TODO: Check if group changed and update groupname
                     if (
-                        ("title" in response.updatedData) &&
-                        response.updatedId === options.noteId
+                        ("title" in response.updated_data) &&
+                        response.updated_id === options.noteId
                     ) {
-                        options.onRenamed?.(response.updatedData.title ?? "");
+                        options.onRenamed?.(response.updated_data.title ?? "");
                     }
                 },
                 deleteNoteResponse: (response) => {
-                    if (response.deletedId === options.noteId) {
+                    if (response.deleted_id === options.noteId) {
                         redirectTo.root();
                     }
                 },

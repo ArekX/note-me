@@ -15,7 +15,7 @@ import {
     EndFileResponse,
     SendFileDataMessage,
     SendFileDataResponse,
-} from "../../../workers/websocket/api/files/messages.ts";
+} from "$workers/websocket/api/files/messages.ts";
 import { addMessage } from "$frontend/toast-message.ts";
 
 export interface FileUploaderHook {
@@ -67,7 +67,7 @@ export const useFileUploader = (): FileUploaderHook => {
                 {
                     data: {
                         binaryData: chunk,
-                        targetId,
+                        target_id: targetId,
                     },
                     expect: "sendFileDataResponse",
                 },
@@ -80,18 +80,18 @@ export const useFileUploader = (): FileUploaderHook => {
 
     const startFileUpload = async (file: File) => {
         try {
-            const { targetId } = await sendMessage<
+            const { target_id } = await sendMessage<
                 BeginFileMessage,
                 BeginFileResponse
             >("files", "beginFile", {
                 data: {
                     size: file.size,
                     name: file.name,
-                    mimeType: file.type,
+                    mime_type: file.type,
                 },
                 expect: "beginFileResponse",
             });
-            return targetId;
+            return target_id;
         } catch (e) {
             const error = e as SystemErrorMessage;
 
@@ -111,7 +111,7 @@ export const useFileUploader = (): FileUploaderHook => {
                 "files",
                 "endFile",
                 {
-                    data: { targetId },
+                    data: { target_id: targetId },
                     expect: "endFileResponse",
                 },
             );

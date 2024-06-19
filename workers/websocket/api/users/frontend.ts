@@ -73,8 +73,8 @@ const updateUserRequest: ListenerFn<UpdateUserMessage> = async (
 
     respond<UpdateUserResponse>({
         type: "updateUserResponse",
-        updatedId: id,
-        updatedData: data,
+        updated_id: id,
+        updated_data: data,
     });
 };
 
@@ -91,7 +91,7 @@ const deleteUserRequest: ListenerFn<DeleteUserMessage> = async (
 
     respond<DeleteUserResponse>({
         type: "deleteUserResponse",
-        deletedId: id,
+        deleted_id: id,
     });
 };
 

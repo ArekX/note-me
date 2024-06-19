@@ -58,7 +58,7 @@ export default function UserList() {
 
         userList.value = records.results;
         totalUsers.value = records.total;
-        perPage.value = records.perPage;
+        perPage.value = records.per_page;
         isLoading.value = false;
     };
 

@@ -29,7 +29,7 @@ export type UpdateTagMessage = TagMessage<
 
 export type UpdateTagResponse = TagMessage<
     "updateTagResponse",
-    { updatedId: number; updatedData: UpdateTagRequest }
+    { updated_id: number; updated_data: UpdateTagRequest }
 >;
 
 export type DeleteTagMessage = TagMessage<
@@ -39,7 +39,7 @@ export type DeleteTagMessage = TagMessage<
 
 export type DeleteTagResponse = TagMessage<
     "deleteTagResponse",
-    { deletedId: number }
+    { deleted_id: number }
 >;
 
 export type FindTagsMessage = TagMessage<

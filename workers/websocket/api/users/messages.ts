@@ -31,7 +31,7 @@ export type UpdateUserMessage = UserMessage<
 
 export type UpdateUserResponse = UserMessage<
     "updateUserResponse",
-    { updatedId: number; updatedData: UpdateUserRequest }
+    { updated_id: number; updated_data: UpdateUserRequest }
 >;
 
 export type DeleteUserMessage = UserMessage<
@@ -41,7 +41,7 @@ export type DeleteUserMessage = UserMessage<
 
 export type DeleteUserResponse = UserMessage<
     "deleteUserResponse",
-    { deletedId: number }
+    { deleted_id: number }
 >;
 
 export type FindUsersMessage = UserMessage<

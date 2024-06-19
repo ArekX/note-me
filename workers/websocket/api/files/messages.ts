@@ -19,17 +19,17 @@ type BinaryFileMessage<Type, Data = unknown> = BinaryMessage<
 
 export type BeginFileMessage = FileMessage<
     "beginFile",
-    { size: number; name: string; mimeType: string }
+    { size: number; name: string; mime_type: string }
 >;
 
 export type BeginFileResponse = FileMessage<
     "beginFileResponse",
-    { targetId: string }
+    { target_id: string }
 >;
 
 export type SendFileDataMessage = BinaryFileMessage<
     "sendFileData",
-    { targetId: string }
+    { target_id: string }
 >;
 
 export type SendFileDataResponse = FileMessage<
@@ -38,7 +38,7 @@ export type SendFileDataResponse = FileMessage<
 
 export type EndFileMessage = FileMessage<
     "endFile",
-    { targetId: string }
+    { target_id: string }
 >;
 
 export type EndFileResponse = FileMessage<

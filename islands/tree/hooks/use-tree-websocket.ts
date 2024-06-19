@@ -44,27 +44,33 @@ export const useTreeWebsocket = (options: TreeWebsocketOptions) => {
                     propagateChanges();
                 },
                 deleteNoteResponse: (data) => {
-                    const container = findContainerById(data.deletedId, "note");
+                    const container = findContainerById(
+                        data.deleted_id,
+                        "note",
+                    );
                     if (container) {
                         removeFromParent(container);
                         propagateChanges();
                     }
                 },
                 updateNoteResponse: (data) => {
-                    const container = findContainerById(data.updatedId, "note");
+                    const container = findContainerById(
+                        data.updated_id,
+                        "note",
+                    );
 
                     if (!container) {
                         return;
                     }
 
-                    if ("title" in data.updatedData) {
+                    if ("title" in data.updated_data) {
                         setContainer(container, {
-                            name: data.updatedData.title,
+                            name: data.updated_data.title,
                         });
                     }
 
-                    if (data.updatedData.group_id !== undefined) {
-                        changeParent(container, data.updatedData.group_id);
+                    if (data.updated_data.group_id !== undefined) {
+                        changeParent(container, data.updated_data.group_id);
                     }
 
                     propagateChanges();
@@ -91,7 +97,7 @@ export const useTreeWebsocket = (options: TreeWebsocketOptions) => {
                 },
                 deleteGroupResponse: (data) => {
                     const container = findContainerById(
-                        data.deletedId,
+                        data.deleted_id,
                         "group",
                     );
                     if (container) {
@@ -101,7 +107,7 @@ export const useTreeWebsocket = (options: TreeWebsocketOptions) => {
                 },
                 updateGroupResponse: (data) => {
                     const container = findContainerById(
-                        data.updatedId,
+                        data.updated_id,
                         "group",
                     );
 
@@ -109,14 +115,14 @@ export const useTreeWebsocket = (options: TreeWebsocketOptions) => {
                         return;
                     }
 
-                    if (data.updatedData.name) {
+                    if (data.updated_data.name) {
                         setContainer(container, {
-                            name: data.updatedData.name,
+                            name: data.updated_data.name,
                         });
                     }
 
-                    if (data.updatedData.parent_id !== undefined) {
-                        changeParent(container, data.updatedData.parent_id);
+                    if (data.updated_data.parent_id !== undefined) {
+                        changeParent(container, data.updated_data.parent_id);
                     }
 
                     propagateChanges();

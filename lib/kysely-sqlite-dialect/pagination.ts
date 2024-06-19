@@ -33,7 +33,7 @@ export const pageResults = async <T, DB, TB extends keyof DB, O>(
         results,
         total,
         page,
-        perPage,
+        per_page: perPage,
     } as Paged<T>;
 };
 
@@ -41,5 +41,5 @@ export interface Paged<T> {
     results: T[];
     total: number;
     page: number;
-    perPage: number;
+    per_page: number;
 }
