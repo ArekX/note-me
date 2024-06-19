@@ -20,6 +20,10 @@ export interface TreeStateHook {
         id: number,
         type: RecordType,
     ) => RecordContainer | null;
+    changeParent: (
+        container: RecordContainer,
+        newParentId: number | null,
+    ) => void;
     propagateChanges: () => void;
 }
 
@@ -106,6 +110,23 @@ export const useTreeState = (): TreeStateHook => {
         }
     };
 
+    const changeParent = (
+        container: RecordContainer,
+        newParentId: number | null,
+    ): void => {
+        const parent = newParentId
+            ? findContainerById(
+                newParentId,
+                "group",
+            )
+            : tree;
+
+        if (parent) {
+            removeFromParent(container);
+            addChild(parent, container);
+        }
+    };
+
     const setRoot = (container: RecordContainer) => {
         setTree(container);
         storeTree(container);
@@ -154,6 +175,7 @@ export const useTreeState = (): TreeStateHook => {
         findParent,
         removeFromParent,
         setContainer,
+        changeParent,
         findContainerById,
         propagateChanges,
     };
