@@ -92,6 +92,7 @@ export default function ViewNote(
                 <NoteWindow
                     onClose={() => windowMode.value = null}
                     type={windowMode.value}
+                    noteText={recordData.value.note}
                     noteId={recordData.value.id}
                 />
             )}

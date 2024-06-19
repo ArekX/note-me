@@ -14,14 +14,10 @@ import {
     NoteHistoryMetaRecord,
 } from "$backend/repository/note-history-repository.ts";
 import HistoryDiff from "$islands/notes/windows/components/HistoryDiff.tsx";
-
-interface NoteHistoryProps {
-    noteId: number;
-    onClose: () => void;
-}
+import { NoteWindowComponentProps } from "$islands/notes/NoteWindow.tsx";
 
 export default function NoteDetails(
-    { noteId, onClose }: NoteHistoryProps,
+    { noteId, onClose, noteText }: NoteWindowComponentProps,
 ) {
     const {
         sendMessage,
@@ -103,7 +99,10 @@ export default function NoteDetails(
                                 <strong>Diff</strong>
                             </div>
                             {selected.value && (
-                                <HistoryDiff id={selected.value.id} />
+                                <HistoryDiff
+                                    id={selected.value.id}
+                                    noteText={noteText}
+                                />
                             )}
                         </div>
                     </div>

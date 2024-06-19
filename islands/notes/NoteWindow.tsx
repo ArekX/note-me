@@ -12,14 +12,9 @@ export type NoteWindowTypes =
     | "help"
     | "delete";
 
-interface NoteWindowProps {
-    type: NoteWindowTypes | null;
-    noteId: number;
+export interface NoteWindowComponentProps {
     onClose: () => void;
-}
-
-interface NoteWindowComponentProps {
-    onClose: () => void;
+    noteText: string;
     noteId: number;
 }
 
@@ -34,9 +29,17 @@ const windowComponents: {
     delete: (props) => <NoteDelete {...props} />,
 };
 
+interface NoteWindowProps {
+    type: NoteWindowTypes | null;
+    noteId: number;
+    noteText: string;
+    onClose: () => void;
+}
+
 export default function NoteWindow({
     type,
     noteId,
+    noteText,
     onClose,
 }: NoteWindowProps) {
     if (!type) {
@@ -49,5 +52,11 @@ export default function NoteWindow({
         return null;
     }
 
-    return <WindowComponent noteId={noteId} onClose={onClose} />;
+    return (
+        <WindowComponent
+            noteId={noteId}
+            onClose={onClose}
+            noteText={noteText}
+        />
+    );
 }

@@ -295,6 +295,7 @@ export default function NoteEditor({
                 <NoteWindow
                     onClose={() => windowMode.value = null}
                     type={windowMode.value}
+                    noteText={text.value}
                     noteId={noteId.value}
                 />
             )}

@@ -15,7 +15,9 @@ export const diffText = (a: string, b: string): DiffLine[] => {
 
     const diffLines = diff(aLines, bLines);
 
-    return aLines.map((value, i) => {
+    const lines = aLines.length > bLines.length ? aLines : bLines;
+
+    return lines.map((value, i) => {
         const diffLine = diffLines.find((x) => x.p[0] === i);
 
         if (diffLine?.t === 2) {

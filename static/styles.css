@@ -252,3 +252,30 @@ dialog::backdrop {
     @apply text-gray-300;
     display: inline-block;
 }
+
+.diff-viewer {
+    display: block;
+    margin-bottom: 5em;
+    padding-bottom: 5em;
+}
+
+.diff-viewer .diff-added {
+    background-color: #335c67;
+    color: #FFF;
+}
+
+
+.diff-viewer .diff-removed {
+    background-color: #7d1300;
+    color: #FFF;
+}
+
+.diff-viewer .diff-changed {
+    background-color: #ffcc00;
+    color: #000;
+}
+
+.diff-viewer .diff-changed .diff-added {
+    background-color: #ffcc00;
+    color: #000;
+}
