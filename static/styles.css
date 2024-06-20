@@ -259,6 +259,12 @@ dialog::backdrop {
     padding-bottom: 5em;
 }
 
+.diff-viewer div {
+    display: block;
+    padding-bottom: .5em;
+
+}
+
 .diff-viewer .diff-added {
     background-color: #335c67;
     color: #FFF;

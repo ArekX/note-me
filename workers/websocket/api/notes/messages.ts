@@ -63,16 +63,28 @@ export type GetNoteHistoryDataResponse = NoteMessage<
     { data: NoteHistoryDataRecord }
 >;
 
+export type RevertNoteToHistoryMessage = NoteMessage<
+    "revertNoteToHistory",
+    { note_id: number; to_history_id: number }
+>;
+
+export type RevertNoteToHistoryResponse = NoteMessage<
+    "revertNoteToHistoryResponse",
+    { note_id: number; title: string; note: string; tags: string[] }
+>;
+
 export type NoteFrontendResponse =
     | CreateNoteResponse
     | UpdateNoteResponse
     | DeleteNoteResponse
     | FindNoteHistoryResponse
-    | GetNoteHistoryDataResponse;
+    | GetNoteHistoryDataResponse
+    | RevertNoteToHistoryResponse;
 
 export type NoteFrontendMessage =
     | CreateNoteMessage
     | UpdateNoteMessage
     | DeleteNoteMessage
     | FindNoteHistoryMessage
-    | GetNoteHistoryDataMessage;
+    | GetNoteHistoryDataMessage
+    | RevertNoteToHistoryMessage;

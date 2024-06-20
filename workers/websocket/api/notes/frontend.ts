@@ -9,6 +9,8 @@ import {
     GetNoteHistoryDataMessage,
     GetNoteHistoryDataResponse,
     NoteFrontendMessage,
+    RevertNoteToHistoryMessage,
+    RevertNoteToHistoryResponse,
     UpdateNoteMessage,
     UpdateNoteResponse,
 } from "./messages.ts";
@@ -17,8 +19,6 @@ import {
     createNote,
     deleteNote,
     noteExists,
-    updateNote,
-    updateNoteParent,
 } from "$backend/repository/note-repository.ts";
 import {
     beginTransaction,
@@ -27,16 +27,15 @@ import {
 } from "$backend/database.ts";
 import { linkNoteWithTags } from "$backend/repository/note-tags-repository.ts";
 import { assignNoteToGroup } from "$backend/repository/group-repository.ts";
-import { when } from "$backend/promise.ts";
 import { requireValidSchema } from "$schemas/mod.ts";
-import { addNoteRequestSchema, updateNoteSchema } from "$schemas/notes.ts";
+import { addNoteRequestSchema } from "$schemas/notes.ts";
 import {
-    addHistory,
     findHistory,
     getHistoryRecordData,
 } from "$backend/repository/note-history-repository.ts";
+import { runUpdateNoteAction } from "$backend/actions/update-note-action.ts";
 
-const createNoteRequest: ListenerFn<CreateNoteMessage> = async (
+const handleCreateNote: ListenerFn<CreateNoteMessage> = async (
     { message: { data }, sourceClient, respond },
 ) => {
     await requireValidSchema(addNoteRequestSchema, data);
@@ -68,79 +67,22 @@ const createNoteRequest: ListenerFn<CreateNoteMessage> = async (
     }
 };
 
-const updateNoteRequest: ListenerFn<UpdateNoteMessage> = async (
+const handleUpdateNote: ListenerFn<UpdateNoteMessage> = async (
     { message: { id, data }, sourceClient, respond },
 ) => {
-    if (Object.keys(data).length === 0) {
-        respond<UpdateNoteResponse>({
-            type: "updateNoteResponse",
-            updated_id: id,
-            updated_data: data,
-        });
-        return;
-    }
+    await runUpdateNoteAction(data, {
+        noteId: id,
+        userId: sourceClient!.userId,
+    });
 
-    await requireValidSchema(updateNoteSchema, data);
-
-    if (!await noteExists(id, sourceClient!.userId)) {
-        throw new Error("Note does not exist.");
-    }
-
-    await beginTransaction();
-
-    const userId = sourceClient!.userId;
-
-    try {
-        await addHistory({
-            note_id: id,
-            user_id: sourceClient!.userId,
-        });
-
-        await Promise.all([
-            when(
-                () => "group_id" in data,
-                () =>
-                    updateNoteParent(
-                        id,
-                        data.group_id ? +data.group_id : null,
-                        userId,
-                    ),
-                () => Promise.resolve(true),
-            ),
-            when(
-                () => [data.title, data.text].some(Boolean),
-                () =>
-                    updateNote(
-                        id,
-                        userId,
-                        {
-                            title: data.title,
-                            note: data.text,
-                        },
-                    ),
-                () => Promise.resolve(true),
-            ),
-            when(
-                () => !!data.tags,
-                () => linkNoteWithTags(id, userId, data.tags!),
-                () => Promise.resolve(true),
-            ),
-        ]);
-
-        await commitTransaction();
-
-        respond<UpdateNoteResponse>({
-            type: "updateNoteResponse",
-            updated_id: id,
-            updated_data: data,
-        });
-    } catch (e) {
-        await rollbackTransaction();
-        throw e;
-    }
+    respond<UpdateNoteResponse>({
+        type: "updateNoteResponse",
+        updated_id: id,
+        updated_data: data,
+    });
 };
 
-const deleteNoteRequest: ListenerFn<DeleteNoteMessage> = async (
+const handleDeleteNote: ListenerFn<DeleteNoteMessage> = async (
     { message: { id }, sourceClient, respond },
 ) => {
     if (!await noteExists(id, sourceClient!.userId)) {
@@ -196,10 +138,49 @@ const handleGetNoteHistoryData: ListenerFn<GetNoteHistoryDataMessage> = async (
     });
 };
 
+const handleRevertNoteToHistory: ListenerFn<RevertNoteToHistoryMessage> =
+    async (
+        {
+            message: { note_id, to_history_id },
+
+            sourceClient,
+
+            respond,
+        },
+    ) => {
+        const data = await getHistoryRecordData(
+            to_history_id,
+            sourceClient!.userId,
+        );
+
+        if (!data) {
+            throw new Error("Note history data does not exist.");
+        }
+
+        await runUpdateNoteAction({
+            title: data.title,
+            text: data.note,
+            tags: data.tags ? data.tags.split(",") : [],
+        }, {
+            noteId: note_id,
+            userId: sourceClient!.userId,
+            newHistoryVersionName: `Reverted to ${data.version}`,
+        });
+
+        respond<RevertNoteToHistoryResponse>({
+            type: "revertNoteToHistoryResponse",
+            note_id,
+            title: data.title,
+            note: data.note,
+            tags: data.tags ? data.tags.split(",") : [],
+        });
+    };
+
 export const frontendMap: RegisterListenerMap<NoteFrontendMessage> = {
-    createNote: createNoteRequest,
-    updateNote: updateNoteRequest,
-    deleteNote: deleteNoteRequest,
+    createNote: handleCreateNote,
+    updateNote: handleUpdateNote,
+    deleteNote: handleDeleteNote,
     findNoteHistory: handleFindNoteHistory,
     getNoteHistoryData: handleGetNoteHistoryData,
+    revertNoteToHistory: handleRevertNoteToHistory,
 };

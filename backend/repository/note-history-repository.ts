@@ -8,6 +8,7 @@ import { NoteHistoryTable, RecordId } from "$types";
 interface AddHistoryData {
     note_id: number;
     user_id: number;
+    new_version_name?: string;
 }
 
 export const addHistory = async (data: AddHistoryData): Promise<void> => {
@@ -24,7 +25,9 @@ export const addHistory = async (data: AddHistoryData): Promise<void> => {
         .executeTakeFirst() ?? { count: 0 };
 
     await db.insertInto("note_history").values({
-        version: `Version ${count + 1}`,
+        version: data.new_version_name
+            ? data.new_version_name
+            : `Version ${count + 1}`,
         created_at: getCurrentUnixTimestamp(),
         note_id: noteData.id,
         note: noteData.note,
@@ -66,6 +69,7 @@ export const findHistory = async (
 
 export type NoteHistoryDataRecord = Pick<
     NoteHistoryTable,
+    | "version"
     | "note"
     | "title"
     | "tags"
@@ -77,6 +81,7 @@ export const getHistoryRecordData = async (
 ): Promise<NoteHistoryDataRecord | null> => {
     return await db.selectFrom("note_history")
         .select([
+            "note_history.version",
             "note_history.note",
             "note_history.title",
             "note_history.tags",

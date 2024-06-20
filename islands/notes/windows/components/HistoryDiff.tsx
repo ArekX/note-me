@@ -13,11 +13,15 @@ import { diffText } from "$frontend/diff.ts";
 interface HistoryDiffProps {
     id: number;
     noteText: string;
+    showType: ShowNoteType;
 }
+
+export type ShowNoteType = "note" | "diff";
 
 export default function HistoryDiff({
     id,
     noteText,
+    showType,
 }: HistoryDiffProps) {
     const { sendMessage } = useWebsocketService();
     const loader = useLoader(true);
@@ -51,10 +55,13 @@ export default function HistoryDiff({
 
     return (
         <div>
-            {loader.running
-                ? <Loader color="white" />
-                : (
-                    <div class="diff-viewer text-sm">
+            {loader.running ? <Loader color="white" /> : (
+                showType === "note"
+                    ? (
+                        <pre class="text-sm whitespace-pre-wrap">{data.value?.note}</pre>
+                    )
+                    : (
+                        <pre class="diff-viewer text-sm whitespace-pre-wrap">
                         {diffLines.map((line, index) => {
                             switch (line.type) {
                                 case "added":
@@ -87,8 +94,9 @@ export default function HistoryDiff({
                                     );
                             }
                         })}
-                    </div>
-                )}
+                        </pre>
+                    )
+            )}
         </div>
     );
 }

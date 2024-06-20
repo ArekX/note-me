@@ -13,7 +13,9 @@ import Pagination from "$islands/Pagination.tsx";
 import {
     NoteHistoryMetaRecord,
 } from "$backend/repository/note-history-repository.ts";
-import HistoryDiff from "$islands/notes/windows/components/HistoryDiff.tsx";
+import HistoryDiff, {
+    ShowNoteType,
+} from "$islands/notes/windows/components/HistoryDiff.tsx";
 import { NoteWindowComponentProps } from "$islands/notes/NoteWindow.tsx";
 
 export default function NoteDetails(
@@ -31,6 +33,7 @@ export default function NoteDetails(
         [],
     );
     const selected = useSignal<NoteHistoryMetaRecord | null>(null);
+    const showType = useSignal<ShowNoteType>("note");
 
     const loadNoteHistory = async () => {
         listLoader.start();
@@ -55,6 +58,15 @@ export default function NoteDetails(
         listLoader.stop();
     };
 
+    const handlePageChanged = async (newPage: number) => {
+        page.value = newPage;
+        await loadNoteHistory();
+    };
+
+    const handlePerformRevert = async () => {
+        // TODO: Implement revert
+    };
+
     useEffect(() => {
         loadNoteHistory();
     }, [noteId]);
@@ -69,7 +81,7 @@ export default function NoteDetails(
             {listLoader.running ? <Loader color="white" /> : (
                 <div>
                     <h1 class="text-2xl pb-4">Note History</h1>
-                    <div class="flex">
+                    <div class="flex w-full">
                         <div class="w-1/5 pr-2">
                             <div>
                                 <strong>Versions</strong>
@@ -91,20 +103,47 @@ export default function NoteDetails(
                                 currentPage={page.value}
                                 perPage={perPage.value}
                                 total={totalRecords.value}
-                                onChange={() => {}}
+                                onChange={handlePageChanged}
                             />
                         </div>
-                        <div class="w-4/5">
-                            <div class="mb-2">
-                                <strong>Diff</strong>
-                            </div>
-                            {selected.value && (
+                        {selected.value && (
+                            <div class="w-4/5">
+                                <div class="mb-4">
+                                    <Button
+                                        color={showType.value === "note"
+                                            ? "success"
+                                            : "primary"}
+                                        onClick={() => showType.value = "note"}
+                                        addClass="mr-2"
+                                    >
+                                        Note
+                                    </Button>
+                                    <Button
+                                        color={showType.value === "diff"
+                                            ? "success"
+                                            : "primary"}
+                                        onClick={() => showType.value = "diff"}
+                                        addClass="mr-2"
+                                    >
+                                        Diff from Current
+                                    </Button>
+
+                                    <Button
+                                        color="success"
+                                        onClick={handlePerformRevert}
+                                        addClass="mr-2"
+                                    >
+                                        Revert to this Version
+                                    </Button>
+                                </div>
+
                                 <HistoryDiff
                                     id={selected.value.id}
                                     noteText={noteText}
+                                    showType={showType.value}
                                 />
-                            )}
-                        </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
