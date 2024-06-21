@@ -10,6 +10,8 @@ import {
     FindNoteHistoryResponse,
     GetNoteHistoryDataMessage,
     GetNoteHistoryDataResponse,
+    GetNoteMessage,
+    GetNoteResponse,
     NoteFrontendMessage,
     RevertNoteToHistoryMessage,
     RevertNoteToHistoryResponse,
@@ -20,6 +22,7 @@ import { CreateNoteMessage } from "$workers/websocket/api/notes/messages.ts";
 import {
     createNote,
     deleteNote,
+    getNote,
     noteExists,
 } from "$backend/repository/note-repository.ts";
 import {
@@ -97,6 +100,21 @@ const handleDeleteNote: ListenerFn<DeleteNoteMessage> = async (
     respond<DeleteNoteResponse>({
         type: "deleteNoteResponse",
         deleted_id: id,
+    });
+};
+
+const handleGetNote: ListenerFn<GetNoteMessage> = async (
+    { message: { id }, sourceClient, respond },
+) => {
+    const record = await getNote(id, sourceClient!.userId);
+
+    if (!record) {
+        throw new Error("Note does not exist.");
+    }
+
+    respond<GetNoteResponse>({
+        type: "getNoteResponse",
+        record,
     });
 };
 
@@ -193,6 +211,7 @@ export const frontendMap: RegisterListenerMap<NoteFrontendMessage> = {
     createNote: handleCreateNote,
     updateNote: handleUpdateNote,
     deleteNote: handleDeleteNote,
+    getNote: handleGetNote,
     findNoteHistory: handleFindNoteHistory,
     getNoteHistoryData: handleGetNoteHistoryData,
     revertNoteToHistory: handleRevertNoteToHistory,

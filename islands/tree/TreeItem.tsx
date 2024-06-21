@@ -7,7 +7,8 @@ import { useEffect } from "preact/hooks";
 import MoreMenu, { MoreMenuItemAction } from "$islands/tree/MoreMenu.tsx";
 import { RecordContainer } from "$islands/tree/hooks/record-container.ts";
 import { closeAllPopovers } from "$frontend/hooks/use-single-popover.ts";
-import NoteDelete from "$islands/notes/windows/NoteDelete.tsx";
+import ConfirmDialog from "$islands/ConfirmDialog.tsx";
+import NoteWindow, { NoteWindowTypes } from "$islands/notes/NoteWindow.tsx";
 
 export interface TreeItemProps {
     dragManager: DragManagerHook<RecordContainer>;
@@ -105,6 +106,7 @@ export default function TreeItem({
     container,
 }: TreeItemProps) {
     const confirmDelete = useSignal(false);
+    const noteWindowType = useSignal<NoteWindowTypes | null>(null);
 
     const handleDragStart = (e: DragEvent) => {
         dragManager.drag(container);
@@ -168,6 +170,7 @@ export default function TreeItem({
     };
 
     const handleMoreMenuAction = (action: MoreMenuItemAction) => {
+        closeAllPopovers();
         switch (action) {
             case "add-note":
                 redirectTo.newNote({
@@ -185,7 +188,7 @@ export default function TreeItem({
                 treeManager.reload(container);
                 break;
             case "delete":
-                confirmDelete.value = true;
+                noteWindowType.value = "delete";
                 break;
             case "edit":
                 treeManager.setDisplayMode(container, "edit");
@@ -194,10 +197,10 @@ export default function TreeItem({
                 // TODO: Move
                 break;
             case "details":
-                // TODO: Details
+                noteWindowType.value = "details";
                 break;
             case "history":
-                // TODO: History
+                noteWindowType.value = "history";
                 break;
             case "share":
                 // TODO: Share
@@ -297,10 +300,21 @@ export default function TreeItem({
                     ))}
                 </div>
             )}
-            {container.type === "note" && confirmDelete.value && (
-                <NoteDelete
+            {container.type === "note" && noteWindowType.value && (
+                <NoteWindow
                     noteId={+container.id!}
-                    onClose={() => confirmDelete.value = false}
+                    type={noteWindowType.value}
+                    onClose={() => noteWindowType.value = null}
+                />
+            )}
+            {container.type === "group" && confirmDelete.value && (
+                <ConfirmDialog
+                    prompt="Are you sure you want to delete this group?"
+                    confirmText="Delete group"
+                    confirmColor="danger"
+                    visible={true}
+                    onConfirm={() => treeManager.deleteContainer(container)}
+                    onCancel={() => confirmDelete.value = false}
                 />
             )}
         </div>

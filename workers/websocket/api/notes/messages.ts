@@ -1,6 +1,9 @@
 import { Message } from "$workers/websocket/types.ts";
 import { AddNoteRequest, UpdateNoteRequest } from "$schemas/notes.ts";
-import { NoteRecord } from "$backend/repository/note-repository.ts";
+import {
+    NoteRecord,
+    ViewNoteRecord,
+} from "$backend/repository/note-repository.ts";
 import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
 import {
     NoteHistoryDataRecord,
@@ -21,6 +24,16 @@ export type CreateNoteMessage = NoteMessage<
 export type CreateNoteResponse = NoteMessage<
     "createNoteResponse",
     { record: NoteRecord; group_id: number | null }
+>;
+
+export type GetNoteMessage = NoteMessage<
+    "getNote",
+    { id: number }
+>;
+
+export type GetNoteResponse = NoteMessage<
+    "getNoteResponse",
+    { record: ViewNoteRecord }
 >;
 
 export type UpdateNoteMessage = NoteMessage<
@@ -90,7 +103,8 @@ export type NoteFrontendResponse =
     | FindNoteHistoryResponse
     | GetNoteHistoryDataResponse
     | RevertNoteToHistoryResponse
-    | DeleteHistoryRecordResponse;
+    | DeleteHistoryRecordResponse
+    | GetNoteResponse;
 
 export type NoteFrontendMessage =
     | CreateNoteMessage
@@ -99,4 +113,5 @@ export type NoteFrontendMessage =
     | FindNoteHistoryMessage
     | GetNoteHistoryDataMessage
     | RevertNoteToHistoryMessage
-    | DeleteHistoryRecordMessage;
+    | DeleteHistoryRecordMessage
+    | GetNoteMessage;
