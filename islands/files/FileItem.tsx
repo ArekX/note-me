@@ -1,7 +1,7 @@
 import { FileMetaRecord } from "$backend/repository/file-repository.ts";
 import Button from "$components/Button.tsx";
 import Icon from "$components/Icon.tsx";
-import { getUserData } from "$frontend/user-data.ts";
+import { useTimeFormat } from "$frontend/hooks/use-time-format.ts";
 
 export interface ExtendedFileMetaRecord extends FileMetaRecord {
     is_processing: boolean;
@@ -102,6 +102,8 @@ export default function FileItem({
 }: FileItemProps) {
     const Viewer = viewers[getViewerName(file)];
 
+    const timeFormatter = useTimeFormat();
+
     return (
         <div
             key={file.identifier}
@@ -134,7 +136,7 @@ export default function FileItem({
                 <br />
                 Size: {renderClosestDisplaySize(file.size)} <br />
                 Public: {file.is_public ? "Yes" : "No"} <br />
-                Uploaded at: {getUserData().formatDateTime(
+                Uploaded at: {timeFormatter.formatDateTime(
                     file.created_at,
                 )}
                 {adminMode && (

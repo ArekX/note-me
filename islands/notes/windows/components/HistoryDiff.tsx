@@ -54,7 +54,7 @@ export default function HistoryDiff({
     }, [id]);
 
     return (
-        <div>
+        <div class="p-4">
             {loader.running ? <Loader color="white" /> : (
                 showType === "note"
                     ? (

@@ -1,10 +1,13 @@
 import { NoteFrontendResponse } from "$workers/websocket/api/notes/messages.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import { redirectTo } from "$frontend/redirection-manager.ts";
+import { UpdateNoteRequest } from "$schemas/notes.ts";
+
+export type UpdatedData = Pick<UpdateNoteRequest, "tags" | "title" | "text">;
 
 export interface NoteWebsocketOptions {
     noteId?: number | null;
-    onRenamed?: (newName: string) => void;
+    onNoteUpdated?: (data: UpdatedData) => void;
 }
 
 export const useNoteWebsocket = (options: NoteWebsocketOptions) => {
@@ -13,13 +16,22 @@ export const useNoteWebsocket = (options: NoteWebsocketOptions) => {
     >({
         eventMap: {
             notes: {
+                revertNoteToHistoryResponse: (response) => {
+                    if (response.note_id === options.noteId) {
+                        options.onNoteUpdated?.({
+                            tags: response.tags,
+                            title: response.title,
+                            text: response.note,
+                        });
+                    }
+                },
                 updateNoteResponse: (response) => {
-                    // TODO: Check if group changed and update groupname
-                    if (
-                        ("title" in response.updated_data) &&
-                        response.updated_id === options.noteId
-                    ) {
-                        options.onRenamed?.(response.updated_data.title ?? "");
+                    if (response.updated_id === options.noteId) {
+                        options.onNoteUpdated?.({
+                            tags: response.updated_data.tags,
+                            title: response.updated_data.title,
+                            text: response.updated_data.text,
+                        });
                     }
                 },
                 deleteNoteResponse: (response) => {

@@ -18,8 +18,26 @@ import {
 } from "./types.ts";
 import { readMessage } from "$workers/websocket/reader/mod.ts";
 import { canRole, roleRequire } from "$backend/rbac/authorizer.ts";
+import { SessionState } from "$backend/session/mod.ts";
+import { parseQueryParams } from "$backend/parse-query-params.ts";
 
 const clients: SocketClientMap = {};
+
+const validateCsrfToken = (
+    request: Request,
+    session: SessionState<AppSessionData>,
+) => {
+    const storedToken = session.data.storedCsrfToken;
+    const params = parseQueryParams<{ csrfToken: string }>(request.url, {
+        csrfToken: { type: "string" },
+    });
+
+    if (params.csrfToken != storedToken) {
+        return new Response("Invalid or missing CSRF token", {
+            status: 403,
+        });
+    }
+};
 
 const handleConnectionRequest = async (request: Request): Promise<Response> => {
     if (request.headers.get("upgrade") != "websocket") {
@@ -32,6 +50,8 @@ const handleConnectionRequest = async (request: Request): Promise<Response> => {
     if (!session?.data?.user) {
         return new Response(null, { status: 401 });
     }
+
+    validateCsrfToken(request, session);
 
     const { socket, response } = Deno.upgradeWebSocket(request);
 

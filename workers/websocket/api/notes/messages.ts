@@ -73,13 +73,24 @@ export type RevertNoteToHistoryResponse = NoteMessage<
     { note_id: number; title: string; note: string; tags: string[] }
 >;
 
+export type DeleteHistoryRecordMessage = NoteMessage<
+    "deleteHistoryRecord",
+    { id: number; note_id: number }
+>;
+
+export type DeleteHistoryRecordResponse = NoteMessage<
+    "deleteHistoryRecordResponse",
+    { id: number }
+>;
+
 export type NoteFrontendResponse =
     | CreateNoteResponse
     | UpdateNoteResponse
     | DeleteNoteResponse
     | FindNoteHistoryResponse
     | GetNoteHistoryDataResponse
-    | RevertNoteToHistoryResponse;
+    | RevertNoteToHistoryResponse
+    | DeleteHistoryRecordResponse;
 
 export type NoteFrontendMessage =
     | CreateNoteMessage
@@ -87,4 +98,5 @@ export type NoteFrontendMessage =
     | DeleteNoteMessage
     | FindNoteHistoryMessage
     | GetNoteHistoryDataMessage
-    | RevertNoteToHistoryMessage;
+    | RevertNoteToHistoryMessage
+    | DeleteHistoryRecordMessage;

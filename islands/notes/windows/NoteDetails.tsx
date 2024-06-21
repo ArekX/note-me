@@ -3,8 +3,8 @@ import { useSignal } from "@preact/signals";
 import { useLoader } from "$frontend/hooks/use-loading.ts";
 import Loader from "$islands/Loader.tsx";
 import { NoteDetailsRecord } from "$backend/repository/note-repository.ts";
-import { getUserData } from "$frontend/user-data.ts";
 import Button from "$components/Button.tsx";
+import { useTimeFormat } from "$frontend/hooks/use-time-format.ts";
 
 interface NoteDetailsProps {
     noteId: number;
@@ -18,7 +18,7 @@ export default function NoteDetails(
 
     const isNoteLoading = useLoader();
 
-    const userData = getUserData();
+    const timeFormatter = useTimeFormat();
 
     const { group_name, created_at, updated_at, user_name } = noteData.value ??
         {};
@@ -39,9 +39,11 @@ export default function NoteDetails(
                             )}
 
                             <strong>Created at:</strong>{" "}
-                            {userData.formatDateTime(created_at ?? 0)} <br />
+                            {timeFormatter.formatDateTime(created_at ?? 0)}{" "}
+                            <br />
                             <strong>Last update at:</strong>{" "}
-                            {userData.formatDateTime(updated_at ?? 0)} <br />
+                            {timeFormatter.formatDateTime(updated_at ?? 0)}{" "}
+                            <br />
                             <strong>Created by:</strong> {user_name}
                         </p>
                         <div class="pt-4">

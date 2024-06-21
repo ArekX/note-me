@@ -1,5 +1,5 @@
 import { timeAgo } from "$frontend/time.ts";
-import { getUserData } from "$frontend/user-data.ts";
+import { useTimeFormat } from "$frontend/hooks/use-time-format.ts";
 
 interface DetailsLineProps {
     groupName: string | null;
@@ -10,8 +10,10 @@ export default function DetailsLine({
     groupName,
     lastUpdatedUnix = null,
 }: DetailsLineProps) {
+    const timeFormatter = useTimeFormat();
+
     const lastUpdatedTitle = lastUpdatedUnix !== null
-        ? getUserData().formatDateTime(lastUpdatedUnix)
+        ? timeFormatter.formatDateTime(lastUpdatedUnix)
         : "";
 
     return (

@@ -17,7 +17,7 @@ const handlers: Set<SocketHandler> = new Set();
 let isReconnecting = false;
 let connectionRetries = 0;
 
-export const connect = (host: string): Promise<void> => {
+export const connect = (host: URL): Promise<void> => {
     return new Promise((resolve) => {
         if (socket) {
             return;

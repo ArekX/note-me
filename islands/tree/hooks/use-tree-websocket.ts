@@ -53,6 +53,22 @@ export const useTreeWebsocket = (options: TreeWebsocketOptions) => {
                         propagateChanges();
                     }
                 },
+                revertNoteToHistoryResponse: (data) => {
+                    const container = findContainerById(
+                        data.note_id,
+                        "note",
+                    );
+
+                    if (!container) {
+                        return;
+                    }
+
+                    setContainer(container, {
+                        name: data.title,
+                    });
+
+                    propagateChanges();
+                },
                 updateNoteResponse: (data) => {
                     const container = findContainerById(
                         data.updated_id,

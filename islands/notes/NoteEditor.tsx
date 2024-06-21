@@ -67,6 +67,11 @@ export default function NoteEditor({
 
     const { sendMessage } = useNoteWebsocket({
         noteId: noteId.value,
+        onNoteUpdated: (data) => {
+            name.value = data.title ?? name.value;
+            text.value = data.text ?? text.value;
+            tags.value = data.tags ?? tags.value;
+        },
     });
 
     const handleSave = async () => {

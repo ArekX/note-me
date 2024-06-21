@@ -15,6 +15,7 @@ interface ButtonProps {
 
 const buttonColors = {
     primary: "bg-gray-500 hover:bg-gray-600 text-white",
+    warning: "bg-yellow-700 hover:bg-yellow-600 text-white",
     success: "bg-sky-900 hover:bg-sky-600 text-white",
     successDisabled: "bg-sky-600 text-white",
     danger: "bg-red-500 hover:bg-red-600 text-white",

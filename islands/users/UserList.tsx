@@ -10,7 +10,6 @@ import {
     roleDropDownList,
     roleLabelMap,
 } from "$backend/rbac/role-definitions.ts";
-import { getUserData } from "$frontend/user-data.ts";
 import { useFilterFactory } from "$components/filters/FilterFactory.tsx";
 import { CanManageUsers } from "$backend/rbac/permissions.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
@@ -21,6 +20,7 @@ import {
     FindUsersResponse,
 } from "$workers/websocket/api/users/messages.ts";
 import { getBrowserTimezone } from "$frontend/time.ts";
+import { useUser } from "$frontend/hooks/use-user.ts";
 export default function UserList() {
     const userToDelete = useSignal<EditableUser | null>(null);
     const userToEdit = useSignal<EditableUser | null>(null);
@@ -102,7 +102,7 @@ export default function UserList() {
         loadUsers();
     }, []);
 
-    const user = getUserData();
+    const user = useUser();
 
     return (
         <div class="p-4">
@@ -162,7 +162,7 @@ export default function UserList() {
                                         <Icon name="pencil" /> Edit
                                     </Button>
                                 )} {user.can(CanManageUsers.Delete) &&
-                                    value.id !== getUserData().userId && (
+                                    value.id !== user.getUserId() && (
                                     <Button
                                         color="danger"
                                         onClick={() =>

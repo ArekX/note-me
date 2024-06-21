@@ -6,7 +6,6 @@ import { useEffect } from "preact/hooks";
 import { UserRecord } from "$backend/repository/user-repository.ts";
 import DropdownList from "$components/DropdownList.tsx";
 import { roleDropDownList } from "$backend/rbac/role-definitions.ts";
-import { getUserData } from "$frontend/user-data.ts";
 import { supportedTimezoneList } from "$backend/time.ts";
 import {
     SystemErrorMessage,
@@ -22,6 +21,7 @@ import { addMessage } from "$frontend/toast-message.ts";
 import { addUserSchema, updateUserSchema } from "$schemas/users.ts";
 import { useValidation } from "$frontend/hooks/use-validation.ts";
 import ErrorDisplay from "$components/ErrorDisplay.tsx";
+import { useUser } from "$frontend/hooks/use-user.ts";
 
 export interface EditableUser extends Omit<UserRecord, "id" | "password"> {
     id: number | null;
@@ -37,6 +37,8 @@ export default function EditUserForm(
     { editUser, onDone }: EditUserFormProps,
 ) {
     const user = useSignal<EditableUser>({ ...editUser } as EditableUser);
+
+    const currentUser = useUser();
 
     const [userValidation, validateUser] = useValidation<
         | ReturnType<typeof getAddUserData>
@@ -197,12 +199,12 @@ export default function EditUserForm(
                 <div className="mb-4">
                     <DropdownList
                         label="Role"
-                        disabled={user.value.id === getUserData().userId}
+                        disabled={user.value.id === currentUser.getUserId()}
                         items={roleDropDownList}
                         value={user.value.role}
                         onInput={setProperty("role")}
                     />
-                    {user.value.id === getUserData().userId && (
+                    {user.value.id === currentUser.getUserId() && (
                         <span class="text-sm">
                             You cannot change your own role.
                         </span>

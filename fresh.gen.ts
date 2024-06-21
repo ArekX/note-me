@@ -32,9 +32,9 @@ import * as $ConfirmDialog from "./islands/ConfirmDialog.tsx";
 import * as $Dialog from "./islands/Dialog.tsx";
 import * as $DropdownMenu from "./islands/DropdownMenu.tsx";
 import * as $InvalidateData from "./islands/InvalidateData.tsx";
+import * as $IslandInitializer from "./islands/IslandInitializer.tsx";
 import * as $Loader from "./islands/Loader.tsx";
 import * as $Pagination from "./islands/Pagination.tsx";
-import * as $ScriptLoader from "./islands/ScriptLoader.tsx";
 import * as $ToastMessages from "./islands/ToastMessages.tsx";
 import * as $files_FileItem from "./islands/files/FileItem.tsx";
 import * as $files_FilePicker from "./islands/files/FilePicker.tsx";
@@ -127,9 +127,9 @@ const manifest = {
         "./islands/Dialog.tsx": $Dialog,
         "./islands/DropdownMenu.tsx": $DropdownMenu,
         "./islands/InvalidateData.tsx": $InvalidateData,
+        "./islands/IslandInitializer.tsx": $IslandInitializer,
         "./islands/Loader.tsx": $Loader,
         "./islands/Pagination.tsx": $Pagination,
-        "./islands/ScriptLoader.tsx": $ScriptLoader,
         "./islands/ToastMessages.tsx": $ToastMessages,
         "./islands/files/FileItem.tsx": $files_FileItem,
         "./islands/files/FilePicker.tsx": $files_FilePicker,

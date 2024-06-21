@@ -4,7 +4,6 @@ import Button from "$components/Button.tsx";
 import Icon from "$components/Icon.tsx";
 import Pagination from "$islands/Pagination.tsx";
 import { useEffect } from "preact/hooks";
-import { getUserData } from "$frontend/user-data.ts";
 import { CanManageTags } from "$backend/rbac/permissions.ts";
 import EditTagForm, { EditableTag } from "$islands/tags/EditTagForm.tsx";
 import Input from "$components/Input.tsx";
@@ -16,6 +15,7 @@ import {
     FindTagsMessage,
     FindTagsResponse,
 } from "$workers/websocket/api/tags/messages.ts";
+import { useUser } from "$frontend/hooks/use-user.ts";
 
 export default function TagsList() {
     const tagToDelete = useSignal<EditableTag | null>(null);
@@ -90,7 +90,7 @@ export default function TagsList() {
         loadTags();
     }, []);
 
-    const user = getUserData();
+    const user = useUser();
 
     return (
         <div class="p-4">

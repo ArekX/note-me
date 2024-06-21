@@ -27,8 +27,13 @@ export default function ViewNote(
 
     useNoteWebsocket({
         noteId: record.id,
-        onRenamed: (newName) => {
-            recordData.value = { ...recordData.value, title: newName };
+        onNoteUpdated: (data) => {
+            recordData.value = {
+                ...recordData.value,
+                title: data.title ?? recordData.value.title,
+                tags: data.tags ?? recordData.value.tags,
+                note: data.text ?? recordData.value.note,
+            };
         },
     });
 

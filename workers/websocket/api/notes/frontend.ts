@@ -2,6 +2,8 @@ import { ListenerFn, RegisterListenerMap } from "$workers/websocket/types.ts";
 
 import {
     CreateNoteResponse,
+    DeleteHistoryRecordMessage,
+    DeleteHistoryRecordResponse,
     DeleteNoteMessage,
     DeleteNoteResponse,
     FindNoteHistoryMessage,
@@ -30,6 +32,7 @@ import { assignNoteToGroup } from "$backend/repository/group-repository.ts";
 import { requireValidSchema } from "$schemas/mod.ts";
 import { addNoteRequestSchema } from "$schemas/notes.ts";
 import {
+    deleteHistoryRecord,
     findHistory,
     getHistoryRecordData,
 } from "$backend/repository/note-history-repository.ts";
@@ -139,15 +142,7 @@ const handleGetNoteHistoryData: ListenerFn<GetNoteHistoryDataMessage> = async (
 };
 
 const handleRevertNoteToHistory: ListenerFn<RevertNoteToHistoryMessage> =
-    async (
-        {
-            message: { note_id, to_history_id },
-
-            sourceClient,
-
-            respond,
-        },
-    ) => {
+    async ({ message: { note_id, to_history_id }, sourceClient, respond }) => {
         const data = await getHistoryRecordData(
             to_history_id,
             sourceClient!.userId,
@@ -164,7 +159,7 @@ const handleRevertNoteToHistory: ListenerFn<RevertNoteToHistoryMessage> =
         }, {
             noteId: note_id,
             userId: sourceClient!.userId,
-            newHistoryVersionName: `Reverted to ${data.version}`,
+            newHistoryVersionName: `Reverted to "${data.version}"`,
         });
 
         respond<RevertNoteToHistoryResponse>({
@@ -176,6 +171,24 @@ const handleRevertNoteToHistory: ListenerFn<RevertNoteToHistoryMessage> =
         });
     };
 
+const handleDeleteHistoryRecord: ListenerFn<DeleteHistoryRecordMessage> =
+    async ({
+        message: { id, note_id },
+        sourceClient,
+        respond,
+    }) => {
+        if (!await noteExists(note_id, sourceClient!.userId)) {
+            throw new Error("Note does not exist.");
+        }
+
+        await deleteHistoryRecord(id, note_id);
+
+        respond<DeleteHistoryRecordResponse>({
+            type: "deleteHistoryRecordResponse",
+            id,
+        });
+    };
+
 export const frontendMap: RegisterListenerMap<NoteFrontendMessage> = {
     createNote: handleCreateNote,
     updateNote: handleUpdateNote,
@@ -183,4 +196,5 @@ export const frontendMap: RegisterListenerMap<NoteFrontendMessage> = {
     findNoteHistory: handleFindNoteHistory,
     getNoteHistoryData: handleGetNoteHistoryData,
     revertNoteToHistory: handleRevertNoteToHistory,
+    deleteHistoryRecord: handleDeleteHistoryRecord,
 };

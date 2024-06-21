@@ -1,6 +1,6 @@
 import { FreshContext } from "$fresh/server.ts";
 import { AppState } from "$types";
-import ScriptsLoader from "../../islands/ScriptLoader.tsx";
+import IslandInitializer from "../../islands/IslandInitializer.tsx";
 import { getUserNotifications } from "$backend/repository/notification-repository.ts";
 import Sidebar from "$components/Sidebar.tsx";
 import { canAccessSettings } from "$backend/rbac/role-definitions.ts";
@@ -26,7 +26,7 @@ export default async function Layout(
                 showSettings={canAccessSettings(role)}
             />
             <div className="w-4/5 bg-gray-900 overflow-auto">
-                <ScriptsLoader
+                <IslandInitializer
                     socketHost={socketHost}
                     userData={{
                         name,

@@ -64,7 +64,7 @@ export const findHistory = async (
         )
         .orderBy("note_history.created_at", "desc");
 
-    return await pageResults(query, page);
+    return await pageResults(query, page, 10);
 };
 
 export type NoteHistoryDataRecord = Pick<
@@ -94,4 +94,14 @@ export const getHistoryRecordData = async (
                     .on("note.user_id", "=", user_id),
         )
         .executeTakeFirst() ?? null;
+};
+
+export const deleteHistoryRecord = async (
+    id: number,
+    note_id: number,
+): Promise<void> => {
+    await db.deleteFrom("note_history")
+        .where("id", "=", id)
+        .where("note_id", "=", note_id)
+        .execute();
 };
