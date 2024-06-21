@@ -7,6 +7,7 @@ import { useEffect } from "preact/hooks";
 import MoreMenu, { MoreMenuItemAction } from "$islands/tree/MoreMenu.tsx";
 import { RecordContainer } from "$islands/tree/hooks/record-container.ts";
 import { closeAllPopovers } from "$frontend/hooks/use-single-popover.ts";
+import NoteDelete from "$islands/notes/windows/NoteDelete.tsx";
 
 export interface TreeItemProps {
     dragManager: DragManagerHook<RecordContainer>;
@@ -103,6 +104,8 @@ export default function TreeItem({
     dragManager,
     container,
 }: TreeItemProps) {
+    const confirmDelete = useSignal(false);
+
     const handleDragStart = (e: DragEvent) => {
         dragManager.drag(container);
         e.stopPropagation();
@@ -182,7 +185,7 @@ export default function TreeItem({
                 treeManager.reload(container);
                 break;
             case "delete":
-                treeManager.deleteContainer(container);
+                confirmDelete.value = true;
                 break;
             case "edit":
                 treeManager.setDisplayMode(container, "edit");
@@ -293,6 +296,12 @@ export default function TreeItem({
                         />
                     ))}
                 </div>
+            )}
+            {container.type === "note" && confirmDelete.value && (
+                <NoteDelete
+                    noteId={+container.id!}
+                    onClose={() => confirmDelete.value = false}
+                />
             )}
         </div>
     );
