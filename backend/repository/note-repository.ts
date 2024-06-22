@@ -128,6 +128,7 @@ export interface NoteDetailsRecord {
     created_at: number;
     updated_at: number;
     user_name: string;
+    note: string;
 }
 
 export const getNoteDetails = async (
@@ -141,6 +142,7 @@ export const getNoteDetails = async (
             "note.created_at",
             "note.updated_at",
             sql<string>`user.name`.as("user_name"),
+            "note.note",
         ])
         .where("note.id", "=", note_id)
         .where("note.user_id", "=", user_id)

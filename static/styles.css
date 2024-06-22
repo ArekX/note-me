@@ -127,8 +127,8 @@ dialog::backdrop {
 
 .note-editor .text-editor {
     font-family: monospace;
-    font-size: 1.1rem;
-    line-height: 1.4em;
+    font-size: .8rem;
+    line-height: 1.5em;
     font-weight: 400;
     min-height: calc(100vh - 8em);
     overflow: hidden;
@@ -158,6 +158,7 @@ dialog::backdrop {
     all: initial;
     color: #FFF;
     @apply font-sans; 
+    line-height: 1.5em;
     display: block;
     margin-bottom: 5em;
     padding-bottom: 5em;
@@ -246,7 +247,8 @@ dialog::backdrop {
 
 .markdown-viewer code {
     @apply bg-gray-950;
-    @apply p-1;
+    @apply pr-1;
+    @apply pl-1;
     @apply rounded-sm;
     @apply text-sm;
     @apply text-gray-300;

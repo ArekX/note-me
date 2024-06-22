@@ -1,6 +1,7 @@
 import { Message } from "$workers/websocket/types.ts";
 import { AddNoteRequest, UpdateNoteRequest } from "$schemas/notes.ts";
 import {
+    NoteDetailsRecord,
     NoteRecord,
     ViewNoteRecord,
 } from "$backend/repository/note-repository.ts";
@@ -34,6 +35,16 @@ export type GetNoteMessage = NoteMessage<
 export type GetNoteResponse = NoteMessage<
     "getNoteResponse",
     { record: ViewNoteRecord }
+>;
+
+export type GetNoteDetailsMessage = NoteMessage<
+    "getNoteDetails",
+    { id: number }
+>;
+
+export type GetNoteDetailsResponse = NoteMessage<
+    "getNoteDetailsResponse",
+    { record: NoteDetailsRecord }
 >;
 
 export type UpdateNoteMessage = NoteMessage<
@@ -104,7 +115,8 @@ export type NoteFrontendResponse =
     | GetNoteHistoryDataResponse
     | RevertNoteToHistoryResponse
     | DeleteHistoryRecordResponse
-    | GetNoteResponse;
+    | GetNoteResponse
+    | GetNoteDetailsResponse;
 
 export type NoteFrontendMessage =
     | CreateNoteMessage
@@ -114,4 +126,5 @@ export type NoteFrontendMessage =
     | GetNoteHistoryDataMessage
     | RevertNoteToHistoryMessage
     | DeleteHistoryRecordMessage
-    | GetNoteMessage;
+    | GetNoteMessage
+    | GetNoteDetailsMessage;
