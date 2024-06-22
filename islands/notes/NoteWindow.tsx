@@ -10,6 +10,7 @@ import {
     GetNoteMessage,
     GetNoteResponse,
 } from "$workers/websocket/api/notes/messages.ts";
+import NoteShare from "$islands/notes/windows/NoteShare.tsx";
 
 export type NoteWindowTypes =
     | "details"
@@ -17,6 +18,7 @@ export type NoteWindowTypes =
     | "share"
     | "remind"
     | "help"
+    | "move"
     | "delete";
 
 export interface NoteWindowComponentProps {
@@ -30,8 +32,9 @@ const windowComponents: {
 } = {
     details: (props) => <NoteDetails {...props} />,
     history: (props) => <NoteHistory {...props} />,
-    share: (props) => <NoteDetails {...props} />,
+    share: (props) => <NoteShare {...props} />,
     remind: (props) => <NoteDetails {...props} />,
+    move: (props) => <NoteDetails {...props} />,
     help: (props) => <NoteHelp {...props} />,
     delete: (props) => <NoteDelete {...props} />,
 };

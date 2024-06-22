@@ -104,6 +104,39 @@ export async function up(db: Kysely<unknown>): Promise<void> {
         .addColumn("created_at", "int8", (col) => col.notNull())
         .execute();
 
+    await db.schema.createTable("note_share_user")
+        .ifNotExists()
+        .addColumn("id", "integer", (col) => col.autoIncrement().primaryKey())
+        .addColumn(
+            "note_id",
+            "integer",
+            (col) => col.notNull().references("note.id"),
+        )
+        .addColumn(
+            "user_id",
+            "integer",
+            (col) => col.notNull().references("user.id"),
+        )
+        .addColumn("created_at", "int8", (col) => col.notNull())
+        .execute();
+
+    await db.schema.createTable("note_share_link")
+        .ifNotExists()
+        .addColumn("id", "integer", (col) => col.autoIncrement().primaryKey())
+        .addColumn(
+            "identifier",
+            "varchar(255)",
+            (col) => col.notNull().unique(),
+        )
+        .addColumn(
+            "note_id",
+            "integer",
+            (col) => col.notNull().references("note.id"),
+        )
+        .addColumn("created_at", "int8", (col) => col.notNull())
+        .addColumn("expires_at", "int8")
+        .execute();
+
     await db.schema.createTable("note_tag")
         .ifNotExists()
         .addColumn("id", "integer", (col) => col.autoIncrement().primaryKey())

@@ -45,6 +45,21 @@ export interface FileTable {
     is_public?: boolean;
 }
 
+export interface NoteShareUserTable {
+    id: Generated<number>;
+    note_id: number;
+    user_id: number;
+    created_at: number;
+}
+
+export interface NoteShareLinkTable {
+    id: Generated<number>;
+    identifier: string;
+    note_id: number;
+    created_at: number;
+    expires_at: number;
+}
+
 export interface NoteHistoryTable {
     id: Generated<number>;
     note_id: number;
@@ -106,6 +121,8 @@ export interface Tables {
     note_reminder: NoteReminderTable;
     file: FileTable;
     note_history: NoteHistoryTable;
+    note_share_user: NoteShareUserTable;
+    note_share_link: NoteShareLinkTable;
     note_tag: NoteTagTable;
     note_tag_note: NoteTagNoteTable;
     notification: NotificationTable;

@@ -188,13 +188,17 @@ export default function TreeItem({
                 treeManager.reload(container);
                 break;
             case "delete":
-                noteWindowType.value = "delete";
+                if (container.type == "note") {
+                    noteWindowType.value = "delete";
+                } else {
+                    confirmDelete.value = true;
+                }
                 break;
             case "edit":
                 treeManager.setDisplayMode(container, "edit");
                 break;
             case "move":
-                // TODO: Move
+                noteWindowType.value = "move";
                 break;
             case "details":
                 noteWindowType.value = "details";
@@ -203,10 +207,10 @@ export default function TreeItem({
                 noteWindowType.value = "history";
                 break;
             case "share":
-                // TODO: Share
+                noteWindowType.value = "share";
                 break;
             case "remind-me":
-                // TODO: Reminde Me
+                noteWindowType.value = "remind";
                 break;
             case "rename":
                 treeManager.setDisplayMode(container, "edit");
@@ -219,7 +223,8 @@ export default function TreeItem({
             class={`group-item-container select-none ${
                 dragManager.target === container ? "bg-red-600" : ""
             }`}
-            draggable={true}
+            draggable={noteWindowType.value === null &&
+                confirmDelete.value === false}
             onDragStart={handleDragStart}
             onDragLeave={handleDragLeave}
             onDragOver={handleDragOver}
