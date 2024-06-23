@@ -12,6 +12,9 @@ import {
 } from "$workers/websocket/api/notes/messages.ts";
 import { useEffect } from "preact/hooks";
 import TableOfContents from "$islands/notes/blocks/TableOfContents.tsx";
+import ButtonGroup from "$components/ButtonGroup.tsx";
+import { useListState } from "$frontend/hooks/use-list-state.ts";
+import Picker from "$components/Picker.tsx";
 
 interface NoteDetailsProps {
     noteId: number;
@@ -28,6 +31,11 @@ export default function NoteDetails(
     const timeFormatter = useTimeFormat();
 
     const { sendMessage } = useWebsocketService();
+
+    const { items, selected, selectItem } = useListState({
+        general: "General",
+        toc: "Table of Contents",
+    }, "general");
 
     const loadNoteData = async () => {
         isNoteLoading.start();
@@ -60,33 +68,46 @@ export default function NoteDetails(
                     <div>
                         <h1 class="text-2xl pb-4">Note Details</h1>
 
-                        <h2 class="text-xl">General</h2>
+                        <ButtonGroup
+                            activeItem={selected.value}
+                            items={items}
+                            onSelect={selectItem}
+                        />
 
-                        <p class="pt-2 pb-2">
-                            {group_name && (
-                                <>
-                                    <strong>Group:</strong> {group_name}
-                                    <br />
-                                </>
-                            )}
+                        <Picker<keyof typeof items>
+                            selector={selected.value}
+                            map={{
+                                general: () => (
+                                    <p class="pt-2 pb-2">
+                                        {group_name && (
+                                            <>
+                                                <strong>Group:</strong>{" "}
+                                                {group_name}
+                                                <br />
+                                            </>
+                                        )}
 
-                            <strong>Created at:</strong>{" "}
-                            {timeFormatter.formatDateTime(created_at ?? 0)}{" "}
-                            <br />
-                            <strong>Last update at:</strong>{" "}
-                            {timeFormatter.formatDateTime(updated_at ?? 0)}{" "}
-                            <br />
-                            <strong>Created by:</strong> {user_name}
-                        </p>
-
-                        <h2 class="text-xl">Table of Contents</h2>
-
-                        <p>
-                            <TableOfContents
-                                text={noteData.value.note}
-                                disableLinks={true}
-                            />
-                        </p>
+                                        <strong>Created at:</strong>{" "}
+                                        {timeFormatter.formatDateTime(
+                                            created_at ?? 0,
+                                        )} <br />
+                                        <strong>Last update at:</strong>{" "}
+                                        {timeFormatter.formatDateTime(
+                                            updated_at ?? 0,
+                                        )} <br />
+                                        <strong>Created by:</strong> {user_name}
+                                    </p>
+                                ),
+                                toc: () => (
+                                    <p>
+                                        <TableOfContents
+                                            text={noteData.value!.note}
+                                            disableLinks={true}
+                                        />
+                                    </p>
+                                ),
+                            }}
+                        />
 
                         <div class="pt-4">
                             <Button onClick={onClose} color="success">

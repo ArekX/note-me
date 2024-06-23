@@ -17,7 +17,7 @@ const Component = ({
 
     return (
         <div>
-            <TableOfContents text={noteText} />
+            <TableOfContents text={noteText} disableLinks={true} />
             <div class="mt-2 flex items-center">
                 <div class="mr-2">
                     <Button color="primary" size="md" onClick={handleInsert}>
@@ -39,7 +39,8 @@ const Component = ({
     );
 };
 
-export const InsertTocDef: InsertComponent = {
+export const InsertTocDef: InsertComponent<"toc"> = {
+    id: "toc",
     name: "Table of Contents",
     component: Component,
 };

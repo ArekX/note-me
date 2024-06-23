@@ -11,7 +11,8 @@ const Component = ({}: InsertComponentProps) => {
     );
 };
 
-export const InsertGroupListDef: InsertComponent = {
+export const InsertGroupListDef: InsertComponent<"group-list"> = {
+    id: "group-list",
     name: "Group List",
     component: Component,
 };

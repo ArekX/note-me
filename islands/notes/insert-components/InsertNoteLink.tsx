@@ -11,7 +11,8 @@ const Component = ({}: InsertComponentProps) => {
     );
 };
 
-export const InsertNoteLinkDef: InsertComponent = {
+export const InsertNoteLinkDef: InsertComponent<"note-link"> = {
+    id: "note-link",
     name: "Note Link",
     component: Component,
 };

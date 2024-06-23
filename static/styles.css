@@ -287,3 +287,8 @@ dialog::backdrop {
     background-color: #ffcc00;
     color: #000;
 }
+
+
+code, pre {
+    font-family: monospace;
+}

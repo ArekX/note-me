@@ -17,7 +17,8 @@ const Component = ({
     );
 };
 
-export const InsertLinkDef: InsertComponent = {
+export const InsertLinkDef: InsertComponent<"link"> = {
+    id: "link",
     name: "Link",
     component: Component,
 };

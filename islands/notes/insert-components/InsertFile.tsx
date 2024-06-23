@@ -106,7 +106,8 @@ const Component = ({
     );
 };
 
-export const InsertFileDef: InsertComponent = {
+export const InsertFileDef: InsertComponent<"file"> = {
+    id: "file",
     name: "File",
     component: Component,
 };

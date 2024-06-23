@@ -17,7 +17,8 @@ const Component = ({
     );
 };
 
-export const InsertImageDef: InsertComponent = {
+export const InsertImageDef: InsertComponent<"image"> = {
+    id: "image",
     name: "Image",
     component: Component,
 };

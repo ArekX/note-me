@@ -11,6 +11,7 @@ import { InsertNoteLinkDef } from "$islands/notes/insert-components/InsertNoteLi
 import { useEffect } from "preact/hooks";
 import DropdownList from "$components/DropdownList.tsx";
 import { InsertTocDef } from "$islands/notes/insert-components/InsertToc.tsx";
+import Picker, { PickerMap } from "$components/Picker.tsx";
 
 interface InsertDialogProps {
     noteText: string;
@@ -23,12 +24,15 @@ export interface InsertComponentProps {
     onInsert: (text: string) => void;
 }
 
-export interface InsertComponent {
+export interface InsertComponent<T> {
+    id: T;
     name: string;
     component: (props: InsertComponentProps) => JSX.Element;
 }
 
-const insertComponents: InsertComponent[] = [
+type ComponentId<T extends { id: string }> = T["id"];
+
+const insertComponents = [
     InsertLinkDef,
     InsertImageDef,
     InsertFileDef,
@@ -37,18 +41,28 @@ const insertComponents: InsertComponent[] = [
     InsertTocDef,
 ];
 
+type InsertComponentIds =
+    | ComponentId<typeof InsertLinkDef>
+    | ComponentId<typeof InsertImageDef>
+    | ComponentId<typeof InsertFileDef>
+    | ComponentId<typeof InsertGroupListDef>
+    | ComponentId<typeof InsertNoteLinkDef>
+    | ComponentId<typeof InsertTocDef>;
+
+const componentsMap: PickerMap<InsertComponentIds, InsertComponentProps> =
+    insertComponents.reduce((map, def) => {
+        map[def.id] = def.component;
+        return map;
+    }, {} as PickerMap<InsertComponentIds, InsertComponentProps>);
+
 export default function InsertDialog({
     noteText,
     onInsert,
 }: InsertDialogProps) {
-    const selectedComponentIndex = useSignal(0);
+    const selectedComponent = useSignal<InsertComponentIds>("image");
     const showDialog = useSignal(false);
 
-    const SelectedComponent =
-        insertComponents[selectedComponentIndex.value].component;
-
     const handleCancel = () => {
-        selectedComponentIndex.value = 0;
         showDialog.value = false;
     };
 
@@ -88,23 +102,25 @@ export default function InsertDialog({
                     <div class="w-96 mb-2">
                         <DropdownList
                             label="Insert:"
-                            items={insertComponents.map((component, index) => ({
+                            items={insertComponents.map((component) => ({
                                 label: component.name,
-                                value: index.toString(),
+                                value: component.id,
                             }))}
-                            value={selectedComponentIndex.value.toString()}
+                            value={selectedComponent.value.toString()}
                             onInput={(value) =>
-                                selectedComponentIndex.value = parseInt(value)}
+                                selectedComponent.value =
+                                    value as InsertComponentIds}
                         />
                     </div>
 
-                    <SelectedComponent
-                        noteText={noteText}
-                        onInsert={(text) => {
-                            onInsert(text);
-                            handleCancel();
-                        }}
-                        onCancel={handleCancel}
+                    <Picker<InsertComponentIds, InsertComponentProps>
+                        selector={selectedComponent.value}
+                        propsGetter={() => ({
+                            noteText,
+                            onCancel: handleCancel,
+                            onInsert,
+                        })}
+                        map={componentsMap}
                     />
                 </Dialog>
             )}

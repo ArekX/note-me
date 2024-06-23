@@ -1,5 +1,4 @@
 import NoteDelete from "$islands/notes/windows/NoteDelete.tsx";
-import { JSX } from "preact/jsx-runtime";
 import NoteDetails from "./windows/NoteDetails.tsx";
 import NoteHelp from "$islands/notes/windows/NoteHelp.tsx";
 import NoteHistory from "$islands/notes/windows/NoteHistory.tsx";
@@ -11,6 +10,7 @@ import {
     GetNoteResponse,
 } from "$workers/websocket/api/notes/messages.ts";
 import NoteShare from "$islands/notes/windows/NoteShare.tsx";
+import Picker from "$components/Picker.tsx";
 
 export type NoteWindowTypes =
     | "details"
@@ -26,18 +26,6 @@ export interface NoteWindowComponentProps {
     noteText: string;
     noteId: number;
 }
-
-const windowComponents: {
-    [K in NoteWindowTypes]: (props: NoteWindowComponentProps) => JSX.Element;
-} = {
-    details: (props) => <NoteDetails {...props} />,
-    history: (props) => <NoteHistory {...props} />,
-    share: (props) => <NoteShare {...props} />,
-    remind: (props) => <NoteDetails {...props} />,
-    move: (props) => <NoteDetails {...props} />,
-    help: (props) => <NoteHelp {...props} />,
-    delete: (props) => <NoteDelete {...props} />,
-};
 
 interface NoteWindowProps {
     type: NoteWindowTypes | null;
@@ -80,21 +68,23 @@ export default function NoteWindow({
         noteTextView.value = noteText ?? "";
     }, [noteText]);
 
-    if (!type) {
-        return null;
-    }
-
-    const WindowComponent = windowComponents[type];
-
-    if (!WindowComponent) {
-        return null;
-    }
-
     return (
-        <WindowComponent
-            noteId={noteId}
-            onClose={onClose}
-            noteText={noteTextView.value}
+        <Picker<NoteWindowTypes, NoteWindowComponentProps>
+            selector={type}
+            propsGetter={() => ({
+                onClose,
+                noteId,
+                noteText: noteTextView.value,
+            })}
+            map={{
+                details: (props) => <NoteDetails {...props} />,
+                history: (props) => <NoteHistory {...props} />,
+                share: (props) => <NoteShare {...props} />,
+                remind: (props) => <NoteDetails {...props} />,
+                move: (props) => <NoteDetails {...props} />,
+                help: (props) => <NoteHelp {...props} />,
+                delete: (props) => <NoteDelete {...props} />,
+            }}
         />
     );
 }
