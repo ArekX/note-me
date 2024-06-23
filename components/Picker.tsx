@@ -11,6 +11,7 @@ interface PickerProps<
     selector: T | null;
     propsGetter?: () => Props;
     map: PickerMap<T, Props>;
+    defaultComponent?: (props: Props) => JSX.Element;
 }
 
 export default function Picker<
@@ -20,8 +21,9 @@ export default function Picker<
     selector,
     map,
     propsGetter,
+    defaultComponent,
 }: PickerProps<T, Props>): JSX.Element | null {
     return selector && selector in map
         ? map[selector](propsGetter?.() ?? {} as never)
-        : null;
+        : defaultComponent?.(propsGetter?.() ?? {} as never) ?? null;
 }
