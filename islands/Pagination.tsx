@@ -58,7 +58,7 @@ export default function Pagination({
                     ).map((page) => (
                         <button
                             key={page}
-                            className={`p-2 ${
+                            className={`pt-2 pb-2 pr-5 pl-5 rounded-md ${
                                 currentPage === page
                                     ? "bg-blue-500 text-white"
                                     : ""

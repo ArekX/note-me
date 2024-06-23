@@ -99,7 +99,7 @@ export default function NoteDetails(
                                     </p>
                                 ),
                                 toc: () => (
-                                    <p>
+                                    <p class="pt-2 pb-2">
                                         <TableOfContents
                                             text={noteData.value!.note}
                                             disableLinks={true}

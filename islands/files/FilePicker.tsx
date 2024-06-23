@@ -257,12 +257,14 @@ export default function FilePicker({
                                 <div>No files found.</div>
                             )}
                         </div>
-                        <Pagination
-                            total={totalFiles.value}
-                            perPage={perPage.value}
-                            currentPage={currentPage.value}
-                            onChange={handlePageChange}
-                        />
+                        <div class="mt-2 mb-2">
+                            <Pagination
+                                total={totalFiles.value}
+                                perPage={perPage.value}
+                                currentPage={currentPage.value}
+                                onChange={handlePageChange}
+                            />
+                        </div>
                     </>
                 )}
             <ConfirmDialog
