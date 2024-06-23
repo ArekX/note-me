@@ -123,6 +123,8 @@ export default function NoteDetails(
         <>
             <Dialog
                 visible={true}
+                canCancel={true}
+                onCancel={onClose}
                 props={{
                     class: "w-3/4",
                 }}

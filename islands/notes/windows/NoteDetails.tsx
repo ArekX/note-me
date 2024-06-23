@@ -61,7 +61,7 @@ export default function NoteDetails(
     const { group_name, created_at, updated_at, user_name } = noteData.value ??
         {};
     return (
-        <Dialog visible={true}>
+        <Dialog visible={true} canCancel={true} onCancel={onClose}>
             {isNoteLoading.running
                 ? <Loader color="white">Loading note details...</Loader>
                 : noteData.value && (

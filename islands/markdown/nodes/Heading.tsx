@@ -17,40 +17,44 @@ const createHeadingId = (el: unknown) => {
 };
 
 export default function Heading({ node, children }: NodeProps<"heading">) {
+    const props = {
+        ref: createHeadingId,
+    };
+
     switch (node.data.level) {
         case 1:
             return (
-                <h1 ref={createHeadingId}>
+                <h1 {...props}>
                     {children}
                 </h1>
             );
         case 2:
             return (
-                <h2 ref={createHeadingId}>
+                <h2 {...props}>
                     {children}
                 </h2>
             );
         case 3:
             return (
-                <h3 ref={createHeadingId}>
+                <h3 {...props}>
                     {children}
                 </h3>
             );
         case 4:
             return (
-                <h4 ref={createHeadingId}>
+                <h4 {...props}>
                     {children}
                 </h4>
             );
         case 5:
             return (
-                <h5 ref={createHeadingId}>
+                <h5 {...props}>
                     {children}
                 </h5>
             );
         default:
             return (
-                <h6 ref={createHeadingId}>
+                <h6 {...props}>
                     {children}
                 </h6>
             );

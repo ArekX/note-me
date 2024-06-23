@@ -7,7 +7,7 @@ interface HelpProps {
 
 export default function NoteHelp({ onClose }: HelpProps) {
     return (
-        <Dialog visible={true}>
+        <Dialog visible={true} canCancel={true} onCancel={onClose}>
             <table>
                 <tr>
                     <td>

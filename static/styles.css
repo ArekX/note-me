@@ -183,30 +183,48 @@ dialog::backdrop {
     padding: .5em 0;
 }
 
+.markdown-viewer h1,
+.markdown-viewer h2,
+.markdown-viewer h3,
+.markdown-viewer h4,
+.markdown-viewer h5,
+.markdown-viewer h6 {
+    font-weight: bold;
+    @apply mt-4 mb-4;
+    padding: .5em 0;
+}
+
+
 .markdown-viewer h1 {
-    font-size: 2.25em;
+    font-size: 2.30em;
     padding: .3em 0;
 }
 
 .markdown-viewer h2 {
-    font-size: 2em;
+    font-size: 1.8em;
     padding: .3em 0;
 }
 
 .markdown-viewer h3 {
-    font-size: 1.75em;
-    padding: .4em 0;
-}
-
-.markdown-viewer h4 {
     font-size: 1.50em;
     padding: .4em 0;
 }
 
+.markdown-viewer h4 {
+    font-size: 1.30em;
+    padding: .4em 0;
+}
+
 .markdown-viewer h5 {
-    font-size: 1.25em;
+    font-size: 1.20em;
     padding: .5em 0;
 }
+
+.markdown-viewer h6 {
+    font-size: 1.15em;
+    padding: .5em 0;
+}
+
 
 .markdown-viewer ul, .markdown-viewer ol {
     padding-left: 1.5em;
