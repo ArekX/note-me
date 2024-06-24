@@ -187,6 +187,37 @@ export const findUsers = async (
     return await pageResults(query, page);
 };
 
+export interface FindShareUserFilters {
+    name?: string;
+    username?: string;
+}
+
+export interface ShareUserRecord {
+    id: number;
+    name: string;
+    username: string;
+}
+
+export const findUsersForShare = async (
+    filters: FindShareUserFilters,
+    page: number,
+): Promise<Paged<ShareUserRecord>> => {
+    let query = db.selectFrom("user")
+        .select([
+            "id",
+            "name",
+            "username",
+        ])
+        .where("is_deleted", "=", false);
+
+    query = applyFilters(query, {
+        name: { type: "text", value: filters.name },
+        username: { type: "text", value: filters.username },
+    });
+
+    return await pageResults(query, page);
+};
+
 export interface UserProfileData extends Pick<UserTable, "name" | "timezone"> {
     new_password?: string;
     old_password?: string;

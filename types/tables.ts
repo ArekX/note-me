@@ -1,4 +1,4 @@
-import { Generated } from "../lib/kysely-sqlite-dialect/deps.ts";
+import { Generated } from "$lib/kysely-sqlite-dialect/deps.ts";
 import { Roles } from "$backend/rbac/role-definitions.ts";
 
 export interface UserTable {
@@ -57,7 +57,7 @@ export interface NoteShareLinkTable {
     identifier: string;
     note_id: number;
     created_at: number;
-    expires_at: number;
+    expires_at?: number;
 }
 
 export interface NoteHistoryTable {

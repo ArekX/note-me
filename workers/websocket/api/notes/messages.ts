@@ -10,6 +10,10 @@ import {
     NoteHistoryDataRecord,
     NoteHistoryMetaRecord,
 } from "$backend/repository/note-history-repository.ts";
+import {
+    NoteShareData,
+    PublicNoteShareRecord,
+} from "$backend/repository/note-share-repository.ts";
 
 type NoteMessage<Type, Data = unknown> = Message<
     "notes",
@@ -107,6 +111,35 @@ export type DeleteHistoryRecordResponse = NoteMessage<
     { id: number }
 >;
 
+export type GetNoteShareDataMessage = NoteMessage<
+    "getNoteShareData",
+    { note_id: number }
+>;
+
+export type GetNoteShareDataResponse = NoteMessage<
+    "getNoteShareDataResponse",
+    NoteShareData
+>;
+
+export type CreatePublicShareMessage = NoteMessage<
+    "createPublicShare",
+    { note_id: number; expires_at: number }
+>;
+
+export type CreatePublicShareResponse = NoteMessage<
+    "createPublicShareResponse",
+    { record: PublicNoteShareRecord }
+>;
+
+export type ShareToUsersMessage = NoteMessage<
+    "shareToUsers",
+    { note_id: number; user_ids: number[] }
+>;
+
+export type ShareToUsersResponse = NoteMessage<
+    "shareToUsersResponse"
+>;
+
 export type NoteFrontendResponse =
     | CreateNoteResponse
     | UpdateNoteResponse
@@ -116,7 +149,10 @@ export type NoteFrontendResponse =
     | RevertNoteToHistoryResponse
     | DeleteHistoryRecordResponse
     | GetNoteResponse
-    | GetNoteDetailsResponse;
+    | GetNoteDetailsResponse
+    | GetNoteShareDataResponse
+    | CreatePublicShareResponse
+    | ShareToUsersResponse;
 
 export type NoteFrontendMessage =
     | CreateNoteMessage
@@ -127,4 +163,7 @@ export type NoteFrontendMessage =
     | RevertNoteToHistoryMessage
     | DeleteHistoryRecordMessage
     | GetNoteMessage
-    | GetNoteDetailsMessage;
+    | GetNoteDetailsMessage
+    | GetNoteShareDataMessage
+    | CreatePublicShareMessage
+    | ShareToUsersMessage;

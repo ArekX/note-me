@@ -2,6 +2,8 @@ import { ListenerFn, RegisterListenerMap } from "$workers/websocket/types.ts";
 
 import {
     CreateNoteResponse,
+    CreatePublicShareMessage,
+    CreatePublicShareResponse,
     DeleteHistoryRecordMessage,
     DeleteHistoryRecordResponse,
     DeleteNoteMessage,
@@ -13,9 +15,13 @@ import {
     GetNoteHistoryDataResponse,
     GetNoteMessage,
     GetNoteResponse,
+    GetNoteShareDataMessage,
+    GetNoteShareDataResponse,
     NoteFrontendMessage,
     RevertNoteToHistoryMessage,
     RevertNoteToHistoryResponse,
+    ShareToUsersMessage,
+    ShareToUsersResponse,
     UpdateNoteMessage,
     UpdateNoteResponse,
 } from "./messages.ts";
@@ -43,6 +49,11 @@ import {
 } from "$backend/repository/note-history-repository.ts";
 import { runUpdateNoteAction } from "$backend/actions/update-note-action.ts";
 import { GetNoteDetailsMessage } from "$workers/websocket/api/notes/messages.ts";
+import {
+    createPublicShare,
+    getNoteShareData,
+    setUserShare,
+} from "$backend/repository/note-share-repository.ts";
 
 const handleCreateNote: ListenerFn<CreateNoteMessage> = async (
     { message: { data }, sourceClient, respond },
@@ -225,6 +236,50 @@ const handleDeleteHistoryRecord: ListenerFn<DeleteHistoryRecordMessage> =
         });
     };
 
+const handleCreatePublicShare: ListenerFn<CreatePublicShareMessage> = async (
+    { message: { note_id, expires_at }, sourceClient, respond },
+) => {
+    if (!await noteExists(note_id, sourceClient!.userId)) {
+        throw new Error("Note does not exist.");
+    }
+
+    const record = await createPublicShare({ note_id, expires_at });
+
+    respond<CreatePublicShareResponse>({
+        type: "createPublicShareResponse",
+        record,
+    });
+};
+
+const handleShareToUsers: ListenerFn<ShareToUsersMessage> = async (
+    { message: { note_id, user_ids }, sourceClient, respond },
+) => {
+    if (!await noteExists(note_id, sourceClient!.userId)) {
+        throw new Error("Note does not exist.");
+    }
+
+    await setUserShare({ note_id, user_ids });
+
+    respond<ShareToUsersResponse>({
+        type: "shareToUsersResponse",
+    });
+};
+
+const handleGetNoteShareData: ListenerFn<GetNoteShareDataMessage> = async (
+    { message: { note_id }, sourceClient, respond },
+) => {
+    if (!await noteExists(note_id, sourceClient!.userId)) {
+        throw new Error("Note does not exist.");
+    }
+
+    const data = await getNoteShareData(note_id);
+
+    respond<GetNoteShareDataResponse>({
+        type: "getNoteShareDataResponse",
+        ...data,
+    });
+};
+
 export const frontendMap: RegisterListenerMap<NoteFrontendMessage> = {
     createNote: handleCreateNote,
     updateNote: handleUpdateNote,
@@ -235,4 +290,7 @@ export const frontendMap: RegisterListenerMap<NoteFrontendMessage> = {
     getNoteHistoryData: handleGetNoteHistoryData,
     revertNoteToHistory: handleRevertNoteToHistory,
     deleteHistoryRecord: handleDeleteHistoryRecord,
+    createPublicShare: handleCreatePublicShare,
+    shareToUsers: handleShareToUsers,
+    getNoteShareData: handleGetNoteShareData,
 };
