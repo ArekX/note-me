@@ -187,21 +187,22 @@ export const findUsers = async (
     return await pageResults(query, page);
 };
 
-export interface FindShareUserFilters {
+export interface FindPickUserFilters {
     name?: string;
     username?: string;
+    user_ids: number[];
 }
 
-export interface ShareUserRecord {
+export interface PickUserRecord {
     id: number;
     name: string;
     username: string;
 }
 
-export const findUsersForShare = async (
-    filters: FindShareUserFilters,
+export const findPickerUsers = async (
+    filters: FindPickUserFilters,
     page: number,
-): Promise<Paged<ShareUserRecord>> => {
+): Promise<Paged<PickUserRecord>> => {
     let query = db.selectFrom("user")
         .select([
             "id",
@@ -213,6 +214,7 @@ export const findUsersForShare = async (
     query = applyFilters(query, {
         name: { type: "text", value: filters.name },
         username: { type: "text", value: filters.username },
+        id: { type: "value", value: filters.user_ids },
     });
 
     return await pageResults(query, page);

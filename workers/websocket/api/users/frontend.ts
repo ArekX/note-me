@@ -4,7 +4,8 @@ import {
     CreateUserResponse,
     DeleteUserMessage,
     DeleteUserResponse,
-    FindShareUsersMessage,
+    FindPickUsersMessage,
+    FindPickUsersResponse,
     FindUsersMessage,
     FindUsersResponse,
     UpdateProfileMessage,
@@ -130,13 +131,13 @@ const updateProfileRequest: ListenerFn<UpdateProfileMessage> = async (
     });
 };
 
-const handleFindShareUsers: ListenerFn<FindShareUsersMessage> = async (
+const handleFindPickUsers: ListenerFn<FindPickUsersMessage> = async (
     { message: { filters, page }, respond },
 ) => {
     const records = await findUsers(filters, page);
 
-    respond<FindUsersResponse>({
-        type: "findUsersResponse",
+    respond<FindPickUsersResponse>({
+        type: "findPickUsersResponse",
         records,
     });
 };
@@ -146,6 +147,6 @@ export const frontendMap: RegisterListenerMap<UserFrontendMessage> = {
     updateUser: updateUserRequest,
     deleteUser: deleteUserRequest,
     findUsers: findUsersRequest,
-    findShareUsers: handleFindShareUsers,
+    findPickUsers: handleFindPickUsers,
     updateProfile: updateProfileRequest,
 };

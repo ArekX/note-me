@@ -2,9 +2,9 @@ import { Message } from "$workers/websocket/types.ts";
 import { AddUserRequest, UpdateUserRequest } from "$schemas/users.ts";
 import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
 import {
-    FindShareUserFilters,
+    FindPickUserFilters,
     FindUserFilters,
-    ShareUserRecord,
+    PickUserRecord,
     UserId,
     UserProfileData,
     UserRecord,
@@ -68,15 +68,15 @@ export type UpdateProfileResponse = UserMessage<
     { data: UserProfileData }
 >;
 
-export type FindShareUsersMessage = UserMessage<
-    "findShareUsers",
-    { filters: FindShareUserFilters; page: number }
+export type FindPickUsersMessage = UserMessage<
+    "findPickUsers",
+    { filters: FindPickUserFilters; page: number }
 >;
 
-export type FindShareUsersResponse = UserMessage<
-    "findShareUsersResponse",
+export type FindPickUsersResponse = UserMessage<
+    "findPickUsersResponse",
     {
-        records: Paged<ShareUserRecord>;
+        records: Paged<PickUserRecord>;
     }
 >;
 
@@ -86,7 +86,7 @@ export type UserFrontendResponse =
     | DeleteUserResponse
     | FindUsersResponse
     | UpdateProfileResponse
-    | FindShareUsersResponse;
+    | FindPickUsersResponse;
 
 export type UserFrontendMessage =
     | CreateUserMessage
@@ -94,4 +94,4 @@ export type UserFrontendMessage =
     | DeleteUserMessage
     | FindUsersMessage
     | UpdateProfileMessage
-    | FindShareUsersMessage;
+    | FindPickUsersMessage;

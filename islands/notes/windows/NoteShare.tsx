@@ -30,31 +30,33 @@ export default function NoteShare({
                 Share status: <strong>Private</strong>
             </div>
 
-            <ButtonGroup
-                activeItem={selected.value}
-                items={items}
-                onSelect={selectItem}
-            />
-
-            <div class="pt-4 pb-4">
-                <Picker<keyof typeof items>
-                    selector={selected.value}
-                    map={{
-                        toUsers: () => <div>Users</div>,
-                        toEveryone: () => (
-                            <div>
-                                Notes shared with everyone can be viewed by
-                                anyone.
-
-                                <div class="pt-4">
-                                    <Button color="primary">
-                                        Generate share link
-                                    </Button>
-                                </div>
-                            </div>
-                        ),
-                    }}
+            <div>
+                <ButtonGroup
+                    activeItem={selected.value}
+                    items={items}
+                    onSelect={selectItem}
                 />
+
+                <div class="pt-4 pb-4">
+                    <Picker<keyof typeof items>
+                        selector={selected.value}
+                        map={{
+                            toUsers: () => <div>Users</div>,
+                            toEveryone: () => (
+                                <div>
+                                    Notes shared with everyone can be viewed by
+                                    anyone.
+
+                                    <div class="pt-4">
+                                        <Button color="primary">
+                                            Generate share link
+                                        </Button>
+                                    </div>
+                                </div>
+                            ),
+                        }}
+                    />
+                </div>
             </div>
 
             <div>

@@ -6,7 +6,7 @@ import {
     rollbackTransaction,
 } from "$backend/database.ts";
 import { getCurrentUnixTimestamp } from "$backend/time.ts";
-import { ShareUserRecord } from "$backend/repository/user-repository.ts";
+import { PickUserRecord } from "$backend/repository/user-repository.ts";
 
 export type PublicShareData = Pick<
     NoteShareLinkTable,
@@ -98,14 +98,14 @@ export const setUserShare = async ({
 };
 
 export interface NoteShareData {
-    users: ShareUserRecord[];
+    users: PickUserRecord[];
     links: PublicNoteShareRecord[];
 }
 
 export const getNoteShareData = async (
     note_id: number,
 ): Promise<NoteShareData> => {
-    const users: ShareUserRecord[] = await db.selectFrom("note_share_user")
+    const users: PickUserRecord[] = await db.selectFrom("note_share_user")
         .innerJoin("user", "user.id", "note_share_user.user_id")
         .select([
             "user.id",
