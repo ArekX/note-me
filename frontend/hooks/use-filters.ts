@@ -3,18 +3,20 @@ import { useDebouncedCallback } from "$frontend/hooks/use-debounced-callback.ts"
 
 interface FilterOptions<T> {
     initialFilters: () => T;
-    onFilterUpdated: () => Promise<void>;
+    onFilterLoad: () => Promise<void>;
+    onFiltersSet?: () => void;
     debounceTime?: number;
 }
 
 export const useFilters = <T>({
     initialFilters,
-    onFilterUpdated,
+    onFilterLoad,
+    onFiltersSet,
     debounceTime,
 }: FilterOptions<T>) => {
     const filters = useSignal(initialFilters());
 
-    const performOnUpdated = () => onFilterUpdated();
+    const performOnUpdated = () => onFilterLoad();
 
     const triggerDebouncedUpdate = useDebouncedCallback(
         performOnUpdated,
@@ -26,6 +28,7 @@ export const useFilters = <T>({
             ...filters.value,
             [key]: value,
         };
+        onFiltersSet?.();
         triggerDebouncedUpdate();
     };
 
@@ -34,11 +37,13 @@ export const useFilters = <T>({
             ...filters.value,
             ...(newFilters as Partial<T>),
         };
+        onFiltersSet?.();
         triggerDebouncedUpdate();
     };
 
     const resetFilters = () => {
         filters.value = initialFilters();
+        onFiltersSet?.();
         triggerDebouncedUpdate();
     };
 

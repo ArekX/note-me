@@ -18,6 +18,8 @@ interface UserPickerProps {
     onSelectUser: (user: PickUserRecord) => void;
     onUnselectUser: (user: PickUserRecord) => void;
     selected: PickUserRecord[];
+    selectedUsersText?: string;
+    noSelectedUsersText?: string;
 }
 
 interface UserItemProps {
@@ -41,6 +43,8 @@ export default function UserPicker({
     onSelectUser,
     onUnselectUser,
     selected,
+    selectedUsersText = "Selected users",
+    noSelectedUsersText = "No users selected",
 }: UserPickerProps) {
     const { results, page, total, perPage, setPagedData, resetPage } =
         usePagedData<
@@ -58,7 +62,6 @@ export default function UserPicker({
             });
             return;
         }
-
         const response = await sendMessage<
             FindPickUsersMessage,
             FindPickUsersResponse
@@ -80,9 +83,12 @@ export default function UserPicker({
         initialFilters: () => ({
             searchText: "",
         }),
-        onFilterUpdated: () => {
+        onFilterLoad: () => {
             resetPage();
             return performSearch();
+        },
+        onFiltersSet: () => {
+            userLoader.start();
         },
     });
 
@@ -90,6 +96,10 @@ export default function UserPicker({
         setPagedData({ page: newPage });
         performSearch();
     };
+
+    const addableUsers = results.value.filter((user) =>
+        !selected.find((s) => s.id == user.id)
+    );
 
     return (
         <div>
@@ -111,14 +121,11 @@ export default function UserPicker({
                             </Loader>
                         </div>
                     )
-                    : (
+                    : filters.value.searchText.length > 0 && (
                         <div class="mt-2">
                             <div class="text-sm mb-2">Found Users</div>
                             <div class="w-full">
-                                {results.value
-                                    .filter((user) =>
-                                        !selected.find((s) => s.id == user.id)
-                                    )
+                                {addableUsers
                                     .map((user) => (
                                         <UserItem
                                             key={user.id}
@@ -127,7 +134,7 @@ export default function UserPicker({
                                                 <Button
                                                     color="success"
                                                     size="sm"
-                                                    title="Select this user"
+                                                    title={`Add ${user.name} to selected users`}
                                                     onClick={() =>
                                                         onSelectUser(user)}
                                                 >
@@ -136,7 +143,14 @@ export default function UserPicker({
                                             }
                                         />
                                     ))}
-                                {results.value.length === 0 && (
+                                {results.value.length > 0 &&
+                                    addableUsers.length === 0 && (
+                                    <div class="text-gray-500">
+                                        No more users to add.
+                                    </div>
+                                )}
+
+                                {total.value === 0 && (
                                     <div class="text-gray-500">
                                         No users found
                                     </div>
@@ -153,7 +167,7 @@ export default function UserPicker({
             )}
 
             <div class="mt-2">
-                <div class="text-sm">Selected users</div>
+                <div class="text-sm">{selectedUsersText}</div>
                 <div>
                     {selected.map((user) => (
                         <UserItem
@@ -164,7 +178,7 @@ export default function UserPicker({
                                     color="danger"
                                     size="sm"
                                     addClass="ml-2"
-                                    title="Unselect this user"
+                                    title={`Remove ${user.name} from selected users`}
                                     onClick={() => onUnselectUser(user)}
                                 >
                                     <Icon name="minus" />
@@ -173,7 +187,7 @@ export default function UserPicker({
                         />
                     ))}
                     {selected.length === 0 && (
-                        <div class="text-gray-500">No users selected</div>
+                        <div class="text-gray-500">{noSelectedUsersText}</div>
                     )}
                 </div>
             </div>

@@ -19,6 +19,7 @@ import {
     CreateUserData,
     createUserRecord,
     deleteUserRecord,
+    findPickerUsers,
     findUsers,
     getUserById,
     getUserByUsername,
@@ -134,7 +135,7 @@ const updateProfileRequest: ListenerFn<UpdateProfileMessage> = async (
 const handleFindPickUsers: ListenerFn<FindPickUsersMessage> = async (
     { message: { filters, page }, respond },
 ) => {
-    const records = await findUsers(filters, page);
+    const records = await findPickerUsers(filters, page);
 
     respond<FindPickUsersResponse>({
         type: "findPickUsersResponse",

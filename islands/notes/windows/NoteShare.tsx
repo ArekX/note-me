@@ -4,6 +4,9 @@ import Dialog from "$islands/Dialog.tsx";
 import { useListState } from "$frontend/hooks/use-list-state.ts";
 import ButtonGroup from "$components/ButtonGroup.tsx";
 import Picker from "$components/Picker.tsx";
+import UserPicker from "$islands/UserPicker.tsx";
+import { useSignal } from "@preact/signals";
+import { PickUserRecord } from "$backend/repository/user-repository.ts";
 
 export default function NoteShare({
     onClose,
@@ -16,6 +19,8 @@ export default function NoteShare({
         toUsers: "To users",
         toEveryone: "To everyone",
     }, "toUsers");
+
+    const selectedUsers = useSignal<PickUserRecord[]>([]);
 
     return (
         <Dialog
@@ -41,7 +46,25 @@ export default function NoteShare({
                     <Picker<keyof typeof items>
                         selector={selected.value}
                         map={{
-                            toUsers: () => <div>Users</div>,
+                            toUsers: () => (
+                                <UserPicker
+                                    onSelectUser={(user) => {
+                                        selectedUsers.value = [
+                                            ...selectedUsers.value,
+                                            user,
+                                        ];
+                                    }}
+                                    onUnselectUser={(user) => {
+                                        selectedUsers.value = selectedUsers
+                                            .value.filter(
+                                                (u) => u.id !== user.id,
+                                            );
+                                    }}
+                                    selected={selectedUsers.value}
+                                    selectedUsersText="Note is shared to:"
+                                    noSelectedUsersText="No users."
+                                />
+                            ),
                             toEveryone: () => (
                                 <div>
                                     Notes shared with everyone can be viewed by
@@ -60,7 +83,9 @@ export default function NoteShare({
             </div>
 
             <div>
-                <Button color="danger" onClick={onClose}>Close</Button>
+                <Button color="danger" onClick={onClose} addClass="ml-2">
+                    Close
+                </Button>
             </div>
         </Dialog>
     );

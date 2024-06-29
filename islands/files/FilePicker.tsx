@@ -107,7 +107,7 @@ export default function FilePicker({
         initialFilters: () => ({
             name: "",
         }),
-        onFilterUpdated: () => {
+        onFilterLoad: () => {
             resetPage();
             return loadFiles();
         },

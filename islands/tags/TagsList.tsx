@@ -50,7 +50,7 @@ export default function TagsList() {
         initialFilters: () => ({
             name: "",
         }),
-        onFilterUpdated: () => {
+        onFilterLoad: () => {
             resetPage();
             return loadTags();
         },

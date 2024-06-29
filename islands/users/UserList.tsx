@@ -68,7 +68,7 @@ export default function UserList() {
             username: "",
             role: "",
         }),
-        onFilterUpdated: () => {
+        onFilterLoad: () => {
             resetPage();
             return loadUsers();
         },

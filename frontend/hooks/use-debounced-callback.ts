@@ -1,9 +1,13 @@
-import { useCallback } from "preact/hooks";
-import { debounce, DebouncedFunction } from "$frontend/deps.ts";
+import { useSignal } from "@preact/signals";
 
-export const useDebouncedCallback = <T extends unknown[]>(
-    callback: (this: DebouncedFunction<T>, ...args: T) => void,
+export const useDebouncedCallback = <R, T extends Array<unknown>>(
+    callback: (...args: T) => R,
     debounceTime: number = 500,
 ) => {
-    return useCallback(debounce(callback, debounceTime), [debounceTime]);
+    const callId = useSignal(0);
+
+    return (...args: T): void => {
+        clearTimeout(callId.value);
+        callId.value = setTimeout(() => callback(...args), debounceTime);
+    };
 };
