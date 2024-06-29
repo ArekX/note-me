@@ -12,48 +12,34 @@ import { usePagedData } from "$frontend/hooks/use-paged-data.ts";
 import { useLoader } from "../frontend/hooks/use-loader.ts";
 import Button from "$components/Button.tsx";
 import Icon from "$components/Icon.tsx";
+import { JSX } from "preact/jsx-runtime";
 
 interface UserPickerProps {
-    onSelected: (users: PickUserRecord[]) => void;
+    onSelectUser: (user: PickUserRecord) => void;
+    onUnselectUser: (user: PickUserRecord) => void;
     selected: PickUserRecord[];
+}
+
+interface UserItemProps {
+    user: PickUserRecord;
+    button: JSX.Element;
 }
 
 const UserItem = ({
     user,
-    selected,
-}: {
-    user: PickUserRecord;
-    selected: boolean;
-}) => (
+    button,
+}: UserItemProps) => (
     <div class="flex justify-between border-b-gray-400 border-b-2 pb-2 mb-2 items-center last:border-b-0">
         <div>{user.name} ({user.username})</div>
         <div>
-            {selected
-                ? (
-                    <Button
-                        color="danger"
-                        size="sm"
-                        addClass="ml-2"
-                        title="Unselect this user"
-                    >
-                        <Icon name="minus" />
-                    </Button>
-                )
-                : (
-                    <Button
-                        color="success"
-                        size="sm"
-                        title="Select this user"
-                    >
-                        <Icon name="plus" />
-                    </Button>
-                )}
+            {button}
         </div>
     </div>
 );
 
 export default function UserPicker({
-    // onSelected,
+    onSelectUser,
+    onUnselectUser,
     selected,
 }: UserPickerProps) {
     const { results, page, total, perPage, setPagedData, resetPage } =
@@ -100,9 +86,6 @@ export default function UserPicker({
         },
     });
 
-    const isUserSelected = (user: PickUserRecord) =>
-        selected.some((selectedUser) => selectedUser.id === user.id);
-
     const handlePageChange = (newPage: number) => {
         setPagedData({ page: newPage });
         performSearch();
@@ -140,7 +123,17 @@ export default function UserPicker({
                                         <UserItem
                                             key={user.id}
                                             user={user}
-                                            selected={isUserSelected(user)}
+                                            button={
+                                                <Button
+                                                    color="success"
+                                                    size="sm"
+                                                    title="Select this user"
+                                                    onClick={() =>
+                                                        onSelectUser(user)}
+                                                >
+                                                    <Icon name="plus" />
+                                                </Button>
+                                            }
                                         />
                                     ))}
                                 {results.value.length === 0 && (
@@ -166,7 +159,17 @@ export default function UserPicker({
                         <UserItem
                             key={user.id}
                             user={user}
-                            selected={true}
+                            button={
+                                <Button
+                                    color="danger"
+                                    size="sm"
+                                    addClass="ml-2"
+                                    title="Unselect this user"
+                                    onClick={() => onUnselectUser(user)}
+                                >
+                                    <Icon name="minus" />
+                                </Button>
+                            }
                         />
                     ))}
                     {selected.length === 0 && (
