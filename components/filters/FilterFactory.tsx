@@ -2,7 +2,7 @@ import TextFilter from "./TextFilter.tsx";
 import DropDownFilter from "./DropDownFilter.tsx";
 import { DropDownItem } from "../DropdownList.tsx";
 import { ComponentChildren } from "preact";
-import { debounce } from "$frontend/deps.ts";
+import { useDebouncedCallback } from "$frontend/hooks/use-debounced-callback.ts";
 
 type OnFilterUpdated<T> = (newFilters: T) => void;
 
@@ -40,8 +40,9 @@ const filterByDropDown = <T extends object>(
 export const useFilterFactory = <T extends object>(
     filters: T,
     onUpdated: OnFilterUpdated<T>,
+    debounceTime: number = 500,
 ) => {
-    const handleDebouncedUpdate = debounce(onUpdated, 500);
+    const handleDebouncedUpdate = useDebouncedCallback(onUpdated, debounceTime);
 
     return Object.keys(filters).reduce(
         (acc, key) => {

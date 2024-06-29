@@ -1,6 +1,5 @@
 import Table from "$components/Table.tsx";
 import ConfirmDialog from "$islands/ConfirmDialog.tsx";
-import { useSignal } from "@preact/signals";
 import Button from "$components/Button.tsx";
 import Icon from "$components/Icon.tsx";
 import Pagination from "$islands/Pagination.tsx";
@@ -21,26 +20,28 @@ import {
 } from "$workers/websocket/api/users/messages.ts";
 import { getBrowserTimezone } from "$frontend/time.ts";
 import { useUser } from "$frontend/hooks/use-user.ts";
+import { usePagedData } from "$frontend/hooks/use-paged-data.ts";
+import { useFilters } from "$frontend/hooks/use-filters.ts";
+import { useSelected } from "$frontend/hooks/use-selected.ts";
+import { useLoader } from "$frontend/hooks/use-loader.ts";
 export default function UserList() {
-    const userToDelete = useSignal<EditableUser | null>(null);
-    const userToEdit = useSignal<EditableUser | null>(null);
-    const isLoading = useSignal<boolean>(true);
-    const currentPage = useSignal(1);
-    const totalUsers = useSignal(0);
-    const perPage = useSignal(20);
-    const filters = useSignal<Partial<FindUsersMessage["filters"]>>({
-        name: "",
-        username: "",
-        role: "",
-    });
+    const userToDelete = useSelected<EditableUser>();
+    const userToEdit = useSelected<EditableUser>();
 
-    const userList = useSignal<EditableUser[]>([]);
+    const userLoader = useLoader();
+
+    const {
+        page,
+        perPage,
+        results,
+        total,
+        setPagedData,
+        resetPage,
+    } = usePagedData<EditableUser>();
 
     const { sendMessage } = useWebsocketService();
 
-    const loadUsers = async () => {
-        isLoading.value = true;
-
+    const loadUsers = userLoader.wrap(async () => {
         const { records } = await sendMessage<
             FindUsersMessage,
             FindUsersResponse
@@ -50,34 +51,41 @@ export default function UserList() {
             {
                 data: {
                     filters: filters.value,
-                    page: currentPage.value,
+                    page: page.value,
                 },
                 expect: "findUsersResponse",
             },
         );
 
-        userList.value = records.results;
-        totalUsers.value = records.total;
-        perPage.value = records.per_page;
-        isLoading.value = false;
-    };
+        setPagedData(records);
+    });
 
-    const filterFactory = useFilterFactory(
-        filters.value,
-        (newFilters: Partial<FindUsersMessage["filters"]>) => {
-            filters.value = newFilters;
-            currentPage.value = 1;
-            loadUsers();
+    const { filters, setFilters } = useFilters<
+        FindUsersMessage["filters"]
+    >({
+        initialFilters: () => ({
+            name: "",
+            username: "",
+            role: "",
+        }),
+        onFilterUpdated: () => {
+            resetPage();
+            return loadUsers();
         },
+    });
+
+    const filterFactory = useFilterFactory<FindUsersMessage["filters"]>(
+        filters.value,
+        setFilters,
     );
 
     const handlePageChanged = (page: number) => {
-        currentPage.value = page;
+        setPagedData({ page });
         loadUsers();
     };
 
     const handleUserFinishedEditing = (reason: "ok" | "cancel") => {
-        userToEdit.value = null;
+        userToEdit.unselect();
         if (reason === "ok") {
             loadUsers();
         }
@@ -89,12 +97,12 @@ export default function UserList() {
             "deleteUser",
             {
                 data: {
-                    id: userToDelete.value!.id!,
+                    id: userToDelete.selected.value!.id!,
                 },
                 expect: "deleteUserResponse",
             },
         );
-        userToDelete.value = null;
+        userToDelete.unselect();
         await loadUsers();
     };
 
@@ -111,14 +119,14 @@ export default function UserList() {
                     <Button
                         color="success"
                         onClick={() => {
-                            userToEdit.value = {
+                            userToEdit.select({
                                 id: null,
                                 name: "",
                                 username: "",
                                 timezone: getBrowserTimezone(),
                                 new_password: "",
                                 role: "user",
-                            };
+                            });
                         }}
                     >
                         <Icon name="plus" /> Add
@@ -126,7 +134,7 @@ export default function UserList() {
                 </div>
             )}
             <Table<EditableUser>
-                isLoading={isLoading.value}
+                isLoading={userLoader.running}
                 noRowsRow={
                     <tr>
                         <td colSpan={4} class="text-center">
@@ -157,7 +165,7 @@ export default function UserList() {
                                 {user.can(CanManageUsers.Delete) && (
                                     <Button
                                         color="success"
-                                        onClick={() => userToEdit.value = value}
+                                        onClick={() => userToEdit.select(value)}
                                     >
                                         <Icon name="pencil" /> Edit
                                     </Button>
@@ -166,7 +174,7 @@ export default function UserList() {
                                     <Button
                                         color="danger"
                                         onClick={() =>
-                                            userToDelete.value = value}
+                                            userToDelete.select(value)}
                                     >
                                         <Icon name="minus" /> Delete
                                     </Button>
@@ -178,26 +186,26 @@ export default function UserList() {
                 bodyRowProps={{
                     class: "text-center",
                 }}
-                rows={userList.value}
+                rows={results.value}
             />
-            {!isLoading.value && (
+            {!userLoader.running && (
                 <Pagination
-                    total={totalUsers.value}
+                    total={total.value}
                     perPage={perPage.value}
-                    currentPage={currentPage.value}
+                    currentPage={page.value}
                     onChange={handlePageChanged}
                 />
             )}
             <ConfirmDialog
-                visible={userToDelete.value !== null}
+                visible={userToDelete.selected.value !== null}
                 prompt="Are you sure you want to delete this user? This action cannot be undone."
                 confirmColor="danger"
                 confirmText="Delete user"
                 onConfirm={handleConfirmDelete}
-                onCancel={() => userToDelete.value = null}
+                onCancel={() => userToDelete.unselect()}
             />
             <EditUserForm
-                editUser={userToEdit.value}
+                editUser={userToEdit.selected.value}
                 onDone={handleUserFinishedEditing}
             />
         </div>

@@ -12,7 +12,7 @@ import {
     RevertNoteToHistoryMessage,
     RevertNoteToHistoryResponse,
 } from "$workers/websocket/api/notes/messages.ts";
-import { useLoader } from "$frontend/hooks/use-loading.ts";
+import { useLoader } from "$frontend/hooks/use-loader.ts";
 import Pagination from "$islands/Pagination.tsx";
 import {
     NoteHistoryMetaRecord,
@@ -24,6 +24,7 @@ import { NoteWindowComponentProps } from "$islands/notes/NoteWindow.tsx";
 import { addMessage } from "$frontend/toast-message.ts";
 import { useTimeFormat } from "$frontend/hooks/use-time-format.ts";
 import ConfirmDialog from "$islands/ConfirmDialog.tsx";
+import { usePagedData } from "$frontend/hooks/use-paged-data.ts";
 
 export default function NoteDetails(
     { noteId, onClose, noteText }: NoteWindowComponentProps,
@@ -33,19 +34,17 @@ export default function NoteDetails(
     } = useWebsocketService();
 
     const listLoader = useLoader();
-    const page = useSignal(1);
-    const totalRecords = useSignal(1);
-    const perPage = useSignal(10);
-    const records = useSignal<NoteHistoryMetaRecord[]>(
-        [],
-    );
+
+    const { page, total, perPage, results, setPagedData } = usePagedData<
+        NoteHistoryMetaRecord
+    >();
+
     const selected = useSignal<NoteHistoryMetaRecord | null>(null);
     const confirmRevert = useSignal<boolean>(false);
     const confirmDelete = useSignal<boolean>(false);
     const showType = useSignal<ShowNoteType>("note");
 
-    const loadNoteHistory = async () => {
-        listLoader.start();
+    const loadNoteHistory = listLoader.wrap(async () => {
         const response = await sendMessage<
             FindNoteHistoryMessage,
             FindNoteHistoryResponse
@@ -61,14 +60,11 @@ export default function NoteDetails(
             },
         );
 
-        perPage.value = response.records.per_page;
-        records.value = response.records.results;
-        totalRecords.value = response.records.total;
-        listLoader.stop();
-    };
+        setPagedData(response.records);
+    });
 
-    const handlePageChanged = async (newPage: number) => {
-        page.value = newPage;
+    const handlePageChanged = async (page: number) => {
+        setPagedData({ page });
         await loadNoteHistory();
     };
 
@@ -132,18 +128,18 @@ export default function NoteDetails(
                 {listLoader.running ? <Loader color="white" /> : (
                     <div>
                         <h1 class="text-2xl pb-4">Note History</h1>
-                        {totalRecords.value === 0 && (
+                        {total.value === 0 && (
                             <div class="text-center">
                                 No history records available for this note.
                             </div>
                         )}
-                        {totalRecords.value > 0 && (
+                        {total.value > 0 && (
                             <div class="flex w-full">
                                 <div class="w-1/5 pr-2">
                                     <div>
                                         <strong>Versions</strong>
                                     </div>
-                                    {records.value.map((record) => (
+                                    {results.value.map((record) => (
                                         <div class="mt-4">
                                             <Button
                                                 color={selected.value?.id ===
@@ -168,7 +164,7 @@ export default function NoteDetails(
                                         <Pagination
                                             currentPage={page.value}
                                             perPage={perPage.value}
-                                            total={totalRecords.value}
+                                            total={total.value}
                                             onChange={handlePageChanged}
                                         />
                                     </div>

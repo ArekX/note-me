@@ -1,6 +1,6 @@
 import Dialog from "$islands/Dialog.tsx";
 import { useSignal } from "@preact/signals";
-import { useLoader } from "$frontend/hooks/use-loading.ts";
+import { useLoader } from "$frontend/hooks/use-loader.ts";
 import Loader from "$islands/Loader.tsx";
 import { NoteDetailsRecord } from "$backend/repository/note-repository.ts";
 import Button from "$components/Button.tsx";
@@ -37,9 +37,7 @@ export default function NoteDetails(
         toc: "Table of Contents",
     }, "general");
 
-    const loadNoteData = async () => {
-        isNoteLoading.start();
-
+    const loadNoteData = isNoteLoading.wrap(async () => {
         const response = await sendMessage<
             GetNoteDetailsMessage,
             GetNoteDetailsResponse
@@ -51,8 +49,7 @@ export default function NoteDetails(
         });
 
         noteData.value = response.record;
-        isNoteLoading.stop();
-    };
+    });
 
     useEffect(() => {
         loadNoteData();

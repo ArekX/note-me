@@ -1,6 +1,6 @@
 import { useSignal } from "@preact/signals";
 import { NoteHistoryDataRecord } from "$backend/repository/note-history-repository.ts";
-import { useLoader } from "$frontend/hooks/use-loading.ts";
+import { useLoader } from "$frontend/hooks/use-loader.ts";
 import {
     GetNoteHistoryDataMessage,
     GetNoteHistoryDataResponse,
@@ -30,8 +30,7 @@ export default function HistoryDiff({
 
     const diffLines = data.value ? diffText(noteText, data.value.note) : [];
 
-    const loadHistoryData = async (id: number) => {
-        loader.start();
+    const loadHistoryData = loader.wrap(async (id: number) => {
         const response = await sendMessage<
             GetNoteHistoryDataMessage,
             GetNoteHistoryDataResponse
@@ -47,8 +46,7 @@ export default function HistoryDiff({
         );
 
         data.value = response.data;
-        loader.stop();
-    };
+    });
 
     useEffect(() => {
         loadHistoryData(id);

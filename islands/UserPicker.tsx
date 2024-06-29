@@ -1,100 +1,128 @@
 import { PickUserRecord } from "$backend/repository/user-repository.ts";
-import { useSignal } from "@preact/signals";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
-import { useEffect } from "https://esm.sh/v128/preact@10.19.6/hooks/src/index.js";
+import Input from "$components/Input.tsx";
+import Loader from "$islands/Loader.tsx";
+import { useFilters } from "$frontend/hooks/use-filters.ts";
 import {
     FindPickUsersMessage,
     FindPickUsersResponse,
 } from "$workers/websocket/api/users/messages.ts";
-
-export interface UserPickContainer {
-    record: PickUserRecord | null;
-    record_id: number;
-    is_loading: boolean;
-}
+import Pagination from "$islands/Pagination.tsx";
+import { usePagedData } from "$frontend/hooks/use-paged-data.ts";
+import { useLoader } from "../frontend/hooks/use-loader.ts";
 
 interface UserPickerProps {
-    onSelected: (users: UserPickContainer[]) => void;
-    selected: UserPickContainer[];
+    onSelected: (users: PickUserRecord[]) => void;
+    selected: PickUserRecord[];
 }
 
 export default function UserPicker({
     // onSelected,
     selected,
 }: UserPickerProps) {
-    // const userList = useSignal<UserPickContainer[]>([]);
-    const selectedUsers = useSignal<UserPickContainer[]>(selected);
+    const { results, page, total, perPage, setPagedData, resetPage } =
+        usePagedData<
+            PickUserRecord
+        >();
 
     const { sendMessage } = useWebsocketService();
 
-    const loadRecordForContainer = async (containers: UserPickContainer[]) => {
-        const userIds = containers.filter((c) => c.record === null).map((c) =>
-            c.record_id
-        );
+    const userLoader = useLoader();
 
-        if (userIds.length === 0) {
+    const performSearch = userLoader.wrap(async () => {
+        if (filters.value.searchText === "") {
+            setPagedData({
+                results: [],
+            });
             return;
         }
 
-        const idChunks = userIds.reduce<number[][]>((acc, id) => {
-            const lastChunk = acc[acc.length - 1];
-            if (lastChunk.length >= 20) {
-                acc.push([id]);
-            } else {
-                lastChunk.push(id);
-            }
-            return acc;
-        }, []);
-
-        for (const chunk of idChunks) {
-            containers.filter((c) => chunk.includes(c.record_id)).forEach((c) =>
-                c.is_loading = true
-            );
-
-            const users = await sendMessage<
-                FindPickUsersMessage,
-                FindPickUsersResponse
-            >(
-                "users",
-                "findPickUsers",
-                {
-                    data: {
-                        filters: {
-                            user_ids: chunk,
-                        },
-                        page: 1,
-                    },
-                    expect: "findPickUsersResponse",
+        const response = await sendMessage<
+            FindPickUsersMessage,
+            FindPickUsersResponse
+        >("users", "findPickUsers", {
+            data: {
+                filters: {
+                    name: filters.value.searchText,
                 },
-            );
+                page: page.value,
+            },
+            expect: "findPickUsersResponse",
+        });
 
-            for (const user of users.records.results) {
-                const container = containers.find((c) =>
-                    c.record_id === user.id
-                );
-                if (!container) {
-                    continue;
-                }
+        setPagedData(response.records);
+    });
 
-                container.record = user;
-                container.is_loading = false;
-            }
-        }
+    const { filters, setFilter } = useFilters({
+        initialFilters: () => ({
+            searchText: "",
+        }),
+        onFilterUpdated: () => {
+            resetPage();
+            return performSearch();
+        },
+    });
 
-        selectedUsers.value = [...containers];
+    const handlePageChange = (newPage: number) => {
+        setPagedData({ page: newPage });
+        performSearch();
     };
-
-    useEffect(() => {
-        loadRecordForContainer(selectedUsers.value);
-    }, [selectedUsers.value]);
-
-    useEffect(() => {
-        selectedUsers.value = selected;
-    }, [selected]);
 
     return (
         <div>
-            UserPicker
+            <div class="w-full">
+                <Input
+                    label="Search for user"
+                    placeholder="Name or Username"
+                    value={filters.value.searchText}
+                    onInput={(value) => setFilter("searchText", value)}
+                />
+            </div>
+
+            {results.value !== null && (
+                userLoader.running
+                    ? (
+                        <div class="mt-2">
+                            <Loader color="white">
+                                Searching for users...
+                            </Loader>
+                        </div>
+                    )
+                    : (
+                        <div class="mt-2">
+                            <div class="text-sm mb-2">Found Users</div>
+                            <div>
+                                {results.value.map((user) => (
+                                    <div key={user.id}>
+                                        {user.name} ({user.username})
+                                    </div>
+                                ))}
+                                {results.value.length === 0 && (
+                                    <div class="text-gray-500">
+                                        No users found
+                                    </div>
+                                )}
+                                <Pagination
+                                    currentPage={page.value}
+                                    perPage={perPage.value}
+                                    total={total.value}
+                                    onChange={handlePageChange}
+                                />
+                            </div>
+                        </div>
+                    )
+            )}
+
+            <div class="mt-2">
+                <div class="text-sm">Selected users</div>
+                <div>
+                    {selected.map((user) => <div key={user.id}>{user.name}
+                    </div>)}
+                    {selected.length === 0 && (
+                        <div class="text-gray-500">No users selected</div>
+                    )}
+                </div>
+            </div>
         </div>
     );
 }

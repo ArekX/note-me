@@ -8,9 +8,9 @@ import {
     DeleteGroupMessage,
     UpdateGroupMessage,
     UpdateGroupResponse,
-} from "../../../workers/websocket/api/groups/messages.ts";
+} from "$workers/websocket/api/groups/messages.ts";
 import { useEffect } from "preact/hooks";
-import { LoaderHook, useLoader } from "$frontend/hooks/use-loading.ts";
+import { LoaderHook, useLoader } from "$frontend/hooks/use-loader.ts";
 import { useTreeState } from "./use-tree-state.ts";
 import {
     createContainer,

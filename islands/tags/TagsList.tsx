@@ -1,5 +1,4 @@
 import ConfirmDialog from "$islands/ConfirmDialog.tsx";
-import { useSignal } from "@preact/signals";
 import Button from "$components/Button.tsx";
 import Icon from "$components/Icon.tsx";
 import Pagination from "$islands/Pagination.tsx";
@@ -7,7 +6,6 @@ import { useEffect } from "preact/hooks";
 import { CanManageTags } from "$backend/rbac/permissions.ts";
 import EditTagForm, { EditableTag } from "$islands/tags/EditTagForm.tsx";
 import Input from "$components/Input.tsx";
-import { debounce } from "$frontend/deps.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import {
     DeleteTagMessage,
@@ -16,59 +14,59 @@ import {
     FindTagsResponse,
 } from "$workers/websocket/api/tags/messages.ts";
 import { useUser } from "$frontend/hooks/use-user.ts";
+import { useFilters } from "$frontend/hooks/use-filters.ts";
+import { usePagedData } from "$frontend/hooks/use-paged-data.ts";
+import { useSelected } from "$frontend/hooks/use-selected.ts";
+import { useLoader } from "$frontend/hooks/use-loader.ts";
 
 export default function TagsList() {
-    const tagToDelete = useSignal<EditableTag | null>(null);
-    const tagToEdit = useSignal<EditableTag | null>(null);
-    const isLoading = useSignal<boolean>(true);
-    const currentPage = useSignal(1);
-    const totalTags = useSignal(0);
-    const perPage = useSignal(20);
-    const tagNameFilter = useSignal("");
+    const tagToDelete = useSelected<EditableTag>();
+    const tagToEdit = useSelected<EditableTag>();
+    const tagsLoader = useLoader();
 
-    const tagList = useSignal<EditableTag[]>([]);
+    const { results, page, perPage, total, setPagedData, resetPage } =
+        usePagedData<
+            EditableTag
+        >();
 
     const { sendMessage } = useWebsocketService();
 
-    const loadTags = async () => {
-        isLoading.value = true;
-
+    const loadTags = tagsLoader.wrap(async () => {
         const { records } = await sendMessage<
             FindTagsMessage,
             FindTagsResponse
         >("tags", "findTags", {
             data: {
-                filters: {
-                    name: tagNameFilter.value,
-                },
-                page: currentPage.value,
+                filters: filters.value,
+                page: page.value,
             },
             expect: "findTagsResponse",
         });
 
-        tagList.value = records.results;
-        totalTags.value = records.total;
-        perPage.value = records.per_page;
-        isLoading.value = false;
-    };
+        setPagedData(records);
+    });
 
-    const handlePageChanged = (page: number) => {
-        currentPage.value = page;
+    const { filters, setFilter } = useFilters({
+        initialFilters: () => ({
+            name: "",
+        }),
+        onFilterUpdated: () => {
+            resetPage();
+            return loadTags();
+        },
+    });
+
+    const handlePageChanged = (newPage: number) => {
+        page.value = newPage;
         loadTags();
     };
 
     const handleFormDone = (reason: "ok" | "cancel") => {
-        tagToEdit.value = null;
+        tagToEdit.unselect();
         if (reason === "ok") {
             loadTags();
         }
     };
-
-    const handleFilterChanged = debounce((value: string) => {
-        tagNameFilter.value = value;
-        currentPage.value = 1;
-        loadTags();
-    }, 500);
 
     const handleConfirmDelete = async () => {
         await sendMessage<DeleteTagMessage, DeleteTagResponse>(
@@ -76,13 +74,13 @@ export default function TagsList() {
             "deleteTag",
             {
                 data: {
-                    id: tagToDelete.value!.id!,
+                    id: tagToDelete.selected.value!.id!,
                 },
                 expect: "deleteTagResponse",
             },
         );
 
-        tagToDelete.value = null;
+        tagToDelete.unselect();
         await loadTags();
     };
 
@@ -99,10 +97,10 @@ export default function TagsList() {
                     <Button
                         color="success"
                         onClick={() => {
-                            tagToEdit.value = {
+                            tagToEdit.select({
                                 id: null,
                                 name: "",
-                            };
+                            });
                         }}
                     >
                         <Icon name="plus" /> Add
@@ -112,51 +110,51 @@ export default function TagsList() {
             <Input
                 label="Tag name"
                 labelColor="black"
-                value={tagNameFilter.value}
-                onInput={(value) => handleFilterChanged(value)}
+                value={filters.value.name}
+                onInput={(value) => setFilter("name", value)}
             />
-            {tagList.value.map((tag) => (
+            {results.value.map((tag) => (
                 <div
                     key={tag.id}
                     class="inline-block  mr-4 mt-4"
                 >
                     <span
                         class="rounded-l-lg bg-gray-900 text-white p-4 cursor-pointer hover:bg-gray-700"
-                        onClick={() => tagToEdit.value = tag}
+                        onClick={() => tagToEdit.select(tag)}
                     >
                         {tag.name}
                     </span>
                     <span
                         class="rounded-r-lg bg-red-900 text-white p-4 cursor-pointer hover:bg-red-700"
-                        onClick={() => tagToDelete.value = tag}
+                        onClick={() => tagToDelete.select(tag)}
                     >
                         <Icon name="minus-circle" size="2xl" />
                     </span>
                 </div>
             ))}
-            {!isLoading.value && tagList.value.length === 0 && (
+            {!tagsLoader.running && results.value.length === 0 && (
                 <div class="text-center text-black p-4">
                     No tags available
                 </div>
             )}
-            {!isLoading.value && (
+            {!tagsLoader.running && (
                 <Pagination
-                    total={totalTags.value}
+                    total={total.value}
                     perPage={perPage.value}
-                    currentPage={currentPage.value}
+                    currentPage={page.value}
                     onChange={handlePageChanged}
                 />
             )}
             <ConfirmDialog
-                visible={tagToDelete.value !== null}
+                visible={tagToDelete.selected.value !== null}
                 prompt="Are you sure you want to delete this tag? This action cannot be undone."
                 confirmColor="danger"
                 confirmText="Delete this tag"
                 onConfirm={handleConfirmDelete}
-                onCancel={() => tagToDelete.value = null}
+                onCancel={() => tagToDelete.selected.value = null}
             />
             <EditTagForm
-                editTag={tagToEdit.value}
+                editTag={tagToEdit.selected.value}
                 onDone={handleFormDone}
             />
         </div>

@@ -12,7 +12,7 @@ import ErrorDisplay from "$components/ErrorDisplay.tsx";
 import NoteWindow, { NoteWindowTypes } from "$islands/notes/NoteWindow.tsx";
 import NoteTextArea from "./NoteTextArea.tsx";
 import TagInput from "$islands/notes/TagInput.tsx";
-import { useLoader } from "$frontend/hooks/use-loading.ts";
+import { useLoader } from "$frontend/hooks/use-loader.ts";
 import {
     addBeforeRedirectListener,
     redirectTo,
@@ -74,9 +74,7 @@ export default function NoteEditor({
         },
     });
 
-    const handleSave = async () => {
-        isSaving.start();
-
+    const handleSave = isSaving.wrap(async () => {
         const noteToSave: NoteRequestData = {
             group_id: groupId.value,
             tags: tags.value,
@@ -85,7 +83,6 @@ export default function NoteEditor({
         };
 
         if (!await validateNote(noteToSave)) {
-            isSaving.stop();
             return;
         }
 
@@ -119,9 +116,7 @@ export default function NoteEditor({
             wasDataChanged.value = false;
             redirectTo.viewNote({ noteId: record.id });
         }
-
-        isSaving.stop();
-    };
+    });
 
     const handleMenuItemClicked = (action: MenuItemActions) => {
         switch (action) {

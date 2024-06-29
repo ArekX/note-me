@@ -6,8 +6,7 @@ import {
     FileFrontendResponse,
     FindFilesMessage,
     FindFilesResponse,
-} from "../../workers/websocket/api/files/messages.ts";
-import { useLoader } from "$frontend/hooks/use-loading.ts";
+} from "$workers/websocket/api/files/messages.ts";
 import Loader from "$islands/Loader.tsx";
 import Pagination from "$islands/Pagination.tsx";
 import FileItem from "$islands/files/FileItem.tsx";
@@ -16,7 +15,10 @@ import { useFileUploader } from "./hooks/use-file-uploader.ts";
 import Dialog from "$islands/Dialog.tsx";
 import { useEffect } from "preact/hooks";
 import Input from "$components/Input.tsx";
-import { debounce } from "$frontend/deps.ts";
+import { useSelected } from "$frontend/hooks/use-selected.ts";
+import { usePagedData } from "$frontend/hooks/use-paged-data.ts";
+import { useFilters } from "$frontend/hooks/use-filters.ts";
+import { useLoader } from "$frontend/hooks/use-loader.ts";
 
 interface FilePickerProps {
     adminMode?: boolean;
@@ -41,8 +43,12 @@ export default function FilePicker({
         eventMap: {
             files: {
                 updateFileResponse: (response) => {
-                    if ("is_public" in response.data) {
-                        files.value = files.value.map((file) => {
+                    if (!("is_public" in response.data)) {
+                        return;
+                    }
+
+                    setPagedData({
+                        results: results.value.map((file) => {
                             if (file.identifier === response.data.identifier) {
                                 return {
                                     ...file,
@@ -51,13 +57,15 @@ export default function FilePicker({
                                 };
                             }
                             return file;
-                        });
-                    }
+                        }),
+                    });
                 },
                 deleteFileResponse: async (response) => {
-                    files.value = files.value.filter((file) =>
-                        file.identifier !== response.identifier
-                    );
+                    setPagedData({
+                        results: results.value.filter((file) =>
+                            file.identifier !== response.identifier
+                        ),
+                    });
 
                     if (
                         selectedFileId === response.identifier
@@ -65,49 +73,60 @@ export default function FilePicker({
                         onFilePicked?.(null);
                     }
 
-                    if (files.value.length === 0 && currentPage.value > 1) {
-                        currentPage.value -= 1;
+                    if (results.value.length === 0 && page.value > 1) {
+                        page.value -= 1;
                     }
 
                     await loadFiles();
                 },
                 findFilesResponse: (response) => {
-                    files.value = response.records.results.map((f) => ({
-                        ...f,
-                        is_processing: false,
-                    }));
+                    setPagedData({
+                        results: response.records.results.map((f) => ({
+                            ...f,
+                            is_processing: false,
+                        })),
+                        total: response.records.total,
+                        per_page: response.records.per_page,
+                        page: response.records.page,
+                    });
 
-                    totalFiles.value = response.records.total;
-                    perPage.value = response.records.per_page;
-                    currentPage.value = response.records.page;
-
-                    loader.stop();
+                    fileLoader.stop();
                 },
             },
         },
     });
-    const loader = useLoader();
 
-    const files = useSignal<ExtendedFileMetaRecord[]>([]);
-    const totalFiles = useSignal(0);
-    const perPage = useSignal(0);
-    const currentPage = useSignal(1);
-    const fileToDelete = useSignal<ExtendedFileMetaRecord | null>(null);
-    const search = useSignal("");
+    const { results, perPage, page, total, setPagedData, resetPage } =
+        usePagedData<
+            ExtendedFileMetaRecord
+        >();
+
+    const fileToDelete = useSelected<ExtendedFileMetaRecord>();
+    const fileLoader = useLoader(true);
+    const { filters, setFilter } = useFilters({
+        initialFilters: () => ({
+            name: "",
+        }),
+        onFilterUpdated: () => {
+            resetPage();
+            return loadFiles();
+        },
+    });
 
     const fileUploader = useFileUploader();
 
     const loadFiles = async () => {
+        fileLoader.start();
         await sendMessage<FindFilesMessage, FindFilesResponse>(
             "files",
             "findFiles",
             {
                 data: {
                     filters: {
-                        name: search.value,
+                        name: filters.value.name,
                         allFiles: adminMode,
                     },
-                    page: currentPage.value,
+                    page: page.value,
                 },
                 expect: "findFilesResponse",
             },
@@ -115,23 +134,22 @@ export default function FilePicker({
     };
 
     const handlePageChange = (page: number) => {
-        currentPage.value = page;
-        loader.start();
+        setPagedData({ page });
         loadFiles();
     };
 
     const handleDeleteFile = async () => {
-        if (!fileToDelete.value) {
+        if (!fileToDelete.selected.value) {
             return;
         }
-        fileToDelete.value.is_processing = true;
+        fileToDelete.selected.value.is_processing = true;
         await sendMessage("files", "deleteFile", {
             data: {
-                identifier: fileToDelete.value.identifier,
+                identifier: fileToDelete.selected.value.identifier,
             },
             expect: "deleteFileResponse",
         });
-        fileToDelete.value = null;
+        fileToDelete.unselect();
     };
 
     const handleToggleFileVisibility = async (file: ExtendedFileMetaRecord) => {
@@ -174,14 +192,7 @@ export default function FilePicker({
         isDroppingFile.value = false;
     };
 
-    const handleSearch = debounce((value: string) => {
-        search.value = value;
-        loader.start();
-        loadFiles();
-    }, 500);
-
     useEffect(() => {
-        loader.start();
         loadFiles();
     }, []);
 
@@ -206,8 +217,8 @@ export default function FilePicker({
                         label="Search"
                         labelColor={color}
                         placeholder="Search..."
-                        onInput={handleSearch}
-                        value={search.value}
+                        onInput={(value) => setFilter("name", value)}
+                        value={filters.value.name}
                     />
                 </div>
                 <div>
@@ -232,7 +243,7 @@ export default function FilePicker({
                 )}
             </div>
 
-            {loader.running
+            {fileLoader.running
                 ? (
                     <div class="text-center p-2">
                         <Loader color={color}>Loading files...</Loader>
@@ -241,7 +252,7 @@ export default function FilePicker({
                 : (
                     <>
                         <div class="grid grid-cols-5 gap-4">
-                            {files.value.map((file) => (
+                            {results.value.map((file) => (
                                 <FileItem
                                     key={file.identifier}
                                     file={file}
@@ -249,29 +260,28 @@ export default function FilePicker({
                                     isSelected={selectedFileId ===
                                         file.identifier}
                                     onSelect={(f) => onFilePicked?.(f)}
-                                    onDelete={(f) => fileToDelete.value = f}
+                                    onDelete={(f) => fileToDelete.select(f)}
                                     onToggleVisibility={handleToggleFileVisibility}
                                 />
                             ))}
-                            {files.value.length === 0 && (
-                                <div>No files found.</div>
-                            )}
+                            {total.value === 0 && <div>No files found.</div>}
                         </div>
                         <div class="mt-2 mb-2">
                             <Pagination
-                                total={totalFiles.value}
+                                total={total.value}
                                 perPage={perPage.value}
-                                currentPage={currentPage.value}
+                                currentPage={page.value}
                                 onChange={handlePageChange}
                             />
                         </div>
                     </>
                 )}
             <ConfirmDialog
-                visible={fileToDelete.value !== null}
+                visible={fileToDelete.selected.value !== null}
                 prompt={
                     <div>
-                        Are you sure you want to delete '{fileToDelete.value
+                        Are you sure you want to delete '{fileToDelete.selected
+                            .value
                             ?.name}' file?
                         <p>
                             This action cannot be undone and all notes
@@ -282,7 +292,7 @@ export default function FilePicker({
                 confirmColor="danger"
                 confirmText="Delete this file"
                 onConfirm={handleDeleteFile}
-                onCancel={() => fileToDelete.value = null}
+                onCancel={() => fileToDelete.unselect()}
             />
         </div>
     );

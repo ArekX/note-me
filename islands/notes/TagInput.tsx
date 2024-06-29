@@ -4,8 +4,7 @@ import { useEffect } from "preact/hooks";
 import { createRef } from "preact";
 import Loader from "$islands/Loader.tsx";
 import { useSinglePopover } from "$frontend/hooks/use-single-popover.ts";
-import { useLoader } from "$frontend/hooks/use-loading.ts";
-import { debounce } from "$frontend/deps.ts";
+import { useLoader } from "$frontend/hooks/use-loader.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import {
     FindTagsMessage,
@@ -16,6 +15,7 @@ import {
     getFormattedTagString,
     getTagArray,
 } from "$frontend/tags.ts";
+import { useDebouncedCallback } from "$frontend/hooks/use-debounced-callback.ts";
 
 interface TagInputProps {
     initialTags: string[];
@@ -141,7 +141,7 @@ export default function TagInput({
         closeTagWindow();
     };
 
-    const searchTags = debounce(async () => {
+    const searchTags = useDebouncedCallback(async () => {
         if (!inputRef.current) {
             return;
         }
@@ -155,24 +155,25 @@ export default function TagInput({
             closeTagWindow();
             return;
         }
-        isSearching.start();
-        open();
-        const { records } = await sendMessage<
-            FindTagsMessage,
-            FindTagsResponse
-        >("tags", "findTags", {
-            data: {
-                filters: {
-                    name: tag,
-                },
-                page: 1,
-            },
-            expect: "findTagsResponse",
-        });
 
-        autocompleteTags.value = records.results.map((r) => r.name);
-        selectedTagIndex.value = 0;
-        isSearching.stop();
+        await isSearching.run(async () => {
+            open();
+            const { records } = await sendMessage<
+                FindTagsMessage,
+                FindTagsResponse
+            >("tags", "findTags", {
+                data: {
+                    filters: {
+                        name: tag,
+                    },
+                    page: 1,
+                },
+                expect: "findTagsResponse",
+            });
+
+            autocompleteTags.value = records.results.map((r) => r.name);
+            selectedTagIndex.value = 0;
+        });
     }, 500);
 
     const recalculatePosition = () => {

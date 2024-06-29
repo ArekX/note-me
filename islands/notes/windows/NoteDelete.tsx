@@ -1,5 +1,5 @@
 import ConfirmDialog from "$islands/ConfirmDialog.tsx";
-import { useLoader } from "$frontend/hooks/use-loading.ts";
+import { useLoader } from "$frontend/hooks/use-loader.ts";
 import Loader from "$islands/Loader.tsx";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import {
@@ -17,9 +17,8 @@ export default function NoteDelete({ noteId, onClose }: NoteDeleteProps) {
 
     const { sendMessage } = useWebsocketService();
 
-    const handleConfirmedDelete = async () => {
-        deleteLoader.start();
-        await sendMessage<DeleteNoteMessage, DeleteNoteResponse>(
+    const handleConfirmedDelete = deleteLoader.wrap(() =>
+        sendMessage<DeleteNoteMessage, DeleteNoteResponse>(
             "notes",
             "deleteNote",
             {
@@ -28,9 +27,8 @@ export default function NoteDelete({ noteId, onClose }: NoteDeleteProps) {
                 },
                 expect: "deleteNoteResponse",
             },
-        );
-        deleteLoader.stop();
-    };
+        )
+    );
 
     return (
         <ConfirmDialog

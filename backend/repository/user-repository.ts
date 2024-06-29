@@ -190,7 +190,7 @@ export const findUsers = async (
 export interface FindPickUserFilters {
     name?: string;
     username?: string;
-    user_ids: number[];
+    user_ids?: number[];
 }
 
 export interface PickUserRecord {
