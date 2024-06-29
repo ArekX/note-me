@@ -7,43 +7,56 @@ import {
 export const filterByText = <DB, TB extends keyof DB, O>(
     query: SelectQueryBuilder<DB, TB, O>,
     name: ReferenceExpression<DB, TB>,
+    inverted: boolean,
     value?: string,
 ) => {
     if (!value) {
         return query;
     }
-    return query.where(name, "like", `%${value}%`);
+    return query.where(name, inverted ? "not like" : "like", `%${value}%`);
 };
 
 export const filterByValue = <DB, TB extends keyof DB, O, V>(
     query: SelectQueryBuilder<DB, TB, O>,
     name: ReferenceExpression<DB, TB>,
+    inverted: boolean,
     value?: V,
 ) => {
     if (!value) {
         return query;
     }
-    return query.where(name, Array.isArray(value) ? "in" : "=", value);
+
+    const operator = inverted
+        ? (Array.isArray(value) ? "not in" : "!=")
+        : (Array.isArray(value) ? "in" : "=");
+
+    return query.where(name, operator, value);
 };
 
-type FilterSpec = { type?: "text" | "value"; value: unknown };
+type FilterSpec<DB, TB extends keyof DB> = {
+    field: StringReference<DB, TB>;
+    type?: "text" | "value";
+    value: unknown;
+    inverted?: boolean;
+};
 
 export const applyFilters = <DB, TB extends keyof DB, O>(
     query: SelectQueryBuilder<DB, TB, O>,
-    filters: Partial<Record<StringReference<DB, TB>, FilterSpec>>,
+    filters: FilterSpec<DB, TB>[],
 ) => {
-    for (const [name, filter] of Object.entries(filters)) {
-        const { type = "value", value } = filter as FilterSpec;
+    for (const { field, type = "text", value, inverted = false } of filters) {
         if (type === "text") {
             query = filterByText(
                 query,
-                name as ReferenceExpression<DB, TB>,
+                field,
+                inverted,
                 value as string,
             );
         } else if (type === "value") {
             query = filterByValue(
                 query,
-                name as ReferenceExpression<DB, TB>,
+                field,
+                inverted,
                 value,
             );
         }

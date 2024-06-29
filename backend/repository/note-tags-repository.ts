@@ -134,9 +134,9 @@ export const findTags = async (
             "name",
         ]);
 
-    query = applyFilters(query, {
-        name: { type: "text", value: filters.name },
-    });
+    query = applyFilters(query, [
+        { field: "name", type: "text", value: filters.name },
+    ]);
 
     return await pageResults(query, page);
 };

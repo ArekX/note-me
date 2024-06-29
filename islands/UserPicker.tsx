@@ -10,11 +10,47 @@ import {
 import Pagination from "$islands/Pagination.tsx";
 import { usePagedData } from "$frontend/hooks/use-paged-data.ts";
 import { useLoader } from "../frontend/hooks/use-loader.ts";
+import Button from "$components/Button.tsx";
+import Icon from "$components/Icon.tsx";
 
 interface UserPickerProps {
     onSelected: (users: PickUserRecord[]) => void;
     selected: PickUserRecord[];
 }
+
+const UserItem = ({
+    user,
+    selected,
+}: {
+    user: PickUserRecord;
+    selected: boolean;
+}) => (
+    <div class="flex justify-between border-b-gray-400 border-b-2 pb-2 mb-2 items-center last:border-b-0">
+        <div>{user.name} ({user.username})</div>
+        <div>
+            {selected
+                ? (
+                    <Button
+                        color="danger"
+                        size="sm"
+                        addClass="ml-2"
+                        title="Unselect this user"
+                    >
+                        <Icon name="minus" />
+                    </Button>
+                )
+                : (
+                    <Button
+                        color="success"
+                        size="sm"
+                        title="Select this user"
+                    >
+                        <Icon name="plus" />
+                    </Button>
+                )}
+        </div>
+    </div>
+);
 
 export default function UserPicker({
     // onSelected,
@@ -44,6 +80,7 @@ export default function UserPicker({
             data: {
                 filters: {
                     name: filters.value.searchText,
+                    exclude_user_ids: selected.map((user) => user.id),
                 },
                 page: page.value,
             },
@@ -62,6 +99,9 @@ export default function UserPicker({
             return performSearch();
         },
     });
+
+    const isUserSelected = (user: PickUserRecord) =>
+        selected.some((selectedUser) => selectedUser.id === user.id);
 
     const handlePageChange = (newPage: number) => {
         setPagedData({ page: newPage });
@@ -91,12 +131,18 @@ export default function UserPicker({
                     : (
                         <div class="mt-2">
                             <div class="text-sm mb-2">Found Users</div>
-                            <div>
-                                {results.value.map((user) => (
-                                    <div key={user.id}>
-                                        {user.name} ({user.username})
-                                    </div>
-                                ))}
+                            <div class="w-full">
+                                {results.value
+                                    .filter((user) =>
+                                        !selected.find((s) => s.id == user.id)
+                                    )
+                                    .map((user) => (
+                                        <UserItem
+                                            key={user.id}
+                                            user={user}
+                                            selected={isUserSelected(user)}
+                                        />
+                                    ))}
                                 {results.value.length === 0 && (
                                     <div class="text-gray-500">
                                         No users found
@@ -116,8 +162,13 @@ export default function UserPicker({
             <div class="mt-2">
                 <div class="text-sm">Selected users</div>
                 <div>
-                    {selected.map((user) => <div key={user.id}>{user.name}
-                    </div>)}
+                    {selected.map((user) => (
+                        <UserItem
+                            key={user.id}
+                            user={user}
+                            selected={true}
+                        />
+                    ))}
                     {selected.length === 0 && (
                         <div class="text-gray-500">No users selected</div>
                     )}

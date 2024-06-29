@@ -102,9 +102,9 @@ export const findFiles = async (
         query = query.where("file.user_id", "=", user_id);
     }
 
-    query = applyFilters(query, {
-        "file.name": { type: "text", value: filters.name },
-    });
+    query = applyFilters(query, [
+        { field: "file.name", type: "text", value: filters.name },
+    ]);
 
     return await pageResults(query, page);
 };

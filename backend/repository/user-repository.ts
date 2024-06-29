@@ -178,11 +178,11 @@ export const findUsers = async (
         ])
         .where("is_deleted", "=", false);
 
-    query = applyFilters(query, {
-        name: { type: "text", value: filters.name },
-        username: { type: "text", value: filters.username },
-        role: { value: filters.role },
-    });
+    query = applyFilters(query, [
+        { field: "name", type: "text", value: filters.name },
+        { field: "username", type: "text", value: filters.username },
+        { field: "role", value: filters.role },
+    ]);
 
     return await pageResults(query, page);
 };
@@ -191,6 +191,7 @@ export interface FindPickUserFilters {
     name?: string;
     username?: string;
     user_ids?: number[];
+    exclude_user_ids?: number[];
 }
 
 export interface PickUserRecord {
@@ -211,11 +212,17 @@ export const findPickerUsers = async (
         ])
         .where("is_deleted", "=", false);
 
-    query = applyFilters(query, {
-        name: { type: "text", value: filters.name },
-        username: { type: "text", value: filters.username },
-        id: { type: "value", value: filters.user_ids },
-    });
+    query = applyFilters(query, [
+        { field: "name", type: "text", value: filters.name },
+        { field: "username", type: "text", value: filters.username },
+        { field: "id", type: "value", value: filters.user_ids },
+        {
+            field: "id",
+            type: "value",
+            value: filters.exclude_user_ids,
+            inverted: true,
+        },
+    ]);
 
     return await pageResults(query, page);
 };
