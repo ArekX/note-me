@@ -224,7 +224,7 @@ export const findPickerUsers = async (
         },
     ]);
 
-    return await pageResults(query, page);
+    return await pageResults(query, page, 5);
 };
 
 export interface UserProfileData extends Pick<UserTable, "name" | "timezone"> {

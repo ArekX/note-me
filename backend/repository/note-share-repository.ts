@@ -7,6 +7,10 @@ import {
 } from "$backend/database.ts";
 import { getCurrentUnixTimestamp } from "$backend/time.ts";
 import { PickUserRecord } from "$backend/repository/user-repository.ts";
+import { getNoteTagsSql } from "$backend/repository/note-repository.ts";
+import { sql } from "$lib/kysely-sqlite-dialect/deps.ts";
+import { Paged, pageResults } from "$lib/kysely-sqlite-dialect/pagination.ts";
+import { applyFilters } from "$lib/kysely-sqlite-dialect/filters.ts";
 
 export type PublicShareData = Pick<
     NoteShareLinkTable,
@@ -23,6 +27,73 @@ export type PublicNoteShareRecord =
     >
     & RecordId;
 
+export interface PublicSharedNote {
+    id: number;
+    title: string;
+    note: string;
+    tags: string[];
+    updated_at: number;
+    user_name: string;
+}
+
+export const getPublicShareNote = async (
+    identifier: string,
+): Promise<PublicSharedNote | null> => {
+    const result = await db.selectFrom("note_share_link")
+        .where("identifier", "=", identifier)
+        .where((w) =>
+            w.or([
+                w("expires_at", "is", null),
+                w("expires_at", ">", getCurrentUnixTimestamp()),
+            ])
+        )
+        .innerJoin("note", "note.id", "note_share_link.note_id")
+        .innerJoin("user", "user.id", "note.user_id")
+        .select([
+            "note.id",
+            "note.title",
+            "note.note",
+            "note.updated_at",
+            getNoteTagsSql().as("tags"),
+            sql<string>`user.name`.as("user_name"),
+        ])
+        .executeTakeFirst() ?? null;
+
+    return result
+        ? {
+            ...result,
+            tags: result.tags?.split(",") ?? [],
+        }
+        : null;
+};
+
+export const getUserShareNote = async (
+    note_id: number,
+    user_id: number,
+): Promise<PublicSharedNote | null> => {
+    const result = await db.selectFrom("note_share_user")
+        .innerJoin("note", "note.id", "note_share_user.note_id")
+        .innerJoin("user", "user.id", "note.user_id")
+        .where("note_share_user.note_id", "=", note_id)
+        .where("note_share_user.user_id", "=", user_id)
+        .select([
+            "note.id",
+            "note.title",
+            "note.note",
+            "note.updated_at",
+            getNoteTagsSql().as("tags"),
+            sql<string>`user.name`.as("user_name"),
+        ])
+        .executeTakeFirst();
+
+    return result
+        ? {
+            ...result,
+            tags: result.tags?.split(",") ?? [],
+        }
+        : null;
+};
+
 export const createPublicShare = async ({
     note_id,
     expires_at,
@@ -33,11 +104,8 @@ export const createPublicShare = async ({
             note_id,
             identifier: crypto.randomUUID(),
             created_at: getCurrentUnixTimestamp(),
+            expires_at,
         };
-
-    if (expires_at) {
-        record.expires_at = expires_at;
-    }
 
     const result = await db.insertInto("note_share_link")
         .values(record)
@@ -47,6 +115,14 @@ export const createPublicShare = async ({
         id: Number(result.insertId),
         ...record,
     };
+};
+
+export const removePublicShare = async (
+    id: number,
+): Promise<void> => {
+    await db.deleteFrom("note_share_link")
+        .where("id", "=", id)
+        .execute();
 };
 
 interface UserShareData {
@@ -61,7 +137,6 @@ export const setUserShare = async ({
     const existingIds = (await db.selectFrom("note_share_user")
         .select("user_id")
         .where("note_id", "=", note_id)
-        .where("user_id", "in", user_ids)
         .execute())
         .map((record) => record.user_id);
 
@@ -126,10 +201,44 @@ export const getNoteShareData = async (
             "expires_at",
         ])
         .where("note_id", "=", note_id)
+        .orderBy("created_at", "desc")
         .execute();
 
     return {
         users,
         links,
     };
+};
+
+export interface UserSharedNoteMeta {
+    id: number;
+    title: string;
+    user_name: string;
+}
+
+export interface FindUserSharedNotesFilters {
+    title?: string;
+}
+
+export const findUserSharedNotes = async (
+    filters: FindUserSharedNotesFilters,
+    user_id: number,
+    page: number,
+): Promise<Paged<PublicSharedNote>> => {
+    let query = db.selectFrom("note_share_user")
+        .innerJoin("note", "note.id", "note_share_user.note_id")
+        .innerJoin("user", "user.id", "note.user_id")
+        .select([
+            "note.id",
+            "note.title",
+            sql<string>`user.name`.as("user_name"),
+        ])
+        .where("note_share_user.user_id", "=", user_id)
+        .orderBy("note_share_user.created_at", "desc");
+
+    query = applyFilters(query, [
+        { field: "note.title", type: "text", value: filters.title },
+    ]);
+
+    return await pageResults(query, page);
 };

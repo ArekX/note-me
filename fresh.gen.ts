@@ -16,7 +16,9 @@ import * as $app_note_index from "./routes/app/note/index.tsx";
 import * as $app_note_new from "./routes/app/note/new.tsx";
 import * as $app_note_partial_edit_id_ from "./routes/app/note/partial/edit-[id].tsx";
 import * as $app_note_partial_new from "./routes/app/note/partial/new.tsx";
+import * as $app_note_partial_shared_id_ from "./routes/app/note/partial/shared-[id].tsx";
 import * as $app_note_partial_view_id_ from "./routes/app/note/partial/view-[id].tsx";
+import * as $app_note_shared_id_ from "./routes/app/note/shared-[id].tsx";
 import * as $app_note_view_id_ from "./routes/app/note/view-[id].tsx";
 import * as $app_profile_layout from "./routes/app/profile/_layout.tsx";
 import * as $app_profile_files from "./routes/app/profile/files.tsx";
@@ -28,6 +30,8 @@ import * as $app_settings_tags from "./routes/app/settings/tags.tsx";
 import * as $app_settings_users from "./routes/app/settings/users.tsx";
 import * as $file_identifier_ from "./routes/file/[identifier].tsx";
 import * as $index from "./routes/index.tsx";
+import * as $public_identifier_ from "./routes/public/[identifier].tsx";
+import * as $Checkbox from "./islands/Checkbox.tsx";
 import * as $ConfirmDialog from "./islands/ConfirmDialog.tsx";
 import * as $Dialog from "./islands/Dialog.tsx";
 import * as $DropdownMenu from "./islands/DropdownMenu.tsx";
@@ -69,7 +73,10 @@ import * as $notes_windows_NoteDetails from "./islands/notes/windows/NoteDetails
 import * as $notes_windows_NoteHelp from "./islands/notes/windows/NoteHelp.tsx";
 import * as $notes_windows_NoteHistory from "./islands/notes/windows/NoteHistory.tsx";
 import * as $notes_windows_NoteShare from "./islands/notes/windows/NoteShare.tsx";
+import * as $notes_windows_components_CreateLinkForm from "./islands/notes/windows/components/CreateLinkForm.tsx";
 import * as $notes_windows_components_HistoryDiff from "./islands/notes/windows/components/HistoryDiff.tsx";
+import * as $notes_windows_components_ShareLinks from "./islands/notes/windows/components/ShareLinks.tsx";
+import * as $notes_windows_components_ShareToUsers from "./islands/notes/windows/components/ShareToUsers.tsx";
 import * as $notifications_NotificationItem from "./islands/notifications/NotificationItem.tsx";
 import * as $notifications_NotificationList from "./islands/notifications/NotificationList.tsx";
 import * as $notifications_views_ReminderView from "./islands/notifications/views/ReminderView.tsx";
@@ -111,7 +118,10 @@ const manifest = {
         "./routes/app/note/new.tsx": $app_note_new,
         "./routes/app/note/partial/edit-[id].tsx": $app_note_partial_edit_id_,
         "./routes/app/note/partial/new.tsx": $app_note_partial_new,
+        "./routes/app/note/partial/shared-[id].tsx":
+            $app_note_partial_shared_id_,
         "./routes/app/note/partial/view-[id].tsx": $app_note_partial_view_id_,
+        "./routes/app/note/shared-[id].tsx": $app_note_shared_id_,
         "./routes/app/note/view-[id].tsx": $app_note_view_id_,
         "./routes/app/profile/_layout.tsx": $app_profile_layout,
         "./routes/app/profile/files.tsx": $app_profile_files,
@@ -123,8 +133,10 @@ const manifest = {
         "./routes/app/settings/users.tsx": $app_settings_users,
         "./routes/file/[identifier].tsx": $file_identifier_,
         "./routes/index.tsx": $index,
+        "./routes/public/[identifier].tsx": $public_identifier_,
     },
     islands: {
+        "./islands/Checkbox.tsx": $Checkbox,
         "./islands/ConfirmDialog.tsx": $ConfirmDialog,
         "./islands/Dialog.tsx": $Dialog,
         "./islands/DropdownMenu.tsx": $DropdownMenu,
@@ -176,8 +188,14 @@ const manifest = {
         "./islands/notes/windows/NoteHelp.tsx": $notes_windows_NoteHelp,
         "./islands/notes/windows/NoteHistory.tsx": $notes_windows_NoteHistory,
         "./islands/notes/windows/NoteShare.tsx": $notes_windows_NoteShare,
+        "./islands/notes/windows/components/CreateLinkForm.tsx":
+            $notes_windows_components_CreateLinkForm,
         "./islands/notes/windows/components/HistoryDiff.tsx":
             $notes_windows_components_HistoryDiff,
+        "./islands/notes/windows/components/ShareLinks.tsx":
+            $notes_windows_components_ShareLinks,
+        "./islands/notes/windows/components/ShareToUsers.tsx":
+            $notes_windows_components_ShareToUsers,
         "./islands/notifications/NotificationItem.tsx":
             $notifications_NotificationItem,
         "./islands/notifications/NotificationList.tsx":

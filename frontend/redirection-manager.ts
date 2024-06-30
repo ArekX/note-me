@@ -19,6 +19,10 @@ const paths = {
         url: `/app/note/view-${data.noteId}`,
         partialUrl: `/app/note/partial/view-${data.noteId}`,
     }),
+    viewSharedNote: (data: { noteId: number }) => ({
+        url: `/app/note/shared-${data.noteId}`,
+        partialUrl: `/app/note/partial/shared-${data.noteId}`,
+    }),
     editNote: (data: { noteId: number }) => ({
         url: `/app/note/edit-${data.noteId}`,
         partialUrl: `/app/note/partial/edit-${data.noteId}`,

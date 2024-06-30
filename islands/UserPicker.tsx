@@ -13,11 +13,13 @@ import { useLoader } from "../frontend/hooks/use-loader.ts";
 import Button from "$components/Button.tsx";
 import Icon from "$components/Icon.tsx";
 import { JSX } from "preact/jsx-runtime";
+import { useUser } from "$frontend/hooks/use-user.ts";
 
 interface UserPickerProps {
     onSelectUser: (user: PickUserRecord) => void;
     onUnselectUser: (user: PickUserRecord) => void;
     selected: PickUserRecord[];
+    excludeCurrentUser?: boolean;
     selectedUsersText?: string;
     noSelectedUsersText?: string;
 }
@@ -45,6 +47,7 @@ export default function UserPicker({
     selected,
     selectedUsersText = "Selected users",
     noSelectedUsersText = "No users selected",
+    excludeCurrentUser = true,
 }: UserPickerProps) {
     const { results, page, total, perPage, setPagedData, resetPage } =
         usePagedData<
@@ -54,6 +57,7 @@ export default function UserPicker({
     const { sendMessage } = useWebsocketService();
 
     const userLoader = useLoader();
+    const user = useUser();
 
     const performSearch = userLoader.wrap(async () => {
         if (filters.value.searchText === "") {
@@ -62,6 +66,16 @@ export default function UserPicker({
             });
             return;
         }
+
+        const excludeUserIds = selected.map((user) => user.id);
+
+        if (excludeCurrentUser) {
+            const currentUserId = user.getUserId();
+            if (currentUserId) {
+                excludeUserIds.push(currentUserId);
+            }
+        }
+
         const response = await sendMessage<
             FindPickUsersMessage,
             FindPickUsersResponse
@@ -69,7 +83,7 @@ export default function UserPicker({
             data: {
                 filters: {
                     name: filters.value.searchText,
-                    exclude_user_ids: selected.map((user) => user.id),
+                    exclude_user_ids: excludeUserIds,
                 },
                 page: page.value,
             },

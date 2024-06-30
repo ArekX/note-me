@@ -12,11 +12,18 @@ import Viewer from "$islands/markdown/Viewer.tsx";
 
 export interface ViewNoteProps {
     readonly?: boolean;
+    disableTagLinks?: boolean;
     record: ViewNoteRecord;
+    author?: string;
 }
 
 export default function ViewNote(
-    { readonly = false, record }: ViewNoteProps,
+    {
+        readonly = false,
+        record,
+        disableTagLinks,
+        author,
+    }: ViewNoteProps,
 ) {
     const windowMode = useSignal<NoteWindowTypes | null>(null);
     const recordData = useSignal<ViewNoteRecord>(record);
@@ -81,14 +88,15 @@ export default function ViewNote(
             </div>
             <div>
                 {recordData.value.tags.map((tag) => (
-                    <a href={`/notes?tag=${tag}`} class="tag">
-                        {`#${tag}`}
-                    </a>
+                    disableTagLinks
+                        ? <span class="tag">#{tag}</span>
+                        : <a href={`/notes?tag=${tag}`} class="tag">#{tag}</a>
                 ))}
             </div>
             <DetailsLine
                 groupName={recordData.value.group_name}
                 lastUpdatedUnix={recordData.value.updated_at}
+                author={author}
             />
             <div>
                 <Viewer text={recordData.value.note} />

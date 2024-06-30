@@ -57,7 +57,7 @@ export interface NoteShareLinkTable {
     identifier: string;
     note_id: number;
     created_at: number;
-    expires_at?: number;
+    expires_at: number | null;
 }
 
 export interface NoteHistoryTable {

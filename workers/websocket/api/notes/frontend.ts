@@ -10,6 +10,8 @@ import {
     DeleteNoteResponse,
     FindNoteHistoryMessage,
     FindNoteHistoryResponse,
+    FindSharedNotesMessage,
+    FindSharedNotesResponse,
     GetNoteDetailsResponse,
     GetNoteHistoryDataMessage,
     GetNoteHistoryDataResponse,
@@ -18,6 +20,8 @@ import {
     GetNoteShareDataMessage,
     GetNoteShareDataResponse,
     NoteFrontendMessage,
+    RemovePublicShareMessage,
+    RemovePublicShareResponse,
     RevertNoteToHistoryMessage,
     RevertNoteToHistoryResponse,
     ShareToUsersMessage,
@@ -51,7 +55,9 @@ import { runUpdateNoteAction } from "$backend/actions/update-note-action.ts";
 import { GetNoteDetailsMessage } from "$workers/websocket/api/notes/messages.ts";
 import {
     createPublicShare,
+    findUserSharedNotes,
     getNoteShareData,
+    removePublicShare,
     setUserShare,
 } from "$backend/repository/note-share-repository.ts";
 
@@ -280,6 +286,36 @@ const handleGetNoteShareData: ListenerFn<GetNoteShareDataMessage> = async (
     });
 };
 
+const handleRemovePublicShare: ListenerFn<RemovePublicShareMessage> = async (
+    { message: { note_id, id }, sourceClient, respond },
+) => {
+    if (!await noteExists(note_id, sourceClient!.userId)) {
+        throw new Error("Note does not exist.");
+    }
+
+    await removePublicShare(id);
+
+    respond<RemovePublicShareResponse>({
+        type: "removePublicShareResponse",
+        removed_id: id,
+    });
+};
+
+const handleFindSharedNotes: ListenerFn<FindSharedNotesMessage> = async (
+    { message: { filters, page }, sourceClient, respond },
+) => {
+    const records = await findUserSharedNotes(
+        filters,
+        sourceClient!.userId,
+        page,
+    );
+
+    respond<FindSharedNotesResponse>({
+        type: "findSharedNotesResponse",
+        records,
+    });
+};
+
 export const frontendMap: RegisterListenerMap<NoteFrontendMessage> = {
     createNote: handleCreateNote,
     updateNote: handleUpdateNote,
@@ -291,6 +327,8 @@ export const frontendMap: RegisterListenerMap<NoteFrontendMessage> = {
     revertNoteToHistory: handleRevertNoteToHistory,
     deleteHistoryRecord: handleDeleteHistoryRecord,
     createPublicShare: handleCreatePublicShare,
+    removePublicShare: handleRemovePublicShare,
     shareToUsers: handleShareToUsers,
     getNoteShareData: handleGetNoteShareData,
+    findSharedNotes: handleFindSharedNotes,
 };

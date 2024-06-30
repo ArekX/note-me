@@ -1,8 +1,11 @@
 import { type PageProps } from "$fresh/server.ts";
 import { getCurrentMonthWallpaper } from "$frontend/wallpaper.ts";
 
-export default function App({ Component, route }: PageProps) {
+export default function App({ Component, route, data }: PageProps) {
     const wallpaper = route === "/" ? getCurrentMonthWallpaper() : null;
+
+    const allowScrolling = route.startsWith("/public");
+    const subTitle = data?.pageTitle ? `- ${data.pageTitle}` : "";
 
     return (
         <html>
@@ -12,7 +15,7 @@ export default function App({ Component, route }: PageProps) {
                     name="viewport"
                     content="width=device-width, initial-scale=1.0"
                 />
-                <title>NoteMe</title>
+                <title>NoteMe {subTitle}</title>
                 <link
                     rel="stylesheet"
                     href="/boxicons/css/boxicons.min.css"
@@ -25,7 +28,7 @@ export default function App({ Component, route }: PageProps) {
                 <link rel="icon" href="/logo-white.svg"></link>
             </head>
             <body
-                class="bg-gray-900"
+                class={`bg-gray-900 ${allowScrolling ? "allow-scrolling" : ""}`}
                 style={wallpaper
                     ? {
                         "background-image": `url(${wallpaper})`,

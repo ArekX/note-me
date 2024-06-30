@@ -9,6 +9,10 @@ html, body {
   @apply bg-gray-900;
 }
 
+body.allow-scrolling {
+    overflow: auto;
+}
+
 .notification-badge {
     @apply bg-red-500;
     border-radius: 100%;
@@ -309,4 +313,8 @@ dialog::backdrop {
 
 code, pre {
     font-family: monospace;
+}
+
+.link-form-expiration {
+    min-height: 2.5em;
 }

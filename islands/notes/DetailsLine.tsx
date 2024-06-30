@@ -4,11 +4,13 @@ import { useTimeFormat } from "$frontend/hooks/use-time-format.ts";
 interface DetailsLineProps {
     groupName: string | null;
     lastUpdatedUnix?: number | null;
+    author?: string | null;
 }
 
 export default function DetailsLine({
     groupName,
     lastUpdatedUnix = null,
+    author,
 }: DetailsLineProps) {
     const timeFormatter = useTimeFormat();
 
@@ -26,6 +28,11 @@ export default function DetailsLine({
             {lastUpdatedUnix !== null && (
                 <div title={lastUpdatedTitle}>
                     Last updated: {timeAgo(lastUpdatedUnix)}
+                </div>
+            )}
+            {author && (
+                <div>
+                    Author: {author}
                 </div>
             )}
         </div>

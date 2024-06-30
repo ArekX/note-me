@@ -2,11 +2,12 @@ import Icon from "$components/Icon.tsx";
 import { IS_BROWSER } from "$fresh/runtime.ts";
 
 interface InputProps {
-    type?: "text" | "password" | "email";
+    type?: "text" | "password" | "email" | "date" | "checkbox";
     labelColor?: "white" | "black";
     label?: string;
     icon?: string;
     name?: string;
+    min?: string;
     value?: string;
     disabled?: boolean;
     onInput?: (value: string) => void;
@@ -20,6 +21,7 @@ export default function Input(
         name,
         type,
         value,
+        min,
         onInput,
         labelColor = "white",
         placeholder,
@@ -46,6 +48,7 @@ export default function Input(
                 name={name}
                 disabled={disabled}
                 value={value}
+                min={min}
                 class={`outline-none border-1 ${
                     icon ? "pl-9" : ""
                 } border-gray-900 bg-gray-700 p-2 w-full rounded-md`}

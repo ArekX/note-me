@@ -11,8 +11,10 @@ import {
     NoteHistoryMetaRecord,
 } from "$backend/repository/note-history-repository.ts";
 import {
+    FindUserSharedNotesFilters,
     NoteShareData,
     PublicNoteShareRecord,
+    UserSharedNoteMeta,
 } from "$backend/repository/note-share-repository.ts";
 
 type NoteMessage<Type, Data = unknown> = Message<
@@ -123,12 +125,22 @@ export type GetNoteShareDataResponse = NoteMessage<
 
 export type CreatePublicShareMessage = NoteMessage<
     "createPublicShare",
-    { note_id: number; expires_at: number }
+    { note_id: number; expires_at: number | null }
 >;
 
 export type CreatePublicShareResponse = NoteMessage<
     "createPublicShareResponse",
     { record: PublicNoteShareRecord }
+>;
+
+export type RemovePublicShareMessage = NoteMessage<
+    "removePublicShare",
+    { note_id: number; id: number }
+>;
+
+export type RemovePublicShareResponse = NoteMessage<
+    "removePublicShareResponse",
+    { removed_id: number }
 >;
 
 export type ShareToUsersMessage = NoteMessage<
@@ -138,6 +150,16 @@ export type ShareToUsersMessage = NoteMessage<
 
 export type ShareToUsersResponse = NoteMessage<
     "shareToUsersResponse"
+>;
+
+export type FindSharedNotesMessage = NoteMessage<
+    "findSharedNotes",
+    { filters: FindUserSharedNotesFilters; page: number }
+>;
+
+export type FindSharedNotesResponse = NoteMessage<
+    "findSharedNotesResponse",
+    { records: Paged<UserSharedNoteMeta> }
 >;
 
 export type NoteFrontendResponse =
@@ -152,7 +174,9 @@ export type NoteFrontendResponse =
     | GetNoteDetailsResponse
     | GetNoteShareDataResponse
     | CreatePublicShareResponse
-    | ShareToUsersResponse;
+    | ShareToUsersResponse
+    | RemovePublicShareResponse
+    | FindSharedNotesResponse;
 
 export type NoteFrontendMessage =
     | CreateNoteMessage
@@ -166,4 +190,6 @@ export type NoteFrontendMessage =
     | GetNoteDetailsMessage
     | GetNoteShareDataMessage
     | CreatePublicShareMessage
-    | ShareToUsersMessage;
+    | ShareToUsersMessage
+    | RemovePublicShareMessage
+    | FindSharedNotesMessage;

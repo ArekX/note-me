@@ -4,11 +4,22 @@ import Dialog from "$islands/Dialog.tsx";
 import { useListState } from "$frontend/hooks/use-list-state.ts";
 import ButtonGroup from "$components/ButtonGroup.tsx";
 import Picker from "$components/Picker.tsx";
-import UserPicker from "$islands/UserPicker.tsx";
 import { useSignal } from "@preact/signals";
+import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
+import {
+    GetNoteShareDataMessage,
+    GetNoteShareDataResponse,
+} from "$workers/websocket/api/notes/messages.ts";
+import { useLoader } from "$frontend/hooks/use-loader.ts";
+import { useEffect } from "preact/hooks";
+import Loader from "$islands/Loader.tsx";
+import ShareToUsers from "$islands/notes/windows/components/ShareToUsers.tsx";
+import ShareLinks from "$islands/notes/windows/components/ShareLinks.tsx";
+import { PublicNoteShareRecord } from "$backend/repository/note-share-repository.ts";
 import { PickUserRecord } from "$backend/repository/user-repository.ts";
 
 export default function NoteShare({
+    noteId,
     onClose,
 }: NoteWindowComponentProps) {
     const {
@@ -20,7 +31,70 @@ export default function NoteShare({
         toEveryone: "To everyone",
     }, "toUsers");
 
-    const selectedUsers = useSignal<PickUserRecord[]>([]);
+    const shareDataLoader = useLoader();
+
+    const shareData = useSignal<
+        Pick<GetNoteShareDataResponse, "users" | "links">
+    >({
+        users: [],
+        links: [],
+    });
+
+    const loadShareData = shareDataLoader.wrap(async () => {
+        const response = await sendMessage<
+            GetNoteShareDataMessage,
+            GetNoteShareDataResponse
+        >(
+            "notes",
+            "getNoteShareData",
+            {
+                data: {
+                    note_id: noteId,
+                },
+                expect: "getNoteShareDataResponse",
+            },
+        );
+
+        shareData.value = {
+            users: response.users,
+            links: response.links,
+        };
+    });
+
+    const { sendMessage } = useWebsocketService();
+
+    const getShareStatus = () => {
+        if (
+            shareData.value.users.length === 0 &&
+            shareData.value.links.length === 0
+        ) {
+            return "Private";
+        }
+
+        if (shareData.value.links.length > 0) {
+            return "Public";
+        }
+
+        return "Specific users only";
+    };
+
+    const handleLinkListChanged = (newList: PublicNoteShareRecord[]) => {
+        shareData.value = {
+            ...shareData.value,
+            links: newList,
+        };
+    };
+
+    const handleUserListChanged = (newList: PickUserRecord[]) => {
+        shareData.value = {
+            ...shareData.value,
+            users: newList,
+        };
+    };
+
+    useEffect(() => {
+        loadShareData();
+    }, []);
 
     return (
         <Dialog
@@ -31,59 +105,49 @@ export default function NoteShare({
         >
             <h1 class="text-2xl pb-4">Share Note</h1>
 
-            <div class="pb-4">
-                Share status: <strong>Private</strong>
-            </div>
+            {shareDataLoader.running ? <Loader color="white" /> : (
+                <div>
+                    <div class="pb-4">
+                        Share status:{" "}
+                        <strong>
+                            {getShareStatus()}
+                        </strong>
+                    </div>
 
-            <div>
-                <ButtonGroup
-                    activeItem={selected.value}
-                    items={items}
-                    onSelect={selectItem}
-                />
+                    <div>
+                        <ButtonGroup
+                            activeItem={selected.value}
+                            items={items}
+                            onSelect={selectItem}
+                        />
 
-                <div class="pt-4 pb-4">
-                    <Picker<keyof typeof items>
-                        selector={selected.value}
-                        map={{
-                            toUsers: () => (
-                                <UserPicker
-                                    onSelectUser={(user) => {
-                                        selectedUsers.value = [
-                                            ...selectedUsers.value,
-                                            user,
-                                        ];
-                                    }}
-                                    onUnselectUser={(user) => {
-                                        selectedUsers.value = selectedUsers
-                                            .value.filter(
-                                                (u) => u.id !== user.id,
-                                            );
-                                    }}
-                                    selected={selectedUsers.value}
-                                    selectedUsersText="Note is shared to:"
-                                    noSelectedUsersText="No users."
-                                />
-                            ),
-                            toEveryone: () => (
-                                <div>
-                                    Notes shared with everyone can be viewed by
-                                    anyone.
-
-                                    <div class="pt-4">
-                                        <Button color="primary">
-                                            Generate share link
-                                        </Button>
-                                    </div>
-                                </div>
-                            ),
-                        }}
-                    />
+                        <div class="pt-4 pb-4">
+                            <Picker<keyof typeof items>
+                                selector={selected.value}
+                                map={{
+                                    toUsers: () => (
+                                        <ShareToUsers
+                                            initialUsers={shareData.value.users}
+                                            noteId={noteId}
+                                            onUserListChanged={handleUserListChanged}
+                                        />
+                                    ),
+                                    toEveryone: () => (
+                                        <ShareLinks
+                                            initialLinks={shareData.value.links}
+                                            noteId={noteId}
+                                            onLinkListChanged={handleLinkListChanged}
+                                        />
+                                    ),
+                                }}
+                            />
+                        </div>
+                    </div>
                 </div>
-            </div>
+            )}
 
             <div>
-                <Button color="danger" onClick={onClose} addClass="ml-2">
+                <Button color="danger" onClick={onClose}>
                     Close
                 </Button>
             </div>
