@@ -88,7 +88,9 @@ export default function UserPicker({
             return performSearch();
         },
         onFiltersSet: () => {
-            userLoader.start();
+            if (filters.value.searchText.length > 0) {
+                userLoader.start();
+            }
         },
     });
 
