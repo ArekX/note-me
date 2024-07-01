@@ -35,6 +35,7 @@ import {
     deleteNote,
     getNote,
     getNoteDetails,
+    getNoteShareDetails,
     noteExists,
 } from "$backend/repository/note-repository.ts";
 import {
@@ -60,6 +61,7 @@ import {
     removePublicShare,
     setUserShare,
 } from "$backend/repository/note-share-repository.ts";
+import { runSendNotificationAction } from "$backend/actions/send-notification-action.ts";
 
 const handleCreateNote: ListenerFn<CreateNoteMessage> = async (
     { message: { data }, sourceClient, respond },
@@ -264,11 +266,31 @@ const handleShareToUsers: ListenerFn<ShareToUsersMessage> = async (
         throw new Error("Note does not exist.");
     }
 
-    await setUserShare({ note_id, user_ids });
+    const { shared_to_user_ids } = await setUserShare({ note_id, user_ids });
 
     respond<ShareToUsersResponse>({
         type: "shareToUsersResponse",
     });
+
+    if (shared_to_user_ids.length === 0) {
+        return;
+    }
+
+    const note = await getNoteShareDetails(note_id);
+
+    const notifications = [];
+    for (const userId of shared_to_user_ids) {
+        notifications.push(runSendNotificationAction({
+            type: "note-shared",
+            payload: {
+                id: note_id,
+                title: note?.title ?? "Unknown",
+                user_name: note?.user_name ?? "Unknown User",
+            },
+        }, userId));
+    }
+
+    await Promise.all(notifications);
 };
 
 const handleGetNoteShareData: ListenerFn<GetNoteShareDataMessage> = async (

@@ -3,6 +3,7 @@ import ReminderView from "$islands/notifications/views/ReminderView.tsx";
 import { JSX } from "preact/jsx-runtime";
 import Button from "$components/Button.tsx";
 import Icon from "$components/Icon.tsx";
+import NotificationSharedView from "$islands/notifications/views/NotificationSharedView.tsx";
 
 export interface NotificationViewProps<T> {
     data: T;
@@ -25,6 +26,7 @@ type NotificationViewMap = {
 
 const notificationViewComponents: NotificationViewMap = {
     "reminder-received": ReminderView,
+    "note-shared": NotificationSharedView,
 };
 
 export default function NotificationItem({

@@ -79,6 +79,8 @@ import * as $notes_windows_components_ShareLinks from "./islands/notes/windows/c
 import * as $notes_windows_components_ShareToUsers from "./islands/notes/windows/components/ShareToUsers.tsx";
 import * as $notifications_NotificationItem from "./islands/notifications/NotificationItem.tsx";
 import * as $notifications_NotificationList from "./islands/notifications/NotificationList.tsx";
+import * as $notifications_notification_message_text from "./islands/notifications/notification-message-text.ts";
+import * as $notifications_views_NotificationSharedView from "./islands/notifications/views/NotificationSharedView.tsx";
 import * as $notifications_views_ReminderView from "./islands/notifications/views/ReminderView.tsx";
 import * as $profile_UserProfile from "./islands/profile/UserProfile.tsx";
 import * as $sidebar_ListSwitcher from "./islands/sidebar/ListSwitcher.tsx";
@@ -200,6 +202,10 @@ const manifest = {
             $notifications_NotificationItem,
         "./islands/notifications/NotificationList.tsx":
             $notifications_NotificationList,
+        "./islands/notifications/notification-message-text.ts":
+            $notifications_notification_message_text,
+        "./islands/notifications/views/NotificationSharedView.tsx":
+            $notifications_views_NotificationSharedView,
         "./islands/notifications/views/ReminderView.tsx":
             $notifications_views_ReminderView,
         "./islands/profile/UserProfile.tsx": $profile_UserProfile,

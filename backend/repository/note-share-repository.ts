@@ -133,7 +133,7 @@ interface UserShareData {
 export const setUserShare = async ({
     note_id,
     user_ids,
-}: UserShareData): Promise<void> => {
+}: UserShareData): Promise<{ shared_to_user_ids: number[] }> => {
     const existingIds = (await db.selectFrom("note_share_user")
         .select("user_id")
         .where("note_id", "=", note_id)
@@ -144,7 +144,7 @@ export const setUserShare = async ({
     const toDelete = existingIds.filter((id) => !user_ids.includes(id));
 
     if (toInsert.length === 0 && toDelete.length === 0) {
-        return;
+        return { shared_to_user_ids: [] };
     }
 
     await beginTransaction();
@@ -166,6 +166,8 @@ export const setUserShare = async ({
                 .execute();
         }
         await commitTransaction();
+
+        return { shared_to_user_ids: toInsert };
     } catch (e) {
         await rollbackTransaction();
         throw e;

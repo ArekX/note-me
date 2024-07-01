@@ -2,13 +2,22 @@ import { db } from "$backend/database.ts";
 import { NotificationTable, Payload, RecordId } from "$types";
 import { getCurrentUnixTimestamp } from "$backend/time.ts";
 
-export interface NoteReminder {
+export interface NoteReminderData {
     noteId: number;
 }
 
-export type NotificationDataTypes = Payload<"reminder-received", NoteReminder>;
+export interface NoteSharedData {
+    id: number;
+    title: string;
+    user_name: string;
+}
+
+export type NotificationDataTypes =
+    | Payload<"reminder-received", NoteReminderData>
+    | Payload<"note-shared", NoteSharedData>;
 
 type ParsedNotificationData = { data: NotificationDataTypes };
+
 export type NotificationRecord =
     & Omit<NotificationTable, "data" | "id" | "is_deleted">
     & RecordId

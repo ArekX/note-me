@@ -16,6 +16,8 @@ import {
     MarkSingleReadMessage,
     NotificationFrontendResponse,
 } from "$workers/websocket/api/notifications/messages.ts";
+import { addMessage } from "$frontend/toast-message.ts";
+import { getNotificationMessageText } from "$islands/notifications/notification-message-text.ts";
 
 interface NotificationsProps {
     initialNotifications: NotificationRecord[];
@@ -68,6 +70,11 @@ export default function Notifications(props: NotificationsProps) {
                         ...notifications.value,
                         data.record,
                     ];
+
+                    addMessage({
+                        type: "info",
+                        text: getNotificationMessageText(data.record),
+                    });
                 },
             },
         },

@@ -1,11 +1,11 @@
-import { NoteReminder } from "$backend/repository/notification-repository.ts";
+import { NoteReminderData } from "$backend/repository/notification-repository.ts";
 import {
     NotificationViewProps,
 } from "$islands/notifications/NotificationItem.tsx";
 
 export default function ReminderView({
     data,
-}: NotificationViewProps<NoteReminder>) {
+}: NotificationViewProps<NoteReminderData>) {
     return (
         <div className=" p-4 rounded-md">
             <h3 className="text-sm font-bold mb-2">

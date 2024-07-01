@@ -164,6 +164,29 @@ export const getNoteDetails = async (
     return result ?? null;
 };
 
+export interface NoteShareData {
+    id: number;
+    title: string;
+    user_name: string;
+}
+
+export const getNoteShareDetails = async (
+    note_id: number,
+): Promise<NoteShareData | null> => {
+    const result = await db.selectFrom("note")
+        .select([
+            "note.id",
+            "note.title",
+            sql<string>`user.name`.as("user_name"),
+        ])
+        .where("note.id", "=", note_id)
+        .where("note.is_deleted", "=", false)
+        .innerJoin("user", "user.id", "note.user_id")
+        .executeTakeFirst();
+
+    return result ?? null;
+};
+
 export const deleteNote = async (
     note_id: number,
     user_id: number,
