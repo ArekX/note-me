@@ -23,6 +23,8 @@ import { parseQueryParams } from "$backend/parse-query-params.ts";
 
 const clients: SocketClientMap = {};
 
+let isServerRunning = false;
+
 const validateCsrfToken = (
     request: Request,
     session: SessionState<AppSessionData>,
@@ -123,6 +125,7 @@ const startServer = (hostname: string, port: number) => {
                 `WebSocket service started and running at {hostname}:{port}`,
                 { hostname, port },
             );
+            isServerRunning = true;
         },
     });
 };
@@ -309,10 +312,13 @@ const getClientByUserId = (userId: number): SocketClient | null => {
     return null;
 };
 
+const isRunning = () => isServerRunning;
+
 export type WebsocketService = typeof websocketService;
 
 export const websocketService = {
     startServer,
+    isRunning,
     getClient,
     getClientByUserId,
     register,

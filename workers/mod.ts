@@ -1,4 +1,3 @@
-import { eventBus } from "$backend/event-bus/mod.ts";
 import { webLogger } from "$backend/logger.ts";
 import { services } from "./services/mod.ts";
 
@@ -41,7 +40,6 @@ export const initializeWorkers = (): void => {
         webLogger.info(`Starting background service: ${serviceName}`);
         service.start();
         webLogger.debug("Background service started.");
-        service.onMessage((message) => eventBus.emit(message));
     }
     webLogger.debug("All background services started");
 };

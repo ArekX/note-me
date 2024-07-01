@@ -244,3 +244,9 @@ export const findUserSharedNotes = async (
 
     return await pageResults(query, page);
 };
+
+export const removeExpiredPublicShares = async (): Promise<void> => {
+    await db.deleteFrom("note_share_link")
+        .where("expires_at", "<", getCurrentUnixTimestamp())
+        .execute();
+};

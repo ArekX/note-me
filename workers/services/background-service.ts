@@ -1,4 +1,3 @@
-import { BusEvents } from "$backend/event-bus/bus-events.ts";
 import { workerLogger } from "$backend/logger.ts";
 import { Message } from "$workers/websocket/types.ts";
 
@@ -76,7 +75,7 @@ export class BackgroundService {
         this.#started = true;
     }
 
-    onMessage(callback: (message: BusEvents) => void) {
+    onMessage(callback: <T>(message: T) => void) {
         this.#worker?.addEventListener("message", (event) => {
             callback(JSON.parse(event.data));
         });

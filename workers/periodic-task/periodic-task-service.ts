@@ -1,14 +1,12 @@
-import { BusEvents } from "$backend/event-bus/bus-events.ts";
 import { workerLogger } from "$backend/logger.ts";
 
 export const EVERY_MINUTE = 60 * 1000;
+export const EVERY_DAY = 86400;
 
 export interface PeriodicTask {
     name: string;
     interval: number;
-    trigger: (actions: {
-        sendMessage: BusEventFn;
-    }) => Promise<void>;
+    trigger: () => Promise<void>;
 }
 
 interface RegisteredTask {
@@ -18,11 +16,8 @@ interface RegisteredTask {
 
 const handlers: Set<RegisteredTask> = new Set();
 
-type BusEventFn = (message: BusEvents) => void;
-
 interface PeriodicTimerService {
     tickTime?: number;
-    onMessage: BusEventFn;
 }
 
 const waitForNextTick = (waitTime: number): Promise<void> => {
@@ -38,8 +33,7 @@ const registerPeriodicTask = (task: PeriodicTask) => {
 
 const start = async ({
     tickTime = EVERY_MINUTE,
-    onMessage,
-}: PeriodicTimerService) => {
+}: PeriodicTimerService = {}) => {
     workerLogger.info("Periodic task service started.");
 
     while (true) {
@@ -50,9 +44,8 @@ const start = async ({
 
             if (handler.leftMinutes <= 0) {
                 try {
-                    await handler.task.trigger({
-                        sendMessage: onMessage,
-                    });
+                    // TODO: We need persistence to run the task in case of shutdown
+                    await handler.task.trigger();
                 } catch (e) {
                     workerLogger.error(
                         "Error occurred when runnig periodic task '{task}': {error}",

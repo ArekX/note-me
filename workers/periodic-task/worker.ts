@@ -12,11 +12,7 @@ periodicTaskService.registerPeriodicTask(checkReminders);
 periodicTaskService.registerPeriodicTask(cleanupTempFolder);
 
 if (import.meta.main) {
-    periodicTaskService.start({
-        onMessage: (message) => {
-            self.postMessage(JSON.stringify(message));
-        },
-    });
+    periodicTaskService.start();
 }
 
 self.onerror = (event) => {

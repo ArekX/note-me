@@ -1,12 +1,10 @@
 import { cleanupOldTempFiles } from "$backend/file-upload.ts";
-import { PeriodicTask } from "../periodic-task-service.ts";
-
-const INTERVAL_24_HOURS = 86400;
+import { EVERY_DAY, PeriodicTask } from "../periodic-task-service.ts";
 
 // TODO: Test this
 export const cleanupTempFolder: PeriodicTask = {
     name: "cleanup-temp",
-    interval: INTERVAL_24_HOURS,
+    interval: EVERY_DAY,
     async trigger(): Promise<void> {
         await cleanupOldTempFiles();
     },
