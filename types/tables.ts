@@ -116,6 +116,12 @@ export interface GroupNoteTable {
     user_id: number;
 }
 
+export interface PeriodicTaskScheduleTable {
+    id: Generated<number>;
+    task_identifier: string;
+    next_run_at: number;
+}
+
 export interface Tables {
     note: NoteTable;
     note_reminder: NoteReminderTable;
@@ -130,4 +136,5 @@ export interface Tables {
     session: SessionTable;
     group_note: GroupNoteTable;
     user: UserTable;
+    periodic_task_schedule: PeriodicTaskScheduleTable;
 }

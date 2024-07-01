@@ -237,6 +237,13 @@ export async function up(db: Kysely<unknown>): Promise<void> {
             (col) => col.notNull().references("user.id"),
         )
         .execute();
+
+    await db.schema.createTable("periodic_task_schedule")
+        .ifNotExists()
+        .addColumn("id", "integer", (col) => col.autoIncrement().primaryKey())
+        .addColumn("task_identifier", "varchar(255)", (col) => col.notNull())
+        .addColumn("next_run_at", "int8")
+        .execute();
 }
 
 export async function down(db: Kysely<unknown>): Promise<void> {
@@ -244,6 +251,8 @@ export async function down(db: Kysely<unknown>): Promise<void> {
     await db.schema.dropTable("file").execute();
     await db.schema.dropTable("note_history").execute();
     await db.schema.dropTable("note_tag").execute();
+    await db.schema.dropTable("note_share_user").execute();
+    await db.schema.dropTable("note_share_link").execute();
     await db.schema.dropTable("note_tag_note").execute();
     await db.schema.dropTable("note").execute();
     await db.schema.dropTable("notification").execute();
