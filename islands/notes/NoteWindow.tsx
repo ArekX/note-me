@@ -11,6 +11,7 @@ import {
 } from "$workers/websocket/api/notes/messages.ts";
 import NoteShare from "$islands/notes/windows/NoteShare.tsx";
 import Picker from "$components/Picker.tsx";
+import NoteReminder from "$islands/notes/windows/NoteReminder.tsx";
 
 export type NoteWindowTypes =
     | "details"
@@ -80,7 +81,7 @@ export default function NoteWindow({
                 details: (props) => <NoteDetails {...props} />,
                 history: (props) => <NoteHistory {...props} />,
                 share: (props) => <NoteShare {...props} />,
-                remind: (props) => <NoteDetails {...props} />,
+                remind: (props) => <NoteReminder {...props} />,
                 move: (props) => <NoteDetails {...props} />,
                 help: (props) => <NoteHelp {...props} />,
                 delete: (props) => <NoteDelete {...props} />,

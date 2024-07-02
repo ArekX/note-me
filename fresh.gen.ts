@@ -72,6 +72,7 @@ import * as $notes_windows_NoteDelete from "./islands/notes/windows/NoteDelete.t
 import * as $notes_windows_NoteDetails from "./islands/notes/windows/NoteDetails.tsx";
 import * as $notes_windows_NoteHelp from "./islands/notes/windows/NoteHelp.tsx";
 import * as $notes_windows_NoteHistory from "./islands/notes/windows/NoteHistory.tsx";
+import * as $notes_windows_NoteReminder from "./islands/notes/windows/NoteReminder.tsx";
 import * as $notes_windows_NoteShare from "./islands/notes/windows/NoteShare.tsx";
 import * as $notes_windows_components_CreateLinkForm from "./islands/notes/windows/components/CreateLinkForm.tsx";
 import * as $notes_windows_components_HistoryDiff from "./islands/notes/windows/components/HistoryDiff.tsx";
@@ -189,6 +190,7 @@ const manifest = {
         "./islands/notes/windows/NoteDetails.tsx": $notes_windows_NoteDetails,
         "./islands/notes/windows/NoteHelp.tsx": $notes_windows_NoteHelp,
         "./islands/notes/windows/NoteHistory.tsx": $notes_windows_NoteHistory,
+        "./islands/notes/windows/NoteReminder.tsx": $notes_windows_NoteReminder,
         "./islands/notes/windows/NoteShare.tsx": $notes_windows_NoteShare,
         "./islands/notes/windows/components/CreateLinkForm.tsx":
             $notes_windows_components_CreateLinkForm,
