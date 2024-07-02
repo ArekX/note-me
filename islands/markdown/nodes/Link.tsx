@@ -6,7 +6,12 @@ export default function Link(
     const url = node.data.url.trim();
     const target = !url.startsWith("#") ? "_blank" : "_self";
     return (
-        <a href={url} title={node.data.title} target={target}>
+        <a
+            class="inline-block"
+            href={url}
+            title={node.data.title}
+            target={target}
+        >
             {children}
         </a>
     );

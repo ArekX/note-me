@@ -1,4 +1,4 @@
-import { useSignal } from "@preact/signals";
+import { Signal, useSignal } from "@preact/signals";
 import { NoteRecord } from "$backend/repository/note-repository.ts";
 import Button from "$components/Button.tsx";
 import Icon from "$components/Icon.tsx";
@@ -187,10 +187,27 @@ export default function NoteEditor({
         };
     }, []);
 
-    const withDataChange = (setter: () => void) => {
-        const result = setter();
-        wasDataChanged.value = true;
-        return result;
+    const withTagsDataChange = (value: typeof tags.value) => {
+        const signalTags = tags.value.join(",");
+        const newTags = value.join(",");
+
+        if (signalTags != newTags) {
+            wasDataChanged.value = true;
+        }
+
+        tags.value = value;
+
+        return value;
+    };
+
+    const withDataChange = <T,>(signal: Signal<T>, value: T) => {
+        if (signal.value != value) {
+            wasDataChanged.value = true;
+        }
+
+        signal.value = value;
+
+        return value;
     };
 
     useEffect(() => {
@@ -200,6 +217,7 @@ export default function NoteEditor({
         noteId.value = note.id ?? null;
         groupId.value = note.group_id ?? null;
         groupName.value = note.group_name ?? null;
+        wasDataChanged.value = false;
     }, [note]);
 
     return (
@@ -214,7 +232,7 @@ export default function NoteEditor({
                         value={name.value}
                         disabled={isSaving.running}
                         onInput={inputHandler((value) =>
-                            withDataChange(() => name.value = value)
+                            withDataChange(name, value)
                         )}
                     />
                     <ErrorDisplay
@@ -265,8 +283,7 @@ export default function NoteEditor({
             <div class="flex-grow">
                 <TagInput
                     isSaving={isSaving.running}
-                    onChange={(newTags) =>
-                        withDataChange(() => tags.value = newTags)}
+                    onChange={(newTags) => withTagsDataChange(newTags)}
                     initialTags={tags.value}
                 />
                 <ErrorDisplay
@@ -287,8 +304,7 @@ export default function NoteEditor({
                 <NoteTextArea
                     initialText={text.value}
                     isSaving={isSaving.running}
-                    onChange={(newText) =>
-                        withDataChange(() => text.value = newText)}
+                    onChange={(newText) => withDataChange(text, newText)}
                 />
             )}
             {noteId.value && (

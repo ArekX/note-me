@@ -238,6 +238,10 @@ dialog::backdrop {
     list-style-type: initial;
 }
 
+.markdown-viewer ul li {
+    padding: .15em 0;
+}
+
 .markdown-viewer ol {
     list-style-type: decimal;
 }

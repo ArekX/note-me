@@ -58,7 +58,7 @@ export default function NodeItem({
                 </li>
             );
         case "softBreak":
-            return <br />;
+            return null;
         case "hardBreak":
             return <p>&nbsp;</p>;
         case "blockQuote":
@@ -70,7 +70,7 @@ export default function NodeItem({
         case "rule":
             return <hr />;
         case "image":
-            return <img src={node.url} alt={node.title} />;
+            return <img src={node.url} class="inline-block" alt={node.title} />;
         case "emphasis":
             return <i>{items}</i>;
         case "strong":
