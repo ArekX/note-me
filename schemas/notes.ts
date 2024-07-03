@@ -25,3 +25,19 @@ export const updateNoteSchema = zod.object({
 }).strict();
 
 export type UpdateNoteRequest = zod.infer<typeof updateNoteSchema>;
+
+export const setReminderSchema = zod.object({
+    note_id: zod.number(),
+    reminder: zod.object({
+        type: zod.enum(["once"]),
+        next_at: zod.number(),
+    }).or(
+        zod.object({
+            type: zod.enum(["repeat"]),
+            interval_seconds: zod.number(),
+            repeat_count: zod.number(),
+        }),
+    ),
+}).strict();
+
+export type SetReminderRequest = zod.infer<typeof setReminderSchema>;

@@ -1,5 +1,9 @@
 import { Message } from "$workers/websocket/types.ts";
-import { AddNoteRequest, UpdateNoteRequest } from "$schemas/notes.ts";
+import {
+    AddNoteRequest,
+    SetReminderRequest,
+    UpdateNoteRequest,
+} from "$schemas/notes.ts";
 import {
     NoteDetailsRecord,
     NoteRecord,
@@ -16,6 +20,11 @@ import {
     PublicNoteShareRecord,
     UserSharedNoteMeta,
 } from "$backend/repository/note-share-repository.ts";
+import {
+    NoteReminderData,
+    ReminderNoteRecord,
+    UserReminderNotesFilters,
+} from "$backend/repository/note-reminder-repository.ts";
 
 type NoteMessage<Type, Data = unknown> = Message<
     "notes",
@@ -162,6 +171,46 @@ export type FindSharedNotesResponse = NoteMessage<
     { records: Paged<UserSharedNoteMeta> }
 >;
 
+export type SetReminderMessage = NoteMessage<
+    "setReminder",
+    SetReminderRequest
+>;
+
+export type SetReminderResponse = NoteMessage<
+    "setReminderResponse",
+    { note_id: number }
+>;
+
+export type RemoveReminderMessage = NoteMessage<
+    "removeReminder",
+    { note_id: number }
+>;
+
+export type RemoveReminderResponse = NoteMessage<
+    "removeReminderResponse",
+    { note_id: number }
+>;
+
+export type FindNoteRemindersMessage = NoteMessage<
+    "findNoteReminders",
+    { filters: UserReminderNotesFilters; page: number }
+>;
+
+export type FindNoteRemindersResponse = NoteMessage<
+    "findNoteRemindersResponse",
+    { records: Paged<ReminderNoteRecord> }
+>;
+
+export type GetNoteReminderDataMessage = NoteMessage<
+    "getNoteReminderData",
+    { note_id: number }
+>;
+
+export type GetNoteReminderDataResponse = NoteMessage<
+    "getNoteReminderDataResponse",
+    { data: NoteReminderData | null }
+>;
+
 export type NoteFrontendResponse =
     | CreateNoteResponse
     | UpdateNoteResponse
@@ -176,7 +225,11 @@ export type NoteFrontendResponse =
     | CreatePublicShareResponse
     | ShareToUsersResponse
     | RemovePublicShareResponse
-    | FindSharedNotesResponse;
+    | FindSharedNotesResponse
+    | SetReminderResponse
+    | RemoveReminderResponse
+    | FindNoteRemindersResponse
+    | GetNoteReminderDataResponse;
 
 export type NoteFrontendMessage =
     | CreateNoteMessage
@@ -192,4 +245,8 @@ export type NoteFrontendMessage =
     | CreatePublicShareMessage
     | ShareToUsersMessage
     | RemovePublicShareMessage
-    | FindSharedNotesMessage;
+    | FindSharedNotesMessage
+    | SetReminderMessage
+    | RemoveReminderMessage
+    | FindNoteRemindersMessage
+    | GetNoteReminderDataMessage;

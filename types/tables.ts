@@ -27,9 +27,10 @@ export interface NoteReminderTable {
     id: Generated<number>;
     note_id: number;
     user_id: number;
-    target_notification_id?: number | null;
-    remind_at: number;
-    repeat_amount: number;
+    next_at: number;
+    interval_seconds?: number | null;
+    repeat_count: number;
+    done_count: number;
 }
 
 export interface FileTable {

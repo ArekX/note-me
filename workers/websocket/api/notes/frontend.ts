@@ -10,20 +10,28 @@ import {
     DeleteNoteResponse,
     FindNoteHistoryMessage,
     FindNoteHistoryResponse,
+    FindNoteRemindersMessage,
+    FindNoteRemindersResponse,
     FindSharedNotesMessage,
     FindSharedNotesResponse,
     GetNoteDetailsResponse,
     GetNoteHistoryDataMessage,
     GetNoteHistoryDataResponse,
     GetNoteMessage,
+    GetNoteReminderDataMessage,
+    GetNoteReminderDataResponse,
     GetNoteResponse,
     GetNoteShareDataMessage,
     GetNoteShareDataResponse,
     NoteFrontendMessage,
     RemovePublicShareMessage,
     RemovePublicShareResponse,
+    RemoveReminderMessage,
+    RemoveReminderResponse,
     RevertNoteToHistoryMessage,
     RevertNoteToHistoryResponse,
+    SetReminderMessage,
+    SetReminderResponse,
     ShareToUsersMessage,
     ShareToUsersResponse,
     UpdateNoteMessage,
@@ -46,7 +54,11 @@ import {
 import { linkNoteWithTags } from "$backend/repository/note-tags-repository.ts";
 import { assignNoteToGroup } from "$backend/repository/group-repository.ts";
 import { requireValidSchema } from "$schemas/mod.ts";
-import { addNoteRequestSchema } from "$schemas/notes.ts";
+import {
+    addNoteRequestSchema,
+    SetReminderRequest,
+    setReminderSchema,
+} from "$schemas/notes.ts";
 import {
     deleteHistoryRecord,
     findHistory,
@@ -62,6 +74,12 @@ import {
     setUserShare,
 } from "$backend/repository/note-share-repository.ts";
 import { runSendNotificationAction } from "$backend/actions/send-notification-action.ts";
+import {
+    findUserReminderNotes,
+    getNoteReminderData,
+    removeReminder,
+    setReminder,
+} from "$backend/repository/note-reminder-repository.ts";
 
 const handleCreateNote: ListenerFn<CreateNoteMessage> = async (
     { message: { data }, sourceClient, respond },
@@ -338,6 +356,58 @@ const handleFindSharedNotes: ListenerFn<FindSharedNotesMessage> = async (
     });
 };
 
+const handleSetReminder: ListenerFn<SetReminderMessage> = async (
+    { message, sourceClient, respond },
+) => {
+    await requireValidSchema<SetReminderRequest>(setReminderSchema, message);
+
+    await setReminder({
+        ...message,
+        user_id: sourceClient?.userId!,
+    });
+
+    respond<SetReminderResponse>({
+        type: "setReminderResponse",
+        note_id: message.note_id,
+    });
+};
+
+const handleRemoveReminder: ListenerFn<RemoveReminderMessage> = async (
+    { message: { note_id }, sourceClient, respond },
+) => {
+    await removeReminder(note_id, sourceClient!.userId);
+
+    respond<RemoveReminderResponse>({
+        type: "removeReminderResponse",
+        note_id,
+    });
+};
+
+const handleFindNoteReminders: ListenerFn<FindNoteRemindersMessage> = async (
+    { message: { filters, page }, sourceClient, respond },
+) => {
+    const records = await findUserReminderNotes(
+        filters,
+        sourceClient!.userId,
+        page,
+    );
+
+    respond<FindNoteRemindersResponse>({
+        type: "findNoteRemindersResponse",
+        records,
+    });
+};
+
+const handleGetNoteReminderData: ListenerFn<GetNoteReminderDataMessage> =
+    async (
+        { message: { note_id }, sourceClient, respond },
+    ) => {
+        respond<GetNoteReminderDataResponse>({
+            type: "getNoteReminderDataResponse",
+            data: await getNoteReminderData(note_id, sourceClient!.userId),
+        });
+    };
+
 export const frontendMap: RegisterListenerMap<NoteFrontendMessage> = {
     createNote: handleCreateNote,
     updateNote: handleUpdateNote,
@@ -353,4 +423,8 @@ export const frontendMap: RegisterListenerMap<NoteFrontendMessage> = {
     shareToUsers: handleShareToUsers,
     getNoteShareData: handleGetNoteShareData,
     findSharedNotes: handleFindSharedNotes,
+    setReminder: handleSetReminder,
+    findNoteReminders: handleFindNoteReminders,
+    removeReminder: handleRemoveReminder,
+    getNoteReminderData: handleGetNoteReminderData,
 };

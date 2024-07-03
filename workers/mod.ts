@@ -1,5 +1,6 @@
 import { webLogger } from "$backend/logger.ts";
 import { services } from "./services/mod.ts";
+import { connectServiceToBus } from "$workers/services/worker-bus.ts";
 
 const checkServiceDisabled = (serviceName: string): boolean => {
     const serviceDisabledEnvName = "DISABLE_SERVICE_" +
@@ -36,6 +37,8 @@ export const initializeWorkers = (): void => {
         if (!service.options.required && checkServiceDisabled(serviceName)) {
             continue;
         }
+
+        connectServiceToBus(service);
 
         webLogger.info(`Starting background service: ${serviceName}`);
         service.start();

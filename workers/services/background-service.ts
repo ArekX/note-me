@@ -1,9 +1,11 @@
 import { workerLogger } from "$backend/logger.ts";
-import { Message } from "$workers/websocket/types.ts";
 
 interface BackgroundServiceOptions {
     required: boolean;
 }
+
+export type OnMessageHandler<T = unknown> = (message: T) => void;
+
 export class BackgroundService {
     #worker: Worker | null = null;
     #started: boolean = false;
@@ -16,11 +18,8 @@ export class BackgroundService {
         },
     ) {}
 
-    send<T extends Message>(message: T | Omit<T, "requestId">) {
-        this.#worker?.postMessage(JSON.stringify({
-            requestId: crypto.randomUUID(),
-            ...message,
-        }));
+    send<T>(message: T) {
+        this.#worker?.postMessage(JSON.stringify(message));
     }
 
     get isStarted() {
@@ -75,7 +74,7 @@ export class BackgroundService {
         this.#started = true;
     }
 
-    onMessage(callback: <T>(message: T) => void) {
+    onMessage(callback: OnMessageHandler) {
         this.#worker?.addEventListener("message", (event) => {
             callback(JSON.parse(event.data));
         });

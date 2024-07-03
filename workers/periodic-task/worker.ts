@@ -7,13 +7,7 @@ import { workerLogger } from "$backend/logger.ts";
 import { checkReminders } from "./tasks/check-reminders.ts";
 import { periodicTaskService } from "./periodic-task-service.ts";
 import { cleanupTempFolder } from "$workers/periodic-task/tasks/cleanup-temp-folder.ts";
-
-periodicTaskService.registerPeriodicTask(checkReminders);
-periodicTaskService.registerPeriodicTask(cleanupTempFolder);
-
-if (import.meta.main) {
-    periodicTaskService.start();
-}
+import { connectWorkerToBus } from "$workers/services/worker-bus.ts";
 
 self.onerror = (event) => {
     workerLogger.error(
@@ -23,3 +17,12 @@ self.onerror = (event) => {
         },
     );
 };
+
+if (import.meta.main) {
+    periodicTaskService.registerPeriodicTask(checkReminders);
+    periodicTaskService.registerPeriodicTask(cleanupTempFolder);
+
+    connectWorkerToBus(self);
+
+    periodicTaskService.start();
+}
