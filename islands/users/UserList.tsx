@@ -156,7 +156,10 @@ export default function UserList() {
                     {
                         name: "Role",
                         render: (value) => roleLabelMap[value.role],
-                        filter: filterFactory.role.list(roleDropDownList),
+                        filter: filterFactory.role.list([
+                            { label: "All roles", value: "" },
+                            ...roleDropDownList,
+                        ]),
                     },
                     {
                         name: "Actions",
