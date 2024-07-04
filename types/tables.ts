@@ -28,7 +28,8 @@ export interface NoteReminderTable {
     note_id: number;
     user_id: number;
     next_at: number;
-    interval_seconds?: number | null;
+    interval?: number | null;
+    unit_value?: number | null;
     repeat_count: number;
     done_count: number;
 }

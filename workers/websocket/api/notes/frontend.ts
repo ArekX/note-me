@@ -357,18 +357,25 @@ const handleFindSharedNotes: ListenerFn<FindSharedNotesMessage> = async (
 };
 
 const handleSetReminder: ListenerFn<SetReminderMessage> = async (
-    { message, sourceClient, respond },
+    {
+        message: { namespace: _1, requestId: _2, type: _3, ...reminderData },
+        sourceClient,
+        respond,
+    },
 ) => {
-    await requireValidSchema<SetReminderRequest>(setReminderSchema, message);
+    await requireValidSchema<SetReminderRequest>(
+        setReminderSchema,
+        reminderData,
+    );
 
     await setReminder({
-        ...message,
+        ...reminderData,
         user_id: sourceClient?.userId!,
     });
 
     respond<SetReminderResponse>({
         type: "setReminderResponse",
-        note_id: message.note_id,
+        note_id: reminderData.note_id,
     });
 };
 

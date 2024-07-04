@@ -322,3 +322,7 @@ code, pre {
 .link-form-expiration {
     min-height: 2.5em;
 }
+
+select.select-input {
+    padding: .66em .5em;
+}

@@ -1,4 +1,5 @@
 import { workerLogger } from "$backend/logger.ts";
+import { connectServiceToBus } from "$workers/services/worker-bus.ts";
 
 interface BackgroundServiceOptions {
     required: boolean;
@@ -72,6 +73,7 @@ export class BackgroundService {
         };
 
         this.#started = true;
+        connectServiceToBus(this);
     }
 
     onMessage(callback: OnMessageHandler) {

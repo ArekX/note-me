@@ -1,21 +1,21 @@
 import { IS_BROWSER } from "$fresh/runtime.ts";
 
-export interface DropDownItem {
-    value: string;
+export interface DropDownItem<T> {
+    value: T;
     label: string;
 }
 
-interface DropDownListProps {
+interface DropDownListProps<T> {
     label?: string;
     labelColor?: "white" | "black";
     name?: string;
-    value?: string;
+    value?: T;
     disabled?: boolean;
-    items: DropDownItem[];
-    onInput?: (value: string) => void;
+    items: DropDownItem<T>[];
+    onInput?: (value: T) => void;
 }
 
-export default function DropdownList(
+export default function DropdownList<T>(
     {
         label,
         items,
@@ -24,8 +24,13 @@ export default function DropdownList(
         onInput,
         disabled = false,
         labelColor = "white",
-    }: DropDownListProps,
+    }: DropDownListProps<T>,
 ) {
+    const handleInputValue = (e: Event) => {
+        const targetIndex = +(e.target as HTMLSelectElement).value;
+        onInput?.(items[targetIndex].value);
+    };
+
     return (
         <div class="text-white">
             {label && (
@@ -38,15 +43,13 @@ export default function DropdownList(
             )}
             <select
                 name={name}
-                value={value}
+                value={items.findIndex((item) => item.value === value)}
                 disabled={disabled}
-                class="outline-none border-1 border-gray-900 bg-gray-700 p-2 w-full rounded-md"
-                onInput={IS_BROWSER
-                    ? (e) => onInput?.((e.target as HTMLSelectElement).value)
-                    : undefined}
+                class="outline-none border-1 border-gray-900 bg-gray-700 select-input w-full rounded-md"
+                onInput={IS_BROWSER ? (e) => handleInputValue(e) : undefined}
             >
-                {items.map((item) => (
-                    <option value={item.value}>{item.label}</option>
+                {items.map((item, index) => (
+                    <option key={index} value={index}>{item.label}</option>
                 ))}
             </select>
         </div>

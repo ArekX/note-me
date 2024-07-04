@@ -11,7 +11,8 @@ type Reminder = {
     next_at: number;
 } | {
     type: "repeat";
-    interval_seconds: number;
+    interval: number;
+    unit_value: number;
     repeat_count: number;
 };
 
@@ -28,14 +29,13 @@ export const setReminder = async ({
 }: SetReminderData) => {
     const data: Pick<
         NoteReminderTable,
-        "next_at" | "interval_seconds" | "repeat_count"
+        "next_at" | "interval" | "repeat_count" | "unit_value"
     > = {
         next_at: reminder.type === "once"
             ? reminder.next_at
-            : getCurrentUnixTimestamp() + reminder.interval_seconds,
-        interval_seconds: reminder.type === "repeat"
-            ? reminder.interval_seconds
-            : null,
+            : getCurrentUnixTimestamp() + reminder.interval,
+        interval: reminder.type === "repeat" ? reminder.interval : null,
+        unit_value: reminder.type === "repeat" ? reminder.unit_value : null,
         repeat_count: reminder.type === "repeat" ? reminder.repeat_count : 0,
     };
 
@@ -77,7 +77,8 @@ export interface ReminderNoteRecord extends
         | "id"
         | "note_id"
         | "done_count"
-        | "interval_seconds"
+        | "interval"
+        | "unit_value"
         | "repeat_count"
         | "next_at"
     > {
@@ -105,10 +106,11 @@ export const findUserReminderNotes = async (
             "note.title",
             sql<number>`note.user_id`.as("author_id"),
             sql<string>`user.name`.as("author_name"),
-            sql<string>`(CASE WHEN note_reminder.interval_seconds IS NULL THEN 'once' ELSE 'repeat' END)`
+            sql<string>`(CASE WHEN note_reminder.interval IS NULL THEN 'once' ELSE 'repeat' END)`
                 .as("type"),
             "note_reminder.done_count",
-            "note_reminder.interval_seconds",
+            "note_reminder.interval",
+            "note_reminder.unit_value",
             "note_reminder.repeat_count",
             "note_reminder.next_at",
         ])
@@ -125,7 +127,8 @@ export type NoteReminderData =
     & Pick<
         NoteReminderTable,
         | "next_at"
-        | "interval_seconds"
+        | "interval"
+        | "unit_value"
         | "repeat_count"
         | "done_count"
     >
@@ -139,7 +142,8 @@ export const getNoteReminderData = async (
         .select([
             "id",
             "next_at",
-            "interval_seconds",
+            "interval",
+            "unit_value",
             "repeat_count",
             "done_count",
         ])
@@ -167,7 +171,13 @@ export const resolveReminderNextOcurrence = async (
     id: number,
 ) => {
     const reminder = await db.selectFrom("note_reminder")
-        .select(["done_count", "interval_seconds", "repeat_count", "next_at"])
+        .select([
+            "done_count",
+            "interval",
+            "unit_value",
+            "repeat_count",
+            "next_at",
+        ])
         .where("id", "=", id)
         .executeTakeFirst();
 
@@ -182,9 +192,9 @@ export const resolveReminderNextOcurrence = async (
         return;
     }
 
-    const nextAt = reminder.interval_seconds
+    const nextAt = reminder.interval
         ? getCurrentUnixTimestamp() +
-            (reminder.interval_seconds ?? 0)
+            (reminder.interval ?? 0) * (reminder.unit_value ?? 0)
         : reminder.next_at;
 
     await db.updateTable("note_reminder")

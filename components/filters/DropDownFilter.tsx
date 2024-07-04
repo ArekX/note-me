@@ -1,18 +1,24 @@
 import DropdownList, { DropDownItem } from "$components/DropdownList.tsx";
 
-interface DropDownFilterProps<T extends object> {
+interface DropDownFilterProps<T extends object, DropdownItemType = string> {
     filters: T;
     filterKey: keyof T;
-    items: DropDownItem[];
+    items: DropDownItem<DropdownItemType>[];
     onChange: (filters: T) => void;
 }
 
-export default function DropDownFilter<T extends object>(
-    { filters, filterKey, items, onChange }: DropDownFilterProps<T>,
+export default function DropDownFilter<
+    T extends object,
+    DropdownItemType = string,
+>(
+    { filters, filterKey, items, onChange }: DropDownFilterProps<
+        T,
+        DropdownItemType
+    >,
 ) {
     return (
-        <DropdownList
-            value={filters[filterKey] as string ?? ""}
+        <DropdownList<DropdownItemType>
+            value={filters[filterKey] as DropdownItemType}
             items={items}
             onInput={(value) => {
                 onChange({ ...filters, [filterKey]: value });

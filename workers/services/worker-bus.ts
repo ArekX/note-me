@@ -1,3 +1,5 @@
+/// <reference lib="webworker" />
+
 import {
     BackgroundService,
     OnMessageHandler,

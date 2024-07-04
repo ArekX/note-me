@@ -51,7 +51,8 @@ export async function up(db: Kysely<unknown>): Promise<void> {
             (col) => col.notNull().references("user.id"),
         )
         .addColumn("next_at", "int8", (col) => col.notNull())
-        .addColumn("interval_seconds", "int8")
+        .addColumn("interval", "int8")
+        .addColumn("unit_value", "int8")
         .addColumn("repeat_count", "int8", (col) => col.notNull().defaultTo(0))
         .addColumn("done_count", "int8", (col) => col.notNull().defaultTo(0))
         .execute();

@@ -27,12 +27,12 @@ export const checkReminders: PeriodicTask = {
                         user_id: reminder.user_id,
                     });
 
+                    await resolveReminderNextOcurrence(reminder.id);
+
                     sendMessageToWebsocket("notifications", "addNotification", {
                         data: record,
                         toUserId: reminder.user_id,
                     });
-
-                    await resolveReminderNextOcurrence(reminder.id);
                 });
             } catch (e) {
                 workerLogger.error(

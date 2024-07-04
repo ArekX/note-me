@@ -58,11 +58,11 @@ const runPreviouslyScheduledTasks = async () => {
 
 const triggerHandler = async (handler: RegisteredTask) => {
     try {
-        workerLogger.info("Running periodic task '{task}'", {
+        workerLogger.debug("Running periodic task '{task}'", {
             task: handler.task.name,
         });
         await handler.task.trigger();
-        workerLogger.info("Periodic task '{task}' finished", {
+        workerLogger.debug("Periodic task '{task}' finished", {
             task: handler.task.name,
         });
     } catch (e) {

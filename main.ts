@@ -12,7 +12,7 @@ import config from "./fresh.config.ts";
 import { initializeWorkers } from "./workers/mod.ts";
 import { initializeBackend } from "$backend/initialize.ts";
 
-initializeWorkers();
 await initializeBackend();
+initializeWorkers();
 
 await start(manifest, config);
