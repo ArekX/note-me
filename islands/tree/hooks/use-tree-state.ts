@@ -105,7 +105,6 @@ export const useTreeState = (): TreeStateHook => {
 
         if (parent.children.length === 0) {
             parent.has_children = false;
-            parent.children_loaded = false;
             parent.is_open = false;
         }
     };
