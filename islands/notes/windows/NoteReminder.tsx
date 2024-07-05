@@ -3,7 +3,6 @@ import Button from "$components/Button.tsx";
 import Dialog from "$islands/Dialog.tsx";
 import Checkbox from "$islands/Checkbox.tsx";
 import { useSignal } from "@preact/signals";
-import Input from "$components/Input.tsx";
 import {
     dateToHms,
     dateToUnix,
@@ -25,17 +24,10 @@ import { useEffect } from "preact/hooks";
 import { useListState } from "$frontend/hooks/use-list-state.ts";
 import Picker from "$components/Picker.tsx";
 import ButtonGroup from "$components/ButtonGroup.tsx";
-import DropdownList from "$components/DropdownList.tsx";
 import { addMessage } from "$frontend/toast-message.ts";
+import { OneTimeReminder } from "$islands/notes/windows/components/OneTimeReminder.tsx";
+import { RepeatReminder } from "$islands/notes/windows/components/RepeatReminder.tsx";
 
-const unitList = [
-    { "label": "minute(s)", "value": 60 },
-    { "label": "hour(s)", "value": 3600 },
-    { "label": "day(s)", "value": 86400 },
-    { "label": "week(s)", "value": 604800 },
-    { "label": "month(s)", "value": 2592000 },
-    { "label": "year(s)", "value": 31536000 },
-];
 export default function NoteReminder({
     noteId,
     onClose,
@@ -194,82 +186,30 @@ export default function NoteReminder({
                                     selector={selected.value}
                                     map={{
                                         repeat: () => (
-                                            <>
-                                                <p>
-                                                    Starting from now, remind me
-                                                    every:
-                                                </p>
-                                                <div class="flex">
-                                                    <div class="w-1/6">
-                                                        <Input
-                                                            type="number"
-                                                            label="Interval"
-                                                            value={interval
-                                                                .value
-                                                                .toString()}
-                                                            onInput={(value) =>
-                                                                interval
-                                                                    .value =
-                                                                        parseFloat(
-                                                                            value,
-                                                                        )}
-                                                        />
-                                                    </div>
-                                                    <div class="w-1/5 pl-2">
-                                                        <DropdownList
-                                                            label="Unit"
-                                                            items={unitList}
-                                                            value={unit.value}
-                                                        />
-                                                    </div>
-                                                    <div class="w-1/6 pl-2">
-                                                        <Input
-                                                            type="number"
-                                                            label="Repeat"
-                                                            value={repeat
-                                                                .value
-                                                                .toString()}
-                                                            onInput={(value) =>
-                                                                repeat
-                                                                    .value =
-                                                                        parseFloat(
-                                                                            value,
-                                                                        )}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </>
+                                            <RepeatReminder
+                                                value={{
+                                                    interval: interval.value,
+                                                    unit: unit.value,
+                                                    repeat: repeat.value,
+                                                }}
+                                                onInput={(v) => {
+                                                    interval.value = v.interval;
+                                                    unit.value = v.unit;
+                                                    repeat.value = v.repeat;
+                                                }}
+                                            />
                                         ),
                                         once: () => (
-                                            <>
-                                                <p>Remind me at:</p>
-                                                <Input
-                                                    type="date"
-                                                    label="Date"
-                                                    value={remindMeDate.value}
-                                                    min={dateToYmd(new Date())}
-                                                    onInput={(value) =>
-                                                        remindMeDate.value =
-                                                            value}
-                                                />
-                                                <Input
-                                                    type="time"
-                                                    label="Time"
-                                                    value={remindMeTime.value}
-                                                    onInput={(value) =>
-                                                        remindMeTime.value =
-                                                            value}
-                                                />
-                                                {(remindMeDate.value.length ===
-                                                        0 ||
-                                                    remindMeTime.value.length ==
-                                                        0) && (
-                                                    <div class="text-sm text-red-400">
-                                                        Please enter reminder
-                                                        date.
-                                                    </div>
-                                                )}
-                                            </>
+                                            <OneTimeReminder
+                                                value={{
+                                                    date: remindMeDate.value,
+                                                    time: remindMeTime.value,
+                                                }}
+                                                onInput={(v) => {
+                                                    remindMeDate.value = v.date;
+                                                    remindMeTime.value = v.time;
+                                                }}
+                                            />
                                         ),
                                     }}
                                 />

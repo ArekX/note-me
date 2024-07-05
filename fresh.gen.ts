@@ -72,10 +72,13 @@ import * as $notes_windows_NoteDelete from "./islands/notes/windows/NoteDelete.t
 import * as $notes_windows_NoteDetails from "./islands/notes/windows/NoteDetails.tsx";
 import * as $notes_windows_NoteHelp from "./islands/notes/windows/NoteHelp.tsx";
 import * as $notes_windows_NoteHistory from "./islands/notes/windows/NoteHistory.tsx";
+import * as $notes_windows_NoteMove from "./islands/notes/windows/NoteMove.tsx";
 import * as $notes_windows_NoteReminder from "./islands/notes/windows/NoteReminder.tsx";
 import * as $notes_windows_NoteShare from "./islands/notes/windows/NoteShare.tsx";
 import * as $notes_windows_components_CreateLinkForm from "./islands/notes/windows/components/CreateLinkForm.tsx";
 import * as $notes_windows_components_HistoryDiff from "./islands/notes/windows/components/HistoryDiff.tsx";
+import * as $notes_windows_components_OneTimeReminder from "./islands/notes/windows/components/OneTimeReminder.tsx";
+import * as $notes_windows_components_RepeatReminder from "./islands/notes/windows/components/RepeatReminder.tsx";
 import * as $notes_windows_components_ShareLinks from "./islands/notes/windows/components/ShareLinks.tsx";
 import * as $notes_windows_components_ShareToUsers from "./islands/notes/windows/components/ShareToUsers.tsx";
 import * as $notifications_NotificationItem from "./islands/notifications/NotificationItem.tsx";
@@ -190,12 +193,17 @@ const manifest = {
         "./islands/notes/windows/NoteDetails.tsx": $notes_windows_NoteDetails,
         "./islands/notes/windows/NoteHelp.tsx": $notes_windows_NoteHelp,
         "./islands/notes/windows/NoteHistory.tsx": $notes_windows_NoteHistory,
+        "./islands/notes/windows/NoteMove.tsx": $notes_windows_NoteMove,
         "./islands/notes/windows/NoteReminder.tsx": $notes_windows_NoteReminder,
         "./islands/notes/windows/NoteShare.tsx": $notes_windows_NoteShare,
         "./islands/notes/windows/components/CreateLinkForm.tsx":
             $notes_windows_components_CreateLinkForm,
         "./islands/notes/windows/components/HistoryDiff.tsx":
             $notes_windows_components_HistoryDiff,
+        "./islands/notes/windows/components/OneTimeReminder.tsx":
+            $notes_windows_components_OneTimeReminder,
+        "./islands/notes/windows/components/RepeatReminder.tsx":
+            $notes_windows_components_RepeatReminder,
         "./islands/notes/windows/components/ShareLinks.tsx":
             $notes_windows_components_ShareLinks,
         "./islands/notes/windows/components/ShareToUsers.tsx":

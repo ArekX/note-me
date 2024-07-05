@@ -33,7 +33,8 @@ export const setReminder = async ({
     > = {
         next_at: reminder.type === "once"
             ? reminder.next_at
-            : getCurrentUnixTimestamp() + reminder.interval,
+            : getCurrentUnixTimestamp() +
+                reminder.interval * reminder.unit_value,
         interval: reminder.type === "repeat" ? reminder.interval : null,
         unit_value: reminder.type === "repeat" ? reminder.unit_value : null,
         repeat_count: reminder.type === "repeat" ? reminder.repeat_count : 0,
