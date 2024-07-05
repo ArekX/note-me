@@ -90,7 +90,6 @@ import * as $profile_UserProfile from "./islands/profile/UserProfile.tsx";
 import * as $sidebar_ListSwitcher from "./islands/sidebar/ListSwitcher.tsx";
 import * as $sidebar_LogoutButton from "./islands/sidebar/LogoutButton.tsx";
 import * as $sidebar_RemindersList from "./islands/sidebar/RemindersList.tsx";
-import * as $sidebar_RenderViews from "./islands/sidebar/RenderViews.tsx";
 import * as $sidebar_SearchBar from "./islands/sidebar/SearchBar.tsx";
 import * as $sidebar_SharedNotesList from "./islands/sidebar/SharedNotesList.tsx";
 import * as $sidebar_SideBarPanel from "./islands/sidebar/SideBarPanel.tsx";
@@ -222,7 +221,6 @@ const manifest = {
         "./islands/sidebar/ListSwitcher.tsx": $sidebar_ListSwitcher,
         "./islands/sidebar/LogoutButton.tsx": $sidebar_LogoutButton,
         "./islands/sidebar/RemindersList.tsx": $sidebar_RemindersList,
-        "./islands/sidebar/RenderViews.tsx": $sidebar_RenderViews,
         "./islands/sidebar/SearchBar.tsx": $sidebar_SearchBar,
         "./islands/sidebar/SharedNotesList.tsx": $sidebar_SharedNotesList,
         "./islands/sidebar/SideBarPanel.tsx": $sidebar_SideBarPanel,

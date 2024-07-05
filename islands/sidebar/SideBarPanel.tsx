@@ -3,18 +3,22 @@ import ListSwitcher, {
     ListSwitcherItem,
 } from "$islands/sidebar/ListSwitcher.tsx";
 import { useSignal } from "@preact/signals";
-import { RendererViews } from "$islands/sidebar/RenderViews.tsx";
+import Button from "$components/Button.tsx";
+import Picker from "$components/Picker.tsx";
+import TreeList from "$islands/tree/TreeList.tsx";
+import RemindersList from "$islands/sidebar/RemindersList.tsx";
+import SharedNotesList from "$islands/sidebar/SharedNotesList.tsx";
 
 interface ListView {
-    type: "notes" | "reminders" | "shared";
+    type: "notes" | "reminders" | "shared" | "recycle-bin";
     label: string;
     icon: string;
     placeholder: string;
 }
 
 export default function ListPanel() {
-    const showAdvancedSearch = useSignal(false);
     const searchQuery = useSignal("");
+
     const currentType = useSignal<ListView>({
         type: "notes",
         label: "Notes",
@@ -64,7 +68,7 @@ export default function ListPanel() {
             icon: "recycle",
             onClick: () => {
                 currentType.value = {
-                    type: "shared",
+                    type: "recycle-bin",
                     label: "Recycle Bin",
                     icon: "recycle",
                     placeholder: "Search recycle bin items...",
@@ -73,30 +77,52 @@ export default function ListPanel() {
         },
     ];
 
-    const RenderView = RendererViews[currentType.value.type];
+    const switcher = (
+        <ListSwitcher
+            items={switchItems}
+            currentIcon={currentType.value.icon}
+            currentItem={currentType.value.label}
+        />
+    );
 
     return (
         <div class="mt-3">
             <SearchBar
-                onSearch={(query) => searchQuery.value = query}
-                showAdvancedSearch={showAdvancedSearch.value}
-                onTriggerAdvancedSearch={() => showAdvancedSearch.value = true}
-                searchPlaceholder={currentType.value.placeholder}
-                advancedSearchComponent={
-                    <button onClick={() => showAdvancedSearch.value = false}>
-                        finish this
-                    </button>
-                }
+                onSearch={(v) => searchQuery.value = v}
+                advancedSearchComponent={({
+                    onClose,
+                }) => (
+                    <div>
+                        <div class="p-2">
+                            TODO: Finish This
+                        </div>
+                        <Button onClick={onClose} color="danger">Close</Button>
+                    </div>
+                )}
             />
-            <RenderView
-                switcher={
-                    <ListSwitcher
-                        items={switchItems}
-                        currentIcon={currentType.value.icon}
-                        currentItem={currentType.value.label}
-                    />
-                }
-                searchQuery={searchQuery.value}
+
+            <Picker<ListView["type"]>
+                selector={currentType.value.type}
+                map={{
+                    notes: () => (
+                        <TreeList
+                            searchQuery={searchQuery.value}
+                            switcherComponent={switcher}
+                        />
+                    ),
+                    reminders: () => (
+                        <RemindersList switcherComponent={switcher} />
+                    ),
+                    shared: () => (
+                        <SharedNotesList switcherComponent={switcher} />
+                    ),
+                    "recycle-bin": () => (
+                        <div>
+                            {switcher}
+                            Recycle Bin
+                        </div>
+                    ),
+                }}
             />
         </div>
     );
