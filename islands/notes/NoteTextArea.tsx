@@ -3,6 +3,15 @@ import { createRef } from "preact";
 import { useEffect } from "preact/hooks";
 import { autosize, insertTextIntoField } from "$frontend/deps.ts";
 import InsertDialog from "$islands/notes/InsertDialog.tsx";
+import { useFileUploader } from "$islands/files/hooks/use-file-uploader.ts";
+import { UploadProgressDialog } from "$islands/files/UploadProgressDialog.tsx";
+import {
+    getFileDownloadUrl,
+    getFileViewUrl,
+    getImageMarkdown,
+    getLinkMarkdown,
+} from "$islands/notes/helpers/markdown.ts";
+import { FileDropWrapper } from "$islands/files/FileDropWrapper.tsx";
 
 interface NoteInputProps {
     isSaving: boolean;
@@ -18,6 +27,7 @@ export default function NoteTextArea({
     const text = useSignal(initialText);
     const lastCursorPosition = useSignal(0);
     const textAreaRef = createRef<HTMLTextAreaElement>();
+    const fileUploader = useFileUploader();
 
     const handleTextInput = (event: Event) => {
         text.value = (event.target as HTMLInputElement).value;
@@ -50,20 +60,60 @@ export default function NoteTextArea({
         const textValue = text.value;
         const cursorPosition = lastCursorPosition.value;
 
-        console.log(
-            "Inserting text",
-            insertedText,
-            "at",
-            cursorPosition,
-            "in",
-            textValue,
-        );
-
         text.value = `${textValue.slice(0, cursorPosition)}${insertedText}${
             textValue.slice(cursorPosition)
         }`;
-        console.log(text.value);
+
         onChange(text.value);
+    };
+
+    const handlePaste = async (e: ClipboardEvent) => {
+        if (!e.clipboardData) {
+            return;
+        }
+
+        const clipboardItems = Array.from(e.clipboardData.items);
+
+        const files = [];
+
+        for (const item of clipboardItems) {
+            const file = item.getAsFile();
+
+            if (file) {
+                files.push(file);
+            }
+        }
+
+        if (files.length === 0) {
+            return;
+        }
+
+        await uploadAndInsertFiles(files);
+    };
+
+    const uploadAndInsertFiles = async (files: File[]) => {
+        const results = await fileUploader.uploadFiles(files);
+        const toInsert = [];
+
+        for (const result of results) {
+            if (result.file.type.startsWith("image/")) {
+                toInsert.push(
+                    getImageMarkdown(
+                        getFileViewUrl(result.identifier),
+                        result.file.name,
+                    ),
+                );
+            } else {
+                toInsert.push(
+                    getLinkMarkdown(
+                        getFileDownloadUrl(result.identifier),
+                        result.file.name,
+                    ),
+                );
+            }
+        }
+
+        handleDialogInsert(toInsert.join("\n"));
     };
 
     useEffect(() => {
@@ -88,18 +138,25 @@ export default function NoteTextArea({
                 noteText={text.value}
                 onInsert={handleDialogInsert}
             />
-            <textarea
-                ref={textAreaRef}
-                class="text-editor block w-full"
-                placeholder="Write your note here"
-                tabIndex={3}
-                disabled={isSaving}
-                onMouseUp={recordLastCursorPosition}
-                onKeyDown={handleKeyDown}
-                onKeyUp={recordLastCursorPosition}
-                onInput={handleTextInput}
-                value={text}
-            />
+            <FileDropWrapper
+                wrapperClass="w-full block"
+                onFilesDropped={uploadAndInsertFiles}
+            >
+                <textarea
+                    ref={textAreaRef}
+                    class="text-editor block w-full"
+                    placeholder="Write your note here"
+                    tabIndex={3}
+                    disabled={isSaving}
+                    onMouseUp={recordLastCursorPosition}
+                    onKeyDown={handleKeyDown}
+                    onKeyUp={recordLastCursorPosition}
+                    onInput={handleTextInput}
+                    onPaste={handlePaste}
+                    value={text}
+                />
+            </FileDropWrapper>
+            <UploadProgressDialog uploader={fileUploader} />
         </div>
     );
 }

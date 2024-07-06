@@ -3,6 +3,7 @@ import {
     InsertComponentProps,
 } from "$islands/notes/InsertDialog.tsx";
 import LinkForm from "$islands/notes/insert-components/LinkForm.tsx";
+import { getLinkMarkdown } from "$islands/notes/helpers/markdown.ts";
 
 const Component = ({
     onCancel,
@@ -12,7 +13,7 @@ const Component = ({
         <LinkForm
             iconName="link"
             onCancel={onCancel}
-            onInsert={(name, url) => onInsert(`[${name}](${url})`)}
+            onInsert={(name, url) => onInsert(getLinkMarkdown(url, name))}
         />
     );
 };

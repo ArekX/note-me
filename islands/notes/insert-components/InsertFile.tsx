@@ -8,6 +8,12 @@ import Button from "$components/Button.tsx";
 import { useSignal } from "@preact/signals";
 import { FileMetaRecord } from "$backend/repository/file-repository.ts";
 import DropdownMenu from "$islands/DropdownMenu.tsx";
+import {
+    getFileDownloadUrl,
+    getFileViewUrl,
+    getImageMarkdown,
+    getLinkMarkdown,
+} from "$islands/notes/helpers/markdown.ts";
 
 const Component = ({
     onInsert,
@@ -31,7 +37,13 @@ const Component = ({
                                     icon: "image",
                                     onClick: () =>
                                         onInsert(
-                                            `![${selectedFile.value?.name}](/file/${selectedFile.value?.identifier})`,
+                                            getImageMarkdown(
+                                                getFileViewUrl(
+                                                    selectedFile.value!
+                                                        .identifier,
+                                                ),
+                                                selectedFile.value!.name,
+                                            ),
                                         ),
                                 },
                                 {
@@ -39,7 +51,13 @@ const Component = ({
                                     icon: "link",
                                     onClick: () =>
                                         onInsert(
-                                            `[${selectedFile.value?.name}](/file/${selectedFile.value?.identifier})`,
+                                            getLinkMarkdown(
+                                                getFileViewUrl(
+                                                    selectedFile.value!
+                                                        .identifier,
+                                                ),
+                                                selectedFile.value!.name,
+                                            ),
                                         ),
                                 },
                                 {
@@ -47,7 +65,13 @@ const Component = ({
                                     icon: "down-arrow-alt",
                                     onClick: () =>
                                         onInsert(
-                                            `[${selectedFile.value?.name}](/file/${selectedFile.value?.identifier}?download)`,
+                                            getLinkMarkdown(
+                                                getFileDownloadUrl(
+                                                    selectedFile.value!
+                                                        .identifier,
+                                                ),
+                                                selectedFile.value!.name,
+                                            ),
                                         ),
                                 },
                                 {
@@ -55,7 +79,10 @@ const Component = ({
                                     icon: "text",
                                     onClick: () =>
                                         onInsert(
-                                            `/file/${selectedFile.value?.identifier}`,
+                                            getFileViewUrl(
+                                                selectedFile.value!
+                                                    .identifier,
+                                            ),
                                         ),
                                 },
                                 {
@@ -63,7 +90,10 @@ const Component = ({
                                     icon: "text",
                                     onClick: () =>
                                         onInsert(
-                                            `/file/${selectedFile.value?.identifier}?download`,
+                                            getFileDownloadUrl(
+                                                selectedFile.value!
+                                                    .identifier,
+                                            ),
                                         ),
                                 },
                             ]}
@@ -87,7 +117,9 @@ const Component = ({
                             Selected:{" "}
                             <a
                                 title={`Download ${selectedFile.value.name}`}
-                                href={`/file/${selectedFile.value.identifier}?download`}
+                                href={getFileDownloadUrl(
+                                    selectedFile.value.identifier,
+                                )}
                                 target="_blank"
                                 class="underline"
                             >

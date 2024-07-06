@@ -1,6 +1,5 @@
 import FileUpload from "$islands/files/FileUpload.tsx";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
-import { useSignal } from "@preact/signals";
 import { FileMetaRecord } from "$backend/repository/file-repository.ts";
 import {
     FileFrontendResponse,
@@ -12,13 +11,14 @@ import Pagination from "$islands/Pagination.tsx";
 import FileItem from "$islands/files/FileItem.tsx";
 import ConfirmDialog from "$islands/ConfirmDialog.tsx";
 import { useFileUploader } from "./hooks/use-file-uploader.ts";
-import Dialog from "$islands/Dialog.tsx";
 import { useEffect } from "preact/hooks";
 import Input from "$components/Input.tsx";
 import { useSelected } from "$frontend/hooks/use-selected.ts";
 import { usePagedData } from "$frontend/hooks/use-paged-data.ts";
 import { useFilters } from "$frontend/hooks/use-filters.ts";
 import { useLoader } from "$frontend/hooks/use-loader.ts";
+import { UploadProgressDialog } from "$islands/files/UploadProgressDialog.tsx";
+import { FileDropWrapper } from "$islands/files/FileDropWrapper.tsx";
 
 interface FilePickerProps {
     adminMode?: boolean;
@@ -163,33 +163,9 @@ export default function FilePicker({
         });
     };
 
-    const isDroppingFile = useSignal(false);
-
-    const handleDragOver = (e: DragEvent) => {
-        if (!e.dataTransfer) {
-            return;
-        }
-
-        e.preventDefault();
-        isDroppingFile.value = true;
-    };
-
-    const handleDragLeave = (e: DragEvent) => {
-        e.preventDefault();
-        isDroppingFile.value = false;
-    };
-
-    const handleDrop = async (e: DragEvent) => {
-        e.preventDefault();
-
-        if (!e.dataTransfer) {
-            return;
-        }
-
-        const files = Array.from(e.dataTransfer.files);
+    const handleFilesDropped = async (files: File[]) => {
         await fileUploader.uploadFiles(files);
         await loadFiles();
-        isDroppingFile.value = false;
     };
 
     useEffect(() => {
@@ -197,19 +173,10 @@ export default function FilePicker({
     }, []);
 
     return (
-        <div
-            class="file-picker w-full relative"
-            onDragOver={handleDragOver}
-            onDrop={handleDrop}
+        <FileDropWrapper
+            wrapperClass="file-picker w-full"
+            onFilesDropped={handleFilesDropped}
         >
-            {isDroppingFile.value && (
-                <div
-                    onDragLeave={handleDragLeave}
-                    class="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50"
-                >
-                    <p class="text-white text-2xl">Drop files to upload</p>
-                </div>
-            )}
             <div class="w-full flex mb-2 items-end">
                 <div class="mr-2 flex-grow">
                     <Input
@@ -227,20 +194,7 @@ export default function FilePicker({
                         fileUploader={fileUploader}
                     />
                 </div>
-
-                {fileUploader.isUploading.value && (
-                    <Dialog>
-                        <p class="text-center">
-                            Uploading progress {fileUploader.donePercentage}%
-                        </p>
-                        <progress
-                            class="w-full"
-                            max={fileUploader.totalSizeToUpload.value}
-                            min="0"
-                            value={fileUploader.uploadedSize.value}
-                        />
-                    </Dialog>
-                )}
+                <UploadProgressDialog uploader={fileUploader} />
             </div>
 
             {fileLoader.running
@@ -294,6 +248,6 @@ export default function FilePicker({
                 onConfirm={handleDeleteFile}
                 onCancel={() => fileToDelete.unselect()}
             />
-        </div>
+        </FileDropWrapper>
     );
 }

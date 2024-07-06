@@ -41,9 +41,11 @@ import * as $Loader from "./islands/Loader.tsx";
 import * as $Pagination from "./islands/Pagination.tsx";
 import * as $ToastMessages from "./islands/ToastMessages.tsx";
 import * as $UserPicker from "./islands/UserPicker.tsx";
+import * as $files_FileDropWrapper from "./islands/files/FileDropWrapper.tsx";
 import * as $files_FileItem from "./islands/files/FileItem.tsx";
 import * as $files_FilePicker from "./islands/files/FilePicker.tsx";
 import * as $files_FileUpload from "./islands/files/FileUpload.tsx";
+import * as $files_UploadProgressDialog from "./islands/files/UploadProgressDialog.tsx";
 import * as $files_hooks_use_file_uploader from "./islands/files/hooks/use-file-uploader.ts";
 import * as $markdown_NodeItem from "./islands/markdown/NodeItem.tsx";
 import * as $markdown_Viewer from "./islands/markdown/Viewer.tsx";
@@ -60,6 +62,7 @@ import * as $notes_NoteWindow from "./islands/notes/NoteWindow.tsx";
 import * as $notes_TagInput from "./islands/notes/TagInput.tsx";
 import * as $notes_ViewNote from "./islands/notes/ViewNote.tsx";
 import * as $notes_blocks_TableOfContents from "./islands/notes/blocks/TableOfContents.tsx";
+import * as $notes_helpers_markdown from "./islands/notes/helpers/markdown.ts";
 import * as $notes_hooks_use_note_websocket from "./islands/notes/hooks/use-note-websocket.ts";
 import * as $notes_insert_components_InsertFile from "./islands/notes/insert-components/InsertFile.tsx";
 import * as $notes_insert_components_InsertGroupList from "./islands/notes/insert-components/InsertGroupList.tsx";
@@ -151,9 +154,11 @@ const manifest = {
         "./islands/Pagination.tsx": $Pagination,
         "./islands/ToastMessages.tsx": $ToastMessages,
         "./islands/UserPicker.tsx": $UserPicker,
+        "./islands/files/FileDropWrapper.tsx": $files_FileDropWrapper,
         "./islands/files/FileItem.tsx": $files_FileItem,
         "./islands/files/FilePicker.tsx": $files_FilePicker,
         "./islands/files/FileUpload.tsx": $files_FileUpload,
+        "./islands/files/UploadProgressDialog.tsx": $files_UploadProgressDialog,
         "./islands/files/hooks/use-file-uploader.ts":
             $files_hooks_use_file_uploader,
         "./islands/markdown/NodeItem.tsx": $markdown_NodeItem,
@@ -172,6 +177,7 @@ const manifest = {
         "./islands/notes/ViewNote.tsx": $notes_ViewNote,
         "./islands/notes/blocks/TableOfContents.tsx":
             $notes_blocks_TableOfContents,
+        "./islands/notes/helpers/markdown.ts": $notes_helpers_markdown,
         "./islands/notes/hooks/use-note-websocket.ts":
             $notes_hooks_use_note_websocket,
         "./islands/notes/insert-components/InsertFile.tsx":

@@ -24,11 +24,16 @@ export interface FileUploaderHook {
     uploadedSize: Signal<number>;
     filesLeft: ReadonlySignal<number>;
     donePercentage: ReadonlySignal<string>;
-    uploadFiles: (newFiles: File[]) => Promise<void>;
+    uploadFiles: (newFiles: File[]) => Promise<UploadedFile[]>;
+}
+
+export interface UploadedFile {
+    file: File;
+    identifier: string;
 }
 
 const getPercentage = (uploaded: number, total: number) =>
-    total != 0 ? Math.floor((uploaded / total) * 100).toFixed(2) : "0";
+    total != 0 ? ((uploaded / total) * 100).toFixed(2) : "0";
 
 export const useFileUploader = (): FileUploaderHook => {
     const { sendBinaryMessage, sendMessage } = useWebsocketService();
@@ -43,11 +48,11 @@ export const useFileUploader = (): FileUploaderHook => {
         getPercentage(uploadedSize.value, totalSizeToUpload.value)
     );
 
-    const transferFile = async (file: File) => {
+    const transferFile = async (file: File): Promise<string | null> => {
         const targetId = await startFileUpload(file);
 
         if (targetId === null) {
-            return;
+            return null;
         }
 
         const fileBuffer = await file.arrayBuffer();
@@ -76,6 +81,8 @@ export const useFileUploader = (): FileUploaderHook => {
         }
 
         await finalizeFile(file.name, targetId);
+
+        return targetId;
     };
 
     const startFileUpload = async (file: File) => {
@@ -124,15 +131,25 @@ export const useFileUploader = (): FileUploaderHook => {
         }
     };
 
-    const uploadFiles = async (newFiles: File[]) => {
+    const uploadFiles = async (newFiles: File[]): Promise<UploadedFile[]> => {
         filesToUpload.value = [...filesToUpload.value, ...newFiles];
         totalSizeToUpload.value += newFiles.reduce(
             (acc, file) => acc + file.size,
             0,
         );
 
+        const results: UploadedFile[] = [];
+
         for (const file of newFiles) {
-            await transferFile(file);
+            const resultTargetId = await transferFile(file);
+
+            if (resultTargetId) {
+                results.push({
+                    file,
+                    identifier: resultTargetId,
+                });
+            }
+
             filesToUpload.value = filesToUpload.value.filter(
                 (f) => f !== file,
             );
@@ -142,6 +159,8 @@ export const useFileUploader = (): FileUploaderHook => {
             uploadedSize.value = 0;
             totalSizeToUpload.value = 0;
         }
+
+        return results;
     };
 
     return {

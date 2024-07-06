@@ -3,10 +3,6 @@ import { useSignal } from "@preact/signals";
 import Button from "$components/Button.tsx";
 import Icon from "$components/Icon.tsx";
 
-const sanitizeUrlForMarkdown = (url: string) => {
-    return url.replace("(", "%28").replace(")", "%29");
-};
-
 interface LinkFormProps {
     iconName: string;
     onInsert: (name: string, url: string) => void;
@@ -21,8 +17,7 @@ export default function LinkForm({
     const link = useSignal<string>("");
     const linkName = useSignal<string>("");
 
-    const handleInsert = () =>
-        onInsert(linkName.value, sanitizeUrlForMarkdown(link.value));
+    const handleInsert = () => onInsert(linkName.value, link.value);
 
     return (
         <div class="w-1/2">
