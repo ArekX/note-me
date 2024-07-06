@@ -31,6 +31,7 @@ export default function Page(props: PageProps<PageData, AppState>) {
         <div class="text-white w-1/2 ml-auto mr-auto pt-8 pb-10">
             <ViewNote
                 readonly={true}
+                guestMode={true}
                 disableTagLinks={true}
                 author={props.data.note.user_name}
                 record={{
