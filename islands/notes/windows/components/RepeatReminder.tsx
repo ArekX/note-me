@@ -1,5 +1,6 @@
 import Input from "$components/Input.tsx";
 import DropdownList from "$components/DropdownList.tsx";
+import { useSignal } from "@preact/signals";
 
 interface OneTimeReminderProps {
     value: RepeatValue;
@@ -21,15 +22,66 @@ interface RepeatValue {
     repeat: number;
 }
 
+const validateInterval = (interval: number, repeat: number) => {
+    const errors: string[] = [];
+
+    if (isNaN(interval)) {
+        errors.push("Please enter a valid number for interval.");
+    }
+
+    if (isNaN(repeat)) {
+        errors.push("Please enter a valid number for repeat.");
+    }
+
+    if (interval <= 0) {
+        errors.push("Please enter a positive number for interval.");
+    }
+
+    if (repeat <= 0) {
+        errors.push("Please enter a positive number for repeat.");
+    }
+
+    return errors;
+};
+
 export function RepeatReminder({
     value,
     onInput,
 }: OneTimeReminderProps) {
+    const interval = useSignal<number>(value.interval);
+    const unit = useSignal<number>(value.unit);
+    const repeat = useSignal<number>(value.repeat);
+    const errors = useSignal<string[]>(
+        validateInterval(value.interval, value.repeat),
+    );
+
     const handleInput = <T extends keyof RepeatValue>(
         key: T,
         newValue: RepeatValue[T],
     ) => {
-        onInput({ ...value, [key]: newValue });
+        const newInterval = {
+            interval: interval.value,
+            unit: unit.value,
+            repeat: repeat.value,
+            [key]: newValue,
+        };
+
+        interval.value = newInterval.interval;
+        unit.value = newInterval.unit;
+        repeat.value = newInterval.repeat;
+
+        errors.value = validateInterval(
+            newInterval.interval,
+            newInterval.repeat,
+        );
+
+        onInput(
+            errors.value.length === 0 ? newInterval : {
+                interval: 0,
+                unit: 0,
+                repeat: 0,
+            },
+        );
     };
     return (
         <>
@@ -41,7 +93,8 @@ export function RepeatReminder({
                     <Input
                         type="number"
                         label="Interval"
-                        value={value.interval.toString()}
+                        min="1"
+                        value={interval.value.toString()}
                         onInput={(v) => handleInput("interval", parseFloat(v))}
                     />
                 </div>
@@ -49,7 +102,7 @@ export function RepeatReminder({
                     <DropdownList<number>
                         label="Unit"
                         items={unitList}
-                        value={value.unit}
+                        value={unit.value}
                         onInput={(v) => handleInput("unit", v)}
                     />
                 </div>
@@ -57,11 +110,17 @@ export function RepeatReminder({
                     <Input
                         type="number"
                         label="Repeat"
-                        value={value.repeat.toString()}
+                        min="1"
+                        value={repeat.value.toString()}
                         onInput={(v) => handleInput("repeat", parseFloat(v))}
                     />
                 </div>
             </div>
+            {errors.value.length > 0 && (
+                <div class="text-sm text-red-400">
+                    {errors.value.map((e) => <div>{e}</div>)}
+                </div>
+            )}
         </>
     );
 }

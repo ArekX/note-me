@@ -3,12 +3,7 @@ import Button from "$components/Button.tsx";
 import Dialog from "$islands/Dialog.tsx";
 import Checkbox from "$islands/Checkbox.tsx";
 import { useSignal } from "@preact/signals";
-import {
-    dateToHms,
-    dateToUnix,
-    dateToYmd,
-    unixToDate,
-} from "$frontend/time.ts";
+import { dateToUnix } from "$frontend/time.ts";
 import { useLoader } from "$frontend/hooks/use-loader.ts";
 import Loader from "$islands/Loader.tsx";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
@@ -27,6 +22,13 @@ import ButtonGroup from "$components/ButtonGroup.tsx";
 import { addMessage } from "$frontend/toast-message.ts";
 import { OneTimeReminder } from "$islands/notes/windows/components/OneTimeReminder.tsx";
 import { RepeatReminder } from "$islands/notes/windows/components/RepeatReminder.tsx";
+import PresetReminder from "$islands/notes/windows/components/PresetReminder.tsx";
+import { useTimeFormat } from "$frontend/hooks/use-time-format.ts";
+import { getCurrentUnixTimestamp } from "$backend/time.ts";
+import { validateSchema } from "$schemas/mod.ts";
+import { setReminderSchema } from "$schemas/notes.ts";
+
+type ReminderType = "once" | "repeat";
 
 export default function NoteReminder({
     noteId,
@@ -34,26 +36,40 @@ export default function NoteReminder({
 }: NoteWindowComponentProps) {
     const shouldAddReminder = useSignal(false);
     const reminderLoader = useLoader();
+    const reminderType = useSignal<ReminderType>("once");
     const remindMeDate = useSignal("");
     const remindMeTime = useSignal("");
     const interval = useSignal(1);
     const unit = useSignal<number>(60);
     const repeat = useSignal(1);
 
+    const timeFormatter = useTimeFormat();
+
     const {
         items,
         selectItem,
         selected,
-    } = useListState({
-        once: "One Time",
-        repeat: "Repeat",
-    }, "once");
+    } = useListState(
+        {
+            preset: "Preset",
+            once: "One Time",
+            repeat: "Repeat",
+        },
+        "preset",
+        (key) => {
+            reminderType.value = key === "preset"
+                ? "once"
+                : key as ReminderType;
+        },
+    );
 
     const { sendMessage } = useWebsocketService();
 
     const resetValues = () => {
-        remindMeDate.value = dateToYmd(new Date());
-        remindMeTime.value = dateToHms(new Date());
+        remindMeDate.value = timeFormatter.formatIsoDate(new Date());
+        remindMeTime.value = timeFormatter.formatIsoTime(
+            getCurrentUnixTimestamp() + 3600,
+        );
         interval.value = 1;
         unit.value = 60;
         repeat.value = 1;
@@ -80,11 +96,13 @@ export default function NoteReminder({
         shouldAddReminder.value = true;
         selectItem(response.data.interval ? "repeat" : "once");
 
-        const unixDate = unixToDate(response.data.next_at);
-
-        if (selected.value === "once") {
-            remindMeDate.value = dateToYmd(unixDate);
-            remindMeTime.value = dateToHms(unixDate);
+        if (response.data.interval === null) {
+            remindMeDate.value = timeFormatter.formatIsoDate(
+                response.data.next_at,
+            );
+            remindMeTime.value = timeFormatter.formatIsoTime(
+                response.data.next_at,
+            );
             return;
         }
 
@@ -109,14 +127,14 @@ export default function NoteReminder({
             );
 
             addMessage({
-                type: "success",
+                type: "warning",
                 text: "Reminder removed successfully.",
             });
             onClose();
             return;
         }
 
-        if (selected.value === "once") {
+        if (reminderType.value === "once") {
             reminder = {
                 type: "once",
                 next_at: dateToUnix(
@@ -132,14 +150,20 @@ export default function NoteReminder({
             };
         }
 
+        const data = {
+            note_id: noteId,
+            reminder,
+        };
+
+        if (await validateSchema(setReminderSchema, data) !== null) {
+            return;
+        }
+
         await sendMessage<SetReminderMessage, SetReminderResponse>(
             "notes",
             "setReminder",
             {
-                data: {
-                    note_id: noteId,
-                    reminder,
-                },
+                data,
                 expect: "setReminderResponse",
             },
         );
@@ -149,6 +173,12 @@ export default function NoteReminder({
             text: "Reminder set successfully.",
         });
         onClose();
+    };
+
+    const handlePresetSelected = (nextAt: number) => {
+        remindMeDate.value = timeFormatter.formatIsoDate(nextAt);
+        remindMeTime.value = timeFormatter.formatIsoTime(nextAt);
+        handleSaveReminder();
     };
 
     useEffect(() => {
@@ -185,6 +215,11 @@ export default function NoteReminder({
                                 <Picker<keyof typeof items>
                                     selector={selected.value}
                                     map={{
+                                        preset: () => (
+                                            <PresetReminder
+                                                onPresetSelected={handlePresetSelected}
+                                            />
+                                        ),
                                         repeat: () => (
                                             <RepeatReminder
                                                 value={{
@@ -220,12 +255,14 @@ export default function NoteReminder({
             )}
 
             <div class="flex justify-end">
-                <Button
-                    onClick={handleSaveReminder}
-                    color="primary"
-                >
-                    Save
-                </Button>
+                {selected.value !== "preset" && (
+                    <Button
+                        onClick={handleSaveReminder}
+                        color="primary"
+                    >
+                        Save
+                    </Button>
+                )}
                 <Button
                     onClick={onClose}
                     color="danger"

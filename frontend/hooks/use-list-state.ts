@@ -7,12 +7,16 @@ export interface ListMap {
 export const useListState = <T extends ListMap>(
     items: T,
     initialId?: keyof T,
+    onSelect?: (id: keyof T) => void,
 ) => {
     const selected = useSignal<keyof T | null>(
         initialId ?? null,
     );
 
-    const selectItem = (itemId: keyof T) => selected.value = itemId;
+    const selectItem = (itemId: keyof T) => {
+        selected.value = itemId;
+        onSelect?.(itemId);
+    };
 
     return {
         items,

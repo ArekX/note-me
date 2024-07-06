@@ -81,6 +81,7 @@ import * as $notes_windows_NoteShare from "./islands/notes/windows/NoteShare.tsx
 import * as $notes_windows_components_CreateLinkForm from "./islands/notes/windows/components/CreateLinkForm.tsx";
 import * as $notes_windows_components_HistoryDiff from "./islands/notes/windows/components/HistoryDiff.tsx";
 import * as $notes_windows_components_OneTimeReminder from "./islands/notes/windows/components/OneTimeReminder.tsx";
+import * as $notes_windows_components_PresetReminder from "./islands/notes/windows/components/PresetReminder.tsx";
 import * as $notes_windows_components_RepeatReminder from "./islands/notes/windows/components/RepeatReminder.tsx";
 import * as $notes_windows_components_ShareLinks from "./islands/notes/windows/components/ShareLinks.tsx";
 import * as $notes_windows_components_ShareToUsers from "./islands/notes/windows/components/ShareToUsers.tsx";
@@ -207,6 +208,8 @@ const manifest = {
             $notes_windows_components_HistoryDiff,
         "./islands/notes/windows/components/OneTimeReminder.tsx":
             $notes_windows_components_OneTimeReminder,
+        "./islands/notes/windows/components/PresetReminder.tsx":
+            $notes_windows_components_PresetReminder,
         "./islands/notes/windows/components/RepeatReminder.tsx":
             $notes_windows_components_RepeatReminder,
         "./islands/notes/windows/components/ShareLinks.tsx":

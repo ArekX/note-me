@@ -34,9 +34,9 @@ export const setReminderSchema = zod.object({
     }).or(
         zod.object({
             type: zod.enum(["repeat"]),
-            interval: zod.number(),
-            unit_value: zod.number(),
-            repeat_count: zod.number(),
+            interval: zod.number().min(1),
+            unit_value: zod.number().min(1),
+            repeat_count: zod.number().min(1),
         }),
     ),
 }).strict();

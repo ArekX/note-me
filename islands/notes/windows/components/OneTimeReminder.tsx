@@ -1,5 +1,6 @@
 import Input from "$components/Input.tsx";
 import { dateToYmd } from "$frontend/time.ts";
+import { useSignal } from "@preact/signals";
 
 interface OnceReminder {
     date: string;
@@ -11,37 +12,80 @@ interface OneTimeReminderProps {
     onInput: (value: OnceReminder) => void;
 }
 
+const validateDateTime = (date: string, time: string) => {
+    const errors = [];
+
+    if (date.length === 0 || time.length === 0) {
+        errors.push("Please enter reminder date.");
+        return errors;
+    }
+
+    if (
+        new Date().getTime() -
+                new Date(date + " " + time).getTime() >
+            0
+    ) {
+        errors.push("Reminder date is in the past.");
+    }
+
+    return errors;
+};
+
 export function OneTimeReminder({
     value,
     onInput,
 }: OneTimeReminderProps) {
+    const date = useSignal<string>(value.date);
+    const time = useSignal<string>(value.time);
+    const errors = useSignal<string[]>(
+        validateDateTime(value.date, value.time),
+    );
+
     const handleInput = <T extends keyof OnceReminder>(
         key: T,
         newValue: OnceReminder[T],
     ) => {
-        onInput({ ...value, [key]: newValue });
+        const valueToSend: OnceReminder = {
+            date: date.value,
+            time: time.value,
+            [key]: newValue,
+        };
+
+        date.value = valueToSend.date;
+        time.value = valueToSend.time;
+
+        errors.value = validateDateTime(
+            valueToSend.date,
+            valueToSend.time,
+        );
+
+        onInput(
+            errors.value.length === 0 ? valueToSend : {
+                date: "",
+                time: "",
+            },
+        );
     };
 
-    const isDateTimeCorrect = value.date.length > 0 && value.time.length > 0;
     return (
         <>
             <p>Remind me at:</p>
             <Input
                 type="date"
                 label="Date"
-                value={value.date}
+                value={date.value}
                 min={dateToYmd(new Date())}
                 onInput={(v) => handleInput("date", v)}
             />
             <Input
                 type="time"
                 label="Time"
-                value={value.time}
+                value={time.value}
                 onInput={(v) => handleInput("time", v)}
             />
-            {isDateTimeCorrect && (
+            {errors.value.length > 0 && (
                 <div class="text-sm text-red-400">
-                    Please enter reminder date.
+                    {errors.value.map((e) => <div>{e}</div>)}
                 </div>
             )}
         </>
