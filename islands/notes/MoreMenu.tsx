@@ -1,7 +1,7 @@
 import DropdownMenu from "$islands/DropdownMenu.tsx";
 import { closeAllPopovers } from "$frontend/hooks/use-single-popover.ts";
 
-type ModeType = "view" | "edit-new" | "edit-existing";
+type ModeType = "view" | "view-readonly" | "edit-new" | "edit-existing";
 
 export interface MoreMenuItem {
     name: string;
@@ -62,7 +62,7 @@ export default function MoreMenu(
         {
             name: "Remind me",
             icon: "alarm",
-            modes: ["view", "edit-existing"],
+            modes: ["view", "edit-existing", "view-readonly"],
             onClick: () => sendAction("remind"),
         },
         {
@@ -74,7 +74,7 @@ export default function MoreMenu(
         {
             name: "Help",
             icon: "help-circle",
-            modes: ["view", "edit-existing"],
+            modes: ["view", "edit-existing", "view-readonly"],
             onClick: () => sendAction("help"),
         },
     ].filter(({ modes }) => modes.includes(mode)) as MoreMenuItem[];

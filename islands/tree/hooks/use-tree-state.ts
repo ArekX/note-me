@@ -5,13 +5,21 @@ import {
     RecordContainer,
     RecordType,
 } from "$islands/tree/hooks/record-container.ts";
+import {
+    consumePropagationTicket,
+    createPropagationTicket,
+    TicketId,
+} from "$frontend/propagation-manager.ts";
 
 export interface TreeStateHook {
     tree: RecordContainer;
+    groupDelete: GroupDelete | null;
     setRoot: (container: RecordContainer) => void;
     addChild: (parent: RecordContainer, child: RecordContainer) => void;
     findParent: (searchContainer: RecordContainer) => RecordContainer | null;
     removeFromParent: (container: RecordContainer) => void;
+    startGroupDelete: (groupId: number) => void;
+    endGroupDelete: () => void;
     setContainer: (
         container: RecordContainer,
         values: Partial<RecordContainer>,
@@ -27,6 +35,11 @@ export interface TreeStateHook {
     propagateChanges: () => void;
 }
 
+export interface GroupDelete {
+    groupId: number;
+    propagationTicket: TicketId;
+}
+
 export const useTreeState = (): TreeStateHook => {
     const restoredTree = useMemo(
         (): RecordContainer | null =>
@@ -39,6 +52,7 @@ export const useTreeState = (): TreeStateHook => {
     const [tree, setTree] = useState<RecordContainer>(
         restoredTree ?? createRootContainer(),
     );
+    const [groupDelete, setGroupDelete] = useState<GroupDelete | null>(null);
 
     const propagateChanges = () => setRoot(JSON.parse(JSON.stringify(tree)));
 
@@ -47,6 +61,20 @@ export const useTreeState = (): TreeStateHook => {
         values: Partial<RecordContainer>,
     ) => {
         Object.assign(container, values);
+    };
+
+    const startGroupDelete = (groupId: number) => {
+        setGroupDelete({
+            groupId,
+            propagationTicket: createPropagationTicket(),
+        });
+    };
+
+    const endGroupDelete = async () => {
+        setGroupDelete(null);
+        if (groupDelete) {
+            await consumePropagationTicket(groupDelete.propagationTicket);
+        }
     };
 
     const findContainerById = (
@@ -169,6 +197,7 @@ export const useTreeState = (): TreeStateHook => {
 
     return {
         tree,
+        groupDelete,
         setRoot,
         addChild,
         findParent,
@@ -177,5 +206,7 @@ export const useTreeState = (): TreeStateHook => {
         changeParent,
         findContainerById,
         propagateChanges,
+        startGroupDelete,
+        endGroupDelete,
     };
 };

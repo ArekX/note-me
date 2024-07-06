@@ -250,3 +250,18 @@ export const removeExpiredPublicShares = async (): Promise<void> => {
         .where("expires_at", "<", getCurrentUnixTimestamp())
         .execute();
 };
+
+export const sharedNoteWithUser = async (
+    note_id: number,
+    user_id: number,
+): Promise<boolean> => {
+    const result = await db.selectFrom("note_share_user")
+        .select([
+            sql`1`.as("exists"),
+        ])
+        .where("note_id", "=", note_id)
+        .where("user_id", "=", user_id)
+        .executeTakeFirst();
+
+    return !!result;
+};

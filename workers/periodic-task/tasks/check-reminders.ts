@@ -7,6 +7,7 @@ import { EVERY_MINUTE, PeriodicTask } from "../periodic-task-service.ts";
 import { sendMessageToWebsocket } from "$workers/periodic-task/worker-message.ts";
 import { runInTransaction } from "$backend/database.ts";
 import { workerLogger } from "$backend/logger.ts";
+import { getNoteInfo } from "$backend/repository/note-repository.ts";
 
 export const checkReminders: PeriodicTask = {
     name: "check-reminders",
@@ -16,12 +17,23 @@ export const checkReminders: PeriodicTask = {
 
         for (const reminder of readyReminders) {
             try {
+                const note = await getNoteInfo(reminder.note_id);
+
+                if (!note) {
+                    continue;
+                }
+
                 await runInTransaction(async () => {
                     const record = await createNotification({
                         data: {
                             type: "reminder-received",
                             payload: {
-                                noteId: reminder.note_id,
+                                id: note.id,
+                                title: note.title,
+                                user_name: note.user_name,
+                                type: note.user_id === reminder.user_id
+                                    ? "own"
+                                    : "shared",
                             },
                         },
                         user_id: reminder.user_id,

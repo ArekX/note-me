@@ -1,8 +1,10 @@
 import { db } from "$backend/database.ts";
 import { sql } from "../../lib/kysely-sqlite-dialect/deps.ts";
 
+export type ItemType = "note" | "group";
+
 export interface TreeRecord {
-    type: "group" | "note";
+    type: ItemType;
     id: number;
     name: string;
     has_children: number;
@@ -47,4 +49,28 @@ export const getTreeList = async (
         .execute();
 
     return results as TreeRecord[];
+};
+
+export const deleteItemsByParentId = async (
+    parent_id: number,
+    user_id: number,
+): Promise<number> => {
+    const groupDeleted = await db.updateTable("group")
+        .set({
+            is_deleted: true,
+        })
+        .where("parent_id", "=", parent_id)
+        .where("user_id", "=", user_id)
+        .executeTakeFirst();
+
+    const noteDeleted = await db.updateTable("note")
+        .set({
+            is_deleted: true,
+        })
+        .innerJoin("group_note", "note.id", "group_note.note_id")
+        .where("group_note.group_id", "=", parent_id)
+        .where("user_id", "=", user_id)
+        .executeTakeFirst();
+
+    return Number(groupDeleted.numUpdatedRows + noteDeleted.numUpdatedRows);
 };

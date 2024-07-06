@@ -12,6 +12,7 @@ import Viewer from "$islands/markdown/Viewer.tsx";
 
 export interface ViewNoteProps {
     readonly?: boolean;
+    guestMode?: boolean;
     disableTagLinks?: boolean;
     record: ViewNoteRecord;
     author?: string;
@@ -21,6 +22,7 @@ export default function ViewNote(
     {
         readonly = false,
         record,
+        guestMode = false,
         disableTagLinks,
         author,
     }: ViewNoteProps,
@@ -63,24 +65,26 @@ export default function ViewNote(
                 <div class="title w-10/12">
                     {recordData.value.title}
                 </div>
-                {!readonly && (
+                {!guestMode && (
                     <div class="text-md ml-2 w-2/12 text-right">
-                        <Button
-                            color="success"
-                            title="Edit"
-                            onClick={() => {
-                                redirectTo.editNote({
-                                    noteId: recordData.value.id,
-                                });
-                            }}
-                        >
-                            <Icon name="pencil" size="lg" />
-                        </Button>{" "}
+                        {!readonly && (
+                            <Button
+                                color="success"
+                                title="Edit"
+                                onClick={() => {
+                                    redirectTo.editNote({
+                                        noteId: recordData.value.id,
+                                    });
+                                }}
+                            >
+                                <Icon name="pencil" size="lg" />
+                            </Button>
+                        )}{" "}
                         <div class="text-left inline-block">
                             <MoreMenu
                                 onMenuItemClick={handleMenuItemClicked}
                                 inPreviewMode={false}
-                                mode="view"
+                                mode={readonly ? "view-readonly" : "view"}
                             />
                         </div>
                     </div>

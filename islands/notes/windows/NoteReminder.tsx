@@ -6,7 +6,10 @@ import { useSignal } from "@preact/signals";
 import { dateToUnix } from "$frontend/time.ts";
 import { useLoader } from "$frontend/hooks/use-loader.ts";
 import Loader from "$islands/Loader.tsx";
-import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
+import {
+    SystemErrorMessage,
+    useWebsocketService,
+} from "$frontend/hooks/use-websocket-service.ts";
 import {
     GetNoteReminderDataMessage,
     GetNoteReminderDataResponse,
@@ -113,66 +116,78 @@ export default function NoteReminder({
 
     const handleSaveReminder = async () => {
         let reminder: SetReminderMessage["reminder"];
-
-        if (!shouldAddReminder.value) {
-            await sendMessage<RemoveReminderMessage, RemoveReminderResponse>(
-                "notes",
-                "removeReminder",
-                {
-                    data: {
-                        note_id: noteId,
+        try {
+            if (!shouldAddReminder.value) {
+                await sendMessage<
+                    RemoveReminderMessage,
+                    RemoveReminderResponse
+                >(
+                    "notes",
+                    "removeReminder",
+                    {
+                        data: {
+                            note_id: noteId,
+                        },
+                        expect: "removeReminderResponse",
                     },
-                    expect: "removeReminderResponse",
+                );
+
+                addMessage({
+                    type: "warning",
+                    text: "Reminder removed successfully.",
+                });
+                onClose();
+                return;
+            }
+
+            if (reminderType.value === "once") {
+                reminder = {
+                    type: "once",
+                    next_at: dateToUnix(
+                        new Date(remindMeDate.value + " " + remindMeTime.value),
+                    ),
+                };
+            } else {
+                reminder = {
+                    type: "repeat",
+                    interval: interval.value,
+                    unit_value: unit.value,
+                    repeat_count: repeat.value,
+                };
+            }
+
+            const data = {
+                note_id: noteId,
+                reminder,
+            };
+
+            if (await validateSchema(setReminderSchema, data) !== null) {
+                return;
+            }
+
+            await sendMessage<SetReminderMessage, SetReminderResponse>(
+                "notes",
+                "setReminder",
+                {
+                    data,
+                    expect: "setReminderResponse",
                 },
             );
 
             addMessage({
-                type: "warning",
-                text: "Reminder removed successfully.",
+                type: "success",
+                text: "Reminder set successfully.",
             });
+        } catch (e) {
+            const responseError = e as SystemErrorMessage;
+            addMessage({
+                type: "error",
+                text: "Failed to set reminder. Reason: " +
+                    responseError.data.message,
+            });
+        } finally {
             onClose();
-            return;
         }
-
-        if (reminderType.value === "once") {
-            reminder = {
-                type: "once",
-                next_at: dateToUnix(
-                    new Date(remindMeDate.value + " " + remindMeTime.value),
-                ),
-            };
-        } else {
-            reminder = {
-                type: "repeat",
-                interval: interval.value,
-                unit_value: unit.value,
-                repeat_count: repeat.value,
-            };
-        }
-
-        const data = {
-            note_id: noteId,
-            reminder,
-        };
-
-        if (await validateSchema(setReminderSchema, data) !== null) {
-            return;
-        }
-
-        await sendMessage<SetReminderMessage, SetReminderResponse>(
-            "notes",
-            "setReminder",
-            {
-                data,
-                expect: "setReminderResponse",
-            },
-        );
-
-        addMessage({
-            type: "success",
-            text: "Reminder set successfully.",
-        });
-        onClose();
     };
 
     const handlePresetSelected = (nextAt: number) => {

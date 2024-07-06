@@ -159,6 +159,7 @@ export default function EditUserForm(
                                 label="Username"
                                 disabled={user.value.id !== null}
                                 type="text"
+                                tabIndex={1}
                                 value={user.value.username}
                                 onInput={setProperty("username")}
                             />
@@ -176,6 +177,7 @@ export default function EditUserForm(
                     <Input
                         label="Name"
                         type="text"
+                        tabIndex={2}
                         value={user.value.name}
                         onInput={setProperty("name")}
                     />
@@ -187,6 +189,7 @@ export default function EditUserForm(
                 <div className="mb-4">
                     <DropdownList
                         label="Timezone"
+                        tabIndex={3}
                         items={supportedTimezoneList}
                         value={user.value.timezone}
                         onInput={setProperty("timezone")}
@@ -199,6 +202,7 @@ export default function EditUserForm(
                 <div className="mb-4">
                     <DropdownList
                         label="Role"
+                        tabIndex={4}
                         disabled={user.value.id === currentUser.getUserId()}
                         items={roleDropDownList}
                         value={user.value.role}
@@ -218,6 +222,7 @@ export default function EditUserForm(
                     <Input
                         label="Set new password"
                         type="password"
+                        tabIndex={5}
                         value={user.value.new_password ?? ""}
                         onInput={setProperty("new_password")}
                     />

@@ -1,4 +1,3 @@
-import { useScriptsReadyEffect } from "$frontend/hooks/use-scripts-ready.ts";
 import {
     BinaryMessage,
     ErrorMessage,
@@ -10,6 +9,7 @@ import {
     send,
     sendBinary,
 } from "$frontend/socket-manager.ts";
+import { useEffect } from "preact/hooks";
 
 type EventMap<T extends Message> = Partial<
     { [K in T["type"]]: (data: Extract<T, { type: K }>) => void }
@@ -50,12 +50,10 @@ export type SystemErrorMessage = ErrorResponse<ErrorMessage>;
 export const useWebsocketService = <T extends Message>(
     options?: WebSocketEventOptions<T>,
 ) => {
-    const { eventMap } = options ?? {};
-
-    if (eventMap) {
-        useScriptsReadyEffect(() => {
+    if (options?.eventMap) {
+        useEffect(() => {
             const handleWebsocketMessage = (data: T) => {
-                eventMap[data.namespace as T["namespace"]]
+                options.eventMap![data.namespace as T["namespace"]]
                     ?.[data.type as T["type"]]?.(
                         data as Extract<
                             Extract<T, { namespace: T["namespace"] }>,
@@ -69,7 +67,7 @@ export const useWebsocketService = <T extends Message>(
             return () => {
                 removeListener(handleWebsocketMessage);
             };
-        });
+        }, [options?.eventMap]);
     }
 
     const dispatchMessage = <T extends Message>(

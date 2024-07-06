@@ -38,10 +38,16 @@ export type DeleteGroupResponse = GroupMessage<
     { deleted_id: number }
 >;
 
+export type DeleteGroupProgress = GroupMessage<
+    "deleteGroupProgress",
+    { deleted_id: number; deleted_count: number }
+>;
+
 export type GroupFrontendResponse =
     | CreateGroupResponse
     | UpdateGroupResponse
-    | DeleteGroupResponse;
+    | DeleteGroupResponse
+    | DeleteGroupProgress;
 
 export type GroupFrontendMessage =
     | CreateGroupMessage

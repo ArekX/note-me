@@ -34,6 +34,7 @@ export default function Page(props: PageProps<PageData, AppState>) {
         <ViewNote
             readonly={true}
             author={props.data.note.user_name}
+            guestMode={false}
             record={{
                 ...props.data.note,
                 group_id: 0,

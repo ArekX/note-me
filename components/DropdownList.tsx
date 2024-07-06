@@ -11,6 +11,7 @@ interface DropDownListProps<T> {
     name?: string;
     value?: T;
     disabled?: boolean;
+    tabIndex?: number;
     items: DropDownItem<T>[];
     onInput?: (value: T) => void;
 }
@@ -21,6 +22,7 @@ export default function DropdownList<T>(
         items,
         name,
         value,
+        tabIndex,
         onInput,
         disabled = false,
         labelColor = "white",
@@ -43,6 +45,7 @@ export default function DropdownList<T>(
             )}
             <select
                 name={name}
+                tabIndex={tabIndex}
                 value={items.findIndex((item) => item.value === value)}
                 disabled={disabled}
                 class="outline-none border-1 border-gray-900 bg-gray-700 select-input w-full rounded-md"

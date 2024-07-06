@@ -99,6 +99,7 @@ import * as $sidebar_SharedNotesList from "./islands/sidebar/SharedNotesList.tsx
 import * as $sidebar_SideBarPanel from "./islands/sidebar/SideBarPanel.tsx";
 import * as $tags_EditTagForm from "./islands/tags/EditTagForm.tsx";
 import * as $tags_TagsList from "./islands/tags/TagsList.tsx";
+import * as $tree_DeleteGroupProgressDialog from "./islands/tree/DeleteGroupProgressDialog.tsx";
 import * as $tree_MoreMenu from "./islands/tree/MoreMenu.tsx";
 import * as $tree_RootGroupBar from "./islands/tree/RootGroupBar.tsx";
 import * as $tree_TreeItem from "./islands/tree/TreeItem.tsx";
@@ -235,6 +236,8 @@ const manifest = {
         "./islands/sidebar/SideBarPanel.tsx": $sidebar_SideBarPanel,
         "./islands/tags/EditTagForm.tsx": $tags_EditTagForm,
         "./islands/tags/TagsList.tsx": $tags_TagsList,
+        "./islands/tree/DeleteGroupProgressDialog.tsx":
+            $tree_DeleteGroupProgressDialog,
         "./islands/tree/MoreMenu.tsx": $tree_MoreMenu,
         "./islands/tree/RootGroupBar.tsx": $tree_RootGroupBar,
         "./islands/tree/TreeItem.tsx": $tree_TreeItem,

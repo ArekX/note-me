@@ -3,7 +3,10 @@ import { NotificationTable, Payload, RecordId } from "$types";
 import { getCurrentUnixTimestamp } from "$backend/time.ts";
 
 export interface NoteReminderData {
-    noteId: number;
+    id: number;
+    title: string;
+    user_name: string;
+    type: "own" | "shared";
 }
 
 export interface NoteSharedData {

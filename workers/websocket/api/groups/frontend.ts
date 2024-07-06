@@ -3,6 +3,7 @@ import {
     CreateGroupMessage,
     CreateGroupResponse,
     DeleteGroupMessage,
+    DeleteGroupProgress,
     DeleteGroupResponse,
     UpdateGroupMessage,
     UpdateGroupResponse,
@@ -11,6 +12,8 @@ import { GroupFrontendMessage } from "./messages.ts";
 import {
     createGroup,
     deleteGroup,
+    deleteUserGroupsByParentId,
+    getUserGroupIds,
     updateGroup,
 } from "$backend/repository/group-repository.ts";
 import { requireValidSchema } from "$schemas/mod.ts";
@@ -18,6 +21,11 @@ import {
     addGroupRequestSchema,
     updateGroupRequestSchema,
 } from "$schemas/groups.ts";
+import {
+    deleteUserNotesByParentId,
+    getUserNoteIds,
+} from "$backend/repository/note-repository.ts";
+import { DeleteNoteResponse } from "$workers/websocket/api/notes/messages.ts";
 
 const createGroupRequest: ListenerFn<CreateGroupMessage> = async (
     { message: { data }, sourceClient, respond },
@@ -51,8 +59,61 @@ const updateGroupRequest: ListenerFn<UpdateGroupMessage> = async (
 };
 
 const deleteGroupRequest: ListenerFn<DeleteGroupMessage> = async (
-    { message: { id }, sourceClient, respond },
+    { message: { id }, sourceClient, respond, send },
 ) => {
+    let deletedCount = 0;
+
+    const deleteChildren = async (parentId: number) => {
+        const childGroupIds = await getUserGroupIds(
+            parentId,
+            sourceClient!.userId,
+        );
+
+        const userNoteIds = await getUserNoteIds(
+            parentId,
+            sourceClient!.userId,
+        );
+
+        const [groupCount, noteCount] = await Promise.all([
+            deleteUserGroupsByParentId(
+                parentId,
+                sourceClient!.userId,
+            ),
+            deleteUserNotesByParentId(
+                parentId,
+                sourceClient!.userId,
+            ),
+        ]);
+
+        for (const noteId of userNoteIds) {
+            send<DeleteNoteResponse>({
+                namespace: "notes",
+                type: "deleteNoteResponse",
+                deleted_id: noteId,
+            });
+        }
+
+        for (const groupId of childGroupIds) {
+            send<DeleteGroupResponse>({
+                type: "deleteGroupResponse",
+                deleted_id: groupId,
+            });
+        }
+
+        deletedCount += groupCount + noteCount;
+
+        send<DeleteGroupProgress>({
+            type: "deleteGroupProgress",
+            deleted_id: id,
+            deleted_count: deletedCount,
+        });
+
+        for (const id of childGroupIds) {
+            await deleteChildren(id);
+        }
+    };
+
+    await deleteChildren(id);
     await deleteGroup(id, sourceClient!.userId);
 
     respond<DeleteGroupResponse>({

@@ -7,6 +7,7 @@ import { useDragManager } from "../../frontend/hooks/use-drag-manager.ts";
 import TreeItem from "./TreeItem.tsx";
 import Icon from "$components/Icon.tsx";
 import { RecordContainer } from "$islands/tree/hooks/record-container.ts";
+import { DeleteGroupProgressDialog } from "$islands/tree/DeleteGroupProgressDialog.tsx";
 
 interface TreeListProps {
     searchQuery: string;
@@ -29,12 +30,12 @@ export default function TreeList({
             <div class="overflow-auto group-list">
                 <Loader
                     color="white"
-                    visible={tree.root_loader.running}
+                    visible={tree.rootLoader.running}
                     displayType="center-block"
                 >
                     Loading notes and groups...
                 </Loader>
-                {!tree.root_loader.running &&
+                {!tree.rootLoader.running &&
                     tree.root.children_loaded &&
                     tree.root.children.length === 0 &&
                     (
@@ -56,6 +57,8 @@ export default function TreeList({
                         treeManager={tree}
                     />
                 ))}
+                {tree.groupDelete &&
+                    <DeleteGroupProgressDialog />}
             </div>
         </>
     );

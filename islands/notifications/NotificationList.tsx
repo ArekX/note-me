@@ -1,6 +1,5 @@
 import { useSignal } from "@preact/signals";
 import Icon from "$components/Icon.tsx";
-import { useScriptsReadyEffect } from "../../frontend/hooks/use-scripts-ready.ts";
 
 import { NotificationRecord } from "$backend/repository/notification-repository.ts";
 import { createRef } from "preact";
@@ -18,6 +17,7 @@ import {
 } from "$workers/websocket/api/notifications/messages.ts";
 import { addMessage } from "$frontend/toast-message.ts";
 import { getNotificationMessageText } from "$islands/notifications/notification-message-text.ts";
+import { useEffect } from "preact/hooks";
 
 interface NotificationsProps {
     initialNotifications: NotificationRecord[];
@@ -80,12 +80,12 @@ export default function Notifications(props: NotificationsProps) {
         },
     });
 
-    useScriptsReadyEffect(() => {
+    useEffect(() => {
         dispatchMessage<GetMyNotificationsMessage>(
             "notifications",
             "getMyNotifications",
         );
-    });
+    }, []);
 
     const handleDeleteSingle = (notification: NotificationRecord) =>
         dispatchMessage<DeleteSingleMessage>("notifications", "deleteSingle", {

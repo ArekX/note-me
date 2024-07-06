@@ -1,6 +1,5 @@
 import { useEffect } from "preact/hooks";
 import { connect } from "$frontend/socket-manager.ts";
-import { scriptsReady } from "$frontend/hooks/use-scripts-ready.ts";
 import { FrontendUserData, setupUserData } from "$frontend/hooks/use-user.ts";
 
 interface ScriptsProps {
@@ -17,12 +16,8 @@ export default function IslandInitializer(props: ScriptsProps) {
         return await connect(url);
     };
 
-    const waitFor = [
-        connectToSocketManager(),
-    ];
-
     useEffect(() => {
-        Promise.all(waitFor).then(() => scriptsReady.value = true);
+        connectToSocketManager();
     }, []);
 
     return null;

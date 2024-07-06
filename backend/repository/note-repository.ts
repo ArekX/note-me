@@ -164,20 +164,22 @@ export const getNoteDetails = async (
     return result ?? null;
 };
 
-export interface NoteShareData {
+export interface NoteInfoRecord {
     id: number;
     title: string;
     user_name: string;
+    user_id: number;
 }
 
-export const getNoteShareDetails = async (
+export const getNoteInfo = async (
     note_id: number,
-): Promise<NoteShareData | null> => {
+): Promise<NoteInfoRecord | null> => {
     const result = await db.selectFrom("note")
         .select([
             "note.id",
             "note.title",
             sql<string>`user.name`.as("user_name"),
+            sql<number>`user.id`.as("user_id"),
         ])
         .where("note.id", "=", note_id)
         .where("note.is_deleted", "=", false)
@@ -214,4 +216,41 @@ export const noteExists = async (
         .executeTakeFirst();
 
     return (result?.exists ?? 0) > 0;
+};
+
+export const getUserNoteIds = async (
+    parent_id: number,
+    user_id: number,
+): Promise<number[]> => {
+    return (await db.selectFrom("group_note")
+        .select([
+            "note_id",
+        ])
+        .innerJoin("note", "note.id", "group_note.note_id")
+        .where("group_note.group_id", "=", parent_id)
+        .where("note.user_id", "=", user_id)
+        .where("note.is_deleted", "=", false)
+        .execute()).map((row) => row.note_id);
+};
+
+export const deleteUserNotesByParentId = async (
+    parent_id: number,
+    user_id: number,
+): Promise<number> => {
+    const deleted = await db.updateTable("note")
+        .set({
+            is_deleted: true,
+        })
+        .where(
+            "note.id",
+            "in",
+            db.selectFrom("group_note")
+                .select("note_id")
+                .where("group_id", "=", parent_id),
+        )
+        .where("note.user_id", "=", user_id)
+        .where("note.is_deleted", "=", false)
+        .executeTakeFirst();
+
+    return Number(deleted.numUpdatedRows);
 };

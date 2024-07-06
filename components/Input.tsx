@@ -16,6 +16,7 @@ interface InputProps {
     name?: string;
     min?: string;
     value?: string;
+    tabIndex?: number;
     disabled?: boolean;
     onInput?: (value: string) => void;
     placeholder?: string;
@@ -30,6 +31,7 @@ export default function Input(
         value,
         min,
         onInput,
+        tabIndex,
         labelColor = "white",
         placeholder,
         disabled = false,
@@ -55,6 +57,7 @@ export default function Input(
                 name={name}
                 disabled={disabled}
                 value={value}
+                tabIndex={tabIndex}
                 min={min}
                 class={`outline-none border-1 ${
                     icon ? "pl-9" : ""

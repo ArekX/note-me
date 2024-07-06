@@ -81,10 +81,38 @@ const triggerHandler = async (handler: RegisteredTask) => {
     );
 };
 
+const synchronizeWithClock = (): Promise<void> =>
+    new Promise((resolve) => {
+        if (new Date().getSeconds() === 0) {
+            resolve();
+            workerLogger.info("Synchronized with clock. No need to wait.");
+            return;
+        }
+
+        workerLogger.info(
+            "Synchronizing with clock up to the current minute started at {date}",
+            {
+                date: new Date().toISOString(),
+            },
+        );
+        const intervalId = setInterval(() => {
+            const now = new Date();
+            const seconds = now.getSeconds();
+            if (seconds === 0) {
+                resolve();
+                clearInterval(intervalId);
+                workerLogger.info("Synchronization finished at: {date}", {
+                    date: now.toISOString(),
+                });
+            }
+        }, 1000);
+    });
+
 const start = async ({
     tickTime = EVERY_MINUTE,
 }: PeriodicTimerService = {}) => {
     workerLogger.info("Periodic task service started.");
+    await synchronizeWithClock();
 
     await runPreviouslyScheduledTasks();
 

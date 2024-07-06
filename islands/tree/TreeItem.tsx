@@ -318,7 +318,10 @@ export default function TreeItem({
                     confirmText="Delete group"
                     confirmColor="danger"
                     visible={true}
-                    onConfirm={() => treeManager.deleteContainer(container)}
+                    onConfirm={() => {
+                        treeManager.deleteContainer(container);
+                        confirmDelete.value = false;
+                    }}
                     onCancel={() => confirmDelete.value = false}
                 />
             )}

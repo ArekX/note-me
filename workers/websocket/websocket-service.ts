@@ -145,7 +145,12 @@ const handleBackendRequest = (message: Message) => {
     let wasRequestHandled = false;
 
     for (const listener of listeners) {
-        listener({ message, service: websocketService, respond: () => {} });
+        listener({
+            message,
+            service: websocketService,
+            respond: () => {},
+            send: () => {},
+        });
         wasRequestHandled = true;
     }
 
@@ -180,6 +185,9 @@ const handleClientError = (
         `Error while handling message of type '{type}' in namespace '{namespace}': {error}`,
         { type, namespace, error },
     );
+    workerLogger.debug("Stack trace: {error}", {
+        error: error.stack ?? "No stack trace available",
+    });
     client.send<ErrorMessage>({
         requestId,
         namespace: "system",
@@ -206,6 +214,13 @@ const handleClientRequest = (
                 respond: (responseMessage) => {
                     client.send({
                         requestId: message.requestId,
+                        namespace,
+                        ...responseMessage,
+                    });
+                },
+                send: (responseMessage) => {
+                    client.send({
+                        requestId: crypto.randomUUID(),
                         namespace,
                         ...responseMessage,
                     });

@@ -154,3 +154,33 @@ export const getSingleUserGroup = async (
         .where("user_id", "=", user_id)
         .executeTakeFirst() ?? null;
 };
+
+export const getUserGroupIds = async (
+    id: number,
+    user_id: number,
+): Promise<number[]> => {
+    return (await db.selectFrom("group")
+        .select([
+            "id",
+        ])
+        .where("parent_id", "=", id)
+        .where("user_id", "=", user_id)
+        .where("is_deleted", "=", false)
+        .execute()).map((r) => r.id);
+};
+
+export const deleteUserGroupsByParentId = async (
+    parent_id: number,
+    user_id: number,
+): Promise<number> => {
+    const deleted = await db.updateTable("group")
+        .set({
+            is_deleted: true,
+        })
+        .where("parent_id", "=", parent_id)
+        .where("user_id", "=", user_id)
+        .where("is_deleted", "=", false)
+        .executeTakeFirst();
+
+    return Number(deleted.numUpdatedRows);
+};

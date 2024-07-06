@@ -11,7 +11,7 @@ import {
 } from "$workers/websocket/api/groups/messages.ts";
 import { useEffect } from "preact/hooks";
 import { LoaderHook, useLoader } from "$frontend/hooks/use-loader.ts";
-import { useTreeState } from "./use-tree-state.ts";
+import { GroupDelete, useTreeState } from "./use-tree-state.ts";
 import {
     createContainer,
     DisplayMode,
@@ -27,7 +27,8 @@ import { useTreeWebsocket } from "$islands/tree/hooks/use-tree-websocket.ts";
 
 export interface RecordTreeHook {
     root: RecordContainer;
-    root_loader: LoaderHook;
+    groupDelete: GroupDelete | null;
+    rootLoader: LoaderHook;
     reload: (container: RecordContainer) => Promise<void>;
     setDisplayMode: (
         container: RecordContainer,
@@ -199,17 +200,18 @@ export const useRecordTree = (): RecordTreeHook => {
             return;
         }
 
-        propagateChanges();
-
         if (container.type === "note") {
             dispatchMessage<DeleteNoteMessage>("notes", "deleteNote", {
                 id: container.id,
             });
         } else {
+            treeState.startGroupDelete(container.id);
             dispatchMessage<DeleteGroupMessage>("groups", "deleteGroup", {
                 id: container.id,
             });
         }
+
+        propagateChanges();
     };
 
     const changeParent = async (
@@ -307,7 +309,8 @@ export const useRecordTree = (): RecordTreeHook => {
 
     return {
         root: tree,
-        root_loader: rootLoader,
+        groupDelete: treeState.groupDelete,
+        rootLoader,
         reload,
         setDisplayMode,
         setName,

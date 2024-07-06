@@ -49,12 +49,19 @@ export type OperationResponseMessage<Namespace = string, Type = string> =
 
 export type ListenerKind = "backend" | "frontend";
 
+type SocketSendData<R extends SocketMessage> =
+    & Omit<R, "namespace" | "requestId">
+    & Partial<Pick<R, "requestId" | "namespace">>;
+
 export type ListenerFn<T = unknown> = (data: {
     message: T;
     service: WebsocketService;
     sourceClient?: SocketClient;
+    send: <R extends SocketMessage>(
+        data: SocketSendData<R>,
+    ) => void;
     respond: <R extends SocketMessage>(
-        data: Omit<R, "namespace" | "requestId">,
+        data: SocketSendData<R>,
     ) => void;
 }) => void;
 

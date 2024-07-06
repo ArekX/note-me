@@ -43,7 +43,7 @@ import {
     deleteNote,
     getNote,
     getNoteDetails,
-    getNoteShareDetails,
+    getNoteInfo,
     noteExists,
 } from "$backend/repository/note-repository.ts";
 import {
@@ -72,6 +72,7 @@ import {
     getNoteShareData,
     removePublicShare,
     setUserShare,
+    sharedNoteWithUser,
 } from "$backend/repository/note-share-repository.ts";
 import { runSendNotificationAction } from "$backend/actions/send-notification-action.ts";
 import {
@@ -294,7 +295,7 @@ const handleShareToUsers: ListenerFn<ShareToUsersMessage> = async (
         return;
     }
 
-    const note = await getNoteShareDetails(note_id);
+    const note = await getNoteInfo(note_id);
 
     const notifications = [];
     for (const userId of shared_to_user_ids) {
@@ -363,6 +364,24 @@ const handleSetReminder: ListenerFn<SetReminderMessage> = async (
         respond,
     },
 ) => {
+    const ownNote = await noteExists(
+        reminderData.note_id,
+        sourceClient!.userId,
+    );
+
+    if (!ownNote) {
+        const sharedNote = await sharedNoteWithUser(
+            reminderData.note_id,
+            sourceClient!.userId,
+        );
+
+        if (!sharedNote) {
+            throw new Error(
+                "Note does not exist or not shared with this user.",
+            );
+        }
+    }
+
     await requireValidSchema<SetReminderRequest>(
         setReminderSchema,
         reminderData,

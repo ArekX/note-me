@@ -11,6 +11,8 @@ interface TreeWebsocketOptions {
 export const useTreeWebsocket = (options: TreeWebsocketOptions) => {
     const {
         tree,
+        groupDelete,
+        endGroupDelete,
         removeFromParent,
         propagateChanges,
         addChild,
@@ -116,6 +118,10 @@ export const useTreeWebsocket = (options: TreeWebsocketOptions) => {
                         data.deleted_id,
                         "group",
                     );
+                    if (data.deleted_id === groupDelete?.groupId) {
+                        endGroupDelete();
+                    }
+
                     if (container) {
                         removeFromParent(container);
                         propagateChanges();
