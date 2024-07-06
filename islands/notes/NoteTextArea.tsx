@@ -134,10 +134,6 @@ export default function NoteTextArea({
 
     return (
         <div class="flex-grow block basis-auto">
-            <InsertDialog
-                noteText={text.value}
-                onInsert={handleDialogInsert}
-            />
             <FileDropWrapper
                 wrapperClass="w-full block"
                 onFilesDropped={uploadAndInsertFiles}
@@ -157,6 +153,10 @@ export default function NoteTextArea({
                 />
             </FileDropWrapper>
             <UploadProgressDialog uploader={fileUploader} />
+            <InsertDialog
+                noteText={text.value}
+                onInsert={handleDialogInsert}
+            />
         </div>
     );
 }
