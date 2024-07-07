@@ -10,7 +10,7 @@ import RemindersList from "$islands/sidebar/RemindersList.tsx";
 import SharedNotesList from "$islands/sidebar/SharedNotesList.tsx";
 
 interface ListView {
-    type: "notes" | "reminders" | "shared" | "recycle-bin";
+    type: "notes" | "reminders" | "shared" | "recycleBin";
     label: string;
     icon: string;
     placeholder: string;
@@ -68,7 +68,7 @@ export default function ListPanel() {
             icon: "recycle",
             onClick: () => {
                 currentType.value = {
-                    type: "recycle-bin",
+                    type: "recycleBin",
                     label: "Recycle Bin",
                     icon: "recycle",
                     placeholder: "Search recycle bin items...",
@@ -116,7 +116,7 @@ export default function ListPanel() {
                     shared: () => (
                         <SharedNotesList switcherComponent={switcher} />
                     ),
-                    "recycle-bin": () => (
+                    recycleBin: () => (
                         <div>
                             {switcher}
                             Recycle Bin
