@@ -75,9 +75,12 @@ export const useRecordTree = (): RecordTreeHook => {
 
     const reload = async (container: RecordContainer) => {
         if (container.type === "root") {
-            const newRoot = createRootContainer();
-            await loadChildren(newRoot);
-            setRoot(newRoot);
+            await rootLoader.run(async () => {
+                const newRoot = createRootContainer();
+                await loadChildren(newRoot);
+                setRoot(newRoot);
+            });
+
             return;
         }
 

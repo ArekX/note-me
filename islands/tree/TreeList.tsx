@@ -49,14 +49,15 @@ export default function TreeList({
                             Add your first note with <Icon name="plus" />!
                         </div>
                     )}
-                {tree.root.children.map((container) => (
-                    <TreeItem
-                        key={container.key}
-                        container={container}
-                        dragManager={dragManager}
-                        treeManager={tree}
-                    />
-                ))}
+                {!tree.rootLoader.running &&
+                    tree.root.children.map((container) => (
+                        <TreeItem
+                            key={container.key}
+                            container={container}
+                            dragManager={dragManager}
+                            treeManager={tree}
+                        />
+                    ))}
                 {tree.groupDelete &&
                     <DeleteGroupProgressDialog />}
             </div>
