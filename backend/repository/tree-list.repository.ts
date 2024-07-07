@@ -1,5 +1,7 @@
 import { db } from "$backend/database.ts";
 import { sql } from "../../lib/kysely-sqlite-dialect/deps.ts";
+import { applyFilters } from "$lib/kysely-sqlite-dialect/filters.ts";
+import { Paged, pageResults } from "$lib/kysely-sqlite-dialect/pagination.ts";
 
 export type ItemType = "note" | "group";
 
@@ -10,11 +12,28 @@ export interface TreeRecord {
     has_children: number;
 }
 
-export const getTreeList = async (
-    group_id: number | null,
-    user_id: number,
-): Promise<TreeRecord[]> => {
-    const results = await db.selectFrom("group")
+const getTreeListQuery = (user_id: number, group_id?: number | null) => {
+    let groupNoteQuery = db.selectFrom("group_note")
+        .select([
+            sql<string>`'note'`.as("type"),
+            sql<number>`note.id`.as("id"),
+            sql<string>`note.title`.as("name"),
+            sql<number>`0`.as("has_children"),
+        ])
+        .innerJoin("note", "note.id", "group_note.note_id")
+        .where("note.is_deleted", "=", false)
+        .where("group_note.user_id", "=", user_id)
+        .where("note.user_id", "=", user_id);
+
+    if (group_id !== undefined) {
+        groupNoteQuery = groupNoteQuery.where(
+            "group_note.group_id",
+            group_id ? "=" : "is",
+            group_id,
+        );
+    }
+
+    let groupQuery = db.selectFrom("group")
         .select([
             sql<string>`'group'`.as("type"),
             "id",
@@ -27,50 +46,46 @@ export const getTreeList = async (
                 ) LIMIT 1
             ), 0)`.as("has_children"),
         ])
-        .where("parent_id", group_id ? "=" : "is", group_id)
         .where("user_id", "=", user_id)
         .where("is_deleted", "=", false)
-        .union(
-            db.selectFrom("group_note")
-                .select([
-                    sql<string>`'note'`.as("type"),
-                    sql<number>`note.id`.as("id"),
-                    sql<string>`note.title`.as("name"),
-                    sql<number>`0`.as("has_children"),
-                ])
-                .innerJoin("note", "note.id", "group_note.note_id")
-                .where("group_note.group_id", group_id ? "=" : "is", group_id)
-                .where("note.is_deleted", "=", false)
-                .where("group_note.user_id", "=", user_id)
-                .where("note.user_id", "=", user_id),
-        )
         .orderBy("type")
-        .orderBy("id")
-        .execute();
+        .orderBy("id");
+
+    if (group_id !== undefined) {
+        groupQuery = groupQuery.where(
+            "parent_id",
+            group_id ? "=" : "is",
+            group_id,
+        );
+    }
+
+    return groupQuery.union(groupNoteQuery);
+};
+
+export const getTreeList = async (
+    group_id: number | null,
+    user_id: number,
+): Promise<TreeRecord[]> => {
+    const results = await getTreeListQuery(user_id, group_id).execute();
 
     return results as TreeRecord[];
 };
 
-export const deleteItemsByParentId = async (
-    parent_id: number,
+interface TreeFilter {
+    name?: string;
+}
+
+export const findTreeItems = async (
+    filter: TreeFilter,
+    page: number,
     user_id: number,
-): Promise<number> => {
-    const groupDeleted = await db.updateTable("group")
-        .set({
-            is_deleted: true,
-        })
-        .where("parent_id", "=", parent_id)
-        .where("user_id", "=", user_id)
-        .executeTakeFirst();
+): Promise<Paged<TreeRecord>> => {
+    let query = db.selectFrom(getTreeListQuery(user_id).as("tree"))
+        .selectAll();
 
-    const noteDeleted = await db.updateTable("note")
-        .set({
-            is_deleted: true,
-        })
-        .innerJoin("group_note", "note.id", "group_note.note_id")
-        .where("group_note.group_id", "=", parent_id)
-        .where("user_id", "=", user_id)
-        .executeTakeFirst();
+    query = applyFilters(query, [
+        { field: "tree.name", type: "text", value: filter.name },
+    ]);
 
-    return Number(groupDeleted.numUpdatedRows + noteDeleted.numUpdatedRows);
+    return await pageResults(query, page);
 };

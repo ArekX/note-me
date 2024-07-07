@@ -27,7 +27,7 @@ export default function CodeBlock(
     return (
         <pre
             ref={viewerRef}
-            class={`lang-${node.data.language}`}
+            class={`lang-${node.data.language} overflow-auto`}
         >{children}</pre>
     );
 }
