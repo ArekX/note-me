@@ -2,11 +2,11 @@ import Icon from "$components/Icon.tsx";
 import Dialog from "$islands/Dialog.tsx";
 import { useSignal } from "@preact/signals";
 import { JSX } from "preact";
-import { useDebouncedCallback } from "$frontend/hooks/use-debounced-callback.ts";
+import { SearchStateHook } from "./hooks/use-search-state.ts";
 
 interface SearchBarProps<T> {
     queryPlaceHolder?: string;
-    onSearch: (query: string) => void;
+    search: SearchStateHook;
     advancedSearchComponent?: (props: {
         onClose: () => void;
     }) => JSX.Element;
@@ -15,21 +15,11 @@ interface SearchBarProps<T> {
 export default function SearchBar<T>(
     {
         queryPlaceHolder = "Search...",
-        onSearch,
+        search,
         advancedSearchComponent: AdvancedSearch,
     }: SearchBarProps<T>,
 ) {
     const showAdvancedSearch = useSignal(false);
-    const searchQuery = useSignal("");
-
-    const triggerOnSearch = useDebouncedCallback(() =>
-        onSearch(searchQuery.value)
-    );
-
-    const handleSearchInput = (e: Event) => {
-        searchQuery.value = (e.target as HTMLInputElement).value;
-        triggerOnSearch();
-    };
 
     return (
         <div class="flex relative">
@@ -49,8 +39,9 @@ export default function SearchBar<T>(
                 type="text"
                 class="outline-none border-1 pl-9 pr-9 border-gray-900 bg-gray-700 p-2 w-full"
                 placeholder={queryPlaceHolder}
-                value={searchQuery.value}
-                onInput={handleSearchInput}
+                value={search.simpleSearchQuery.value}
+                onInput={(e) =>
+                    search.searchSimple((e.target as HTMLInputElement).value)}
             />
             {AdvancedSearch && (
                 <Dialog

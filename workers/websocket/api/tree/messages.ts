@@ -1,5 +1,9 @@
 import { Message } from "$workers/websocket/types.ts";
-import { TreeRecord } from "$backend/repository/tree-list.repository.ts";
+import {
+    FindTreeItemsFilter,
+    TreeRecord,
+} from "$backend/repository/tree-list.repository.ts";
+import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
 
 type TreeMessage<Type, Data = unknown> = Message<
     "tree",
@@ -14,6 +18,21 @@ export type GetTreeResponse = TreeMessage<
     { records: TreeRecord[]; parent_id?: number }
 >;
 
-export type TreeFrontendResponse = GetTreeResponse;
+export type FindTreeItemsMessage = TreeMessage<
+    "findTreeItems",
+    {
+        filter: FindTreeItemsFilter;
+        page: number;
+    }
+>;
 
-export type TreeFrontendMessage = GetTreeMessage;
+export type FindTreeItemsResponse = TreeMessage<
+    "findTreeItemsResponse",
+    {
+        records: Paged<TreeRecord>;
+    }
+>;
+
+export type TreeFrontendResponse = GetTreeResponse | FindTreeItemsResponse;
+
+export type TreeFrontendMessage = GetTreeMessage | FindTreeItemsMessage;

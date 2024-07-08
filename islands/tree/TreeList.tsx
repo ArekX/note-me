@@ -10,7 +10,6 @@ import { RecordContainer } from "$islands/tree/hooks/record-container.ts";
 import { DeleteGroupProgressDialog } from "$islands/tree/DeleteGroupProgressDialog.tsx";
 
 interface TreeListProps {
-    searchQuery: string;
     switcherComponent: ComponentChild;
 }
 

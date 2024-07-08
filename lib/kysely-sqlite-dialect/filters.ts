@@ -1,65 +1,91 @@
 import {
+    ExpressionBuilder,
+    ExpressionWrapper,
     ReferenceExpression,
     SelectQueryBuilder,
-    StringReference,
+    SqlBool,
 } from "./deps.ts";
 
-export const filterByText = <DB, TB extends keyof DB, O>(
-    query: SelectQueryBuilder<DB, TB, O>,
-    name: ReferenceExpression<DB, TB>,
-    inverted: boolean,
-    value?: string,
+export const getTextExpression = <DB, TB extends keyof DB, O>(
+    expression: ExpressionBuilder<DB, TB>,
+    filter: FilterSpec<DB, TB>,
 ) => {
-    if (!value) {
-        return query;
+    if (!filter.value) {
+        return null;
     }
-    return query.where(name, inverted ? "not like" : "like", `%${value}%`);
+
+    return expression(
+        filter.field,
+        filter.inverted ? "not like" : "like",
+        `%${filter.value}%`,
+    );
 };
 
-export const filterByValue = <DB, TB extends keyof DB, O, V>(
-    query: SelectQueryBuilder<DB, TB, O>,
-    name: ReferenceExpression<DB, TB>,
-    inverted: boolean,
-    value?: V,
+export const getValueExpression = <DB, TB extends keyof DB, O, V>(
+    expression: ExpressionBuilder<DB, TB>,
+    filter: FilterSpec<DB, TB>,
 ) => {
-    if (!value) {
-        return query;
+    if (!filter.value) {
+        return null;
     }
 
-    const operator = inverted
-        ? (Array.isArray(value) ? "not in" : "!=")
-        : (Array.isArray(value) ? "in" : "=");
+    const operator = filter.inverted
+        ? (Array.isArray(filter.value) ? "not in" : "!=")
+        : (Array.isArray(filter.value) ? "in" : "=");
 
-    return query.where(name, operator, value);
+    return expression(filter.field, operator, filter.value);
 };
 
 type FilterSpec<DB, TB extends keyof DB> = {
-    field: StringReference<DB, TB>;
+    field: ReferenceExpression<DB, TB>;
     type?: "text" | "value";
     value: unknown;
     inverted?: boolean;
 };
 
+type CustomFilter<DB, TB extends keyof DB, V = SqlBool> = {
+    type: "custom";
+    value: (
+        builder: ExpressionBuilder<DB, TB>,
+    ) => ExpressionWrapper<DB, TB, V> | null;
+};
+
+interface FilterOptions {
+    filterGlueType?: "and" | "or";
+}
+
 export const applyFilters = <DB, TB extends keyof DB, O>(
     query: SelectQueryBuilder<DB, TB, O>,
-    filters: FilterSpec<DB, TB>[],
+    filters: (FilterSpec<DB, TB> | CustomFilter<DB, TB>)[],
+    {
+        filterGlueType = "and",
+    }: FilterOptions = {},
 ) => {
-    for (const { field, type = "text", value, inverted = false } of filters) {
-        if (type === "text") {
-            query = filterByText(
-                query,
-                field,
-                inverted,
-                value as string,
-            );
-        } else if (type === "value") {
-            query = filterByValue(
-                query,
-                field,
-                inverted,
-                value,
-            );
+    return query.where(({ eb, and, or }) => {
+        const conditions = [];
+
+        for (
+            const filter of filters
+        ) {
+            let expression;
+
+            if (filter.type === "text") {
+                expression = getTextExpression(eb, filter);
+            } else if (filter.type === "value") {
+                expression = getValueExpression(eb, filter);
+            } else if (filter.type === "custom") {
+                expression = filter.value(eb);
+            }
+
+            if (expression) {
+                conditions.push(expression);
+            }
         }
-    }
-    return query;
+
+        if (filterGlueType === "or") {
+            return or(conditions);
+        }
+
+        return and(conditions);
+    });
 };

@@ -95,8 +95,10 @@ import * as $sidebar_ListSwitcher from "./islands/sidebar/ListSwitcher.tsx";
 import * as $sidebar_LogoutButton from "./islands/sidebar/LogoutButton.tsx";
 import * as $sidebar_RemindersList from "./islands/sidebar/RemindersList.tsx";
 import * as $sidebar_SearchBar from "./islands/sidebar/SearchBar.tsx";
+import * as $sidebar_SearchView from "./islands/sidebar/SearchView.tsx";
 import * as $sidebar_SharedNotesList from "./islands/sidebar/SharedNotesList.tsx";
 import * as $sidebar_SideBarPanel from "./islands/sidebar/SideBarPanel.tsx";
+import * as $sidebar_hooks_use_search_state from "./islands/sidebar/hooks/use-search-state.ts";
 import * as $tags_EditTagForm from "./islands/tags/EditTagForm.tsx";
 import * as $tags_TagsList from "./islands/tags/TagsList.tsx";
 import * as $tree_DeleteGroupProgressDialog from "./islands/tree/DeleteGroupProgressDialog.tsx";
@@ -232,8 +234,11 @@ const manifest = {
         "./islands/sidebar/LogoutButton.tsx": $sidebar_LogoutButton,
         "./islands/sidebar/RemindersList.tsx": $sidebar_RemindersList,
         "./islands/sidebar/SearchBar.tsx": $sidebar_SearchBar,
+        "./islands/sidebar/SearchView.tsx": $sidebar_SearchView,
         "./islands/sidebar/SharedNotesList.tsx": $sidebar_SharedNotesList,
         "./islands/sidebar/SideBarPanel.tsx": $sidebar_SideBarPanel,
+        "./islands/sidebar/hooks/use-search-state.ts":
+            $sidebar_hooks_use_search_state,
         "./islands/tags/EditTagForm.tsx": $tags_EditTagForm,
         "./islands/tags/TagsList.tsx": $tags_TagsList,
         "./islands/tree/DeleteGroupProgressDialog.tsx":

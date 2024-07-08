@@ -8,6 +8,8 @@ import Picker from "$components/Picker.tsx";
 import TreeList from "$islands/tree/TreeList.tsx";
 import RemindersList from "$islands/sidebar/RemindersList.tsx";
 import SharedNotesList from "$islands/sidebar/SharedNotesList.tsx";
+import SearchView from "$islands/sidebar/SearchView.tsx";
+import { useSearchState } from "./hooks/use-search-state.ts";
 
 interface ListView {
     type: "notes" | "reminders" | "shared" | "recycleBin";
@@ -17,7 +19,7 @@ interface ListView {
 }
 
 export default function ListPanel() {
-    const searchQuery = useSignal("");
+    const search = useSearchState();
 
     const currentType = useSignal<ListView>({
         type: "notes",
@@ -88,7 +90,7 @@ export default function ListPanel() {
     return (
         <div class="mt-3">
             <SearchBar
-                onSearch={(v) => searchQuery.value = v}
+                search={search}
                 advancedSearchComponent={({
                     onClose,
                 }) => (
@@ -101,29 +103,30 @@ export default function ListPanel() {
                 )}
             />
 
-            <Picker<ListView["type"]>
-                selector={currentType.value.type}
-                map={{
-                    notes: () => (
-                        <TreeList
-                            searchQuery={searchQuery.value}
-                            switcherComponent={switcher}
-                        />
-                    ),
-                    reminders: () => (
-                        <RemindersList switcherComponent={switcher} />
-                    ),
-                    shared: () => (
-                        <SharedNotesList switcherComponent={switcher} />
-                    ),
-                    recycleBin: () => (
-                        <div>
-                            {switcher}
-                            Recycle Bin
-                        </div>
-                    ),
-                }}
-            />
+            {search.isActive.value
+                ? <SearchView search={search} />
+                : (
+                    <Picker<ListView["type"]>
+                        selector={currentType.value.type}
+                        map={{
+                            notes: () => (
+                                <TreeList switcherComponent={switcher} />
+                            ),
+                            reminders: () => (
+                                <RemindersList switcherComponent={switcher} />
+                            ),
+                            shared: () => (
+                                <SharedNotesList switcherComponent={switcher} />
+                            ),
+                            recycleBin: () => (
+                                <div>
+                                    {switcher}
+                                    Recycle Bin
+                                </div>
+                            ),
+                        }}
+                    />
+                )}
         </div>
     );
 }
