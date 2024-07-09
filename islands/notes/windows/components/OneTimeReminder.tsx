@@ -1,5 +1,5 @@
 import Input from "$components/Input.tsx";
-import { dateToYmd } from "$frontend/time.ts";
+import { dateToYmd } from "$lib/time/iso-date.ts";
 import { useSignal } from "@preact/signals";
 
 interface OnceReminder {

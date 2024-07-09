@@ -9,7 +9,7 @@ import {
 } from "$workers/websocket/api/notes/messages.ts";
 import Icon from "$components/Icon.tsx";
 import { useTimeFormat } from "$frontend/hooks/use-time-format.ts";
-import { timeAgo } from "$frontend/time.ts";
+import { timeAgo } from "$lib/time/time-ago.ts";
 import { addMessage } from "$frontend/toast-message.ts";
 
 interface ShareLinksProps {

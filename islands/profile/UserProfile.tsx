@@ -3,7 +3,7 @@ import { EditUserProfile } from "$schemas/users.ts";
 import Input from "$components/Input.tsx";
 import Button from "$components/Button.tsx";
 import DropdownList from "$components/DropdownList.tsx";
-import { supportedTimezoneList } from "$backend/time.ts";
+import { supportedTimezoneList } from "$lib/time/time-zone.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import {
     UpdateProfileMessage,

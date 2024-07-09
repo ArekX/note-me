@@ -1,11 +1,11 @@
 import { db } from "$backend/database.ts";
 import { UserTable } from "$types";
 import { bcrypt } from "$backend/deps.ts";
-import { getCurrentUnixTimestamp } from "$backend/time.ts";
+import { getCurrentUnixTimestamp } from "$lib/time/unix.ts";
 import { Roles } from "$backend/rbac/role-definitions.ts";
-import { applyFilters } from "../../lib/kysely-sqlite-dialect/filters.ts";
-import { Paged } from "../../lib/kysely-sqlite-dialect/pagination.ts";
-import { pageResults } from "../../lib/kysely-sqlite-dialect/pagination.ts";
+import { applyFilters } from "$lib/kysely-sqlite-dialect/filters.ts";
+import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
+import { pageResults } from "$lib/kysely-sqlite-dialect/pagination.ts";
 
 export type UserId = { id: number };
 

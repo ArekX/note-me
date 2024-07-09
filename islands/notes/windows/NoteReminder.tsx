@@ -3,7 +3,7 @@ import Button from "$components/Button.tsx";
 import Dialog from "$islands/Dialog.tsx";
 import Checkbox from "$islands/Checkbox.tsx";
 import { useSignal } from "@preact/signals";
-import { dateToUnix } from "$frontend/time.ts";
+import { dateToUnix, getCurrentUnixTimestamp } from "$lib/time/unix.ts";
 import { useLoader } from "$frontend/hooks/use-loader.ts";
 import Loader from "$islands/Loader.tsx";
 import {
@@ -27,7 +27,6 @@ import { OneTimeReminder } from "$islands/notes/windows/components/OneTimeRemind
 import { RepeatReminder } from "$islands/notes/windows/components/RepeatReminder.tsx";
 import PresetReminder from "$islands/notes/windows/components/PresetReminder.tsx";
 import { useTimeFormat } from "$frontend/hooks/use-time-format.ts";
-import { getCurrentUnixTimestamp } from "$backend/time.ts";
 import { validateSchema } from "$schemas/mod.ts";
 import { setReminderSchema } from "$schemas/notes.ts";
 

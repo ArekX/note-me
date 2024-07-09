@@ -1,4 +1,4 @@
-import { timeAgo } from "$frontend/time.ts";
+import { timeAgo } from "$lib/time/time-ago.ts";
 import { useTimeFormat } from "$frontend/hooks/use-time-format.ts";
 
 interface DetailsLineProps {

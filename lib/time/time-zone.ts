@@ -1,4 +1,5 @@
-export const getCurrentUnixTimestamp = () => Math.floor(Date.now() / 1000);
+export const resolveTimeZone = () =>
+    Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 export const supportedTimezones = Intl.supportedValuesOf("timeZone");
 

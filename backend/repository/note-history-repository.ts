@@ -1,5 +1,5 @@
 import { db } from "$backend/database.ts";
-import { getCurrentUnixTimestamp } from "$backend/time.ts";
+import { getCurrentUnixTimestamp } from "$lib/time/unix.ts";
 import { sql } from "$lib/kysely-sqlite-dialect/deps.ts";
 import { getNote } from "$backend/repository/note-repository.ts";
 import { Paged, pageResults } from "$lib/kysely-sqlite-dialect/pagination.ts";

@@ -1,6 +1,6 @@
 import { db } from "$backend/database.ts";
 import { NotificationTable, Payload, RecordId } from "$types";
-import { getCurrentUnixTimestamp } from "$backend/time.ts";
+import { getCurrentUnixTimestamp } from "$lib/time/unix.ts";
 
 export interface NoteReminderData {
     id: number;

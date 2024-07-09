@@ -1,22 +1,4 @@
-export const unixToDate = (unix: number) => new Date(unix * 1000);
-
-export const dateToUnix = (date: Date) => Math.floor(date.getTime() / 1000);
-
-export const inputDateToUnix = (date: string) => dateToUnix(new Date(date));
-
-export const dateToYmd = (date: Date) => date.toISOString().split("T")[0];
-
-export const dateToHms = (date: Date) =>
-    date.toISOString().split("T")[1].split(".")[0];
-
-export const getDateWithAddedDays = (
-    addDays: number = 1,
-    date: Date | null = null,
-) => {
-    const nextDay = date ? new Date(date) : new Date();
-    nextDay.setDate(nextDay.getDate() + addDays);
-    return nextDay;
-};
+import { unixToDate } from "./unix.ts";
 
 const timeAgoScale: [number, string, number][] = [
     [60, "minute", 60],
@@ -56,6 +38,3 @@ export const timeAgo = (fromDate: number | Date) => {
 
     return isFuture ? "in far future" : "a long time ago";
 };
-
-export const getBrowserTimezone = () =>
-    Intl.DateTimeFormat().resolvedOptions().timeZone;

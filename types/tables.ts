@@ -122,6 +122,9 @@ export interface PeriodicTaskScheduleTable {
     id: Generated<number>;
     task_identifier: string;
     next_run_at: number;
+    is_last_run_successful?: boolean;
+    last_successful_run_at?: number | null;
+    last_fail_reason?: string | null;
 }
 
 export interface Tables {

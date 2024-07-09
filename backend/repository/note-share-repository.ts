@@ -5,7 +5,7 @@ import {
     db,
     rollbackTransaction,
 } from "$backend/database.ts";
-import { getCurrentUnixTimestamp } from "$backend/time.ts";
+import { getCurrentUnixTimestamp } from "$lib/time/unix.ts";
 import { PickUserRecord } from "$backend/repository/user-repository.ts";
 import { getNoteTagsSql } from "$backend/repository/note-repository.ts";
 import { sql } from "$lib/kysely-sqlite-dialect/deps.ts";

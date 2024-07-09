@@ -9,12 +9,10 @@ import {
     CreatePublicShareMessage,
     CreatePublicShareResponse,
 } from "$workers/websocket/api/notes/messages.ts";
-import {
-    dateToYmd,
-    getDateWithAddedDays,
-    inputDateToUnix,
-} from "$frontend/time.ts";
+import { inputDateToUnix } from "$lib/time/unix.ts";
 import { PublicNoteShareRecord } from "$backend/repository/note-share-repository.ts";
+import { addDays } from "$lib/time/modifiers.ts";
+import { dateToYmd } from "$lib/time/iso-date.ts";
 
 interface CreateLinkFormProps {
     noteId: number;
@@ -79,7 +77,7 @@ export default function CreateLinkForm({
                         <Input
                             type="date"
                             value={expiresAt.value}
-                            min={dateToYmd(getDateWithAddedDays(1))}
+                            min={dateToYmd(addDays(1))}
                             onInput={(value) => expiresAt.value = value}
                         />
                         {expiresAt.value.length === 0 && (

@@ -1,6 +1,6 @@
 import { zod } from "./deps.ts";
 import { roleNames } from "$backend/rbac/role-definitions.ts";
-import { supportedTimezones } from "$backend/time.ts";
+import { supportedTimezones } from "$lib/time/time-zone.ts";
 
 const userSchema = zod.object({
     name: zod.string().min(1, "Name must have at least one character"),

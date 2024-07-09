@@ -1,6 +1,5 @@
 import Button from "$components/Button.tsx";
-import { getCurrentUnixTimestamp } from "$backend/time.ts";
-import { dateToUnix } from "$frontend/time.ts";
+import { dateToUnix, getCurrentUnixTimestamp } from "$lib/time/unix.ts";
 
 type PresetMap = {
     [key: string]: {

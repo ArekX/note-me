@@ -241,6 +241,12 @@ export async function up(db: Kysely<unknown>): Promise<void> {
         .addColumn("id", "integer", (col) => col.autoIncrement().primaryKey())
         .addColumn("task_identifier", "varchar(255)", (col) => col.notNull())
         .addColumn("next_run_at", "int8")
+        .addColumn(
+            "is_last_run_successful",
+            "boolean",
+        )
+        .addColumn("last_successful_run_at", "int8")
+        .addColumn("last_fail_reason", "text")
         .execute();
 }
 

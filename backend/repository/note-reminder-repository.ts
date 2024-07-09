@@ -2,9 +2,9 @@ import { db } from "$backend/database.ts";
 import { sql } from "$lib/kysely-sqlite-dialect/deps.ts";
 import { applyFilters } from "$lib/kysely-sqlite-dialect/filters.ts";
 import { Paged, pageResults } from "$lib/kysely-sqlite-dialect/pagination.ts";
-import { NoteReminderTable } from "../../types/tables.ts";
-import { getCurrentUnixTimestamp } from "$backend/time.ts";
-import { RecordId } from "../../types/repository.ts";
+import { NoteReminderTable } from "$types";
+import { getCurrentUnixTimestamp } from "$lib/time/unix.ts";
+import { RecordId } from "$types";
 
 type Reminder = {
     type: "once";

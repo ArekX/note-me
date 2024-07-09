@@ -1,11 +1,12 @@
 import { removeExpiredPublicShares } from "$backend/repository/note-share-repository.ts";
 import { workerLogger } from "$backend/logger.ts";
-import { EVERY_DAY, PeriodicTask } from "../periodic-task-service.ts";
+import { PeriodicTask } from "../periodic-task-service.ts";
+import { startOfNextDay } from "$workers/periodic-task/next-at.ts";
 
 // TODO: Test this
 export const removeExpiredShareLinks: PeriodicTask = {
     name: "cleanup-expired-share-links",
-    interval: EVERY_DAY,
+    getNextAt: startOfNextDay,
     async trigger(): Promise<void> {
         workerLogger.info("Removing expired public share links");
         await removeExpiredPublicShares();

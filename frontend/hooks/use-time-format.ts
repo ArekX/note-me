@@ -1,12 +1,11 @@
 import { useComputed } from "@preact/signals";
-import { userData } from "$frontend/hooks/use-user.ts";
-import { unixToDate } from "$frontend/time.ts";
+import { unixToDate } from "$lib/time/unix.ts";
+import { resolveTimeZone } from "$lib/time/time-zone.ts";
 
 export const useTimeFormat = () => {
     const formatters = useComputed(() => {
         const timeZoneData = {
-            timeZone: userData.value?.timezone ??
-                Intl.DateTimeFormat().resolvedOptions().timeZone,
+            timeZone: resolveTimeZone(),
         };
 
         return {

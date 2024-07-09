@@ -6,7 +6,7 @@ import { useEffect } from "preact/hooks";
 import { UserRecord } from "$backend/repository/user-repository.ts";
 import DropdownList from "$components/DropdownList.tsx";
 import { roleDropDownList } from "$backend/rbac/role-definitions.ts";
-import { supportedTimezoneList } from "$backend/time.ts";
+import { supportedTimezoneList } from "$lib/time/time-zone.ts";
 import {
     SystemErrorMessage,
     useWebsocketService,

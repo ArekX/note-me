@@ -1,11 +1,12 @@
 import { cleanupOldTempFiles } from "$backend/file-upload.ts";
 import { workerLogger } from "$backend/logger.ts";
-import { EVERY_DAY, PeriodicTask } from "../periodic-task-service.ts";
+import { startOfNextDay } from "$workers/periodic-task/next-at.ts";
+import { PeriodicTask } from "../periodic-task-service.ts";
 
 // TODO: Test this
 export const cleanupTempFolder: PeriodicTask = {
     name: "cleanup-temp",
-    interval: EVERY_DAY,
+    getNextAt: startOfNextDay,
     async trigger(): Promise<void> {
         workerLogger.info("Cleaning up old temporary files");
         await cleanupOldTempFiles();

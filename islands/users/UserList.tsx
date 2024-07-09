@@ -18,7 +18,7 @@ import {
     FindUsersMessage,
     FindUsersResponse,
 } from "$workers/websocket/api/users/messages.ts";
-import { getBrowserTimezone } from "$frontend/time.ts";
+import { resolveTimeZone } from "$lib/time/time-zone.ts";
 import { useUser } from "$frontend/hooks/use-user.ts";
 import { usePagedData } from "$frontend/hooks/use-paged-data.ts";
 import { useFilters } from "$frontend/hooks/use-filters.ts";
@@ -123,7 +123,7 @@ export default function UserList() {
                                 id: null,
                                 name: "",
                                 username: "",
-                                timezone: getBrowserTimezone(),
+                                timezone: resolveTimeZone(),
                                 new_password: "",
                                 role: "user",
                             });

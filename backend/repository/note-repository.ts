@@ -1,7 +1,7 @@
 import { NoteTable } from "$types";
 import { db } from "$backend/database.ts";
-import { getCurrentUnixTimestamp } from "$backend/time.ts";
-import { sql } from "../../lib/kysely-sqlite-dialect/deps.ts";
+import { getCurrentUnixTimestamp } from "$lib/time/unix.ts";
+import { sql } from "$lib/kysely-sqlite-dialect/deps.ts";
 
 type NoteId = { id: number };
 

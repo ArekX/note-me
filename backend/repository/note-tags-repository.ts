@@ -1,6 +1,6 @@
 import { db } from "$backend/database.ts";
 import { NoteTagTable, RecordId } from "$types";
-import { getCurrentUnixTimestamp } from "$backend/time.ts";
+import { getCurrentUnixTimestamp } from "$lib/time/unix.ts";
 import { applyFilters } from "$lib/kysely-sqlite-dialect/filters.ts";
 import { Paged, pageResults } from "$lib/kysely-sqlite-dialect/pagination.ts";
 import { when } from "$backend/promise.ts";
