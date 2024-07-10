@@ -1,4 +1,4 @@
-import { FileTable } from "../../types/tables.ts";
+import { FileTable } from "$types";
 import { db } from "$backend/database.ts";
 import { applyFilters } from "$lib/kysely-sqlite-dialect/filters.ts";
 import { Paged, pageResults } from "$lib/kysely-sqlite-dialect/pagination.ts";

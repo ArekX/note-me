@@ -1,5 +1,5 @@
 import { RecordTreeHook } from "$islands/tree/hooks/use-record-tree.ts";
-import { DragManagerHook } from "../../frontend/hooks/use-drag-manager.ts";
+import { DragManagerHook } from "$frontend/hooks/use-drag-manager.ts";
 import { redirectTo } from "$frontend/redirection-manager.ts";
 import Icon from "$components/Icon.tsx";
 import { useSignal } from "@preact/signals";

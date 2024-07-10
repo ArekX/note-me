@@ -1,6 +1,6 @@
 import { FreshContext } from "$fresh/server.ts";
 import { AppState } from "$types";
-import IslandInitializer from "../../islands/IslandInitializer.tsx";
+import IslandInitializer from "$islands/IslandInitializer.tsx";
 import { getUserNotifications } from "$backend/repository/notification-repository.ts";
 import Sidebar from "$components/Sidebar.tsx";
 import { canAccessSettings } from "$backend/rbac/role-definitions.ts";

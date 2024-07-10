@@ -6,7 +6,7 @@ import { createRef } from "preact";
 import NotificationItem from "$islands/notifications/NotificationItem.tsx";
 import Button from "$components/Button.tsx";
 import { useSinglePopover } from "$frontend/hooks/use-single-popover.ts";
-import { useWebsocketService } from "../../frontend/hooks/use-websocket-service.ts";
+import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import {
     DeleteAllMessage,
     DeleteSingleMessage,

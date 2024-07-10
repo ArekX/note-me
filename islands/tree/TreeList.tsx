@@ -3,7 +3,7 @@ import { useRecordTree } from "./hooks/use-record-tree.ts";
 import RootGroupBar from "$islands/tree/RootGroupBar.tsx";
 import { redirectTo } from "$frontend/redirection-manager.ts";
 import Loader from "$islands/Loader.tsx";
-import { useDragManager } from "../../frontend/hooks/use-drag-manager.ts";
+import { useDragManager } from "$frontend/hooks/use-drag-manager.ts";
 import TreeItem from "./TreeItem.tsx";
 import Icon from "$components/Icon.tsx";
 import { RecordContainer } from "$islands/tree/hooks/record-container.ts";

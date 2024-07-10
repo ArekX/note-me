@@ -9,7 +9,7 @@ import {
 } from "$workers/websocket/api/users/messages.ts";
 import Pagination from "$islands/Pagination.tsx";
 import { usePagedData } from "$frontend/hooks/use-paged-data.ts";
-import { useLoader } from "../frontend/hooks/use-loader.ts";
+import { useLoader } from "$frontend/hooks/use-loader.ts";
 import Button from "$components/Button.tsx";
 import Icon from "$components/Icon.tsx";
 import { JSX } from "preact/jsx-runtime";

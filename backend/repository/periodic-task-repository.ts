@@ -1,6 +1,6 @@
 import { db } from "$backend/database.ts";
 import { getCurrentUnixTimestamp } from "$lib/time/unix.ts";
-import { PeriodicTaskScheduleTable } from "../../types/tables.ts";
+import { PeriodicTaskScheduleTable } from "$types";
 
 export const savePeriodicTaskRun = async (
     task_identifier: string,

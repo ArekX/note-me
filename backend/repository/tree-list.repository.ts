@@ -1,5 +1,5 @@
 import { db } from "$backend/database.ts";
-import { sql } from "../../lib/kysely-sqlite-dialect/deps.ts";
+import { sql } from "$lib/kysely-sqlite-dialect/deps.ts";
 import { applyFilters } from "$lib/kysely-sqlite-dialect/filters.ts";
 import { Paged, pageResults } from "$lib/kysely-sqlite-dialect/pagination.ts";
 

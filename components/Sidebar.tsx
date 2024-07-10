@@ -1,8 +1,8 @@
-import Notifications from "../islands/notifications/NotificationList.tsx";
+import Notifications from "$islands/notifications/NotificationList.tsx";
 import Logo from "$components/Logo.tsx";
 import { NotificationRecord } from "$backend/repository/notification-repository.ts";
 import Icon from "$components/Icon.tsx";
-import SideBarPanel from "../islands/sidebar/SideBarPanel.tsx";
+import SideBarPanel from "$islands/sidebar/SideBarPanel.tsx";
 import LogoutButton from "$islands/sidebar/LogoutButton.tsx";
 import { getCurrentMonthWallpaper } from "$frontend/wallpaper.ts";
 
