@@ -37,6 +37,7 @@ import * as $Dialog from "./islands/Dialog.tsx";
 import * as $DropdownMenu from "./islands/DropdownMenu.tsx";
 import * as $InvalidateData from "./islands/InvalidateData.tsx";
 import * as $IslandInitializer from "./islands/IslandInitializer.tsx";
+import * as $LoadMoreWrapper from "./islands/LoadMoreWrapper.tsx";
 import * as $Loader from "./islands/Loader.tsx";
 import * as $Pagination from "./islands/Pagination.tsx";
 import * as $ToastMessages from "./islands/ToastMessages.tsx";
@@ -99,6 +100,7 @@ import * as $sidebar_SearchView from "./islands/sidebar/SearchView.tsx";
 import * as $sidebar_SharedNotesList from "./islands/sidebar/SharedNotesList.tsx";
 import * as $sidebar_SideBarPanel from "./islands/sidebar/SideBarPanel.tsx";
 import * as $sidebar_hooks_use_search_state from "./islands/sidebar/hooks/use-search-state.ts";
+import * as $sidebar_search_TreeItemView from "./islands/sidebar/search/TreeItemView.tsx";
 import * as $tags_EditTagForm from "./islands/tags/EditTagForm.tsx";
 import * as $tags_TagsList from "./islands/tags/TagsList.tsx";
 import * as $tree_DeleteGroupProgressDialog from "./islands/tree/DeleteGroupProgressDialog.tsx";
@@ -154,6 +156,7 @@ const manifest = {
         "./islands/DropdownMenu.tsx": $DropdownMenu,
         "./islands/InvalidateData.tsx": $InvalidateData,
         "./islands/IslandInitializer.tsx": $IslandInitializer,
+        "./islands/LoadMoreWrapper.tsx": $LoadMoreWrapper,
         "./islands/Loader.tsx": $Loader,
         "./islands/Pagination.tsx": $Pagination,
         "./islands/ToastMessages.tsx": $ToastMessages,
@@ -239,6 +242,8 @@ const manifest = {
         "./islands/sidebar/SideBarPanel.tsx": $sidebar_SideBarPanel,
         "./islands/sidebar/hooks/use-search-state.ts":
             $sidebar_hooks_use_search_state,
+        "./islands/sidebar/search/TreeItemView.tsx":
+            $sidebar_search_TreeItemView,
         "./islands/tags/EditTagForm.tsx": $tags_EditTagForm,
         "./islands/tags/TagsList.tsx": $tags_TagsList,
         "./islands/tree/DeleteGroupProgressDialog.tsx":

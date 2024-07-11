@@ -8,7 +8,7 @@ export interface SearchStateHook<T = unknown> {
     searchAdvanced: (data: T) => void;
 }
 
-type SearchRequest<T> =
+export type SearchRequest<T = object> =
     | {
         type: "simple";
         query: string;

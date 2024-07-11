@@ -129,5 +129,5 @@ export const findTreeItems = async (
         { field: "tree.type", type: "value", value: filter.type },
     ]);
 
-    return await pageResults(query, page);
+    return await pageResults(query, page, 5);
 };

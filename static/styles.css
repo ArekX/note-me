@@ -326,3 +326,7 @@ code, pre {
 select.select-input {
     padding: .66em .5em;
 }
+
+.search-view-height {
+    height: calc(100vh - 9em);
+}
