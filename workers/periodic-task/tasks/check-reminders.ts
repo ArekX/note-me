@@ -6,7 +6,7 @@ import { createNotification } from "$backend/repository/notification-repository.
 import { PeriodicTask } from "../periodic-task-service.ts";
 import { sendMessageToWebsocket } from "$workers/periodic-task/worker-message.ts";
 import { runInTransaction } from "$backend/database.ts";
-import { workerLogger } from "$backend/logger.ts";
+import { logger } from "$backend/logger.ts";
 import { getNoteInfo } from "$backend/repository/note-repository.ts";
 import { nextMinute } from "$workers/periodic-task/next-at.ts";
 
@@ -48,7 +48,7 @@ export const checkReminders: PeriodicTask = {
                     });
                 });
             } catch (e) {
-                workerLogger.error(
+                logger.error(
                     "Error while processing note reminder ID {reminderId}: {error}",
                     {
                         reminderId: reminder.id,

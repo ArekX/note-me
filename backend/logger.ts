@@ -1,8 +1,14 @@
 import "$std/dotenv/load.ts";
 import { log } from "$backend/deps.ts";
 
+let loggerName: string = "default";
+
+export const setLoggerName = (name: string) => {
+    loggerName = name;
+};
+
 const formatMessage: log.FormatterFunction = (
-    { loggerName, levelName, datetime, msg, args },
+    { levelName, datetime, msg, args },
 ) => {
     const [params] = args.length > 0 ? args : [{}];
 
@@ -12,9 +18,7 @@ const formatMessage: log.FormatterFunction = (
         msg = msg.replaceAll(`{${key}}`, value);
     }
 
-    return `[${
-        loggerName === "default" ? "webserver" : loggerName
-    }|${levelName}|${datetime.toISOString()}]: ${msg}`;
+    return `[${loggerName}|${levelName}|${datetime.toISOString()}]: ${msg}`;
 };
 
 const loggingLevel: log.LevelName =
@@ -49,6 +53,4 @@ log.setup({
     handlers: logHandlers,
 });
 
-export const cliLogger = log.getLogger("cli");
-export const workerLogger = log.getLogger("worker");
-export const webLogger = log.getLogger();
+export const logger = log.getLogger();

@@ -1,7 +1,7 @@
 import { resolveCookies } from "$backend/session/cookie.ts";
 import { loadSessionState } from "$backend/session/session.ts";
 import { AppSessionData } from "$types";
-import { workerLogger } from "$backend/logger.ts";
+import { logger } from "$backend/logger.ts";
 import {
     BinaryMessage,
     ClientEvent,
@@ -90,7 +90,7 @@ const handleConnectionRequest = async (request: Request): Promise<Response> => {
         const message = readMessage(event.data);
 
         if (!message) {
-            workerLogger.error(
+            logger.error(
                 `Client {id} sent an invalid message of type: {type}`,
                 {
                     id,
@@ -121,7 +121,7 @@ const startServer = (hostname: string, port: number) => {
         hostname,
         handler: handleConnectionRequest,
         onListen({ port }) {
-            workerLogger.info(
+            logger.info(
                 `WebSocket service started and running at {hostname}:{port}`,
                 { hostname, port },
             );
@@ -155,7 +155,7 @@ const handleBackendRequest = (message: Message) => {
     }
 
     if (!wasRequestHandled) {
-        workerLogger.error(
+        logger.error(
             `No handler for backend message of type '{type}' in namespace '{namespace}' was found.`,
             { type, namespace },
         );
@@ -181,11 +181,11 @@ const handleClientError = (
     client: SocketClient,
     error: Error,
 ) => {
-    workerLogger.error(
+    logger.error(
         `Error while handling message of type '{type}' in namespace '{namespace}': {error}`,
         { type, namespace, error },
     );
-    workerLogger.debug("Stack trace: {error}", {
+    logger.debug("Stack trace: {error}", {
         error: error.stack ?? "No stack trace available",
     });
     client.send<ErrorMessage>({

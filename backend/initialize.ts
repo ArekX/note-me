@@ -1,5 +1,5 @@
 import { migrator } from "$backend/migration-manager.ts";
-import { webLogger } from "$backend/logger.ts";
+import { logger, setLoggerName } from "$backend/logger.ts";
 import { initTempLocation } from "$backend/file-upload.ts";
 import { createUserRecord } from "$backend/repository/user-repository.ts";
 
@@ -8,14 +8,14 @@ const runMigrations = async () => {
     await migrator.migrateUp();
 
     if (isFirstRun) {
-        webLogger.info("Setting up initial data on first run.");
+        logger.info("Setting up initial data on first run.");
         await initializeFirstRun();
-        webLogger.info("First time setup complete!");
+        logger.info("First time setup complete!");
     }
 };
 
 const initializeFirstRun = async () => {
-    webLogger.info("Creating administrator user...");
+    logger.info("Creating administrator user...");
     await createUserRecord({
         name: "Administrator",
         username: "admin",
@@ -26,12 +26,14 @@ const initializeFirstRun = async () => {
 };
 
 export const initializeBackend = async () => {
-    webLogger.info("Initializing backend...");
+    setLoggerName("backend");
+
+    logger.info("Initializing backend...");
     await initTempLocation();
 
     if ((Deno.env.get("RUN_MIGRATIONS_ON_STARTUP") ?? "1") == "1") {
         await runMigrations();
     }
 
-    webLogger.info("Backend initialized.");
+    logger.info("Backend initialized.");
 };

@@ -1,11 +1,11 @@
-import { webLogger } from "$backend/logger.ts";
+import { logger } from "$backend/logger.ts";
 import { services } from "./services/mod.ts";
 
 const checkServiceDisabled = (serviceName: string): boolean => {
     const serviceDisabledEnvName = "DISABLE_SERVICE_" +
         serviceName.replace(/([a-z])([A-Z])/g, "$1_$2").toUpperCase();
 
-    webLogger.debug(
+    logger.debug(
         "Checking if service '{serviceName}' is disabled by environment variable '{name}'",
         {
             serviceName,
@@ -16,7 +16,7 @@ const checkServiceDisabled = (serviceName: string): boolean => {
     const isServiceDisabled = Deno.env.get(serviceDisabledEnvName) == "1";
 
     if (isServiceDisabled) {
-        webLogger.info(
+        logger.info(
             `Service '{name}' has been disabled by environment variable '{variable}'.`,
             {
                 name: serviceName,
@@ -26,7 +26,7 @@ const checkServiceDisabled = (serviceName: string): boolean => {
         return true;
     }
 
-    webLogger.debug("Service is not disabled.");
+    logger.debug("Service is not disabled.");
 
     return false;
 };
@@ -37,9 +37,9 @@ export const initializeWorkers = (): void => {
             continue;
         }
 
-        webLogger.info(`Starting background service: ${serviceName}`);
+        logger.info(`Starting background service: ${serviceName}`);
         service.start();
-        webLogger.debug("Background service started.");
+        logger.debug("Background service started.");
     }
-    webLogger.debug("All background services started");
+    logger.debug("All background services started");
 };

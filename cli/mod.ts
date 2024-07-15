@@ -6,6 +6,9 @@ import { newMigrationCommand } from "./new-migration.ts";
 import { migrateDownCommand } from "./migrate-down.ts";
 import { migrateUpCommand } from "./migrate-up.ts";
 import { addUser } from "./add-user.ts";
+import { setLoggerName } from "$backend/logger.ts";
+
+setLoggerName("cli");
 
 await new Command()
     .name("NoteMe CLI")

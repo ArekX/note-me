@@ -1,4 +1,4 @@
-import { workerLogger } from "$backend/logger.ts";
+import { logger } from "$backend/logger.ts";
 import { connectServiceToBus } from "$workers/services/worker-bus.ts";
 
 interface BackgroundServiceOptions {
@@ -44,7 +44,7 @@ export class BackgroundService {
         );
 
         this.#worker.onmessageerror = (event) => {
-            workerLogger.error(
+            logger.error(
                 "Received unserializeable message from worker '{worker}': {error}",
                 {
                     worker: this.workerPath,
@@ -54,7 +54,7 @@ export class BackgroundService {
         };
 
         this.#worker.onerror = (event) => {
-            workerLogger.error(
+            logger.error(
                 "Restarting worker '{worker}' due to error '{error}' at {file}:{line}.",
                 {
                     worker: this.workerPath,

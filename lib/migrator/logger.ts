@@ -1,4 +1,4 @@
-import { cliLogger } from "$backend/logger.ts";
+import { logger } from "$backend/logger.ts";
 
 export interface MigrationLogger {
     log(message: string): void;
@@ -7,12 +7,12 @@ export interface MigrationLogger {
 
 export class ConsoleLogger implements MigrationLogger {
     log(message: string): void {
-        cliLogger.info(message);
+        logger.info(message);
     }
     error(error: Error, message?: string | undefined): void {
-        cliLogger.error(error);
+        logger.error(error);
         if (message) {
-            cliLogger.error(message);
+            logger.error(message);
         }
     }
 }

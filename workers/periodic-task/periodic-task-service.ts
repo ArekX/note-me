@@ -1,4 +1,4 @@
-import { workerLogger } from "$backend/logger.ts";
+import { logger } from "$backend/logger.ts";
 import {
     findPendingPeriodicTasks,
     getScheduledTasks,
@@ -44,7 +44,7 @@ const restorePreviouslyScheduledTasks = async () => {
             task.task_identifier === handler.task.name
         );
         if (task) {
-            workerLogger.info(
+            logger.info(
                 "Found previously scheduled periodic task '{task}' scheduled at {nextAt}",
                 {
                     task: handler.task.name,
@@ -61,16 +61,16 @@ const triggerHandler = async (handler: RegisteredTask) => {
     let failureReason: string | null = null;
     let isSuccessful = false;
     try {
-        workerLogger.debug("Running periodic task '{task}'", {
+        logger.debug("Running periodic task '{task}'", {
             task: handler.task.name,
         });
         await handler.task.trigger();
-        workerLogger.debug("Periodic task '{task}' finished", {
+        logger.debug("Periodic task '{task}' finished", {
             task: handler.task.name,
         });
         isSuccessful = true;
     } catch (e) {
-        workerLogger.error(
+        logger.error(
             "Error occurred when runnig periodic task '{task}': {error}",
             {
                 task: handler.task.name,
@@ -93,11 +93,11 @@ const synchronizeWithClock = (): Promise<void> =>
     new Promise((resolve) => {
         if (new Date().getSeconds() === 0) {
             resolve();
-            workerLogger.info("Synchronized with clock. No need to wait.");
+            logger.info("Synchronized with clock. No need to wait.");
             return;
         }
 
-        workerLogger.info(
+        logger.info(
             "Synchronizing with clock up to the current minute started at {date}",
             {
                 date: new Date().toISOString(),
@@ -109,7 +109,7 @@ const synchronizeWithClock = (): Promise<void> =>
             if (seconds === 0) {
                 resolve();
                 clearInterval(intervalId);
-                workerLogger.info("Synchronization finished at: {date}", {
+                logger.info("Synchronization finished at: {date}", {
                     date: now.toISOString(),
                 });
             }
@@ -136,7 +136,7 @@ const scheduleFirstTimeJobs = async () => {
             continue;
         }
 
-        workerLogger.info(
+        logger.info(
             "Scheduling first time run for {task}",
             {
                 task: handler.task.name,
@@ -152,14 +152,14 @@ const scheduleFirstTimeJobs = async () => {
 const start = async ({
     tickTime = MINUTE_INTERVAL,
 }: PeriodicTimerService = {}) => {
-    workerLogger.info("Periodic task service started.");
+    logger.info("Periodic task service started.");
     await restorePreviouslyScheduledTasks();
     await synchronizeWithClock();
     await scheduleFirstTimeJobs();
 
     while (true) {
         const now = getCurrentUnixTimestamp();
-        workerLogger.debug("Tick time passed. Running periodic tasks.");
+        logger.debug("Tick time passed. Running periodic tasks.");
         for (const handler of handlers) {
             if (now >= handler.next_at) {
                 await triggerHandler(handler);
@@ -168,7 +168,7 @@ const start = async ({
                 );
             }
         }
-        workerLogger.debug(
+        logger.debug(
             "All periodic tasks for this time have finished. Waiting for next tick.",
         );
         await waitForNextTick(tickTime);
