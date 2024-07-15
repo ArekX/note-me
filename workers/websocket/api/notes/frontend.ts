@@ -30,6 +30,8 @@ import {
     RemoveReminderResponse,
     RevertNoteToHistoryMessage,
     RevertNoteToHistoryResponse,
+    SearchNoteMessage,
+    SearchNoteResponse,
     SetReminderMessage,
     SetReminderResponse,
     ShareToUsersMessage,
@@ -81,6 +83,7 @@ import {
     removeReminder,
     setReminder,
 } from "$backend/repository/note-reminder-repository.ts";
+import { searchNotes } from "$backend/repository/note-search-repository.ts";
 
 const handleCreateNote: ListenerFn<CreateNoteMessage> = async (
     { message: { data }, sourceClient, respond },
@@ -434,6 +437,17 @@ const handleGetNoteReminderData: ListenerFn<GetNoteReminderDataMessage> =
         });
     };
 
+const handleSearchNote: ListenerFn<SearchNoteMessage> = async (
+    { message: { filters }, sourceClient, respond },
+) => {
+    const records = await searchNotes(filters, sourceClient!.userId);
+
+    respond<SearchNoteResponse>({
+        type: "searchNoteResponse",
+        records,
+    });
+};
+
 export const frontendMap: RegisterListenerMap<NoteFrontendMessage> = {
     createNote: handleCreateNote,
     updateNote: handleUpdateNote,
@@ -453,4 +467,5 @@ export const frontendMap: RegisterListenerMap<NoteFrontendMessage> = {
     findNoteReminders: handleFindNoteReminders,
     removeReminder: handleRemoveReminder,
     getNoteReminderData: handleGetNoteReminderData,
+    searchNote: handleSearchNote,
 };

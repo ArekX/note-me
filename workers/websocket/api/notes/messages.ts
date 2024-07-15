@@ -25,6 +25,10 @@ import {
     ReminderNoteRecord,
     UserReminderNotesFilters,
 } from "$backend/repository/note-reminder-repository.ts";
+import {
+    NoteSearchRecord,
+    SearchNoteFilters,
+} from "$backend/repository/note-search-repository.ts";
 
 type NoteMessage<Type, Data = unknown> = Message<
     "notes",
@@ -211,6 +215,16 @@ export type GetNoteReminderDataResponse = NoteMessage<
     { data: NoteReminderData | null }
 >;
 
+export type SearchNoteMessage = NoteMessage<
+    "searchNote",
+    { filters: SearchNoteFilters }
+>;
+
+export type SearchNoteResponse = NoteMessage<
+    "searchNoteResponse",
+    { records: NoteSearchRecord[] }
+>;
+
 export type NoteFrontendResponse =
     | CreateNoteResponse
     | UpdateNoteResponse
@@ -229,7 +243,8 @@ export type NoteFrontendResponse =
     | SetReminderResponse
     | RemoveReminderResponse
     | FindNoteRemindersResponse
-    | GetNoteReminderDataResponse;
+    | GetNoteReminderDataResponse
+    | SearchNoteResponse;
 
 export type NoteFrontendMessage =
     | CreateNoteMessage
@@ -249,4 +264,5 @@ export type NoteFrontendMessage =
     | SetReminderMessage
     | RemoveReminderMessage
     | FindNoteRemindersMessage
-    | GetNoteReminderDataMessage;
+    | GetNoteReminderDataMessage
+    | SearchNoteMessage;
