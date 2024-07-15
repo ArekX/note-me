@@ -58,7 +58,7 @@ export default function NodeItem({
                 </li>
             );
         case "softBreak":
-            return null;
+            return <span>&nbsp;</span>;
         case "hardBreak":
             return <p>&nbsp;</p>;
         case "blockQuote":

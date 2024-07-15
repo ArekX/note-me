@@ -55,7 +55,7 @@ export default function SearchView({
 
         addMoreRecords(response.records.results);
 
-        if (response.records.results.length === 0) {
+        if (response.records.results.length < 10) {
             setNoMoreData();
         }
 
