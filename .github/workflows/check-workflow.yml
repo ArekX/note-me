@@ -4,7 +4,7 @@ permissions:
     contents: read
 
 env:
-  DENO_VERSION: "1.44.1"
+  DENO_VERSION: "1.45.2"
   DENO_DIR: /home/runner/.deno-cache
   SQLITE_DATABASE_LOCATION: ":memory:"
   COOKIE_DOMAIN: localhost

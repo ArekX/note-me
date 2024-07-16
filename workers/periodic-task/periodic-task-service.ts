@@ -6,8 +6,6 @@ import {
 } from "$backend/repository/periodic-task-repository.ts";
 import { getCurrentUnixTimestamp, unixToDate } from "$lib/time/unix.ts";
 
-export const MINUTE_INTERVAL = 1;
-
 export interface PeriodicTask {
     name: string;
     getNextAt: (currentTime: number) => number;
@@ -21,12 +19,19 @@ interface RegisteredTask {
 
 const handlers: Set<RegisteredTask> = new Set();
 
-interface PeriodicTimerService {
-    tickTime?: number;
-}
+const waitForNextTick = (): Promise<void> => {
+    return new Promise((resolve) => {
+        const now = new Date();
 
-const waitForNextTick = (waitTime: number): Promise<void> => {
-    return new Promise((resolve) => setTimeout(resolve, waitTime * 60 * 1000));
+        const syncWait = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+        logger.debug(
+            "Waiting for {time} seconds for next tick",
+            {
+                time: (syncWait / 1000).toFixed(2),
+            },
+        );
+        setTimeout(resolve, syncWait);
+    });
 };
 
 const registerPeriodicTask = (task: PeriodicTask) => {
@@ -89,33 +94,6 @@ const triggerHandler = async (handler: RegisteredTask) => {
     );
 };
 
-const synchronizeWithClock = (): Promise<void> =>
-    new Promise((resolve) => {
-        if (new Date().getSeconds() === 0) {
-            resolve();
-            logger.info("Synchronized with clock. No need to wait.");
-            return;
-        }
-
-        logger.info(
-            "Synchronizing with clock up to the current minute started at {date}",
-            {
-                date: new Date().toISOString(),
-            },
-        );
-        const intervalId = setInterval(() => {
-            const now = new Date();
-            const seconds = now.getSeconds();
-            if (seconds === 0) {
-                resolve();
-                clearInterval(intervalId);
-                logger.info("Synchronization finished at: {date}", {
-                    date: now.toISOString(),
-                });
-            }
-        }, 1000);
-    });
-
 const scheduleFirstTimeJobs = async () => {
     const now = getCurrentUnixTimestamp();
 
@@ -149,17 +127,13 @@ const scheduleFirstTimeJobs = async () => {
     }
 };
 
-const start = async ({
-    tickTime = MINUTE_INTERVAL,
-}: PeriodicTimerService = {}) => {
+const start = async () => {
     logger.info("Periodic task service started.");
     await restorePreviouslyScheduledTasks();
-    await synchronizeWithClock();
     await scheduleFirstTimeJobs();
 
     while (true) {
         const now = getCurrentUnixTimestamp();
-        logger.debug("Tick time passed. Running periodic tasks.");
         for (const handler of handlers) {
             if (now >= handler.next_at) {
                 await triggerHandler(handler);
@@ -168,10 +142,7 @@ const start = async ({
                 );
             }
         }
-        logger.debug(
-            "All periodic tasks for this time have finished. Waiting for next tick.",
-        );
-        await waitForNextTick(tickTime);
+        await waitForNextTick();
     }
 };
 
