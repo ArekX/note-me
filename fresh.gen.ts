@@ -100,6 +100,7 @@ import * as $sidebar_SearchView from "./islands/sidebar/SearchView.tsx";
 import * as $sidebar_SharedNotesList from "./islands/sidebar/SharedNotesList.tsx";
 import * as $sidebar_SideBarPanel from "./islands/sidebar/SideBarPanel.tsx";
 import * as $sidebar_hooks_use_search_state from "./islands/sidebar/hooks/use-search-state.ts";
+import * as $sidebar_search_AdvancedSearch from "./islands/sidebar/search/AdvancedSearch.tsx";
 import * as $sidebar_search_TreeItemView from "./islands/sidebar/search/TreeItemView.tsx";
 import * as $tags_EditTagForm from "./islands/tags/EditTagForm.tsx";
 import * as $tags_TagsList from "./islands/tags/TagsList.tsx";
@@ -242,6 +243,8 @@ const manifest = {
         "./islands/sidebar/SideBarPanel.tsx": $sidebar_SideBarPanel,
         "./islands/sidebar/hooks/use-search-state.ts":
             $sidebar_hooks_use_search_state,
+        "./islands/sidebar/search/AdvancedSearch.tsx":
+            $sidebar_search_AdvancedSearch,
         "./islands/sidebar/search/TreeItemView.tsx":
             $sidebar_search_TreeItemView,
         "./islands/tags/EditTagForm.tsx": $tags_EditTagForm,

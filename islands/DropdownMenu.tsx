@@ -1,6 +1,6 @@
-import Button from "$components/Button.tsx";
+import Button, { ButtonSize } from "$components/Button.tsx";
 import Icon, { IconSize } from "$components/Icon.tsx";
-import { createRef } from "preact";
+import { createRef, JSX } from "preact";
 import { createPortal, Ref } from "preact/compat";
 import {
     PopoverId,
@@ -20,9 +20,10 @@ type InlineDirection = "left" | "right";
 
 interface MoreMenuProps {
     popoverId: PopoverId;
-    label?: string;
+    label?: string | JSX.Element;
     icon?: string;
     iconSize?: IconSize;
+    buttonSize?: ButtonSize;
     iconOnly?: boolean;
     inlineDirection?: InlineDirection;
     showDirection?: MenuShowDirection;
@@ -35,10 +36,11 @@ interface MenuItemProps {
     menuRef: Ref<HTMLDivElement>;
     displayType: DisplayType;
     inlineDirection: InlineDirection;
+    onClick: (item: MoreMenuItem) => void;
 }
 
 const MenuItems = (
-    { items, menuRef, displayType, inlineDirection }: MenuItemProps,
+    { items, menuRef, displayType, inlineDirection, onClick }: MenuItemProps,
 ) => (
     <div
         ref={menuRef}
@@ -48,13 +50,13 @@ const MenuItems = (
                 : ""
         } text-md mt-1 z-50 drop-shadow-lg bg-gray-800 rounded-lg shadow-lg p-2 whitespace-nowrap break-keep`}
     >
-        {items.map(({ name, icon, onClick }, index) => (
+        {items.map((item, index) => (
             <div
                 key={index}
                 class="hover:bg-gray-700 cursor-pointer p-1 pl-2 pr-2"
-                onClick={onClick}
+                onClick={() => onClick(item)}
             >
-                <Icon name={icon} /> {name}
+                <Icon name={item.icon} /> {item.name}
             </div>
         ))}
     </div>
@@ -67,6 +69,7 @@ export default function DropdownMenu(
         icon = "chevron-down",
         iconOnly = false,
         iconSize = "md",
+        buttonSize = "md",
         displayType = "inline",
         inlineDirection = "right",
         label = "",
@@ -104,7 +107,7 @@ export default function DropdownMenu(
         menuRef.current.style.left = `${iconRefRect.left}px`;
     };
 
-    const { isOpen, open } = useSinglePopover(
+    const { isOpen, open, close } = useSinglePopover(
         popoverId,
         menuRef,
         () => repositionMenu(innerWidth, innerHeight),
@@ -115,6 +118,11 @@ export default function DropdownMenu(
         open();
     };
 
+    const handleItemClick = (item: MoreMenuItem) => {
+        item.onClick();
+        close();
+    };
+
     useWindowResize(menuRef, repositionMenu);
 
     const menuItemsComponent = (
@@ -123,6 +131,7 @@ export default function DropdownMenu(
             displayType={displayType}
             items={items}
             menuRef={menuRef}
+            onClick={handleItemClick}
         />
     );
 
@@ -143,7 +152,7 @@ export default function DropdownMenu(
                         <Button
                             color="primary"
                             onClick={handleOpenMenu}
-                            size="md"
+                            size={buttonSize}
                         >
                             {label} <Icon name={icon} size={iconSize} />
                         </Button>

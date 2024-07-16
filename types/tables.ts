@@ -124,6 +124,7 @@ export interface PeriodicTaskScheduleTable {
     next_run_at: number;
     is_last_run_successful?: boolean;
     last_successful_run_at?: number | null;
+    last_fail_run_at?: number | null;
     last_fail_reason?: string | null;
 }
 

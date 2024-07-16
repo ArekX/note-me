@@ -1,7 +1,6 @@
+import DropdownMenu from "$islands/DropdownMenu.tsx";
+import { MoreMenuItem } from "$islands/DropdownMenu.tsx";
 import Icon from "$components/Icon.tsx";
-import { useSignal } from "@preact/signals";
-import { createRef } from "preact";
-import { useEffect } from "preact/hooks";
 
 export interface ListSwitcherItem {
     name: string;
@@ -10,72 +9,88 @@ export interface ListSwitcherItem {
 }
 
 interface ListSwitcherProps {
-    currentItem: string;
-    currentIcon: string;
-    items: ListSwitcherItem[];
+    onSelectItem: (item: SwitcherItem) => void;
+    selectedItem: SwitcherItem;
 }
 
+export interface SwitcherItem {
+    type: keyof typeof typeMap;
+    label: string;
+    icon: string;
+    placeholder: string;
+}
+
+const typeMap = {
+    notes: {
+        label: "Notes",
+        icon: "note",
+        placeholder: "Search notes...",
+    },
+    reminders: {
+        label: "Reminders",
+        icon: "alarm",
+        placeholder: "Search reminders...",
+    },
+    shared: {
+        label: "Shared with me",
+        icon: "share-alt",
+        placeholder: "Search shared notes...",
+    },
+    recycleBin: {
+        label: "Recycle Bin",
+        icon: "recycle",
+        placeholder: "Search recycle bin items...",
+    },
+};
+
 export default function ListSwitcher({
-    items,
-    currentItem,
-    currentIcon,
+    onSelectItem,
+    selectedItem,
 }: ListSwitcherProps) {
-    const isVisible = useSignal(false);
-    const menuRef = createRef<HTMLDivElement>();
+    const handleTypeSelect = (key: keyof typeof typeMap) => {
+        onSelectItem({
+            type: key,
+            ...typeMap[key],
+        });
+    };
 
-    useEffect(() => {
-        if (!menuRef.current) {
-            return;
-        }
-
-        const handleDocumentClick = (event: Event) => {
-            if (!menuRef.current!) {
-                isVisible.value = false;
-                return;
-            }
-            if (menuRef.current.contains(event.target as Node)) {
-                return;
-            }
-
-            isVisible.value = false;
-        };
-
-        document.body.addEventListener("click", handleDocumentClick);
-
-        return () => {
-            document.body.removeEventListener("click", handleDocumentClick);
-        };
-    }, [menuRef]);
+    const items: MoreMenuItem[] = [
+        {
+            name: "Notes",
+            icon: "note",
+            onClick: () => handleTypeSelect("notes"),
+        },
+        {
+            name: "Reminders",
+            icon: "alarm",
+            onClick: () => handleTypeSelect("reminders"),
+        },
+        {
+            name: "Shared with me",
+            icon: "share-alt",
+            onClick: () => handleTypeSelect("shared"),
+        },
+        {
+            name: "Recycle Bin",
+            icon: "recycle",
+            onClick: () => handleTypeSelect("recycleBin"),
+        },
+    ];
 
     return (
-        <div class="cursor-pointer relative inline-block">
-            <div
-                onClick={() => isVisible.value = !isVisible.value}
-                class="text-sm p-1"
-            >
-                <span class="pr-1">
-                    <Icon name={currentIcon} size="sm" />
-                </span>
-                {currentItem}{" "}
-                <Icon name="chevron-down" size="sm" type="solid" />
-            </div>
-
-            {isVisible.value && (
-                <div
-                    ref={menuRef}
-                    class="text-white absolute text-lg left-0 z-50 top-full mt-1 drop-shadow-lg bg-gray-800 rounded-lg shadow-lg p-2 whitespace-nowrap break-keep"
-                >
-                    {items.map(({ name, icon, onClick }, index) => (
-                        <div
-                            key={index}
-                            class="hover:bg-gray-700 cursor-pointer p-1 pl-2 pr-2"
-                            onClick={onClick}
-                        >
-                            <Icon name={icon} /> {name}
-                        </div>
-                    ))}
-                </div>
-            )}
-        </div>
+        <DropdownMenu
+            items={items}
+            label={
+                <>
+                    <Icon name={selectedItem.icon} size="sm" />{" "}
+                    {selectedItem.label}
+                </>
+            }
+            buttonSize="sm"
+            popoverId="listSwitcher-0"
+            displayType="inline"
+            inlineDirection="left"
+            showDirection="bottom"
+        />
     );
 }

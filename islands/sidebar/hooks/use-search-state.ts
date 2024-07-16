@@ -4,6 +4,7 @@ export interface SearchStateHook<T = unknown> {
     request: ReadonlySignal<SearchRequest<T>>;
     simpleSearchQuery: ReadonlySignal<string>;
     isActive: ReadonlySignal<boolean>;
+    reset: () => void;
     searchSimple: (text: string) => void;
     searchAdvanced: (data: T) => void;
 }
@@ -50,10 +51,17 @@ export const useSearchState = <T = unknown>(): SearchStateHook<T> => {
         searchType.value = "advanced";
     };
 
+    const reset = () => {
+        query.value = "";
+        advancedSearch.value = null;
+        searchType.value = "simple";
+    };
+
     return {
         request: searchRequest,
         simpleSearchQuery: query,
         isActive,
+        reset,
         searchSimple,
         searchAdvanced,
     };

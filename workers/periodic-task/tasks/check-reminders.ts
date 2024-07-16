@@ -5,7 +5,7 @@ import {
 import { createNotification } from "$backend/repository/notification-repository.ts";
 import { PeriodicTask } from "../periodic-task-service.ts";
 import { sendMessageToWebsocket } from "$workers/periodic-task/worker-message.ts";
-import { runInTransaction } from "$backend/database.ts";
+import { createTransaction } from "$backend/database.ts";
 import { logger } from "$backend/logger.ts";
 import { getNoteInfo } from "$backend/repository/note-repository.ts";
 import { nextMinute } from "$workers/periodic-task/next-at.ts";
@@ -24,7 +24,9 @@ export const checkReminders: PeriodicTask = {
                     continue;
                 }
 
-                await runInTransaction(async () => {
+                const transaction = await createTransaction();
+
+                await transaction.run(async () => {
                     const record = await createNotification({
                         data: {
                             type: "reminder-received",

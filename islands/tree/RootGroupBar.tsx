@@ -16,10 +16,6 @@ export default function RootGroupBar({
     dragManager,
     switcherComponent,
 }: RootGroupBarProps) {
-    const handleDrop = () => {
-        treeManager.changeParent(dragManager.source!, treeManager.root);
-    };
-
     const handleDragOver = (e: DragEvent) => {
         if (dragManager.canDropTo(treeManager.root)) {
             dragManager.setDropTarget(treeManager.root);
@@ -42,7 +38,6 @@ export default function RootGroupBar({
         >
             <div
                 class={`flex-1`}
-                onDrop={handleDrop}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
             >

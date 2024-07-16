@@ -1,10 +1,5 @@
 import { NoteShareLinkTable, RecordId } from "$types";
-import {
-    beginTransaction,
-    commitTransaction,
-    db,
-    rollbackTransaction,
-} from "$backend/database.ts";
+import { createTransaction, db } from "$backend/database.ts";
 import { getCurrentUnixTimestamp } from "$lib/time/unix.ts";
 import { PickUserRecord } from "$backend/repository/user-repository.ts";
 import { getNoteTagsSql } from "$backend/repository/note-repository.ts";
@@ -147,8 +142,9 @@ export const setUserShare = async ({
         return { shared_to_user_ids: [] };
     }
 
-    await beginTransaction();
-    try {
+    const transaction = await createTransaction();
+
+    return await transaction.run(async () => {
         if (toInsert.length > 0) {
             await db.insertInto("note_share_user")
                 .values(toInsert.map((user_id) => ({
@@ -165,13 +161,9 @@ export const setUserShare = async ({
                 .where("user_id", "in", toDelete)
                 .execute();
         }
-        await commitTransaction();
 
         return { shared_to_user_ids: toInsert };
-    } catch (e) {
-        await rollbackTransaction();
-        throw e;
-    }
+    });
 };
 
 export interface NoteShareData {

@@ -48,11 +48,7 @@ import {
     getNoteInfo,
     noteExists,
 } from "$backend/repository/note-repository.ts";
-import {
-    beginTransaction,
-    commitTransaction,
-    rollbackTransaction,
-} from "$backend/database.ts";
+import { createTransaction } from "$backend/database.ts";
 import { linkNoteWithTags } from "$backend/repository/note-tags-repository.ts";
 import { assignNoteToGroup } from "$backend/repository/group-repository.ts";
 import { requireValidSchema } from "$schemas/mod.ts";
@@ -90,9 +86,9 @@ const handleCreateNote: ListenerFn<CreateNoteMessage> = async (
 ) => {
     await requireValidSchema(addNoteRequestSchema, data);
 
-    await beginTransaction();
+    const transaction = await createTransaction();
 
-    try {
+    const record = await transaction.run(async () => {
         const record = await createNote({
             title: data.title,
             note: data.text,
@@ -104,17 +100,14 @@ const handleCreateNote: ListenerFn<CreateNoteMessage> = async (
             assignNoteToGroup(data.group_id, record.id, sourceClient!.userId),
         ]);
 
-        await commitTransaction();
+        return record;
+    });
 
-        respond<CreateNoteResponse>({
-            type: "createNoteResponse",
-            record,
-            group_id: data.group_id,
-        });
-    } catch (e) {
-        await rollbackTransaction();
-        throw e;
-    }
+    respond<CreateNoteResponse>({
+        type: "createNoteResponse",
+        record,
+        group_id: data.group_id,
+    });
 };
 
 const handleUpdateNote: ListenerFn<UpdateNoteMessage> = async (

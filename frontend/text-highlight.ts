@@ -33,7 +33,15 @@ const findNextClosestSpace = (text: string, start: number) => {
         start++;
     }
 
-    return start;
+    return start < text.length ? start : text.length - 1;
+};
+
+const findPreviousClosestSpace = (text: string, start: number) => {
+    while (text[start] !== " " && start > 0) {
+        start--;
+    }
+
+    return start >= 0 ? start : 0;
 };
 
 export const findHighlightedLines = (
@@ -53,11 +61,27 @@ export const findHighlightedLines = (
     let parts: TextPart[] = [];
 
     while (foundIndex > -1 && partLines.length < 3) {
-        const leftText = text.substring(0, foundIndex);
+        let leftText = text.substring(0, foundIndex);
         const highlighted = text.substring(
             foundIndex,
             foundIndex + search.length,
         );
+
+        if (leftText.length > lengthPerLine) {
+            let leftIndex = findPreviousClosestSpace(leftText, foundIndex);
+
+            if (foundIndex - leftIndex > lengthPerLine) {
+                leftIndex = Math.max(
+                    0,
+                    foundIndex - Math.round(lengthPerLine / 3),
+                );
+            }
+
+            leftText = "..." + leftText.substring(
+                leftIndex,
+                foundIndex,
+            );
+        }
 
         if (currentLineLength + leftText.length > lengthPerLine) {
             const diff = lengthPerLine - currentLineLength;

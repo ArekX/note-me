@@ -247,6 +247,7 @@ export async function up(db: Kysely<unknown>): Promise<void> {
         )
         .addColumn("last_successful_run_at", "int8")
         .addColumn("last_fail_reason", "text")
+        .addColumn("last_fail_run_at", "int8")
         .execute();
 }
 

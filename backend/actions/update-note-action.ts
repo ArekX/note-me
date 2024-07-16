@@ -5,11 +5,7 @@ import {
     updateNote,
     updateNoteParent,
 } from "$backend/repository/note-repository.ts";
-import {
-    beginTransaction,
-    commitTransaction,
-    rollbackTransaction,
-} from "$backend/database.ts";
+import { createTransaction } from "$backend/database.ts";
 import { addHistory } from "$backend/repository/note-history-repository.ts";
 import { when } from "$backend/promise.ts";
 import { linkNoteWithTags } from "$backend/repository/note-tags-repository.ts";
@@ -41,9 +37,9 @@ export const runUpdateNoteAction = async (
         throw new Error("Note does not exist.");
     }
 
-    await beginTransaction();
+    const transaction = await createTransaction();
 
-    try {
+    return await transaction.run(async () => {
         await addHistory({
             note_id: backend_data.noteId,
             user_id: backend_data.userId,
@@ -86,11 +82,6 @@ export const runUpdateNoteAction = async (
             ),
         ]);
 
-        await commitTransaction();
-
         return true;
-    } catch (e) {
-        await rollbackTransaction();
-        throw e;
-    }
+    });
 };

@@ -20,6 +20,7 @@ export const savePeriodicTaskRun = async (
                 | "next_run_at"
                 | "last_fail_reason"
                 | "last_successful_run_at"
+                | "last_fail_run_at"
                 | "is_last_run_successful"
             >
         > = {
@@ -29,6 +30,7 @@ export const savePeriodicTaskRun = async (
         if (!is_successful) {
             data.is_last_run_successful = false;
             data.last_fail_reason = fail_reason ?? "Unknown error";
+            data.last_fail_run_at = getCurrentUnixTimestamp();
         } else {
             data.is_last_run_successful = true;
             data.last_successful_run_at = getCurrentUnixTimestamp();
