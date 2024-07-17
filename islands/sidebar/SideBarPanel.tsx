@@ -6,7 +6,7 @@ import TreeList from "$islands/tree/TreeList.tsx";
 import RemindersList from "$islands/sidebar/RemindersList.tsx";
 import SharedNotesList from "$islands/sidebar/SharedNotesList.tsx";
 import SearchView from "$islands/sidebar/SearchView.tsx";
-import { useSearchState } from "./hooks/use-search-state.ts";
+import { useSearch } from "$frontend/hooks/use-search.ts";
 
 interface ListView {
     type: "notes" | "reminders" | "shared" | "recycleBin";
@@ -16,7 +16,7 @@ interface ListView {
 }
 
 export default function ListPanel() {
-    const search = useSearchState();
+    const search = useSearch();
 
     const currentType = useSignal<SwitcherItem>({
         type: "notes",
@@ -34,32 +34,28 @@ export default function ListPanel() {
 
     return (
         <div class="mt-3">
-            <SearchBar search={search} />
+            <SearchBar />
 
-            {search.isActive.value
-                ? <SearchView search={search} />
-                : (
-                    <Picker<ListView["type"]>
-                        selector={currentType.value.type}
-                        map={{
-                            notes: () => (
-                                <TreeList switcherComponent={switcher} />
-                            ),
-                            reminders: () => (
-                                <RemindersList switcherComponent={switcher} />
-                            ),
-                            shared: () => (
-                                <SharedNotesList switcherComponent={switcher} />
-                            ),
-                            recycleBin: () => (
-                                <div>
-                                    {switcher}
-                                    Recycle Bin
-                                </div>
-                            ),
-                        }}
-                    />
-                )}
+            {search.isActive.value ? <SearchView /> : (
+                <Picker<ListView["type"]>
+                    selector={currentType.value.type}
+                    map={{
+                        notes: () => <TreeList switcherComponent={switcher} />,
+                        reminders: () => (
+                            <RemindersList switcherComponent={switcher} />
+                        ),
+                        shared: () => (
+                            <SharedNotesList switcherComponent={switcher} />
+                        ),
+                        recycleBin: () => (
+                            <div>
+                                {switcher}
+                                Recycle Bin
+                            </div>
+                        ),
+                    }}
+                />
+            )}
         </div>
     );
 }

@@ -1,18 +1,13 @@
-import { SearchStateHook } from "./hooks/use-search-state.ts";
 import Loader from "$islands/Loader.tsx";
 import LoadMoreWrapper from "$islands/LoadMoreWrapper.tsx";
 import TreeItemView from "$islands/sidebar/search/TreeItemView.tsx";
 import Button from "$components/Button.tsx";
 import { tagsToString } from "$frontend/tags.ts";
 import Icon from "$components/Icon.tsx";
+import { useSearch } from "$frontend/hooks/use-search.ts";
 
-interface SearchViewProps {
-    search: SearchStateHook;
-}
-
-export default function SearchView({
-    search,
-}: SearchViewProps) {
+export default function SearchView() {
+    const search = useSearch();
     return (
         <div class="relative">
             <div class="p-1">
@@ -45,11 +40,11 @@ export default function SearchView({
             </div>
             <div class="p-2">
                 Search results{" "}
-                {search.loader.running
+                {search.isRunning.value
                     ? ""
                     : `(${search.results.value.length})`}
             </div>
-            {search.loader.running
+            {search.isRunning.value
                 ? (
                     <div class="text-center">
                         <Loader color="white" />
@@ -70,7 +65,6 @@ export default function SearchView({
                             <div>
                                 {search.results.value.map((i, idx) => (
                                     <TreeItemView
-                                        search={search}
                                         key={idx}
                                         record={i}
                                     />

@@ -1,19 +1,18 @@
 import Icon from "$components/Icon.tsx";
 import { useSignal } from "@preact/signals";
-import { SearchStateHook } from "./hooks/use-search-state.ts";
 import AdvancedSearch from "$islands/sidebar/search/AdvancedSearch.tsx";
+import { useSearch } from "$frontend/hooks/use-search.ts";
 
 interface SearchBarProps<T> {
     queryPlaceHolder?: string;
-    search: SearchStateHook;
 }
 
 export default function SearchBar<T>(
     {
         queryPlaceHolder = "Search...",
-        search,
     }: SearchBarProps<T>,
 ) {
+    const search = useSearch();
     const showAdvancedSearch = useSignal(false);
 
     return (
@@ -45,7 +44,6 @@ export default function SearchBar<T>(
             {showAdvancedSearch.value && (
                 <AdvancedSearch
                     onClose={() => showAdvancedSearch.value = false}
-                    search={search}
                 />
             )}
         </div>

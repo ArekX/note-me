@@ -4,17 +4,16 @@ import { findHighlightedLines } from "$frontend/text-highlight.ts";
 import { useMemo } from "preact/hooks";
 import { redirectTo } from "$frontend/redirection-manager.ts";
 import { timeAgo } from "$lib/time/time-ago.ts";
-import { SearchStateHook } from "$islands/sidebar/hooks/use-search-state.ts";
+import { useSearch } from "$frontend/hooks/use-search.ts";
 
 interface TreeItemViewProps {
-    search: SearchStateHook;
     record: NoteSearchRecord;
 }
 
 export default function TreeItemView({
-    search,
     record,
 }: TreeItemViewProps) {
+    const search = useSearch();
     const foundLines = useMemo(() =>
         findHighlightedLines(
             record.note,

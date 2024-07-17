@@ -9,6 +9,7 @@ import { useNoteWebsocket } from "$islands/notes/hooks/use-note-websocket.ts";
 import { useEffect } from "preact/hooks";
 import DetailsLine from "$islands/notes/DetailsLine.tsx";
 import Viewer from "$islands/markdown/Viewer.tsx";
+import { useSearch } from "$frontend/hooks/use-search.ts";
 
 export interface ViewNoteProps {
     readonly?: boolean;
@@ -29,6 +30,7 @@ export default function ViewNote(
 ) {
     const windowMode = useSignal<NoteWindowTypes | null>(null);
     const recordData = useSignal<ViewNoteRecord>(record);
+    const search = disableTagLinks ? null : useSearch();
 
     useEffect(() => {
         recordData.value = { ...record };
@@ -57,6 +59,14 @@ export default function ViewNote(
                 windowMode.value = action;
                 break;
         }
+    };
+
+    const handleTagClick = (tag: string) => {
+        if (disableTagLinks) {
+            return;
+        }
+
+        search?.setTags([tag]);
     };
 
     return (
@@ -92,9 +102,17 @@ export default function ViewNote(
             </div>
             <div>
                 {recordData.value.tags.map((tag) => (
-                    disableTagLinks
-                        ? <span class="tag">#{tag}</span>
-                        : <a href={`/notes?tag=${tag}`} class="tag">#{tag}</a>
+                    <span
+                        class={`tag ${
+                            disableTagLinks
+                                ? "cursor-default"
+                                : "cursor-pointer"
+                        }`}
+                        key={tag}
+                        onClick={() => handleTagClick(tag)}
+                    >
+                        #{tag}
+                    </span>
                 ))}
             </div>
             <DetailsLine

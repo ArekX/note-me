@@ -6,16 +6,16 @@ import Checkbox from "$islands/Checkbox.tsx";
 import { TreeRecord } from "$backend/repository/tree-list.repository.ts";
 import Input from "$components/Input.tsx";
 import TagInput from "$islands/notes/TagInput.tsx";
-import { SearchStateHook } from "$islands/sidebar/hooks/use-search-state.ts";
+import { useSearch } from "$frontend/hooks/use-search.ts";
 
 interface AdvancedSearchProps {
-    search: SearchStateHook;
     onClose: () => void;
 }
 
 export default function AdvancedSearch(
-    { onClose, search }: AdvancedSearchProps,
+    { onClose }: AdvancedSearchProps,
 ) {
+    const search = useSearch();
     const selectedGroup = useSignal<TreeRecord | null>(
         search.groupRecord.value ? { ...search.groupRecord.value } : null,
     );

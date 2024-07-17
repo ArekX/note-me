@@ -1,50 +1,35 @@
-import { ReadonlySignal, useComputed, useSignal } from "@preact/signals";
+import { computed, signal } from "@preact/signals";
 import {
     NoteSearchRecord,
     SearchNoteFilters,
 } from "$backend/repository/note-search-repository.ts";
 import { TreeRecord } from "$backend/repository/tree-list.repository.ts";
-import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import { useDebouncedCallback } from "$frontend/hooks/use-debounced-callback.ts";
 import {
     SearchNoteMessage,
     SearchNoteResponse,
 } from "$workers/websocket/api/notes/messages.ts";
-import { LoaderHook, useLoader } from "$frontend/hooks/use-loader.ts";
+import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 
-export interface SearchStateHook {
-    type: ReadonlySignal<SearchNoteFilters["type"]>;
-    query: ReadonlySignal<string>;
-    groupRecord: ReadonlySignal<TreeRecord | null>;
-    tags: ReadonlySignal<string[]>;
-    isActive: ReadonlySignal<boolean>;
-    hasMoreData: ReadonlySignal<boolean>;
-    results: ReadonlySignal<NoteSearchRecord[]>;
-    loader: LoaderHook;
-    resetSearch: () => void;
-    setQuery: (newQuery: string) => void;
-    setType: (newType: SearchNoteFilters["type"]) => void;
-    setGroup: (newGroup: TreeRecord | null) => void;
-    setTags: (newTags: string[]) => void;
-    loadMore: () => void;
-}
+const type = signal<SearchNoteFilters["type"]>("general");
+const query = signal<string>("");
+const groupRecord = signal<TreeRecord | null>(null);
+const tags = signal<string[]>([]);
+const fromId = signal<number | undefined>(undefined);
+const results = signal<NoteSearchRecord[]>([]);
+const hasMoreData = signal<boolean>(true);
+const isRunning = signal<boolean>(false);
+const isActive = computed(() =>
+    query.value.length > 0 || groupRecord.value !== null ||
+    tags.value.length > 0
+);
 
-export const useSearchState = (): SearchStateHook => {
-    const type = useSignal<SearchNoteFilters["type"]>("general");
-    const query = useSignal<string>("");
-    const groupRecord = useSignal<TreeRecord | null>(null);
-    const tags = useSignal<string[]>([]);
-    const fromId = useSignal<number | undefined>(undefined);
-    const results = useSignal<NoteSearchRecord[]>([]);
-    const hasMoreData = useSignal<boolean>(true);
-
-    const loader = useLoader();
-
+export const useSearch = () => {
     const { sendMessage } = useWebsocketService();
 
     const performSearch = useDebouncedCallback(async () => {
         if (!hasMoreData.value) {
-            loader.stop();
+            isRunning.value = false;
             return;
         }
 
@@ -75,13 +60,8 @@ export const useSearchState = (): SearchStateHook => {
         }
 
         fromId.value = response.records[response.records.length - 1]?.id;
-        loader.stop();
+        isRunning.value = false;
     });
-
-    const isActive = useComputed(() =>
-        query.value.length > 0 || groupRecord.value !== null ||
-        tags.value.length > 0
-    );
 
     const resetSearch = () => {
         query.value = "";
@@ -96,7 +76,7 @@ export const useSearchState = (): SearchStateHook => {
         results.value = [];
         hasMoreData.value = true;
         fromId.value = undefined;
-        loader.start();
+        isRunning.value = true;
         performSearch();
     };
 
@@ -110,6 +90,7 @@ export const useSearchState = (): SearchStateHook => {
     const setType = (newType: SearchNoteFilters["type"]) => {
         type.value = newType;
         resetSearch();
+        performSearch();
     };
 
     const setGroup = (newGroup: TreeRecord | null) => {
@@ -136,7 +117,7 @@ export const useSearchState = (): SearchStateHook => {
         isActive,
         hasMoreData,
         results,
-        loader,
+        isRunning,
         resetSearch,
         setQuery,
         setType,
