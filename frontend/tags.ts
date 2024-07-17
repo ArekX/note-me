@@ -15,6 +15,10 @@ export const getTagArray = (tagString: string) => {
 
 export const getFormattedTagString = (tagString: string) => {
     const tags = getTagArray(tagString);
+    return tagsToString(tags);
+};
+
+export const tagsToString = (tags: string[]) => {
     return tags.length > 0 ? `#${tags.join(" #")}` : "";
 };
 

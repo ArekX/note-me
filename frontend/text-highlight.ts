@@ -29,11 +29,12 @@ const splitByClosestWord = (text: string, start: number) => {
 };
 
 const findNextClosestSpace = (text: string, start: number) => {
+    const oldStart = start;
     while (text[start] !== " " && start < text.length) {
         start++;
     }
 
-    return start < text.length ? start : text.length - 1;
+    return start < text.length ? start : oldStart;
 };
 
 const findPreviousClosestSpace = (text: string, start: number) => {
@@ -49,6 +50,10 @@ export const findHighlightedLines = (
     search: string,
     lengthPerLine: number,
 ) => {
+    if (text.length === 0 || search.length === 0) {
+        return [];
+    }
+
     text = text.replace(/[\n\r]/g, " ");
     const searchString = search.toLowerCase();
 

@@ -6,7 +6,7 @@ export interface SearchNoteFilters {
     from_id?: number;
     query: string;
     group_id?: number;
-    tag_ids?: number[];
+    tags?: string[];
     type: "general" | "shared" | "reminders" | "recycleBin";
 }
 
@@ -65,7 +65,7 @@ export const searchNotes = async (
         {
             type: "custom",
             value: (e) => {
-                if (!filters.tag_ids || filters.tag_ids.length === 0) {
+                if (!filters.tags || filters.tags.length === 0) {
                     return null;
                 }
 
@@ -73,11 +73,19 @@ export const searchNotes = async (
                     e(
                         "note.id",
                         "in",
-                        db.selectFrom("note_tag_note").select("note_id").where(
-                            "tag_id",
-                            "in",
-                            filters.tag_ids,
-                        ),
+                        db.selectFrom("note_tag_note").select(
+                            "note_tag_note.note_id",
+                        )
+                            .innerJoin(
+                                "note_tag",
+                                "note_tag_note.tag_id",
+                                "note_tag.id",
+                            )
+                            .where(
+                                "note_tag.name",
+                                "in",
+                                filters.tags,
+                            ),
                     ),
                 ]);
             },

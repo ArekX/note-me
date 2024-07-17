@@ -330,3 +330,8 @@ select.select-input {
 .search-view-height {
     height: calc(100vh - 9em);
 }
+
+.group-picker {
+    max-height: 200px;
+    overflow: auto;
+}

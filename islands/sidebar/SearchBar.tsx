@@ -38,15 +38,14 @@ export default function SearchBar<T>(
                 type="text"
                 class="outline-none border-1 pl-9 pr-9 border-gray-900 bg-gray-700 p-2 w-full"
                 placeholder={queryPlaceHolder}
-                value={search.query.value.query}
+                value={search.query.value}
                 onInput={(e) =>
-                    search.setQuery({
-                        query: (e.target as HTMLInputElement).value,
-                    })}
+                    search.setQuery((e.target as HTMLInputElement).value)}
             />
             {showAdvancedSearch.value && (
                 <AdvancedSearch
                     onClose={() => showAdvancedSearch.value = false}
+                    search={search}
                 />
             )}
         </div>

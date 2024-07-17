@@ -18,9 +18,9 @@ export default function TreeItemView({
     const foundLines = useMemo(() =>
         findHighlightedLines(
             record.note,
-            search.query.value.query,
+            search.query.value,
             100,
-        ), [record, search.query.value.query]);
+        ), [record, search.query.value]);
 
     const handleOpenNote = () => {
         redirectTo.viewNote({

@@ -132,17 +132,24 @@ export default function GroupPicker({
     }, []);
 
     return (
-        <div>
-            {pickerLoader.running
-                ? <Loader color="white" />
-                : rootRecords.value.map((record) => (
-                    <GroupPickerItem
-                        key={record.id}
-                        selectedId={selectedId}
-                        record={record}
-                        onPick={onPick}
-                    />
-                ))}
+        <div class="border-solid border-gray-700 p-4 border-2 group-picker">
+            {pickerLoader.running ? <Loader color="white" /> : (
+                <>
+                    {rootRecords.value.length === 0 && (
+                        <div class="text-center text-gray-400">
+                            No groups found
+                        </div>
+                    )}
+                    {rootRecords.value.map((record) => (
+                        <GroupPickerItem
+                            key={record.id}
+                            selectedId={selectedId}
+                            record={record}
+                            onPick={onPick}
+                        />
+                    ))}
+                </>
+            )}
         </div>
     );
 }

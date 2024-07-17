@@ -19,7 +19,8 @@ import { useDebouncedCallback } from "$frontend/hooks/use-debounced-callback.ts"
 
 interface TagInputProps {
     initialTags: string[];
-    isSaving: boolean;
+    isSaving?: boolean;
+    placeholder?: string;
     onChange: (tags: string[]) => void;
 }
 
@@ -84,7 +85,8 @@ const calculateDropdownPos = (
 
 export default function TagInput({
     initialTags,
-    isSaving,
+    isSaving = false,
+    placeholder = "Tag your note",
     onChange,
 }: TagInputProps) {
     const tagString = useSignal(getFormattedTagString(initialTags.join(" ")));
@@ -236,7 +238,7 @@ export default function TagInput({
                 ref={inputRef}
                 class="outline-none block bg-transparent mt-2 w-full tag-editor"
                 type="text"
-                placeholder="Tag your note"
+                placeholder={placeholder}
                 tabIndex={2}
                 value={tagString.value}
                 disabled={isSaving}
