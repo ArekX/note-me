@@ -43,13 +43,25 @@ export type DeleteGroupProgress = GroupMessage<
     { deleted_id: number; deleted_count: number }
 >;
 
+export type GetSingleGroupMessage = GroupMessage<
+    "getSingleGroup",
+    { id: number }
+>;
+
+export type GetSingleGroupResponse = GroupMessage<
+    "getSingleGroupResponse",
+    { record: GroupRecord | null }
+>;
+
 export type GroupFrontendResponse =
     | CreateGroupResponse
     | UpdateGroupResponse
     | DeleteGroupResponse
-    | DeleteGroupProgress;
+    | DeleteGroupProgress
+    | GetSingleGroupResponse;
 
 export type GroupFrontendMessage =
     | CreateGroupMessage
     | UpdateGroupMessage
-    | DeleteGroupMessage;
+    | DeleteGroupMessage
+    | GetSingleGroupMessage;

@@ -40,6 +40,7 @@ import * as $InvalidateData from "./islands/InvalidateData.tsx";
 import * as $IslandInitializer from "./islands/IslandInitializer.tsx";
 import * as $LoadMoreWrapper from "./islands/LoadMoreWrapper.tsx";
 import * as $Loader from "./islands/Loader.tsx";
+import * as $MoveGroupDialog from "./islands/MoveGroupDialog.tsx";
 import * as $Pagination from "./islands/Pagination.tsx";
 import * as $ToastMessages from "./islands/ToastMessages.tsx";
 import * as $UserPicker from "./islands/UserPicker.tsx";
@@ -77,7 +78,6 @@ import * as $notes_windows_NoteDelete from "./islands/notes/windows/NoteDelete.t
 import * as $notes_windows_NoteDetails from "./islands/notes/windows/NoteDetails.tsx";
 import * as $notes_windows_NoteHelp from "./islands/notes/windows/NoteHelp.tsx";
 import * as $notes_windows_NoteHistory from "./islands/notes/windows/NoteHistory.tsx";
-import * as $notes_windows_NoteMove from "./islands/notes/windows/NoteMove.tsx";
 import * as $notes_windows_NoteReminder from "./islands/notes/windows/NoteReminder.tsx";
 import * as $notes_windows_NoteShare from "./islands/notes/windows/NoteShare.tsx";
 import * as $notes_windows_components_CreateLinkForm from "./islands/notes/windows/components/CreateLinkForm.tsx";
@@ -160,6 +160,7 @@ const manifest = {
         "./islands/IslandInitializer.tsx": $IslandInitializer,
         "./islands/LoadMoreWrapper.tsx": $LoadMoreWrapper,
         "./islands/Loader.tsx": $Loader,
+        "./islands/MoveGroupDialog.tsx": $MoveGroupDialog,
         "./islands/Pagination.tsx": $Pagination,
         "./islands/ToastMessages.tsx": $ToastMessages,
         "./islands/UserPicker.tsx": $UserPicker,
@@ -207,7 +208,6 @@ const manifest = {
         "./islands/notes/windows/NoteDetails.tsx": $notes_windows_NoteDetails,
         "./islands/notes/windows/NoteHelp.tsx": $notes_windows_NoteHelp,
         "./islands/notes/windows/NoteHistory.tsx": $notes_windows_NoteHistory,
-        "./islands/notes/windows/NoteMove.tsx": $notes_windows_NoteMove,
         "./islands/notes/windows/NoteReminder.tsx": $notes_windows_NoteReminder,
         "./islands/notes/windows/NoteShare.tsx": $notes_windows_NoteShare,
         "./islands/notes/windows/components/CreateLinkForm.tsx":

@@ -23,7 +23,7 @@ import { requireValidSchema } from "$schemas/mod.ts";
 import { addTagSchema, updateTagSchema } from "$schemas/tags.ts";
 import { CanManageTags } from "$backend/rbac/permissions.ts";
 
-const createTagRequest: ListenerFn<CreateTagMessage> = async (
+const handleCreateTagRequest: ListenerFn<CreateTagMessage> = async (
     { message: { data }, sourceClient, respond },
 ) => {
     await requireValidSchema(addTagSchema, data);
@@ -39,7 +39,7 @@ const createTagRequest: ListenerFn<CreateTagMessage> = async (
     });
 };
 
-const updateTagRequest: ListenerFn<UpdateTagMessage> = async (
+const handleUpdateTagRequest: ListenerFn<UpdateTagMessage> = async (
     { message: { id, data }, respond, sourceClient },
 ) => {
     await requireValidSchema(updateTagSchema, data);
@@ -54,7 +54,7 @@ const updateTagRequest: ListenerFn<UpdateTagMessage> = async (
     });
 };
 
-const deleteTagRequest: ListenerFn<DeleteTagMessage> = async (
+const handleDeleteTagRequest: ListenerFn<DeleteTagMessage> = async (
     { message: { id }, respond, sourceClient },
 ) => {
     await deleteTagRecord(id);
@@ -66,7 +66,7 @@ const deleteTagRequest: ListenerFn<DeleteTagMessage> = async (
     });
 };
 
-const findTagsRequest: ListenerFn<FindTagsMessage> = async (
+const handleFindTagsRequest: ListenerFn<FindTagsMessage> = async (
     { message: { filters, page }, respond },
 ) => {
     const records = await findTags(filters, page);
@@ -78,8 +78,8 @@ const findTagsRequest: ListenerFn<FindTagsMessage> = async (
 };
 
 export const frontendMap: RegisterListenerMap<TagFrontendMessage> = {
-    createTag: createTagRequest,
-    updateTag: updateTagRequest,
-    deleteTag: deleteTagRequest,
-    findTags: findTagsRequest,
+    createTag: handleCreateTagRequest,
+    updateTag: handleUpdateTagRequest,
+    deleteTag: handleDeleteTagRequest,
+    findTags: handleFindTagsRequest,
 };

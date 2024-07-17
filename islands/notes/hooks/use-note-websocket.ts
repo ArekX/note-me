@@ -2,12 +2,19 @@ import { NoteFrontendResponse } from "$workers/websocket/api/notes/messages.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import { redirectTo } from "$frontend/redirection-manager.ts";
 import { UpdateNoteRequest } from "$schemas/notes.ts";
+import {
+    GetSingleGroupMessage,
+    GetSingleGroupResponse,
+} from "$workers/websocket/api/groups/messages.ts";
 
-export type UpdatedData = Pick<UpdateNoteRequest, "tags" | "title" | "text">;
+export type UpdatedData = Pick<UpdateNoteRequest, "tags" | "title" | "text"> & {
+    group_id?: number;
+    group_name?: string;
+};
 
 export interface NoteWebsocketOptions {
     noteId?: number | null;
-    onNoteUpdated?: (data: UpdatedData) => void;
+    onNoteUpdated?: (data: Partial<UpdatedData>) => void;
 }
 
 export const useNoteWebsocket = (options: NoteWebsocketOptions) => {
@@ -31,6 +38,25 @@ export const useNoteWebsocket = (options: NoteWebsocketOptions) => {
                             tags: response.updated_data.tags,
                             title: response.updated_data.title,
                             text: response.updated_data.text,
+                        });
+                    }
+
+                    if (response.updated_data.group_id) {
+                        sendMessage<
+                            GetSingleGroupMessage,
+                            GetSingleGroupResponse
+                        >("groups", "getSingleGroup", {
+                            data: {
+                                id: response.updated_data.group_id,
+                            },
+                            expect: "getSingleGroupResponse",
+                        }).then((response) => {
+                            if (response.record) {
+                                options.onNoteUpdated?.({
+                                    group_id: response.record.id,
+                                    group_name: response.record.name,
+                                });
+                            }
                         });
                     }
                 },

@@ -5,7 +5,7 @@ import {
     NotificationFrontendResponse,
 } from "./messages.ts";
 
-const addNotification: ListenerFn<AddNotificationMessage> = ({
+const handleAddNotification: ListenerFn<AddNotificationMessage> = ({
     message,
     service,
 }) => {
@@ -20,5 +20,5 @@ const addNotification: ListenerFn<AddNotificationMessage> = ({
 };
 
 export const backendMap: RegisterListenerMap<NotificationBackendMessage> = {
-    addNotification,
+    addNotification: handleAddNotification,
 };

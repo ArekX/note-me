@@ -12,7 +12,7 @@ import {
 import NoteShare from "$islands/notes/windows/NoteShare.tsx";
 import Picker from "$components/Picker.tsx";
 import NoteReminder from "$islands/notes/windows/NoteReminder.tsx";
-import NoteMove from "$islands/notes/windows/NoteMove.tsx";
+import MoveGroupDialog from "$islands/MoveGroupDialog.tsx";
 
 export type NoteWindowTypes =
     | "details"
@@ -83,7 +83,13 @@ export default function NoteWindow({
                 history: (props) => <NoteHistory {...props} />,
                 share: (props) => <NoteShare {...props} />,
                 remind: (props) => <NoteReminder {...props} />,
-                move: (props) => <NoteMove {...props} />,
+                move: (props) => (
+                    <MoveGroupDialog
+                        onClose={props.onClose}
+                        recordId={props.noteId}
+                        recordType="note"
+                    />
+                ),
                 help: (props) => <NoteHelp {...props} />,
                 delete: (props) => <NoteDelete {...props} />,
             }}

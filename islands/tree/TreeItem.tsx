@@ -10,6 +10,7 @@ import { closeAllPopovers } from "$frontend/hooks/use-single-popover.ts";
 import ConfirmDialog from "$islands/ConfirmDialog.tsx";
 import NoteWindow, { NoteWindowTypes } from "$islands/notes/NoteWindow.tsx";
 import { useSearch } from "$frontend/hooks/use-search.ts";
+import MoveGroupDialog from "$islands/MoveGroupDialog.tsx";
 
 export interface TreeItemProps {
     dragManager: DragManagerHook<RecordContainer>;
@@ -321,6 +322,13 @@ export default function TreeItem({
                 <NoteWindow
                     noteId={+container.id!}
                     type={noteWindowType.value}
+                    onClose={() => noteWindowType.value = null}
+                />
+            )}
+            {container.type === "group" && noteWindowType.value === "move" && (
+                <MoveGroupDialog
+                    recordId={container.id!}
+                    recordType={container.type}
                     onClose={() => noteWindowType.value = null}
                 />
             )}

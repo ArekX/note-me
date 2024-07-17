@@ -148,8 +148,9 @@ export const useTreeState = (): TreeStateHook => {
             )
             : tree;
 
+        removeFromParent(container);
+
         if (parent) {
-            removeFromParent(container);
             addChild(parent, container);
         }
     };

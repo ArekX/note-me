@@ -5,6 +5,8 @@ import {
     DeleteGroupMessage,
     DeleteGroupProgress,
     DeleteGroupResponse,
+    GetSingleGroupMessage,
+    GetSingleGroupResponse,
     UpdateGroupMessage,
     UpdateGroupResponse,
 } from "./messages.ts";
@@ -13,6 +15,7 @@ import {
     createGroup,
     deleteGroup,
     deleteUserGroupsByParentId,
+    getGroupById,
     getUserGroupIds,
     updateGroup,
 } from "$backend/repository/group-repository.ts";
@@ -27,7 +30,7 @@ import {
 } from "$backend/repository/note-repository.ts";
 import { DeleteNoteResponse } from "$workers/websocket/api/notes/messages.ts";
 
-const createGroupRequest: ListenerFn<CreateGroupMessage> = async (
+const handleCreateGroupRequest: ListenerFn<CreateGroupMessage> = async (
     { message: { data }, sourceClient, respond },
 ) => {
     await requireValidSchema(addGroupRequestSchema, data);
@@ -41,7 +44,7 @@ const createGroupRequest: ListenerFn<CreateGroupMessage> = async (
     });
 };
 
-const updateGroupRequest: ListenerFn<UpdateGroupMessage> = async (
+const handleUpdateGroupRequest: ListenerFn<UpdateGroupMessage> = async (
     { message: { id, data }, sourceClient, respond },
 ) => {
     await requireValidSchema(updateGroupRequestSchema, data);
@@ -58,7 +61,7 @@ const updateGroupRequest: ListenerFn<UpdateGroupMessage> = async (
     });
 };
 
-const deleteGroupRequest: ListenerFn<DeleteGroupMessage> = async (
+const handleDeleteGroupRequest: ListenerFn<DeleteGroupMessage> = async (
     { message: { id }, sourceClient, respond, send },
 ) => {
     let deletedCount = 0;
@@ -122,8 +125,18 @@ const deleteGroupRequest: ListenerFn<DeleteGroupMessage> = async (
     });
 };
 
+const handleGetSingleGroup: ListenerFn<GetSingleGroupMessage> = async (
+    { message: { id }, sourceClient, respond },
+) => {
+    respond<GetSingleGroupResponse>({
+        type: "getSingleGroupResponse",
+        record: await getGroupById(id, sourceClient!.userId),
+    });
+};
+
 export const frontendMap: RegisterListenerMap<GroupFrontendMessage> = {
-    createGroup: createGroupRequest,
-    updateGroup: updateGroupRequest,
-    deleteGroup: deleteGroupRequest,
+    createGroup: handleCreateGroupRequest,
+    updateGroup: handleUpdateGroupRequest,
+    deleteGroup: handleDeleteGroupRequest,
+    getSingleGroup: handleGetSingleGroup,
 };

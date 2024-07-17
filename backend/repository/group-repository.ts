@@ -183,3 +183,13 @@ export const deleteUserGroupsByParentId = async (
 
     return Number(deleted.numUpdatedRows);
 };
+
+export const getGroupById = async (
+    id: number,
+    user_id: number,
+): Promise<GroupRecord | null> => {
+    return await getGroupQuery()
+        .where("id", "=", id)
+        .where("user_id", "=", user_id)
+        .executeTakeFirst() ?? null;
+};

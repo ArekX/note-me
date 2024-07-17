@@ -20,7 +20,7 @@ import {
     NotificationListResponse,
 } from "./messages.ts";
 
-const getMyNotifications: ListenerFn<GetMyNotificationsMessage> = async (
+const handleGetMyNotifications: ListenerFn<GetMyNotificationsMessage> = async (
     { sourceClient, respond },
 ) => {
     const { userId } = sourceClient!;
@@ -31,7 +31,7 @@ const getMyNotifications: ListenerFn<GetMyNotificationsMessage> = async (
     });
 };
 
-const deleteAll: ListenerFn<DeleteAllMessage> = async (
+const handleDeleteAll: ListenerFn<DeleteAllMessage> = async (
     { sourceClient, respond },
 ) => {
     const { userId } = sourceClient!;
@@ -41,7 +41,7 @@ const deleteAll: ListenerFn<DeleteAllMessage> = async (
     });
 };
 
-const markAllRead: ListenerFn<MarkAllReadMessage> = async (
+const handleMarkAllRead: ListenerFn<MarkAllReadMessage> = async (
     { sourceClient, respond },
 ) => {
     const { userId } = sourceClient!;
@@ -51,7 +51,7 @@ const markAllRead: ListenerFn<MarkAllReadMessage> = async (
     });
 };
 
-const markSingleRead: ListenerFn<MarkSingleReadMessage> = async ({
+const handleMarkSingleRead: ListenerFn<MarkSingleReadMessage> = async ({
     message,
     sourceClient,
     respond,
@@ -64,7 +64,7 @@ const markSingleRead: ListenerFn<MarkSingleReadMessage> = async ({
     });
 };
 
-const deleteSingle: ListenerFn<DeleteSingleMessage> = async ({
+const handleDeleteSingle: ListenerFn<DeleteSingleMessage> = async ({
     message,
     sourceClient,
     respond,
@@ -78,9 +78,9 @@ const deleteSingle: ListenerFn<DeleteSingleMessage> = async ({
 };
 
 export const frontendMap: RegisterListenerMap<NotificationFrontendMessage> = {
-    getMyNotifications,
-    deleteAll,
-    markAllRead,
-    markSingleRead,
-    deleteSingle,
+    getMyNotifications: handleGetMyNotifications,
+    deleteAll: handleDeleteAll,
+    markAllRead: handleMarkAllRead,
+    markSingleRead: handleMarkSingleRead,
+    deleteSingle: handleDeleteSingle,
 };

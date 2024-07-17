@@ -6,7 +6,7 @@ import {
 } from "./messages.ts";
 import { getTreeList } from "$backend/repository/tree-list.repository.ts";
 
-const getTree: ListenerFn<GetTreeMessage> = async (
+const handleGetTree: ListenerFn<GetTreeMessage> = async (
     { message, sourceClient, respond },
 ) => {
     respond<GetTreeResponse>({
@@ -21,5 +21,5 @@ const getTree: ListenerFn<GetTreeMessage> = async (
 };
 
 export const frontendMap: RegisterListenerMap<TreeFrontendMessage> = {
-    getTree,
+    getTree: handleGetTree,
 };

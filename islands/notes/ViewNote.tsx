@@ -44,6 +44,8 @@ export default function ViewNote(
                 title: data.title ?? recordData.value.title,
                 tags: data.tags ?? recordData.value.tags,
                 note: data.text ?? recordData.value.note,
+                group_id: data.group_id ?? recordData.value.group_id,
+                group_name: data.group_name ?? recordData.value.group_name,
             };
         },
     });

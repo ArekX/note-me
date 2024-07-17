@@ -36,7 +36,7 @@ import { requireValidSchema } from "$schemas/mod.ts";
 import { addUserSchema, updateUserSchema } from "$schemas/users.ts";
 import { CanManageUsers } from "$backend/rbac/permissions.ts";
 
-const createUserRequest: ListenerFn<CreateUserMessage> = async (
+const handleCreateUser: ListenerFn<CreateUserMessage> = async (
     { message: { data }, respond, sourceClient },
 ) => {
     await requireValidSchema(addUserSchema, data);
@@ -66,7 +66,7 @@ const createUserRequest: ListenerFn<CreateUserMessage> = async (
     });
 };
 
-const updateUserRequest: ListenerFn<UpdateUserMessage> = async (
+const handleUpdateUser: ListenerFn<UpdateUserMessage> = async (
     { message: { id, data }, respond, sourceClient },
 ) => {
     await requireValidSchema(updateUserSchema, data);
@@ -81,7 +81,7 @@ const updateUserRequest: ListenerFn<UpdateUserMessage> = async (
     });
 };
 
-const deleteUserRequest: ListenerFn<DeleteUserMessage> = async (
+const handleDeleteUser: ListenerFn<DeleteUserMessage> = async (
     { message: { id }, sourceClient, respond },
 ) => {
     sourceClient!.auth.require(CanManageUsers.Delete);
@@ -98,7 +98,7 @@ const deleteUserRequest: ListenerFn<DeleteUserMessage> = async (
     });
 };
 
-const findUsersRequest: ListenerFn<FindUsersMessage> = async (
+const handleFindUsers: ListenerFn<FindUsersMessage> = async (
     { message: { filters, page }, respond, sourceClient },
 ) => {
     sourceClient!.auth.require(CanManageUsers.List);
@@ -111,7 +111,7 @@ const findUsersRequest: ListenerFn<FindUsersMessage> = async (
     });
 };
 
-const updateProfileRequest: ListenerFn<UpdateProfileMessage> = async (
+const handleUpdateProfile: ListenerFn<UpdateProfileMessage> = async (
     { message: { data }, sourceClient, respond },
 ) => {
     const result = await updateUserProfile(sourceClient?.userId!, data);
@@ -144,10 +144,10 @@ const handleFindPickUsers: ListenerFn<FindPickUsersMessage> = async (
 };
 
 export const frontendMap: RegisterListenerMap<UserFrontendMessage> = {
-    createUser: createUserRequest,
-    updateUser: updateUserRequest,
-    deleteUser: deleteUserRequest,
-    findUsers: findUsersRequest,
+    createUser: handleCreateUser,
+    updateUser: handleUpdateUser,
+    deleteUser: handleDeleteUser,
+    findUsers: handleFindUsers,
     findPickUsers: handleFindPickUsers,
-    updateProfile: updateProfileRequest,
+    updateProfile: handleUpdateProfile,
 };

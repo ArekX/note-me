@@ -11,22 +11,30 @@ import Icon from "$components/Icon.tsx";
 import Loader from "$islands/Loader.tsx";
 
 interface GroupPickerItemProps {
+    isRoot?: boolean;
     record: TreeRecord;
     selectedId?: number | null;
     onPick?: (record: TreeRecord) => void;
 }
 
 const GroupPickerItem = ({
+    isRoot = false,
     record,
     onPick,
     selectedId,
 }: GroupPickerItemProps) => {
-    const children = useSignal<TreeRecord[] | null>(null);
+    const children = useSignal<TreeRecord[] | null>(
+        isRoot ? [] : null,
+    );
     const { sendMessage } = useWebsocketService();
     const loader = useLoader();
-    const isOpen = useSignal(false);
+    const isOpen = useSignal(isRoot);
 
     const loadChildren = loader.wrap(async () => {
+        if (isRoot) {
+            return;
+        }
+
         const response = await sendMessage<GetTreeMessage, GetTreeResponse>(
             "tree",
             "getTree",
@@ -51,7 +59,7 @@ const GroupPickerItem = ({
     const handleToggleOpenClose = async (e: Event) => {
         e.stopPropagation();
 
-        if (record.has_children !== 1) {
+        if (isRoot || record.has_children !== 1) {
             return;
         }
 
@@ -101,10 +109,12 @@ const GroupPickerItem = ({
 
 interface GroupPickerProps {
     selectedId?: number | null;
+    allowRoot?: boolean;
     onPick?: (record: TreeRecord) => void;
 }
 
 export default function GroupPicker({
+    allowRoot,
     selectedId,
     onPick,
 }: GroupPickerProps) {
@@ -140,14 +150,29 @@ export default function GroupPicker({
                             No groups found
                         </div>
                     )}
-                    {rootRecords.value.map((record) => (
+                    {allowRoot && (
                         <GroupPickerItem
-                            key={record.id}
+                            isRoot={true}
+                            record={{
+                                id: 0,
+                                type: "group",
+                                name: "Top Level",
+                                has_children: 1,
+                            }}
                             selectedId={selectedId}
-                            record={record}
                             onPick={onPick}
                         />
-                    ))}
+                    )}
+                    <div class={allowRoot ? "pl-2" : ""}>
+                        {rootRecords.value.map((record) => (
+                            <GroupPickerItem
+                                key={record.id}
+                                selectedId={selectedId}
+                                record={record}
+                                onPick={onPick}
+                            />
+                        ))}
+                    </div>
                 </>
             )}
         </div>
