@@ -1,26 +1,26 @@
 import Icon from "$components/Icon.tsx";
-import { SearchRequest } from "$islands/sidebar/hooks/use-search-state.ts";
 import { NoteSearchRecord } from "$backend/repository/note-search-repository.ts";
 import { findHighlightedLines } from "$frontend/text-highlight.ts";
 import { useMemo } from "preact/hooks";
 import { redirectTo } from "$frontend/redirection-manager.ts";
 import { timeAgo } from "$lib/time/time-ago.ts";
+import { SearchStateHook } from "$islands/sidebar/hooks/use-search-state.ts";
 
 interface TreeItemViewProps {
-    searchQuery: SearchRequest;
+    search: SearchStateHook;
     record: NoteSearchRecord;
 }
 
 export default function TreeItemView({
-    searchQuery,
+    search,
     record,
 }: TreeItemViewProps) {
     const foundLines = useMemo(() =>
         findHighlightedLines(
             record.note,
-            searchQuery.type === "simple" ? searchQuery.query : "",
+            search.query.value.query,
             100,
-        ), [record, searchQuery]);
+        ), [record, search.query.value.query]);
 
     const handleOpenNote = () => {
         redirectTo.viewNote({

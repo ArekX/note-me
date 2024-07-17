@@ -19,6 +19,7 @@ const buttonColors = {
     success: "bg-sky-900 hover:bg-sky-600 text-white",
     successDisabled: "bg-sky-600 text-white",
     danger: "bg-red-500 hover:bg-red-600 text-white",
+    transparent: "bg-transparent hover:bg-gray-700/25",
 };
 
 const sizeTypes = {

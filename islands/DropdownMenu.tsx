@@ -1,4 +1,4 @@
-import Button, { ButtonSize } from "$components/Button.tsx";
+import Button, { ButtonColors, ButtonSize } from "$components/Button.tsx";
 import Icon, { IconSize } from "$components/Icon.tsx";
 import { createRef, JSX } from "preact";
 import { createPortal, Ref } from "preact/compat";
@@ -24,6 +24,7 @@ interface MoreMenuProps {
     icon?: string;
     iconSize?: IconSize;
     buttonSize?: ButtonSize;
+    buttonColor?: ButtonColors;
     iconOnly?: boolean;
     inlineDirection?: InlineDirection;
     showDirection?: MenuShowDirection;
@@ -72,6 +73,7 @@ export default function DropdownMenu(
         buttonSize = "md",
         displayType = "inline",
         inlineDirection = "right",
+        buttonColor = "primary",
         label = "",
         showDirection = "bottom",
     }: MoreMenuProps,
@@ -150,7 +152,7 @@ export default function DropdownMenu(
                 : (
                     <div ref={buttonRef}>
                         <Button
-                            color="primary"
+                            color={buttonColor}
                             onClick={handleOpenMenu}
                             size={buttonSize}
                         >

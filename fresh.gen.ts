@@ -35,6 +35,7 @@ import * as $Checkbox from "./islands/Checkbox.tsx";
 import * as $ConfirmDialog from "./islands/ConfirmDialog.tsx";
 import * as $Dialog from "./islands/Dialog.tsx";
 import * as $DropdownMenu from "./islands/DropdownMenu.tsx";
+import * as $GroupPicker from "./islands/GroupPicker.tsx";
 import * as $InvalidateData from "./islands/InvalidateData.tsx";
 import * as $IslandInitializer from "./islands/IslandInitializer.tsx";
 import * as $LoadMoreWrapper from "./islands/LoadMoreWrapper.tsx";
@@ -155,6 +156,7 @@ const manifest = {
         "./islands/ConfirmDialog.tsx": $ConfirmDialog,
         "./islands/Dialog.tsx": $Dialog,
         "./islands/DropdownMenu.tsx": $DropdownMenu,
+        "./islands/GroupPicker.tsx": $GroupPicker,
         "./islands/InvalidateData.tsx": $InvalidateData,
         "./islands/IslandInitializer.tsx": $IslandInitializer,
         "./islands/LoadMoreWrapper.tsx": $LoadMoreWrapper,

@@ -32,7 +32,7 @@ export default function RootGroupBar({
 
     return (
         <div
-            class={`flex pl-2 select-none  ${
+            class={`flex select-none  ${
                 target === treeManager.root ? "bg-red-500" : ""
             }`}
         >
@@ -42,7 +42,7 @@ export default function RootGroupBar({
                 onDragLeave={handleDragLeave}
             >
                 {source
-                    ? <div>Drop here to move to top level</div>
+                    ? <div class="pl-2">Drop here to move to top level</div>
                     : switcherComponent}
             </div>
             <div class="flex-1 text-right opacity-30 hover:opacity-100 pr-1">

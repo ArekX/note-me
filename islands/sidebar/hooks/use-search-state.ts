@@ -1,68 +1,58 @@
 import { ReadonlySignal, useComputed, useSignal } from "@preact/signals";
+import { SearchNoteFilters } from "$backend/repository/note-search-repository.ts";
 
-export interface SearchStateHook<T = unknown> {
-    request: ReadonlySignal<SearchRequest<T>>;
-    simpleSearchQuery: ReadonlySignal<string>;
+export interface SearchStateHook {
+    type: ReadonlySignal<SearchNoteFilters["type"]>;
+    query: ReadonlySignal<Omit<SearchNoteFilters, "type" | "from_id">>;
     isActive: ReadonlySignal<boolean>;
-    reset: () => void;
-    searchSimple: (text: string) => void;
-    searchAdvanced: (data: T) => void;
+    isSimpleSearch: ReadonlySignal<boolean>;
+    resetSearch: () => void;
+    setQuery: (newQuery: Partial<SearchNoteFilters>) => void;
+    setType: (newType: SearchNoteFilters["type"]) => void;
 }
 
-export type SearchRequest<T = object> =
-    | {
-        type: "simple";
-        query: string;
-    }
-    | ({
-        type: "advanced";
-    } & T);
-
-export const useSearchState = <T = unknown>(): SearchStateHook<T> => {
-    const query = useSignal<string>("");
-    const advancedSearch = useSignal<T | null>(null);
-    const searchType = useSignal<"simple" | "advanced">("simple");
-
-    const isActive = useComputed(() => query.value.length > 0);
-
-    const searchRequest = useComputed<SearchRequest<T>>(() => {
-        if (searchType.value === "simple") {
-            return {
-                type: "simple",
-                query: query.value,
-            };
-        }
-
-        return {
-            type: "advanced",
-            ...advancedSearch.value!,
-        };
+export const useSearchState = (): SearchStateHook => {
+    const type = useSignal<SearchNoteFilters["type"]>("general");
+    const query = useSignal<Omit<SearchNoteFilters, "type" | "from_id">>({
+        query: "",
     });
 
-    const searchSimple = (text: string) => {
-        query.value = text;
-        advancedSearch.value = null;
-        searchType.value = "simple";
+    const isActive = useComputed(() =>
+        query.value.query.length > 0 || query.value.group_id !== undefined ||
+        (query.value.tag_ids?.length ?? 0) > 0
+    );
+
+    const isSimpleSearch = useComputed(() =>
+        query.value.query.length > 0 && !query.value.group_id &&
+        (query.value.tag_ids?.length ?? 0) === 0
+    );
+
+    const resetSearch = () => {
+        query.value = {
+            query: "",
+        };
     };
 
-    const searchAdvanced = (data: T) => {
-        advancedSearch.value = data;
-        query.value = "";
-        searchType.value = "advanced";
+    const setQuery = (
+        newQuery: Partial<Omit<SearchNoteFilters, "type" | "from_id">>,
+    ) => {
+        query.value = {
+            ...query.value,
+            ...newQuery,
+        };
     };
 
-    const reset = () => {
-        query.value = "";
-        advancedSearch.value = null;
-        searchType.value = "simple";
+    const setType = (newType: SearchNoteFilters["type"]) => {
+        type.value = newType;
     };
 
     return {
-        request: searchRequest,
-        simpleSearchQuery: query,
+        type,
+        query,
         isActive,
-        reset,
-        searchSimple,
-        searchAdvanced,
+        isSimpleSearch,
+        resetSearch,
+        setQuery,
+        setType,
     };
 };

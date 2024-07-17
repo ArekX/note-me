@@ -1,5 +1,8 @@
 import { Message } from "$workers/websocket/types.ts";
-import { TreeRecord } from "$backend/repository/tree-list.repository.ts";
+import {
+    ItemType,
+    TreeRecord,
+} from "$backend/repository/tree-list.repository.ts";
 
 type TreeMessage<Type, Data = unknown> = Message<
     "tree",
@@ -7,7 +10,10 @@ type TreeMessage<Type, Data = unknown> = Message<
     Data
 >;
 
-export type GetTreeMessage = TreeMessage<"getTree", { parent_id?: number }>;
+export type GetTreeMessage = TreeMessage<
+    "getTree",
+    { parent_id?: number; item_type?: ItemType }
+>;
 
 export type GetTreeResponse = TreeMessage<
     "getTreeResponse",

@@ -5,7 +5,6 @@ import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import { useDebouncedCallback } from "$frontend/hooks/use-debounced-callback.ts";
 import Loader from "$islands/Loader.tsx";
 import { useLoadMoreData } from "$frontend/hooks/use-load-more-data.ts";
-import { useSignal } from "@preact/signals";
 import LoadMoreWrapper from "$islands/LoadMoreWrapper.tsx";
 import TreeItemView from "$islands/sidebar/search/TreeItemView.tsx";
 import {
@@ -29,9 +28,8 @@ export default function SearchView({
         addMoreRecords,
         setNoMoreData,
         resetData,
+        getLastRecordKey,
     } = useLoadMoreData<NoteSearchRecord>();
-
-    const page = useSignal(1);
 
     const performSearch = useDebouncedCallback(async () => {
         const response = await sendMessage<
@@ -43,10 +41,9 @@ export default function SearchView({
             {
                 data: {
                     filters: {
-                        type: "general",
-                        query: search.request.value.type === "simple"
-                            ? search.request.value.query
-                            : "",
+                        ...search.query.value,
+                        type: search.type.value,
+                        from_id: getLastRecordKey("id"),
                     },
                 },
                 expect: "searchNoteResponse",
@@ -63,11 +60,10 @@ export default function SearchView({
     });
 
     useEffect(() => {
-        page.value = 1;
         resetData();
         searchLoader.start();
         performSearch();
-    }, [search.request.value]);
+    }, [search.query.value]);
 
     return (
         <div class="relative">
@@ -85,15 +81,12 @@ export default function SearchView({
                     <LoadMoreWrapper
                         addCss="search-view-height"
                         hasMore={hasMoreData.value}
-                        onLoadMore={() => {
-                            page.value++;
-                            performSearch();
-                        }}
+                        onLoadMore={() => performSearch()}
                     >
                         <div>
                             {records.value.map((i, idx) => (
                                 <TreeItemView
-                                    searchQuery={search.request.value}
+                                    search={search}
                                     key={idx}
                                     record={i}
                                 />

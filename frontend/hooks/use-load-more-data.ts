@@ -18,11 +18,18 @@ export const useLoadMoreData = <T>() => {
         hasMoreData.value = true;
     };
 
+    const getLastRecordKey = <K extends keyof T>(key: K): T[K] | undefined => {
+        const lastRecord = records.value[records.value.length - 1];
+
+        return lastRecord ? lastRecord[key] : undefined;
+    };
+
     return {
         records,
         hasMoreData,
         resetData,
         setNoMoreData,
         addMoreRecords,
+        getLastRecordKey,
     };
 };

@@ -15,6 +15,7 @@ const getTree: ListenerFn<GetTreeMessage> = async (
         records: await getTreeList(
             message.parent_id ?? null,
             sourceClient!.userId,
+            message.item_type,
         ),
     });
 };
