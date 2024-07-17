@@ -37,7 +37,7 @@ const presets: PresetMap = {
         title: "Next monday",
         getNextAtFromNow: () => {
             const now = new Date();
-            const daysUntilNextMonday = (1 + 7 - now.getDay()) % 7;
+            const daysUntilNextMonday = (1 + 7 - now.getDay()) % 7 || 7;
             return dateToUnix(
                 new Date(
                     now.getFullYear(),
@@ -51,7 +51,7 @@ const presets: PresetMap = {
         title: "Next wednesday",
         getNextAtFromNow: () => {
             const now = new Date();
-            const daysUntilNextWednesday = (3 + 7 - now.getDay()) % 7;
+            const daysUntilNextWednesday = (3 + 7 - now.getDay()) % 7 || 7;
             return dateToUnix(
                 new Date(
                     now.getFullYear(),
@@ -65,7 +65,7 @@ const presets: PresetMap = {
         title: "Next friday",
         getNextAtFromNow: () => {
             const now = new Date();
-            const daysUntilNextFriday = (5 + 7 - now.getDay()) % 7;
+            const daysUntilNextFriday = (5 + 7 - now.getDay()) % 7 || 7;
             return dateToUnix(
                 new Date(
                     now.getFullYear(),
