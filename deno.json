@@ -11,7 +11,7 @@
         "build-docker": "deno task build-assets && docker build --build-arg GIT_REVISION=$(git rev-parse HEAD) . -t arekxv/note-me:$(git describe --tags --abbrev=0)",
         "build-podman": "deno task build-assets && podman build --build-arg GIT_REVISION=$(git rev-parse HEAD) . -t arekxv/note-me",
         "build-assets": "deno run -A build.ts build",
-        "production": "deno run -A --check main.ts",
+        "production": "deno run -A main.ts",
         "debug": "deno run --inspect-wait -A dev.ts",
         "test": "deno test -A",
         "preview": "deno run -A main.ts",

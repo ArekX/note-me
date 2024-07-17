@@ -18,6 +18,7 @@ export type MoreMenuItemAction =
     | "history"
     | "share"
     | "remind-me"
+    | "search-group"
     | "move"
     | "delete";
 
@@ -44,6 +45,12 @@ export default function MoreMenu(
             icon: "folder-plus",
             types: ["group"],
             action: "add-group",
+        },
+        {
+            name: "Search",
+            icon: "search",
+            types: ["group"],
+            action: "search-group",
         },
         {
             name: "Refresh",

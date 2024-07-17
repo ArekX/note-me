@@ -10,13 +10,6 @@ export interface TreeRecord {
     has_children: number;
 }
 
-interface TreeListQueryOptions {
-    user_id: number;
-    group_id?: number | null;
-    scope_by_group_id?: boolean;
-    include_has_children_data?: boolean;
-}
-
 const getGroupQuery = (
     options: {
         user_id: number;

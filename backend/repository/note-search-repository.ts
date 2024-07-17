@@ -19,6 +19,31 @@ export interface NoteSearchRecord {
     user_name: string;
 }
 
+const findChildrenGroupIds = async (user_id: number, group_id: number) => {
+    const groups = await db.selectFrom("group")
+        .select([
+            "id",
+            "parent_id",
+        ])
+        .where("user_id", "=", user_id)
+        .execute();
+
+    const groupIds = [group_id];
+
+    const findGroupIds = (parentId: number) => {
+        for (const group of groups) {
+            if (group.parent_id === parentId) {
+                groupIds.push(group.id);
+                findGroupIds(group.id);
+            }
+        }
+    };
+
+    findGroupIds(group_id);
+
+    return groupIds;
+};
+
 export const searchNotes = async (
     filters: SearchNoteFilters,
     user_id: number,
@@ -47,6 +72,10 @@ export const searchNotes = async (
         query = query.where("note.is_deleted", "=", false);
     }
 
+    const childGroupIds = filters.group_id
+        ? await findChildrenGroupIds(user_id, filters.group_id)
+        : [];
+
     query = applyFilters(query, [
         {
             type: "custom",
@@ -61,7 +90,15 @@ export const searchNotes = async (
                 return null;
             },
         },
-        { field: "group.id", type: "value", value: filters.group_id },
+        {
+            type: "custom",
+            value: (e) => {
+                if (!filters.group_id) {
+                    return null;
+                }
+                return e("group_note.group_id", "in", childGroupIds);
+            },
+        },
         {
             type: "custom",
             value: (e) => {

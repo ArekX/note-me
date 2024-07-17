@@ -105,7 +105,7 @@ export default function ViewNote(
                     <span
                         class={`tag ${
                             disableTagLinks
-                                ? "cursor-default"
+                                ? "cursor-default pointer-events-none"
                                 : "cursor-pointer"
                         }`}
                         key={tag}

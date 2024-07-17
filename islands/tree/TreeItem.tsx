@@ -9,6 +9,7 @@ import { RecordContainer } from "$islands/tree/hooks/record-container.ts";
 import { closeAllPopovers } from "$frontend/hooks/use-single-popover.ts";
 import ConfirmDialog from "$islands/ConfirmDialog.tsx";
 import NoteWindow, { NoteWindowTypes } from "$islands/notes/NoteWindow.tsx";
+import { useSearch } from "$frontend/hooks/use-search.ts";
 
 export interface TreeItemProps {
     dragManager: DragManagerHook<RecordContainer>;
@@ -105,6 +106,7 @@ export default function TreeItem({
     dragManager,
     container,
 }: TreeItemProps) {
+    const search = useSearch();
     const confirmDelete = useSignal(false);
     const noteWindowType = useSignal<NoteWindowTypes | null>(null);
 
@@ -214,6 +216,16 @@ export default function TreeItem({
                 break;
             case "rename":
                 treeManager.setDisplayMode(container, "edit");
+                break;
+            case "search-group":
+                if (container.type === "group") {
+                    search.setGroup({
+                        id: container.id!,
+                        name: container.name,
+                        has_children: Number(container.has_children),
+                        type: "group",
+                    });
+                }
                 break;
         }
     };

@@ -250,7 +250,7 @@ export default function TagInput({
             {isOpen && (
                 <div
                     ref={dropdownRef}
-                    class="fixed top-full left-0 bg-gray-800 text-white max-h-52 overflow-auto rounded-md"
+                    class="z-50 fixed top-full left-0 bg-gray-800 text-white max-h-52 overflow-auto rounded-md"
                 >
                     {isSearching.running && (
                         <div class="p-4">
