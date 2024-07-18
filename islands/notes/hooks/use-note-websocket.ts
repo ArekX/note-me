@@ -8,8 +8,8 @@ import {
 } from "$workers/websocket/api/groups/messages.ts";
 
 export type UpdatedData = Pick<UpdateNoteRequest, "tags" | "title" | "text"> & {
-    group_id?: number;
-    group_name?: string;
+    group_id?: number | null;
+    group_name?: string | null;
 };
 
 export interface NoteWebsocketOptions {
@@ -41,7 +41,15 @@ export const useNoteWebsocket = (options: NoteWebsocketOptions) => {
                         });
                     }
 
-                    if (response.updated_data.group_id) {
+                    if (response.updated_data.group_id !== undefined) {
+                        if (response.updated_data.group_id === null) {
+                            options.onNoteUpdated?.({
+                                group_id: null,
+                                group_name: null,
+                            });
+                            return;
+                        }
+
                         sendMessage<
                             GetSingleGroupMessage,
                             GetSingleGroupResponse

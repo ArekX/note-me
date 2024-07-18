@@ -64,14 +64,15 @@ import * as $notes_NoteTextArea from "./islands/notes/NoteTextArea.tsx";
 import * as $notes_NoteWindow from "./islands/notes/NoteWindow.tsx";
 import * as $notes_TagInput from "./islands/notes/TagInput.tsx";
 import * as $notes_ViewNote from "./islands/notes/ViewNote.tsx";
+import * as $notes_blocks_NoteList from "./islands/notes/blocks/NoteList.tsx";
 import * as $notes_blocks_TableOfContents from "./islands/notes/blocks/TableOfContents.tsx";
 import * as $notes_helpers_markdown from "./islands/notes/helpers/markdown.ts";
 import * as $notes_hooks_use_note_websocket from "./islands/notes/hooks/use-note-websocket.ts";
 import * as $notes_insert_components_InsertFile from "./islands/notes/insert-components/InsertFile.tsx";
-import * as $notes_insert_components_InsertGroupList from "./islands/notes/insert-components/InsertGroupList.tsx";
 import * as $notes_insert_components_InsertImage from "./islands/notes/insert-components/InsertImage.tsx";
 import * as $notes_insert_components_InsertLink from "./islands/notes/insert-components/InsertLink.tsx";
 import * as $notes_insert_components_InsertNoteLink from "./islands/notes/insert-components/InsertNoteLink.tsx";
+import * as $notes_insert_components_InsertNoteList from "./islands/notes/insert-components/InsertNoteList.tsx";
 import * as $notes_insert_components_InsertToc from "./islands/notes/insert-components/InsertToc.tsx";
 import * as $notes_insert_components_LinkForm from "./islands/notes/insert-components/LinkForm.tsx";
 import * as $notes_windows_NoteDelete from "./islands/notes/windows/NoteDelete.tsx";
@@ -185,6 +186,7 @@ const manifest = {
         "./islands/notes/NoteWindow.tsx": $notes_NoteWindow,
         "./islands/notes/TagInput.tsx": $notes_TagInput,
         "./islands/notes/ViewNote.tsx": $notes_ViewNote,
+        "./islands/notes/blocks/NoteList.tsx": $notes_blocks_NoteList,
         "./islands/notes/blocks/TableOfContents.tsx":
             $notes_blocks_TableOfContents,
         "./islands/notes/helpers/markdown.ts": $notes_helpers_markdown,
@@ -192,14 +194,14 @@ const manifest = {
             $notes_hooks_use_note_websocket,
         "./islands/notes/insert-components/InsertFile.tsx":
             $notes_insert_components_InsertFile,
-        "./islands/notes/insert-components/InsertGroupList.tsx":
-            $notes_insert_components_InsertGroupList,
         "./islands/notes/insert-components/InsertImage.tsx":
             $notes_insert_components_InsertImage,
         "./islands/notes/insert-components/InsertLink.tsx":
             $notes_insert_components_InsertLink,
         "./islands/notes/insert-components/InsertNoteLink.tsx":
             $notes_insert_components_InsertNoteLink,
+        "./islands/notes/insert-components/InsertNoteList.tsx":
+            $notes_insert_components_InsertNoteList,
         "./islands/notes/insert-components/InsertToc.tsx":
             $notes_insert_components_InsertToc,
         "./islands/notes/insert-components/LinkForm.tsx":

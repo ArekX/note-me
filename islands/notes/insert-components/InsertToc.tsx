@@ -21,7 +21,7 @@ const Component = ({
             <div class="mt-2 flex items-center">
                 <div class="mr-2">
                     <Button color="primary" size="md" onClick={handleInsert}>
-                        <Icon name="link" size="lg" /> Insert
+                        <Icon name="list-ul" size="lg" /> Insert
                     </Button>
                 </div>
 

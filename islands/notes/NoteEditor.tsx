@@ -33,7 +33,7 @@ interface NoteData extends Pick<NoteRecord, "title" | "note"> {
     id?: number;
     tags: string[];
     group_id: number | null;
-    group_name: string;
+    group_name: string | null;
 }
 
 interface NoteEditorProps {
@@ -71,6 +71,12 @@ export default function NoteEditor({
             name.value = data.title ?? name.value;
             text.value = data.text ?? text.value;
             tags.value = data.tags ?? tags.value;
+            groupId.value = data.group_id !== undefined
+                ? data.group_id
+                : groupId.value;
+            groupName.value = data.group_name !== undefined
+                ? data.group_name
+                : groupName.value;
         },
     });
 

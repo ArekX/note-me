@@ -88,11 +88,19 @@ const parseImageTokens: TokenPipelineFn = (tokens: Tokens[]): Tokens[] => {
     return result as Tokens[];
 };
 
+const extensionLimits = {
+    "note-list": 10,
+} as const;
+
 const extensionRegex =
     /(?<!\\){\:(?<extension>[a-zA-Z0-9-]+)(?<params>(\|[^}]+)*)\}/;
 
 const parseExtensions: TokenPipelineFn = (tokens: Tokens[]): Tokens[] => {
     const results: Tokens[] = [];
+
+    const extensionCounters: Record<keyof typeof extensionLimits, number> = {
+        "note-list": 0,
+    };
 
     for (const token of tokens) {
         if (token.type !== "text") {
@@ -122,14 +130,35 @@ const parseExtensions: TokenPipelineFn = (tokens: Tokens[]): Tokens[] => {
             }
 
             text = text.slice(index! + matched.length);
+            match = text.match(extensionRegex);
+
+            if (extension in extensionCounters) {
+                const checkExtension =
+                    extension as keyof typeof extensionLimits;
+                extensionCounters[checkExtension]++;
+
+                if (
+                    extensionCounters[checkExtension] >
+                        extensionLimits[checkExtension]
+                ) {
+                    results.push({
+                        type: "extension",
+                        extension: "over-limit",
+                        params: [
+                            extension,
+                            extensionCounters[checkExtension].toString(),
+                            extensionLimits[checkExtension].toString(),
+                        ],
+                    });
+                    continue;
+                }
+            }
 
             results.push({
                 type: "extension",
                 extension,
                 params,
             });
-
-            match = text.match(extensionRegex);
         }
 
         if (text.length > 0) {

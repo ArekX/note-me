@@ -75,8 +75,8 @@ export interface ViewNoteRecord {
     id: number;
     title: string;
     note: string;
-    group_id: number;
-    group_name: string;
+    group_id: number | null;
+    group_name: string | null;
     tags: string[];
     updated_at: number;
 }

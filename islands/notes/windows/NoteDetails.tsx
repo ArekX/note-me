@@ -76,6 +76,9 @@ export default function NoteDetails(
                             map={{
                                 general: () => (
                                     <p class="pt-2 pb-2">
+                                        <strong>Note ID:</strong> {noteId}{" "}
+                                        <br />
+
                                         {group_name && (
                                             <>
                                                 <strong>Group:</strong>{" "}

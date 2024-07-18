@@ -6,7 +6,7 @@ import { useSignal } from "@preact/signals";
 import { JSX } from "preact/jsx-runtime";
 import { InsertImageDef } from "$islands/notes/insert-components/InsertImage.tsx";
 import { InsertFileDef } from "$islands/notes/insert-components/InsertFile.tsx";
-import { InsertGroupListDef } from "$islands/notes/insert-components/InsertGroupList.tsx";
+import { InsertNoteListDef } from "./insert-components/InsertNoteList.tsx";
 import { InsertNoteLinkDef } from "$islands/notes/insert-components/InsertNoteLink.tsx";
 import { useEffect } from "preact/hooks";
 import DropdownList from "$components/DropdownList.tsx";
@@ -36,7 +36,7 @@ const insertComponents = [
     InsertLinkDef,
     InsertImageDef,
     InsertFileDef,
-    InsertGroupListDef,
+    InsertNoteListDef,
     InsertNoteLinkDef,
     InsertTocDef,
 ];
@@ -45,7 +45,7 @@ type InsertComponentIds =
     | ComponentId<typeof InsertLinkDef>
     | ComponentId<typeof InsertImageDef>
     | ComponentId<typeof InsertFileDef>
-    | ComponentId<typeof InsertGroupListDef>
+    | ComponentId<typeof InsertNoteListDef>
     | ComponentId<typeof InsertNoteLinkDef>
     | ComponentId<typeof InsertTocDef>;
 
