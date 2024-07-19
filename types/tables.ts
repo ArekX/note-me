@@ -20,6 +20,7 @@ export interface NoteTable {
     user_id: number;
     created_at: number;
     updated_at: number;
+    last_open_at: number | null;
     is_deleted?: boolean;
 }
 

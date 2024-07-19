@@ -1,4 +1,5 @@
 import Icon from "$components/Icon.tsx";
+import RecentlyOpenedNotes from "$islands/dashboard/RecentlyOpenedNotes.tsx";
 
 export default function Page() {
     return (
@@ -15,6 +16,12 @@ export default function Page() {
                     {" "}
                     icon.
                 </p>
+            </div>
+
+            <div class="flex py-5">
+                <div class="w-1/4">
+                    <RecentlyOpenedNotes />
+                </div>
             </div>
         </>
     );

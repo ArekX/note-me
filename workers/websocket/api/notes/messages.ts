@@ -8,6 +8,7 @@ import {
     NoteDetailsOptions,
     NoteDetailsRecord,
     NoteRecord,
+    RecentNoteRecord,
 } from "$backend/repository/note-repository.ts";
 import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
 import {
@@ -215,6 +216,15 @@ export type SearchNoteResponse = NoteMessage<
     { records: NoteSearchRecord[] }
 >;
 
+export type GetRecentlyOpenedNotesMessage = NoteMessage<
+    "getRecentlyOpenedNotes"
+>;
+
+export type GetRecentlyOpenedNotesResponse = NoteMessage<
+    "getRecentlyOpenedNotesResponse",
+    { records: RecentNoteRecord[] }
+>;
+
 export type NoteFrontendResponse =
     | CreateNoteResponse
     | UpdateNoteResponse
@@ -233,7 +243,8 @@ export type NoteFrontendResponse =
     | RemoveReminderResponse
     | FindNoteRemindersResponse
     | GetNoteReminderDataResponse
-    | SearchNoteResponse;
+    | SearchNoteResponse
+    | GetRecentlyOpenedNotesResponse;
 
 export type NoteFrontendMessage =
     | CreateNoteMessage
@@ -253,4 +264,5 @@ export type NoteFrontendMessage =
     | RemoveReminderMessage
     | FindNoteRemindersMessage
     | GetNoteReminderDataMessage
-    | SearchNoteMessage;
+    | SearchNoteMessage
+    | GetRecentlyOpenedNotesMessage;

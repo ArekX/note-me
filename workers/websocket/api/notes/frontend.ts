@@ -21,6 +21,8 @@ import {
     GetNoteReminderDataResponse,
     GetNoteShareDataMessage,
     GetNoteShareDataResponse,
+    GetRecentlyOpenedNotesMessage,
+    GetRecentlyOpenedNotesResponse,
     NoteFrontendMessage,
     RemovePublicShareMessage,
     RemovePublicShareResponse,
@@ -41,6 +43,7 @@ import { CreateNoteMessage } from "$workers/websocket/api/notes/messages.ts";
 import {
     createNote,
     deleteNote,
+    findRecentlyOpenedNotes,
     getNoteDetails,
     getNoteInfo,
     noteExists,
@@ -423,6 +426,20 @@ const handleSearchNote: ListenerFn<SearchNoteMessage> = async (
     });
 };
 
+const handleGetRecentlyOpenedNotes: ListenerFn<GetRecentlyOpenedNotesMessage> =
+    async (
+        { sourceClient, respond },
+    ) => {
+        const records = await findRecentlyOpenedNotes(
+            sourceClient!.userId,
+        );
+
+        respond<GetRecentlyOpenedNotesResponse>({
+            type: "getRecentlyOpenedNotesResponse",
+            records,
+        });
+    };
+
 export const frontendMap: RegisterListenerMap<NoteFrontendMessage> = {
     createNote: handleCreateNote,
     updateNote: handleUpdateNote,
@@ -442,4 +459,5 @@ export const frontendMap: RegisterListenerMap<NoteFrontendMessage> = {
     removeReminder: handleRemoveReminder,
     getNoteReminderData: handleGetNoteReminderData,
     searchNote: handleSearchNote,
+    getRecentlyOpenedNotes: handleGetRecentlyOpenedNotes,
 };

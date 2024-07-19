@@ -7,7 +7,7 @@ type NoteId = { id: number };
 
 export type NewNote = Omit<
     NoteTable,
-    "id" | "created_at" | "updated_at" | "is_deleted"
+    "id" | "created_at" | "updated_at" | "is_deleted" | "last_open_at"
 >;
 
 export type NoteRecord = Omit<NoteTable, "id"> & NoteId;
@@ -15,6 +15,7 @@ export type NoteRecord = Omit<NoteTable, "id"> & NoteId;
 export const createNote = async (note: NewNote): Promise<NoteRecord> => {
     const newRecord = {
         ...note,
+        last_open_at: null,
         created_at: getCurrentUnixTimestamp(),
         updated_at: getCurrentUnixTimestamp(),
     };
@@ -123,6 +124,22 @@ export const getNote = async (
         ...result,
         tags: (result.tags ?? "").split?.(",").filter(Boolean),
     };
+};
+
+export const updateLastOpenAt = async (
+    note_id: number,
+    user_id: number,
+): Promise<boolean> => {
+    const result = await db.updateTable("note")
+        .set({
+            last_open_at: getCurrentUnixTimestamp(),
+        })
+        .where("id", "=", note_id)
+        .where("user_id", "=", user_id)
+        .where("is_deleted", "=", false)
+        .executeTakeFirst();
+
+    return result.numUpdatedRows > 0;
 };
 
 export interface NoteDetailsRecord {
@@ -276,4 +293,40 @@ export const deleteUserNotesByParentId = async (
         .executeTakeFirst();
 
     return Number(deleted.numUpdatedRows);
+};
+
+export interface RecentNoteRecord {
+    id: number;
+    title: string;
+    group_id: number | null;
+    group_name: string | null;
+    updated_at: number;
+    last_open_at: number | null;
+}
+
+export const findRecentlyOpenedNotes = async (
+    user_id: number,
+): Promise<RecentNoteRecord[]> => {
+    return await db.selectFrom("note")
+        .select([
+            "note.id",
+            "note.title",
+            sql<number>`\`group\`.id`.as("group_id"),
+            sql<string>`\`group\`.name`.as("group_name"),
+            "note.updated_at",
+            "note.last_open_at",
+        ])
+        .where("note.user_id", "=", user_id)
+        .where("note.is_deleted", "=", false)
+        .leftJoin(
+            "group_note",
+            (join) =>
+                join
+                    .onRef("note.id", "=", "group_note.note_id")
+                    .on("group_note.user_id", "=", user_id),
+        )
+        .leftJoin("group", "group_note.group_id", "group.id")
+        .orderBy("last_open_at", "desc")
+        .limit(10)
+        .execute();
 };

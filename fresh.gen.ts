@@ -45,6 +45,7 @@ import * as $MoveGroupDialog from "./islands/MoveGroupDialog.tsx";
 import * as $Pagination from "./islands/Pagination.tsx";
 import * as $ToastMessages from "./islands/ToastMessages.tsx";
 import * as $UserPicker from "./islands/UserPicker.tsx";
+import * as $dashboard_RecentlyOpenedNotes from "./islands/dashboard/RecentlyOpenedNotes.tsx";
 import * as $files_FileDropWrapper from "./islands/files/FileDropWrapper.tsx";
 import * as $files_FileItem from "./islands/files/FileItem.tsx";
 import * as $files_FilePicker from "./islands/files/FilePicker.tsx";
@@ -170,6 +171,8 @@ const manifest = {
         "./islands/Pagination.tsx": $Pagination,
         "./islands/ToastMessages.tsx": $ToastMessages,
         "./islands/UserPicker.tsx": $UserPicker,
+        "./islands/dashboard/RecentlyOpenedNotes.tsx":
+            $dashboard_RecentlyOpenedNotes,
         "./islands/files/FileDropWrapper.tsx": $files_FileDropWrapper,
         "./islands/files/FileItem.tsx": $files_FileItem,
         "./islands/files/FilePicker.tsx": $files_FilePicker,
