@@ -335,3 +335,7 @@ select.select-input {
     max-height: 200px;
     overflow: auto;
 }
+
+.note-link-result-view {
+    max-height: 200px;
+}

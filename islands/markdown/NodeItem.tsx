@@ -22,7 +22,7 @@ interface NodeItemProps {
 export default function NodeItem({
     node,
     originalText,
-    options 
+    options,
 }: NodeItemProps) {
     const items = "children" in node
         ? node.children.map((c, index) => (
@@ -103,7 +103,13 @@ export default function NodeItem({
         case "footnoteReference":
             return <sup>{items}</sup>;
         case "extension":
-            return <Extension node={node} originalText={originalText} options={options} />;
+            return (
+                <Extension
+                    node={node}
+                    originalText={originalText}
+                    options={options}
+                />
+            );
         case "codeBlock":
             return (
                 <CodeBlock node={node}>

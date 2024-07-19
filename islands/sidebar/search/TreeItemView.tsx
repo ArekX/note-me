@@ -2,35 +2,32 @@ import Icon from "$components/Icon.tsx";
 import { NoteSearchRecord } from "$backend/repository/note-search-repository.ts";
 import { findHighlightedLines } from "$frontend/text-highlight.ts";
 import { useMemo } from "preact/hooks";
-import { redirectTo } from "$frontend/redirection-manager.ts";
 import { timeAgo } from "$lib/time/time-ago.ts";
-import { useSearch } from "$frontend/hooks/use-search.ts";
 
 interface TreeItemViewProps {
     record: NoteSearchRecord;
+    searchQuery: string;
+    addClass?: string;
+    onNoteClick: () => void;
 }
 
 export default function TreeItemView({
     record,
+    searchQuery,
+    onNoteClick,
+    addClass = "",
 }: TreeItemViewProps) {
-    const search = useSearch();
     const foundLines = useMemo(() =>
         findHighlightedLines(
             record.note,
-            search.query.value,
+            searchQuery,
             100,
-        ), [record, search.query.value]);
-
-    const handleOpenNote = () => {
-        redirectTo.viewNote({
-            noteId: record.id,
-        });
-    };
+        ), [record, searchQuery]);
 
     return (
         <div
-            class="p-2 cursor-pointer hover:bg-gray-700"
-            onClick={handleOpenNote}
+            class={`p-2 cursor-pointer hover:bg-gray-700 ${addClass}`}
+            onClick={onNoteClick}
         >
             <Icon name="note" /> <span class="text-lg">{record.title}</span>
             <div class="text-xs text-gray-400">

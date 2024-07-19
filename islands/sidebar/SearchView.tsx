@@ -5,6 +5,7 @@ import Button from "$components/Button.tsx";
 import { tagsToString } from "$frontend/tags.ts";
 import Icon from "$components/Icon.tsx";
 import { useSearch } from "$frontend/hooks/use-search.ts";
+import { redirectTo } from "$frontend/redirection-manager.ts";
 
 export default function SearchView() {
     const search = useSearch();
@@ -67,6 +68,11 @@ export default function SearchView() {
                                     <TreeItemView
                                         key={idx}
                                         record={i}
+                                        searchQuery={search.query.value}
+                                        onNoteClick={() =>
+                                            redirectTo.viewNote({
+                                                noteId: i.id,
+                                            })}
                                     />
                                 ))}
                             </div>

@@ -96,7 +96,7 @@ export default function InsertDialog({
                     canCancel={true}
                     onCancel={handleCancel}
                     props={{
-                        class: "w-2/3",
+                        class: "w-3/4",
                     }}
                 >
                     <div class="w-96 mb-2">
