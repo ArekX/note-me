@@ -1,6 +1,7 @@
 import {
     AppPermissions,
     CanManageFiles,
+    CanManagePeriodicTasks,
     CanManageSettings,
     CanManageTags,
     CanManageUsers,
@@ -21,6 +22,7 @@ export const roleDefinitions = {
             ...Object.values(CanManageSettings),
             ...Object.values(CanManageTags),
             ...Object.values(CanManageFiles),
+            ...Object.values(CanManagePeriodicTasks),
         ],
     },
     user: {
@@ -29,11 +31,12 @@ export const roleDefinitions = {
     },
 } satisfies RoleDefinitionMap;
 
-const settingsPermissions = [
+const settingsPermissions: AppPermissions[] = [
     CanManageUsers.List,
     CanManageSettings.Update,
     CanManageTags.List,
     CanManageFiles.AllFiles,
+    CanManagePeriodicTasks.View,
 ];
 
 export type Roles = keyof typeof roleDefinitions;

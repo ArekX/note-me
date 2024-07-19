@@ -2318,6 +2318,7 @@
     "https://esm.sh/@babel/helper-validator-identifier@7.22.20": "daace34e028130297fddf97f3ef6deb4b05ec3eb46f5c5cacd6eaa43d6323b0a",
     "https://esm.sh/@preact/signals@1.2.2": "95be2c5edcdbc7afd8a3f24a9c3852250c8cfbfa176392ea7270059e9596e3df",
     "https://esm.sh/preact@10.19.6": "281b115a9b79918c6b73382b4e818d6f9e48db9064b7fd4f75a45a4edee54145",
+    "https://esm.sh/preact@10.19.6/": "281b115a9b79918c6b73382b4e818d6f9e48db9064b7fd4f75a45a4edee54145",
     "https://esm.sh/preact@10.19.6/compat": "bb05c43973d0804e7f02e18c19852af51cb5096362c3634f5f974119845025e6",
     "https://esm.sh/preact@10.19.6/debug": "0e16b3e9f45372501b91ecf69b1bcaf2b2dad3ac470ce75113d957acbd5e277d",
     "https://esm.sh/preact@10.19.6/hooks": "3037d71a7794c70bacb2da5dd9520334c6a24b3a7a75a2eeec9f025f8dc549f1",

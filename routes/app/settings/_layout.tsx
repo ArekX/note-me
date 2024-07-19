@@ -3,6 +3,7 @@ import TabPanel, { TabLink } from "$components/TabPanel.tsx";
 import { AppState } from "$types";
 import {
     CanManageFiles,
+    CanManagePeriodicTasks,
     CanManageSettings,
 } from "$backend/rbac/permissions.ts";
 import { hasPermission } from "$backend/rbac/authorizer.ts";
@@ -16,6 +17,10 @@ export default function Layout(
         hasPermission(CanManageSettings.Update, state) && {
             name: "General",
             link: "/app/settings",
+        },
+        hasPermission(CanManagePeriodicTasks.View, state) && {
+            name: "Tasks",
+            link: "/app/settings/periodic-tasks",
         },
         hasPermission(CanManageUsers.List, state) && {
             name: "Users",

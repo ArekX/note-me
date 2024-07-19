@@ -64,3 +64,26 @@ export const getScheduledTasks = async (task_identifiers: string[]) => {
         .select(["task_identifier"])
         .execute()).map((task) => task.task_identifier);
 };
+
+export type PeriodicTaskRecord = Pick<
+    PeriodicTaskScheduleTable,
+    | "task_identifier"
+    | "next_run_at"
+    | "last_successful_run_at"
+    | "last_fail_reason"
+    | "last_fail_run_at"
+    | "is_last_run_successful"
+>;
+
+export const getAllPeriodicTasks = async (): Promise<PeriodicTaskRecord[]> => {
+    return await db.selectFrom("periodic_task_schedule")
+        .select([
+            "task_identifier",
+            "next_run_at",
+            "last_successful_run_at",
+            "last_fail_reason",
+            "last_fail_run_at",
+            "is_last_run_successful",
+        ])
+        .execute();
+};

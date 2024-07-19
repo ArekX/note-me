@@ -6,6 +6,7 @@ import { noteKindMap } from "$workers/websocket/api/notes/mod.ts";
 import { tagKindMap } from "$workers/websocket/api/tags/mod.ts";
 import { userKindMap } from "$workers/websocket/api/users/mod.ts";
 import { fileKindMap } from "./files/mod.ts";
+import { settingsKindMap } from "$workers/websocket/api/settings/mod.ts";
 
 export const registerApiHandlers = (service: WebsocketService) => {
     const { registerKindMap } = service;
@@ -17,4 +18,5 @@ export const registerApiHandlers = (service: WebsocketService) => {
     registerKindMap("tags", tagKindMap);
     registerKindMap("users", userKindMap);
     registerKindMap("files", fileKindMap);
+    registerKindMap("settings", settingsKindMap);
 };

@@ -26,6 +26,7 @@ import * as $app_profile_index from "./routes/app/profile/index.tsx";
 import * as $app_settings_layout from "./routes/app/settings/_layout.tsx";
 import * as $app_settings_files from "./routes/app/settings/files.tsx";
 import * as $app_settings_index from "./routes/app/settings/index.tsx";
+import * as $app_settings_periodic_tasks from "./routes/app/settings/periodic-tasks.tsx";
 import * as $app_settings_tags from "./routes/app/settings/tags.tsx";
 import * as $app_settings_users from "./routes/app/settings/users.tsx";
 import * as $file_identifier_ from "./routes/file/[identifier].tsx";
@@ -94,6 +95,7 @@ import * as $notifications_NotificationList from "./islands/notifications/Notifi
 import * as $notifications_notification_message_text from "./islands/notifications/notification-message-text.ts";
 import * as $notifications_views_NotificationSharedView from "./islands/notifications/views/NotificationSharedView.tsx";
 import * as $notifications_views_ReminderView from "./islands/notifications/views/ReminderView.tsx";
+import * as $periodic_tasks_PeriodicTaskList from "./islands/periodic-tasks/PeriodicTaskList.tsx";
 import * as $profile_UserProfile from "./islands/profile/UserProfile.tsx";
 import * as $sidebar_ListSwitcher from "./islands/sidebar/ListSwitcher.tsx";
 import * as $sidebar_LogoutButton from "./islands/sidebar/LogoutButton.tsx";
@@ -146,6 +148,8 @@ const manifest = {
         "./routes/app/settings/_layout.tsx": $app_settings_layout,
         "./routes/app/settings/files.tsx": $app_settings_files,
         "./routes/app/settings/index.tsx": $app_settings_index,
+        "./routes/app/settings/periodic-tasks.tsx":
+            $app_settings_periodic_tasks,
         "./routes/app/settings/tags.tsx": $app_settings_tags,
         "./routes/app/settings/users.tsx": $app_settings_users,
         "./routes/file/[identifier].tsx": $file_identifier_,
@@ -238,6 +242,8 @@ const manifest = {
             $notifications_views_NotificationSharedView,
         "./islands/notifications/views/ReminderView.tsx":
             $notifications_views_ReminderView,
+        "./islands/periodic-tasks/PeriodicTaskList.tsx":
+            $periodic_tasks_PeriodicTaskList,
         "./islands/profile/UserProfile.tsx": $profile_UserProfile,
         "./islands/sidebar/ListSwitcher.tsx": $sidebar_ListSwitcher,
         "./islands/sidebar/LogoutButton.tsx": $sidebar_LogoutButton,

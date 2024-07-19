@@ -20,7 +20,10 @@ export const timeAgo = (fromDate: number | Date) => {
     scale = Math.abs(scale);
 
     if (scale < 60) {
-        return isFuture ? "soon" : "just now";
+        const add = scale > 1 ? "s" : "";
+        return isFuture
+            ? `in ${Math.floor(scale)} second${add}`
+            : `${Math.floor(scale)} second${add} ago`;
     }
 
     for (const [scaleValue, scaleName, scaleMax] of timeAgoScale) {

@@ -22,8 +22,13 @@ export enum CanManageFiles {
     AllFiles = "canManageAllFiles",
 }
 
+export enum CanManagePeriodicTasks {
+    View = "canViewPeriodicTasks",
+}
+
 export type AppPermissions =
     | CanManageUsers
     | CanManageTags
     | CanManageSettings
-    | CanManageFiles;
+    | CanManageFiles
+    | CanManagePeriodicTasks;
