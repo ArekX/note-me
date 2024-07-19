@@ -84,22 +84,25 @@ export default function PeriodicTaskList() {
                     },
                     {
                         name: "Last run successful?",
-                        render: (record) => (
-                            <div
-                                class={record.is_last_run_successful
-                                    ? "text-green-800"
-                                    : "text-red-800"}
-                            >
-                                <Icon
-                                    name={record.last_successful_run_at
-                                        ? "check-circle"
-                                        : "times-circle"}
-                                />{" "}
-                                {record.last_successful_run_at
-                                    ? "Successful"
-                                    : "Failed"}
-                            </div>
-                        ),
+                        render: (record) =>
+                            record.last_successful_run_at
+                                ? (
+                                    <div
+                                        class={record.is_last_run_successful
+                                            ? "text-green-800"
+                                            : "text-red-800"}
+                                    >
+                                        <Icon
+                                            name={record.last_successful_run_at
+                                                ? "check-circle"
+                                                : "times-circle"}
+                                        />{" "}
+                                        {record.last_successful_run_at
+                                            ? "Successful"
+                                            : "Failed"}
+                                    </div>
+                                )
+                                : "No runs yet",
                     },
                     {
                         name: "Last successful run at",
