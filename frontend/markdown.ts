@@ -90,6 +90,7 @@ const parseImageTokens: TokenPipelineFn = (tokens: Tokens[]): Tokens[] => {
 
 const extensionLimits = {
     "note-list": 10,
+    "note-link": 20,
 } as const;
 
 const extensionRegex =
@@ -100,6 +101,7 @@ const parseExtensions: TokenPipelineFn = (tokens: Tokens[]): Tokens[] => {
 
     const extensionCounters: Record<keyof typeof extensionLimits, number> = {
         "note-list": 0,
+        "note-link": 0,
     };
 
     for (const token of tokens) {

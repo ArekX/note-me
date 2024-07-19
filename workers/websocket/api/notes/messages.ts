@@ -5,9 +5,9 @@ import {
     UpdateNoteRequest,
 } from "$schemas/notes.ts";
 import {
+    NoteDetailsOptions,
     NoteDetailsRecord,
     NoteRecord,
-    ViewNoteRecord,
 } from "$backend/repository/note-repository.ts";
 import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
 import {
@@ -46,19 +46,9 @@ export type CreateNoteResponse = NoteMessage<
     { record: NoteRecord; group_id: number | null }
 >;
 
-export type GetNoteMessage = NoteMessage<
-    "getNote",
-    { id: number }
->;
-
-export type GetNoteResponse = NoteMessage<
-    "getNoteResponse",
-    { record: ViewNoteRecord }
->;
-
 export type GetNoteDetailsMessage = NoteMessage<
     "getNoteDetails",
-    { id: number }
+    { id: number; options: NoteDetailsOptions }
 >;
 
 export type GetNoteDetailsResponse = NoteMessage<
@@ -233,7 +223,6 @@ export type NoteFrontendResponse =
     | GetNoteHistoryDataResponse
     | RevertNoteToHistoryResponse
     | DeleteHistoryRecordResponse
-    | GetNoteResponse
     | GetNoteDetailsResponse
     | GetNoteShareDataResponse
     | CreatePublicShareResponse
@@ -254,7 +243,6 @@ export type NoteFrontendMessage =
     | GetNoteHistoryDataMessage
     | RevertNoteToHistoryMessage
     | DeleteHistoryRecordMessage
-    | GetNoteMessage
     | GetNoteDetailsMessage
     | GetNoteShareDataMessage
     | CreatePublicShareMessage

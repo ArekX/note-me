@@ -64,6 +64,7 @@ import * as $notes_NoteTextArea from "./islands/notes/NoteTextArea.tsx";
 import * as $notes_NoteWindow from "./islands/notes/NoteWindow.tsx";
 import * as $notes_TagInput from "./islands/notes/TagInput.tsx";
 import * as $notes_ViewNote from "./islands/notes/ViewNote.tsx";
+import * as $notes_blocks_NoteLink from "./islands/notes/blocks/NoteLink.tsx";
 import * as $notes_blocks_NoteList from "./islands/notes/blocks/NoteList.tsx";
 import * as $notes_blocks_TableOfContents from "./islands/notes/blocks/TableOfContents.tsx";
 import * as $notes_helpers_markdown from "./islands/notes/helpers/markdown.ts";
@@ -186,6 +187,7 @@ const manifest = {
         "./islands/notes/NoteWindow.tsx": $notes_NoteWindow,
         "./islands/notes/TagInput.tsx": $notes_TagInput,
         "./islands/notes/ViewNote.tsx": $notes_ViewNote,
+        "./islands/notes/blocks/NoteLink.tsx": $notes_blocks_NoteLink,
         "./islands/notes/blocks/NoteList.tsx": $notes_blocks_NoteList,
         "./islands/notes/blocks/TableOfContents.tsx":
             $notes_blocks_TableOfContents,

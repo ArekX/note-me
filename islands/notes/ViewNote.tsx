@@ -13,7 +13,7 @@ import { useSearch } from "$frontend/hooks/use-search.ts";
 
 export interface ViewNoteProps {
     readonly?: boolean;
-    guestMode?: boolean;
+    shareMode?: "none" | "everyone" | "users";
     disableTagLinks?: boolean;
     record: ViewNoteRecord;
     author?: string;
@@ -23,7 +23,7 @@ export default function ViewNote(
     {
         readonly = false,
         record,
-        guestMode = false,
+        shareMode = "none",
         disableTagLinks,
         author,
     }: ViewNoteProps,
@@ -81,7 +81,7 @@ export default function ViewNote(
                 <div class="title w-10/12">
                     {recordData.value.title}
                 </div>
-                {!guestMode && (
+                {shareMode !== "everyone" && (
                     <div class="text-md ml-2 w-2/12 text-right">
                         {!readonly && (
                             <Button
@@ -127,7 +127,12 @@ export default function ViewNote(
                 author={author}
             />
             <div>
-                <Viewer text={recordData.value.note} />
+                <Viewer
+                    text={recordData.value.note}
+                    options={{
+                        isSharing: shareMode !== "none",
+                    }}
+                />
             </div>
             {recordData.value.id && (
                 <NoteWindow

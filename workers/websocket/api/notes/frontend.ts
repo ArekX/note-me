@@ -17,10 +17,8 @@ import {
     GetNoteDetailsResponse,
     GetNoteHistoryDataMessage,
     GetNoteHistoryDataResponse,
-    GetNoteMessage,
     GetNoteReminderDataMessage,
     GetNoteReminderDataResponse,
-    GetNoteResponse,
     GetNoteShareDataMessage,
     GetNoteShareDataResponse,
     NoteFrontendMessage,
@@ -43,7 +41,6 @@ import { CreateNoteMessage } from "$workers/websocket/api/notes/messages.ts";
 import {
     createNote,
     deleteNote,
-    getNote,
     getNoteDetails,
     getNoteInfo,
     noteExists,
@@ -140,25 +137,10 @@ const handleDeleteNote: ListenerFn<DeleteNoteMessage> = async (
     });
 };
 
-const handleGetNote: ListenerFn<GetNoteMessage> = async (
-    { message: { id }, sourceClient, respond },
-) => {
-    const record = await getNote(id, sourceClient!.userId);
-
-    if (!record) {
-        throw new Error("Note does not exist.");
-    }
-
-    respond<GetNoteResponse>({
-        type: "getNoteResponse",
-        record,
-    });
-};
-
 const handleGetNoteDetails: ListenerFn<GetNoteDetailsMessage> = async (
-    { message: { id }, sourceClient, respond },
+    { message: { id, options }, sourceClient, respond },
 ) => {
-    const record = await getNoteDetails(id, sourceClient!.userId);
+    const record = await getNoteDetails(id, sourceClient!.userId, options);
 
     if (!record) {
         throw new Error("Note does not exist.");
@@ -445,7 +427,6 @@ export const frontendMap: RegisterListenerMap<NoteFrontendMessage> = {
     createNote: handleCreateNote,
     updateNote: handleUpdateNote,
     deleteNote: handleDeleteNote,
-    getNote: handleGetNote,
     getNoteDetails: handleGetNoteDetails,
     findNoteHistory: handleFindNoteHistory,
     getNoteHistoryData: handleGetNoteHistoryData,

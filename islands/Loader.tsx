@@ -10,6 +10,25 @@ export type LoaderProps = {
     children?: ComponentChildren;
     displayType?: "inline" | "center-block";
     visible?: boolean;
+    size?: "sm" | "md" | "lg";
+};
+
+const sizeMap = {
+    sm: {
+        width: "16",
+        height: "16",
+        text: "text-xs",
+    },
+    md: {
+        width: "28",
+        height: "28",
+        text: "text-md",
+    },
+    lg: {
+        width: "36",
+        height: "36",
+        text: "text-lg",
+    },
 };
 
 export default function Loader(
@@ -18,8 +37,11 @@ export default function Loader(
         children = "Loading...",
         displayType = "inline",
         visible = true,
+        size = "md",
     }: LoaderProps,
 ) {
+    const { width, height, text } = sizeMap[size];
+
     return (
         visible
             ? (
@@ -35,8 +57,8 @@ export default function Loader(
                     >
                         <svg
                             class="animate-spin inline-block"
-                            width="28"
-                            height="28"
+                            width={width}
+                            height={height}
                             viewBox="0 0 135 135"
                             xmlns="http://www.w3.org/2000/svg"
                             fill={loaderColors[color]}
@@ -64,7 +86,7 @@ export default function Loader(
                         </svg>
                     </div>
                     <div
-                        class={`pl-2 ${
+                        class={`pl-2 ${text} ${
                             displayType == "inline"
                                 ? "inline-block"
                                 : "text-center"

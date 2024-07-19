@@ -6,8 +6,8 @@ import { useSignal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import {
-    GetNoteMessage,
-    GetNoteResponse,
+    GetNoteDetailsMessage,
+    GetNoteDetailsResponse,
 } from "$workers/websocket/api/notes/messages.ts";
 import NoteShare from "$islands/notes/windows/NoteShare.tsx";
 import Picker from "$components/Picker.tsx";
@@ -47,14 +47,20 @@ export default function NoteWindow({
     const { sendMessage } = useWebsocketService();
 
     const loadNoteText = async () => {
-        const data = await sendMessage<GetNoteMessage, GetNoteResponse>(
+        const data = await sendMessage<
+            GetNoteDetailsMessage,
+            GetNoteDetailsResponse
+        >(
             "notes",
-            "getNote",
+            "getNoteDetails",
             {
                 data: {
                     id: noteId,
+                    options: {
+                        include_note: true,
+                    },
                 },
-                expect: "getNoteResponse",
+                expect: "getNoteDetailsResponse",
             },
         );
 

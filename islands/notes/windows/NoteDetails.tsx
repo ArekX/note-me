@@ -44,6 +44,13 @@ export default function NoteDetails(
         >("notes", "getNoteDetails", {
             data: {
                 id: noteId,
+                options: {
+                    include_note: true,
+                    include_group: true,
+                    include_user: true,
+                    include_timestamp: true,
+                    include_title: true,
+                },
             },
             expect: "getNoteDetailsResponse",
         });
@@ -55,8 +62,9 @@ export default function NoteDetails(
         loadNoteData();
     }, [noteId]);
 
-    const { group_name, created_at, updated_at, user_name } = noteData.value ??
-        {};
+    const { group_name, created_at, updated_at, user_name, title } =
+        noteData.value ??
+            {};
     return (
         <Dialog visible={true} canCancel={true} onCancel={onClose}>
             {isNoteLoading.running
@@ -78,7 +86,7 @@ export default function NoteDetails(
                                     <p class="pt-2 pb-2">
                                         <strong>Note ID:</strong> {noteId}{" "}
                                         <br />
-
+                                        <strong>Title:</strong> {title} <br />
                                         {group_name && (
                                             <>
                                                 <strong>Group:</strong>{" "}

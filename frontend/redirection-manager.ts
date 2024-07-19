@@ -1,6 +1,6 @@
 import { runOnReady } from "$frontend/propagation-manager.ts";
 
-type PathResult = string | {
+export type PathResult = string | {
     url: string;
     partialUrl: string;
     fullRender: boolean;

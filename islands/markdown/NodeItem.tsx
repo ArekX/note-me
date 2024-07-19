@@ -5,6 +5,7 @@ import Heading from "$islands/markdown/nodes/Heading.tsx";
 import Extension from "$islands/markdown/nodes/Extension.tsx";
 import CodeBlock from "$islands/markdown/nodes/CodeBlock.tsx";
 import { JSX } from "preact";
+import { MarkdownOptions } from "$islands/markdown/Viewer.tsx";
 
 export interface NodeProps<T extends AstNode["type"]> {
     node: Extract<AstNode, { type: T }>;
@@ -15,11 +16,13 @@ export interface NodeProps<T extends AstNode["type"]> {
 interface NodeItemProps {
     node: AstNode;
     originalText: string;
+    options: MarkdownOptions;
 }
 
 export default function NodeItem({
     node,
     originalText,
+    options 
 }: NodeItemProps) {
     const items = "children" in node
         ? node.children.map((c, index) => (
@@ -27,6 +30,7 @@ export default function NodeItem({
                 key={index}
                 node={c}
                 originalText={originalText}
+                options={options}
             />
         ))
         : null;
@@ -99,7 +103,7 @@ export default function NodeItem({
         case "footnoteReference":
             return <sup>{items}</sup>;
         case "extension":
-            return <Extension node={node} originalText={originalText} />;
+            return <Extension node={node} originalText={originalText} options={options} />;
         case "codeBlock":
             return (
                 <CodeBlock node={node}>

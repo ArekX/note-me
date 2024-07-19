@@ -34,20 +34,21 @@ const TreeItemEditor = (
     }, [container.name]);
 
     const handleAccept = async (e: Event) => {
+        e.preventDefault();
+        e.stopPropagation();
         treeManager.setName(container, name.value);
         await treeManager.save(container);
         treeManager.setDisplayMode(container, "view");
-        e.stopPropagation();
     };
 
     const handleCancel = (e: Event) => {
+        e.preventDefault();
+        e.stopPropagation();
         if (container.id === null) {
             treeManager.deleteContainer(container);
         } else {
             treeManager.setDisplayMode(container, "view");
         }
-
-        e.stopPropagation();
     };
 
     return (

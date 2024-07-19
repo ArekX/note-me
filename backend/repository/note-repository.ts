@@ -132,24 +132,46 @@ export interface NoteDetailsRecord {
     updated_at: number;
     user_name: string;
     note: string;
+    title: string;
+}
+
+export interface NoteDetailsOptions {
+    include_group?: boolean;
+    include_timestamp?: boolean;
+    include_user?: boolean;
+    include_title?: boolean;
+    include_note?: boolean;
 }
 
 export const getNoteDetails = async (
     note_id: number,
     user_id: number,
+    options: NoteDetailsOptions = {},
 ): Promise<NoteDetailsRecord | null> => {
-    const result = await db.selectFrom("note")
+    return await db.selectFrom("note")
         .select([
-            sql<number>`\`group\`.id`.as("group_id"),
-            sql<string>`\`group\`.name`.as("group_name"),
-            "note.created_at",
-            "note.updated_at",
-            sql<string>`user.name`.as("user_name"),
-            "note.note",
+            options.include_group
+                ? sql<number>`\`group\`.id`.as("group_id")
+                : sql<number>`0`.as("group_id"),
+            options.include_group
+                ? sql<string>`\`group\`.name`.as("group_name")
+                : sql<string>`''`.as("group_name"),
+            options.include_timestamp
+                ? "note.created_at"
+                : sql<number>`0`.as("created_at"),
+            options.include_timestamp
+                ? "note.updated_at"
+                : sql<number>`0`.as("updated_at"),
+            options.include_user
+                ? sql<string>`user.name`.as("user_name")
+                : sql<string>`''`.as("user_name"),
+            options.include_title
+                ? "note.title"
+                : sql<string>`''`.as("note.title"),
+            options.include_note
+                ? "note.note"
+                : sql<string>`''`.as("note.note"),
         ])
-        .where("note.id", "=", note_id)
-        .where("note.user_id", "=", user_id)
-        .where("note.is_deleted", "=", false)
         .leftJoin(
             "group_note",
             (join) =>
@@ -158,10 +180,11 @@ export const getNoteDetails = async (
                     .on("group_note.user_id", "=", user_id),
         )
         .leftJoin("group", "group_note.group_id", "group.id")
-        .leftJoin("user", "note.user_id", "user.id")
-        .executeTakeFirst();
-
-    return result ?? null;
+        .innerJoin("user", "user.id", "note.user_id")
+        .where("note.id", "=", note_id)
+        .where("note.user_id", "=", user_id)
+        .where("note.is_deleted", "=", false)
+        .executeTakeFirst() ?? null;
 };
 
 export interface NoteInfoRecord {
