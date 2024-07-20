@@ -21,6 +21,11 @@ export async function up(db: Kysely<unknown>): Promise<void> {
             "text",
             (col) => col.notNull().defaultTo("{}"),
         )
+        .addColumn(
+            "note_encryption_key",
+            "text",
+            (col) => col.notNull(),
+        )
         .execute();
 
     await db.schema.createTable("note")
@@ -28,6 +33,11 @@ export async function up(db: Kysely<unknown>): Promise<void> {
         .addColumn("id", "integer", (col) => col.autoIncrement().primaryKey())
         .addColumn("title", "varchar(255)", (col) => col.notNull())
         .addColumn("note", "text", (col) => col.notNull())
+        .addColumn(
+            "is_encrypted",
+            "boolean",
+            (col) => col.notNull().defaultTo(false),
+        )
         .addColumn(
             "user_id",
             "integer",
@@ -105,6 +115,7 @@ export async function up(db: Kysely<unknown>): Promise<void> {
         .addColumn("title", "varchar(255)", (col) => col.notNull())
         .addColumn("tags", "text", (col) => col.notNull())
         .addColumn("note", "text", (col) => col.notNull())
+        .addColumn("is_encrypted", "boolean", (col) => col.notNull())
         .addColumn("created_at", "int8", (col) => col.notNull())
         .execute();
 

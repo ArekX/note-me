@@ -32,6 +32,7 @@ export const addHistory = async (data: AddHistoryData): Promise<void> => {
         note_id: noteData.id,
         note: noteData.note,
         title: noteData.title,
+        is_encrypted: noteData.is_encrypted,
         tags: noteData.tags.join(","),
     }).execute();
 };
@@ -72,6 +73,7 @@ export type NoteHistoryDataRecord = Pick<
     | "version"
     | "note"
     | "title"
+    | "is_encrypted"
     | "tags"
 >;
 
@@ -83,6 +85,7 @@ export const getHistoryRecordData = async (
         .select([
             "note_history.version",
             "note_history.note",
+            "note_history.is_encrypted",
             "note_history.title",
             "note_history.tags",
         ])

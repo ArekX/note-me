@@ -7,7 +7,7 @@ import Loader from "$islands/Loader.tsx";
 import { useEffect } from "preact/hooks";
 import { MenuItemActions } from "$islands/notes/MoreMenu.tsx";
 import { inputHandler } from "$frontend/methods.ts";
-import { addNoteRequestSchema } from "$schemas/notes.ts";
+import { AddNoteRequest, addNoteRequestSchema } from "$schemas/notes.ts";
 import ErrorDisplay from "$components/ErrorDisplay.tsx";
 import NoteWindow, { NoteWindowTypes } from "$islands/notes/NoteWindow.tsx";
 import NoteTextArea from "./NoteTextArea.tsx";
@@ -40,13 +40,6 @@ interface NoteEditorProps {
     note: NoteData;
 }
 
-interface NoteRequestData {
-    group_id: number | null;
-    tags: string[];
-    title: string;
-    text: string;
-}
-
 export default function NoteEditor({
     note,
 }: NoteEditorProps) {
@@ -61,7 +54,7 @@ export default function NoteEditor({
     const isPreviewMode = useSignal(false);
     const wasDataChanged = useSignal(false);
 
-    const [noteValidation, validateNote] = useValidation<NoteRequestData>({
+    const [noteValidation, validateNote] = useValidation<AddNoteRequest>({
         schema: addNoteRequestSchema,
     });
 
@@ -81,9 +74,10 @@ export default function NoteEditor({
     });
 
     const handleSave = isSaving.wrap(async () => {
-        const noteToSave: NoteRequestData = {
+        const noteToSave: AddNoteRequest = {
             group_id: groupId.value,
             tags: tags.value,
+            is_encrypted: false, // TODO: Implement encryption
             text: text.value,
             title: name.value,
         };

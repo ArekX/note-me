@@ -4,19 +4,19 @@ import { findHighlightedLines } from "$frontend/text-highlight.ts";
 import { useMemo } from "preact/hooks";
 import { timeAgo } from "$lib/time/time-ago.ts";
 
-interface TreeItemViewProps {
+interface NoteItemViewProps {
     record: NoteSearchRecord;
     searchQuery: string;
     addClass?: string;
     onNoteClick: () => void;
 }
 
-export default function TreeItemView({
+export default function NoteItemView({
     record,
     searchQuery,
     onNoteClick,
     addClass = "",
-}: TreeItemViewProps) {
+}: NoteItemViewProps) {
     const foundLines = useMemo(() =>
         findHighlightedLines(
             record.note,
@@ -30,16 +30,6 @@ export default function TreeItemView({
             onClick={onNoteClick}
         >
             <Icon name="note" /> <span class="text-lg">{record.title}</span>
-            <div class="text-xs text-gray-400">
-                {record.group_name && (
-                    <>
-                        <Icon name="folder" size="sm" /> {record.group_name}
-                        {" "}
-                    </>
-                )}
-                <Icon name="user" size="sm" /> {record.user_name}{"  "}
-                <Icon name="time-five" size="sm" /> {timeAgo(record.updated_at)}
-            </div>
             {foundLines.length > 0 && (
                 <div class="pt-2 pb-2">
                     {foundLines.map((line, index) => (
@@ -61,6 +51,16 @@ export default function TreeItemView({
                     ))}
                 </div>
             )}
+            <div class="text-xs text-gray-400">
+                {record.group_name && (
+                    <>
+                        <Icon name="folder" size="sm" /> {record.group_name}
+                        {" "}
+                    </>
+                )}
+                <Icon name="user" size="sm" /> {record.user_name}{"  "}
+                <Icon name="time-five" size="sm" /> {timeAgo(record.updated_at)}
+            </div>
         </div>
     );
 }

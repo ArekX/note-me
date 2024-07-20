@@ -111,6 +111,15 @@ export default function EditUserForm(
             return;
         }
 
+        if (user.value.id === currentUser.getUserId()) {
+            const updateData = getUpdateUserData();
+            await currentUser.updateProfile({
+                name: updateData.name,
+                timezone: updateData.timezone,
+            });
+            return;
+        }
+
         await sendMessage<UpdateUserMessage, UpdateUserResponse>(
             "users",
             "updateUser",
@@ -218,19 +227,33 @@ export default function EditUserForm(
                         path="role"
                     />
                 </div>
-                <div className="mb-4">
-                    <Input
-                        label="Set new password"
-                        type="password"
-                        tabIndex={5}
-                        value={user.value.new_password ?? ""}
-                        onInput={setProperty("new_password")}
-                    />
-                    <ErrorDisplay
-                        state={userValidation}
-                        path="password"
-                    />
-                </div>
+                {user.value.id === currentUser.getUserId()
+                    ? (
+                        <div class="py-2">
+                            Please change your password via profile page.
+                        </div>
+                    )
+                    : (
+                        <div className="mb-4">
+                            <Input
+                                label="Set new password"
+                                type="password"
+                                tabIndex={5}
+                                value={user.value.new_password ?? ""}
+                                onInput={setProperty("new_password")}
+                            />
+                            <ErrorDisplay
+                                state={userValidation}
+                                path="password"
+                            />
+                            <div>
+                                <strong>Important:</strong>
+                                If the user has any password protected notes,
+                                they will no longer be accessible if you change
+                                the password.
+                            </div>
+                        </div>
+                    )}
                 <Button type="submit" color="success">Save</Button>{" "}
                 <Button onClick={() => onDone("cancel")}>Cancel</Button>
             </form>

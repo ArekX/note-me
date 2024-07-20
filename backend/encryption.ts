@@ -1,10 +1,15 @@
+import { decodeBase64, encodeBase64 } from "$backend/deps.ts";
+
 const PBKDF2_ITERATIONS = 500000;
 
-const deriveCipherKey = async (password: string, salt: Uint8Array) => {
+const deriveCipherKey = async (
+    password: string | ArrayBuffer,
+    salt: Uint8Array,
+) => {
     const encoder = new TextEncoder();
     const passwordKey = await crypto.subtle.importKey(
         "raw",
-        encoder.encode(password),
+        typeof password === "string" ? encoder.encode(password) : password,
         "PBKDF2",
         false,
         ["deriveKey"],
@@ -58,16 +63,13 @@ function extractFromCipherData(
     return { salt, iv, encrypted };
 }
 
-export const encryptText = async (
-    text: string,
-    password: string,
+const encryptBinary = async (
+    data: Uint8Array | ArrayBuffer,
+    password: string | ArrayBuffer,
 ): Promise<Uint8Array> => {
     const salt = crypto.getRandomValues(new Uint8Array(16));
     const iv = crypto.getRandomValues(new Uint8Array(12));
     const key = await deriveCipherKey(password, salt);
-
-    const encoder = new TextEncoder();
-    const data = encoder.encode(text);
 
     const encrypted = await crypto.subtle.encrypt(
         {
@@ -81,10 +83,10 @@ export const encryptText = async (
     return combineIntoCipherData(salt, iv, new Uint8Array(encrypted));
 };
 
-export const decryptText = async (
+const decryptBinary = async (
     cipherData: Uint8Array,
-    password: string,
-): Promise<string> => {
+    password: string | ArrayBuffer,
+): Promise<ArrayBuffer> => {
     const { encrypted, iv, salt } = extractFromCipherData(cipherData);
 
     const key = await deriveCipherKey(password, salt);
@@ -98,6 +100,59 @@ export const decryptText = async (
         encrypted,
     );
 
-    const decoder = new TextDecoder();
-    return decoder.decode(decrypted);
+    return decrypted;
+};
+export const generateNoteEncryptionKey = async (
+    password: string,
+): Promise<string> => {
+    const key = crypto.getRandomValues(new Uint8Array(64));
+
+    const encryptedKey = await encryptBinary(key, password);
+
+    return encodeBase64(encryptedKey);
+};
+
+export const reEncryptNoteKey = async (
+    oldPassword: string,
+    newPassword: string,
+    noteKeyBase64: string,
+): Promise<string> => {
+    const key = await decryptBinary(decodeBase64(noteKeyBase64), oldPassword);
+    const encryptedKey = await encryptBinary(key, newPassword);
+    return encodeBase64(encryptedKey);
+};
+
+export const encryptNote = async (
+    note: string,
+    noteKeyBase64: string,
+    password: string,
+): Promise<string> => {
+    const encryptionKey = await decryptBinary(
+        decodeBase64(noteKeyBase64),
+        password,
+    );
+
+    const encrypted = await encryptBinary(
+        new TextEncoder().encode(note),
+        encryptionKey,
+    );
+    return encodeBase64(encrypted);
+};
+
+export const decryptNote = async (
+    encryptedNoteBase64: string,
+    noteKeyBase64: string,
+    password: string,
+): Promise<string> => {
+    const encryptionKey = await decryptBinary(
+        decodeBase64(noteKeyBase64),
+        password,
+    );
+
+    const decrypted = await decryptBinary(
+        decodeBase64(encryptedNoteBase64),
+        encryptionKey,
+    );
+
+    return new TextDecoder().decode(decrypted);
 };

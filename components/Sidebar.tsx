@@ -5,6 +5,7 @@ import Icon from "$components/Icon.tsx";
 import SideBarPanel from "$islands/sidebar/SideBarPanel.tsx";
 import LogoutButton from "$islands/sidebar/LogoutButton.tsx";
 import { getCurrentMonthWallpaper } from "$frontend/wallpaper.ts";
+import EncryptionLockIcon from "$islands/encryption/EncryptionLockButton.tsx";
 
 export interface SidebarProps {
     showSettings: boolean;
@@ -52,6 +53,7 @@ export default function Sidebar(
                         >
                             <Icon name="user" />
                         </a>
+                        <EncryptionLockIcon />
                         <LogoutButton />
                     </div>
                 </div>

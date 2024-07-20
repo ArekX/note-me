@@ -19,6 +19,7 @@ interface InputProps {
     tabIndex?: number;
     disabled?: boolean;
     onInput?: (value: string) => void;
+    onKeydown?: (e: KeyboardEvent) => void;
     placeholder?: string;
 }
 
@@ -31,6 +32,7 @@ export default function Input(
         value,
         min,
         onInput,
+        onKeydown,
         tabIndex,
         labelColor = "white",
         placeholder,
@@ -68,6 +70,7 @@ export default function Input(
                         !disabled &&
                         onInput?.((e.target as HTMLInputElement).value)
                     : undefined}
+                onKeyDown={IS_BROWSER ? onKeydown : undefined}
             />
         </div>
     );

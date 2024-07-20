@@ -92,6 +92,7 @@ const handleCreateNote: ListenerFn<CreateNoteMessage> = async (
         const record = await createNote({
             title: data.title,
             note: data.text,
+            is_encrypted: data.is_encrypted,
             user_id: sourceClient!.userId,
         });
 
@@ -222,6 +223,7 @@ const handleRevertNoteToHistory: ListenerFn<RevertNoteToHistoryMessage> =
             note_id,
             title: data.title,
             note: data.note,
+            is_encrypted: data.is_encrypted,
             tags: data.tags ? data.tags.split(",") : [],
         });
     };

@@ -9,6 +9,7 @@ export interface UserTable {
     role: Roles;
     timezone: string;
     onboarding_state?: string;
+    note_encryption_key: string;
     created_at: number;
     updated_at: number;
     is_deleted?: boolean;
@@ -18,6 +19,7 @@ export interface NoteTable {
     id: Generated<number>;
     title: string;
     note: string;
+    is_encrypted: boolean;
     user_id: number;
     created_at: number;
     updated_at: number;
@@ -67,6 +69,7 @@ export interface NoteShareLinkTable {
 export interface NoteHistoryTable {
     id: Generated<number>;
     note_id: number;
+    is_encrypted: boolean;
     note: string;
     title: string;
     tags: string;

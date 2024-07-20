@@ -6,6 +6,10 @@ import { Roles } from "$backend/rbac/role-definitions.ts";
 import { applyFilters } from "$lib/kysely-sqlite-dialect/filters.ts";
 import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
 import { pageResults } from "$lib/kysely-sqlite-dialect/pagination.ts";
+import {
+    generateNoteEncryptionKey,
+    reEncryptNoteKey,
+} from "$backend/encryption.ts";
 
 export type UserId = { id: number };
 
@@ -129,6 +133,7 @@ export const createUserRecord = async (
         role: user.role,
         timezone: user.timezone,
         password: bcrypt.hashSync(user.password),
+        note_encryption_key: await generateNoteEncryptionKey(user.password),
         created_at: getCurrentUnixTimestamp(),
         updated_at: getCurrentUnixTimestamp(),
     };
@@ -165,6 +170,7 @@ export const updateUserRecord = async (
             | "role"
             | "timezone"
             | "updated_at"
+            | "note_encryption_key"
             | "is_deleted"
         >
     > = {
@@ -177,6 +183,9 @@ export const updateUserRecord = async (
 
     if (user.new_password) {
         userRecord.password = bcrypt.hashSync(user.new_password);
+        userRecord.note_encryption_key = await generateNoteEncryptionKey(
+            user.new_password,
+        );
     }
 
     const result = await db.updateTable("user")
@@ -270,7 +279,14 @@ export const updateUserProfile = async (
     data: UserProfileData,
 ): Promise<boolean> => {
     const toUpdate: Partial<
-        Pick<UserTable, "name" | "timezone" | "updated_at" | "password">
+        Pick<
+            UserTable,
+            | "name"
+            | "timezone"
+            | "updated_at"
+            | "password"
+            | "note_encryption_key"
+        >
     > = {
         name: data.name,
         timezone: data.timezone,
@@ -283,6 +299,17 @@ export const updateUserProfile = async (
         }
 
         toUpdate.password = bcrypt.hashSync(data.new_password);
+
+        const { note_encryption_key } = (await db.selectFrom("user")
+            .select(["note_encryption_key"])
+            .where("id", "=", profile_user_id)
+            .executeTakeFirst())!;
+
+        toUpdate.note_encryption_key = await reEncryptNoteKey(
+            data.old_password,
+            data.new_password,
+            note_encryption_key,
+        );
     }
 
     const result = await db.updateTable("user")

@@ -53,6 +53,7 @@ export const searchNotes = async (
             "note.id",
             "title",
             "note",
+            "is_encrypted",
             sql<string>`\`group\`.name`.as("group_name"),
             "note.updated_at",
             sql<string>`user.name`.as("user_name"),
@@ -83,7 +84,10 @@ export const searchNotes = async (
                 if (filters.query.length > 0) {
                     return e.or([
                         e("note.title", "like", `%${filters.query}%`),
-                        e("note.note", "like", `%${filters.query}%`),
+                        e.and([
+                            e("note.note", "like", `%${filters.query}%`),
+                            e("note.is_encrypted", "=", false),
+                        ]),
                     ]);
                 }
 

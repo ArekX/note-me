@@ -17,7 +17,7 @@ import { NoteSearchRecord } from "$backend/repository/note-search-repository.ts"
 import LoadMoreWrapper from "$islands/LoadMoreWrapper.tsx";
 import Loader from "$islands/Loader.tsx";
 import { useEffect } from "preact/hooks";
-import TreeItemView from "$islands/sidebar/search/TreeItemView.tsx";
+import NoteItemView from "../../sidebar/search/NoteItemView.tsx";
 
 const Component = ({
     onCancel,
@@ -105,7 +105,7 @@ const Component = ({
                         onLoadMore={() => findNotes()}
                     >
                         {results.value.map((i) => (
-                            <TreeItemView
+                            <NoteItemView
                                 record={i}
                                 addClass={selectedNoteId.value === i.id
                                     ? "bg-gray-600"

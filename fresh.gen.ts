@@ -45,6 +45,8 @@ import * as $ToastMessages from "./islands/ToastMessages.tsx";
 import * as $UserPicker from "./islands/UserPicker.tsx";
 import * as $dashboard_Dashboard from "./islands/dashboard/Dashboard.tsx";
 import * as $dashboard_RecentlyOpenedNotes from "./islands/dashboard/RecentlyOpenedNotes.tsx";
+import * as $encryption_EncryptionLockButton from "./islands/encryption/EncryptionLockButton.tsx";
+import * as $encryption_EncryptionLockWindow from "./islands/encryption/EncryptionLockWindow.tsx";
 import * as $files_FileDropWrapper from "./islands/files/FileDropWrapper.tsx";
 import * as $files_FileItem from "./islands/files/FileItem.tsx";
 import * as $files_FilePicker from "./islands/files/FilePicker.tsx";
@@ -108,7 +110,7 @@ import * as $sidebar_SearchView from "./islands/sidebar/SearchView.tsx";
 import * as $sidebar_SharedNotesList from "./islands/sidebar/SharedNotesList.tsx";
 import * as $sidebar_SideBarPanel from "./islands/sidebar/SideBarPanel.tsx";
 import * as $sidebar_search_AdvancedSearch from "./islands/sidebar/search/AdvancedSearch.tsx";
-import * as $sidebar_search_TreeItemView from "./islands/sidebar/search/TreeItemView.tsx";
+import * as $sidebar_search_NoteItemView from "./islands/sidebar/search/NoteItemView.tsx";
 import * as $tags_EditTagForm from "./islands/tags/EditTagForm.tsx";
 import * as $tags_TagsList from "./islands/tags/TagsList.tsx";
 import * as $tree_DeleteGroupProgressDialog from "./islands/tree/DeleteGroupProgressDialog.tsx";
@@ -176,6 +178,10 @@ const manifest = {
         "./islands/dashboard/Dashboard.tsx": $dashboard_Dashboard,
         "./islands/dashboard/RecentlyOpenedNotes.tsx":
             $dashboard_RecentlyOpenedNotes,
+        "./islands/encryption/EncryptionLockButton.tsx":
+            $encryption_EncryptionLockButton,
+        "./islands/encryption/EncryptionLockWindow.tsx":
+            $encryption_EncryptionLockWindow,
         "./islands/files/FileDropWrapper.tsx": $files_FileDropWrapper,
         "./islands/files/FileItem.tsx": $files_FileItem,
         "./islands/files/FilePicker.tsx": $files_FilePicker,
@@ -263,8 +269,8 @@ const manifest = {
         "./islands/sidebar/SideBarPanel.tsx": $sidebar_SideBarPanel,
         "./islands/sidebar/search/AdvancedSearch.tsx":
             $sidebar_search_AdvancedSearch,
-        "./islands/sidebar/search/TreeItemView.tsx":
-            $sidebar_search_TreeItemView,
+        "./islands/sidebar/search/NoteItemView.tsx":
+            $sidebar_search_NoteItemView,
         "./islands/tags/EditTagForm.tsx": $tags_EditTagForm,
         "./islands/tags/TagsList.tsx": $tags_TagsList,
         "./islands/tree/DeleteGroupProgressDialog.tsx":

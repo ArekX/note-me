@@ -1,6 +1,6 @@
 import Loader from "$islands/Loader.tsx";
 import LoadMoreWrapper from "$islands/LoadMoreWrapper.tsx";
-import TreeItemView from "$islands/sidebar/search/TreeItemView.tsx";
+import NoteItemView from "./search/NoteItemView.tsx";
 import Button from "$components/Button.tsx";
 import { tagsToString } from "$frontend/tags.ts";
 import Icon from "$components/Icon.tsx";
@@ -65,7 +65,7 @@ export default function SearchView() {
                         >
                             <div>
                                 {search.results.value.map((i, idx) => (
-                                    <TreeItemView
+                                    <NoteItemView
                                         key={idx}
                                         record={i}
                                         searchQuery={search.query.value}

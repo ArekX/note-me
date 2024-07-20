@@ -104,7 +104,13 @@ export type RevertNoteToHistoryMessage = NoteMessage<
 
 export type RevertNoteToHistoryResponse = NoteMessage<
     "revertNoteToHistoryResponse",
-    { note_id: number; title: string; note: string; tags: string[] }
+    {
+        note_id: number;
+        is_encrypted: boolean;
+        title: string;
+        note: string;
+        tags: string[];
+    }
 >;
 
 export type DeleteHistoryRecordMessage = NoteMessage<

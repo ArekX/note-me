@@ -76,6 +76,7 @@ export interface ViewNoteRecord {
     id: number;
     title: string;
     note: string;
+    is_encrypted: boolean;
     group_id: number | null;
     group_name: string | null;
     tags: string[];
@@ -98,6 +99,7 @@ export const getNote = async (
             "note.id",
             "title",
             "note",
+            "is_encrypted",
             sql<number>`\`group\`.id`.as("group_id"),
             sql<string>`\`group\`.name`.as("group_name"),
             getNoteTagsSql().as("tags"),
@@ -188,6 +190,7 @@ export const getNoteDetails = async (
             options.include_note
                 ? "note.note"
                 : sql<string>`''`.as("note.note"),
+            "note.is_encrypted",
         ])
         .leftJoin(
             "group_note",

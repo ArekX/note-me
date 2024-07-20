@@ -26,6 +26,7 @@ export interface PublicSharedNote {
     id: number;
     title: string;
     note: string;
+    is_encrypted: boolean;
     tags: string[];
     updated_at: number;
     user_name: string;
@@ -48,6 +49,7 @@ export const getPublicShareNote = async (
             "note.id",
             "note.title",
             "note.note",
+            "note.is_encrypted",
             "note.updated_at",
             getNoteTagsSql().as("tags"),
             sql<string>`user.name`.as("user_name"),
@@ -75,6 +77,7 @@ export const getUserShareNote = async (
             "note.id",
             "note.title",
             "note.note",
+            "note.is_encrypted",
             "note.updated_at",
             getNoteTagsSql().as("tags"),
             sql<string>`user.name`.as("user_name"),
