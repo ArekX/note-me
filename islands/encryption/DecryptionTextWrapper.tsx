@@ -86,11 +86,15 @@ export default function EncryptionNoteWrapper({
                         {decryptionFailReason.value
                             ? (
                                 <div>
+                                    <div class="text-2xl font-semibold py-2">
+                                        Could not unlock note
+                                    </div>
+
                                     Protected notes cannot be viewed or edited
                                     without entering the password.
 
-                                    <div class="py-2">
-                                        Decryption failure reason:{" "}
+                                    <div class="py-2 font-semibold text-lg">
+                                        Fail reason:{" "}
                                         {decryptionFailReason.value}
                                     </div>
 
