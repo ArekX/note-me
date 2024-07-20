@@ -15,6 +15,8 @@ import {
     UpdateUserMessage,
     UpdateUserResponse,
     UserFrontendMessage,
+    VerifyOwnPasswordMessage,
+    VerifyOwnPasswordResponse,
 } from "./messages.ts";
 import { CreateUserMessage } from "$workers/websocket/api/users/messages.ts";
 import {
@@ -30,6 +32,7 @@ import {
     updateUserProfile,
     updateUserRecord,
     UserId,
+    validateUserPassword,
 } from "$backend/repository/user-repository.ts";
 import {
     destroySession,
@@ -170,6 +173,20 @@ const handleUpdateOnboarding: ListenerFn<UpdateOnboardingStateMessage> = async (
     });
 };
 
+const handleVerifyOwnPassword: ListenerFn<VerifyOwnPasswordMessage> = async (
+    { message: { password }, sourceClient, respond },
+) => {
+    const verified = await validateUserPassword(
+        sourceClient?.userId!,
+        password,
+    );
+
+    respond<VerifyOwnPasswordResponse>({
+        type: "verifyOwnPasswordResponse",
+        verified,
+    });
+};
+
 export const frontendMap: RegisterListenerMap<UserFrontendMessage> = {
     createUser: handleCreateUser,
     updateUser: handleUpdateUser,
@@ -178,4 +195,5 @@ export const frontendMap: RegisterListenerMap<UserFrontendMessage> = {
     findPickUsers: handleFindPickUsers,
     updateProfile: handleUpdateProfile,
     updateOnboarding: handleUpdateOnboarding,
+    verifyOwnPassword: handleVerifyOwnPassword,
 };

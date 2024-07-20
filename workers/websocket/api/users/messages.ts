@@ -91,6 +91,16 @@ export type UpdateOnboardingStateResponse = UserMessage<
     { onboarding_state: UserOnboardingState }
 >;
 
+export type VerifyOwnPasswordMessage = UserMessage<
+    "verifyOwnPassword",
+    { password: string }
+>;
+
+export type VerifyOwnPasswordResponse = UserMessage<
+    "verifyOwnPasswordResponse",
+    { verified: boolean }
+>;
+
 export type UserFrontendResponse =
     | CreateUserResponse
     | UpdateUserResponse
@@ -98,7 +108,8 @@ export type UserFrontendResponse =
     | FindUsersResponse
     | UpdateProfileResponse
     | FindPickUsersResponse
-    | UpdateOnboardingStateResponse;
+    | UpdateOnboardingStateResponse
+    | VerifyOwnPasswordResponse;
 
 export type UserFrontendMessage =
     | CreateUserMessage
@@ -107,4 +118,5 @@ export type UserFrontendMessage =
     | FindUsersMessage
     | UpdateProfileMessage
     | FindPickUsersMessage
-    | UpdateOnboardingStateMessage;
+    | UpdateOnboardingStateMessage
+    | VerifyOwnPasswordMessage;
