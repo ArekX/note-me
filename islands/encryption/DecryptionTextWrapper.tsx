@@ -2,7 +2,10 @@ import { ComponentChildren } from "preact";
 import { useEncryptionLock } from "$frontend/hooks/use-encryption-lock.ts";
 import { useSignal } from "@preact/signals";
 import { useLoader } from "$frontend/hooks/use-loader.ts";
-import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
+import {
+    SystemErrorMessage,
+    useWebsocketService,
+} from "$frontend/hooks/use-websocket-service.ts";
 import {
     DecryptTextMessage,
     DecryptTextResponse,
@@ -25,18 +28,23 @@ export default function EncryptionNoteWrapper({
     children,
 }: EncryptionNoteWrapperProps) {
     const encryptionLock = useEncryptionLock();
-    const decryptionFailed = useSignal(false);
+    const decryptionFailReason = useSignal<string | null>(null);
     const decryptedText = useSignal(!isEncrypted ? encryptedText : "");
     const decryptionLoader = useLoader(isEncrypted);
 
     const { sendMessage } = useWebsocketService();
 
     const decryptNoteText = decryptionLoader.wrap(async () => {
-        decryptionFailed.value = false;
+        decryptionFailReason.value = null;
         decryptedText.value = "";
+        let encryptionPassword;
         try {
-            const encryptionPassword = await encryptionLock.requestPassword();
-
+            encryptionPassword = await encryptionLock.requestPassword();
+        } catch {
+            decryptionFailReason.value = "Password request canceled.";
+            return;
+        }
+        try {
             const response = await sendMessage<
                 DecryptTextMessage,
                 DecryptTextResponse
@@ -50,8 +58,10 @@ export default function EncryptionNoteWrapper({
 
             decryptedText.value = response.text;
             onDecrypt(response.text);
-        } catch {
-            decryptionFailed.value = true;
+        } catch (e) {
+            const error = e as SystemErrorMessage;
+            decryptionFailReason.value =
+                `Failed to decrypt: ${error.data.message}`;
         }
     });
 
@@ -73,18 +83,23 @@ export default function EncryptionNoteWrapper({
                 )
                 : (
                     <>
-                        {decryptionFailed.value
+                        {decryptionFailReason.value
                             ? (
                                 <div>
                                     Protected notes cannot be viewed or edited
                                     without entering the password.
 
                                     <div class="py-2">
+                                        Decryption failure reason:{" "}
+                                        {decryptionFailReason.value}
+                                    </div>
+
+                                    <div class="py-2">
                                         <Button
-                                            color="primary"
+                                            color="success"
                                             onClick={decryptNoteText}
                                         >
-                                            Unlock
+                                            Retry
                                         </Button>
                                     </div>
                                 </div>
