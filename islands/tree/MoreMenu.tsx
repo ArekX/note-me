@@ -61,7 +61,7 @@ export default function MoreMenu(
         {
             name: "Details",
             icon: "detail",
-            types: ["note"],
+            types: ["note", "group"],
             action: "details",
         },
         {

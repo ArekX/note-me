@@ -1,7 +1,7 @@
 import Dialog from "$islands/Dialog.tsx";
 import Button from "$components/Button.tsx";
 import { useSignal } from "@preact/signals";
-import GroupPicker from "$islands/GroupPicker.tsx";
+import GroupPicker from "../../groups/GroupPicker.tsx";
 import Checkbox from "$islands/Checkbox.tsx";
 import { TreeRecord } from "$backend/repository/tree-list.repository.ts";
 import Input from "$components/Input.tsx";

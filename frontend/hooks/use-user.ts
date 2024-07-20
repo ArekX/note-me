@@ -1,6 +1,17 @@
 import { signal } from "@preact/signals";
-import { UserRecord } from "$backend/repository/user-repository.ts";
+import {
+    UserOnboardingState,
+    UserProfileData,
+    UserRecord,
+} from "$backend/repository/user-repository.ts";
 import { AppPermissions } from "$backend/rbac/permissions.ts";
+import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
+import {
+    UpdateOnboardingStateMessage,
+    UpdateProfileMessage,
+    UpdateProfileResponse,
+    UserFrontendResponse,
+} from "$workers/websocket/api/users/messages.ts";
 
 export type FrontendUserData =
     & Pick<
@@ -10,6 +21,7 @@ export type FrontendUserData =
     & {
         permissions: AppPermissions[];
         csrfToken: string;
+        onboardingState: UserOnboardingState;
     };
 
 export const userData = signal<FrontendUserData | null>(null);
@@ -17,13 +29,93 @@ export const userData = signal<FrontendUserData | null>(null);
 export const setupUserData = (data: FrontendUserData) => userData.value = data;
 
 export const useUser = () => {
+    const { dispatchMessage, sendMessage } = useWebsocketService<
+        UserFrontendResponse
+    >({
+        eventMap: {
+            users: {
+                updateProfileResponse: (response) => {
+                    if (!userData.value) {
+                        return;
+                    }
+
+                    userData.value = {
+                        ...userData.value,
+                        name: response.data.name,
+                        timezone: response.data.timezone,
+                    };
+                },
+                updateOnboardingResponse: (response) => {
+                    if (!userData.value) {
+                        return;
+                    }
+
+                    userData.value = {
+                        ...userData.value,
+                        onboardingState: response.onboarding_state,
+                    };
+                },
+            },
+        },
+    });
+
     const can = (action: AppPermissions): boolean =>
         userData.value?.permissions?.includes(action) ?? false;
 
     const getUserId = (): number | null => userData.value?.id ?? null;
 
+    const getName = (): string => userData.value?.name ?? "";
+
+    const getTimezone = (): string => userData.value?.timezone ?? "";
+
+    const getOnboardingState = (): UserOnboardingState =>
+        userData.value?.onboardingState ?? {};
+
+    const updateOnboardingState = (
+        state: Partial<UserOnboardingState>,
+    ) => {
+        if (!userData.value) {
+            return;
+        }
+
+        const onboardingState = {
+            ...userData.value.onboardingState,
+            ...state,
+        };
+
+        dispatchMessage<UpdateOnboardingStateMessage>(
+            "users",
+            "updateOnboarding",
+            {
+                onboarding_state: onboardingState,
+            },
+        );
+    };
+
+    const updateProfile = async (data: UserProfileData) => {
+        if (!userData.value) {
+            return;
+        }
+
+        await sendMessage<UpdateProfileMessage, UpdateProfileResponse>(
+            "users",
+            "updateProfile",
+            {
+                data: {
+                    data,
+                },
+                expect: "updateProfileResponse",
+            },
+        );
+    };
+
     return {
         can,
         getUserId,
+        getName,
+        getTimezone,
+        getOnboardingState,
+        updateOnboardingState,
+        updateProfile,
     };
 };

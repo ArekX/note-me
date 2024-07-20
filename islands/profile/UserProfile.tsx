@@ -4,35 +4,26 @@ import Input from "$components/Input.tsx";
 import Button from "$components/Button.tsx";
 import DropdownList from "$components/DropdownList.tsx";
 import { supportedTimezoneList } from "$lib/time/time-zone.ts";
-import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
-import {
-    UpdateProfileMessage,
-    UpdateProfileResponse,
-} from "$workers/websocket/api/users/messages.ts";
+import { useUser } from "$frontend/hooks/use-user.ts";
+import { addMessage } from "$frontend/toast-message.ts";
 
-interface UserProfileProps {
-    initialProfileData: EditUserProfile;
-}
-
-export default function UserProfile({ initialProfileData }: UserProfileProps) {
+export default function UserProfile() {
+    const user = useUser();
     const userData = useSignal<EditUserProfile>({
-        ...initialProfileData,
+        name: user.getName(),
+        timezone: user.getTimezone(),
+        old_password: "",
+        new_password: "",
+        confirm_password: "",
     });
-
-    const { sendMessage } = useWebsocketService();
 
     const handleSubmit = async (event: Event) => {
         event.preventDefault();
-        await sendMessage<UpdateProfileMessage, UpdateProfileResponse>(
-            "users",
-            "updateProfile",
-            {
-                data: {
-                    data: userData.value,
-                },
-                expect: "updateProfileResponse",
-            },
-        );
+        await user.updateProfile(userData.value);
+        addMessage({
+            type: "success",
+            text: "Profile updated successfully.",
+        });
     };
 
     const handlePropertyChange =

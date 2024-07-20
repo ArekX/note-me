@@ -2,7 +2,7 @@ import {
     InsertComponent,
     InsertComponentProps,
 } from "$islands/notes/InsertDialog.tsx";
-import GroupPicker from "$islands/GroupPicker.tsx";
+import GroupPicker from "../../groups/GroupPicker.tsx";
 import Button from "$components/Button.tsx";
 import Icon from "$components/Icon.tsx";
 import { TreeRecord } from "$backend/repository/tree-list.repository.ts";

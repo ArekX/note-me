@@ -12,7 +12,7 @@ import {
 import NoteShare from "$islands/notes/windows/NoteShare.tsx";
 import Picker from "$components/Picker.tsx";
 import NoteReminder from "$islands/notes/windows/NoteReminder.tsx";
-import MoveGroupDialog from "$islands/MoveGroupDialog.tsx";
+import MoveGroupDialog from "../groups/MoveGroupDialog.tsx";
 
 export type NoteWindowTypes =
     | "details"

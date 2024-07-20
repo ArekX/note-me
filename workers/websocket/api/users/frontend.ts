@@ -8,6 +8,8 @@ import {
     FindPickUsersResponse,
     FindUsersMessage,
     FindUsersResponse,
+    UpdateOnboardingStateMessage,
+    UpdateOnboardingStateResponse,
     UpdateProfileMessage,
     UpdateProfileResponse,
     UpdateUserMessage,
@@ -23,6 +25,7 @@ import {
     findUsers,
     getUserById,
     getUserByUsername,
+    updateOnboardingState,
     UpdateUserData,
     updateUserProfile,
     updateUserRecord,
@@ -143,6 +146,30 @@ const handleFindPickUsers: ListenerFn<FindPickUsersMessage> = async (
     });
 };
 
+const handleUpdateOnboarding: ListenerFn<UpdateOnboardingStateMessage> = async (
+    { message: { onboarding_state }, sourceClient, respond },
+) => {
+    const result = await updateOnboardingState(
+        sourceClient?.userId!,
+        onboarding_state,
+    );
+
+    if (result) {
+        const session = await loadSessionStateByUserId(sourceClient?.userId!);
+
+        if (session) {
+            await session.patch({
+                user: await getUserById(sourceClient?.userId!),
+            });
+        }
+    }
+
+    respond<UpdateOnboardingStateResponse>({
+        type: "updateOnboardingResponse",
+        onboarding_state,
+    });
+};
+
 export const frontendMap: RegisterListenerMap<UserFrontendMessage> = {
     createUser: handleCreateUser,
     updateUser: handleUpdateUser,
@@ -150,4 +177,5 @@ export const frontendMap: RegisterListenerMap<UserFrontendMessage> = {
     findUsers: handleFindUsers,
     findPickUsers: handleFindPickUsers,
     updateProfile: handleUpdateProfile,
+    updateOnboarding: handleUpdateOnboarding,
 };

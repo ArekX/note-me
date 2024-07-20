@@ -6,6 +6,7 @@ import {
     FindUserFilters,
     PickUserRecord,
     UserId,
+    UserOnboardingState,
     UserProfileData,
     UserRecord,
 } from "$backend/repository/user-repository.ts";
@@ -80,13 +81,24 @@ export type FindPickUsersResponse = UserMessage<
     }
 >;
 
+export type UpdateOnboardingStateMessage = UserMessage<
+    "updateOnboarding",
+    { onboarding_state: UserOnboardingState }
+>;
+
+export type UpdateOnboardingStateResponse = UserMessage<
+    "updateOnboardingResponse",
+    { onboarding_state: UserOnboardingState }
+>;
+
 export type UserFrontendResponse =
     | CreateUserResponse
     | UpdateUserResponse
     | DeleteUserResponse
     | FindUsersResponse
     | UpdateProfileResponse
-    | FindPickUsersResponse;
+    | FindPickUsersResponse
+    | UpdateOnboardingStateResponse;
 
 export type UserFrontendMessage =
     | CreateUserMessage
@@ -94,4 +106,5 @@ export type UserFrontendMessage =
     | DeleteUserMessage
     | FindUsersMessage
     | UpdateProfileMessage
-    | FindPickUsersMessage;
+    | FindPickUsersMessage
+    | UpdateOnboardingStateMessage;

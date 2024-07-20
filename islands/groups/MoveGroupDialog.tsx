@@ -4,7 +4,7 @@ import {
     TreeRecord,
 } from "$backend/repository/tree-list.repository.ts";
 import Button from "$components/Button.tsx";
-import GroupPicker from "$islands/GroupPicker.tsx";
+import GroupPicker from "./GroupPicker.tsx";
 import { useSignal } from "@preact/signals";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import {

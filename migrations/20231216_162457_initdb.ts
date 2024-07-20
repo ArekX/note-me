@@ -16,6 +16,11 @@ export async function up(db: Kysely<unknown>): Promise<void> {
             "boolean",
             (col) => col.notNull().defaultTo(false),
         )
+        .addColumn(
+            "onboarding_state",
+            "text",
+            (col) => col.notNull().defaultTo("{}"),
+        )
         .execute();
 
     await db.schema.createTable("note")
@@ -265,5 +270,6 @@ export async function down(db: Kysely<unknown>): Promise<void> {
     await db.schema.dropTable("group").execute();
     await db.schema.dropTable("session").execute();
     await db.schema.dropTable("group_note").execute();
+    await db.schema.dropTable("periodic_task_schedule").execute();
     await db.schema.dropTable("user").execute();
 }

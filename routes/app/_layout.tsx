@@ -11,7 +11,7 @@ export default async function Layout(
     _req: Request,
     ctx: FreshContext<AppState>,
 ) {
-    const { name = "", id, timezone = "", role = "user" } =
+    const { name = "", id, timezone = "", role = "user", onboarding_state } =
         ctx.state.session?.data.user ?? {};
 
     const permissions = ctx.state.permissions ?? [];
@@ -34,6 +34,7 @@ export default async function Layout(
                         timezone,
                         csrfToken: ctx.state.newCsrfToken ?? "",
                         permissions,
+                        onboardingState: onboarding_state ?? {},
                     }}
                 />
                 <Partial name="body">

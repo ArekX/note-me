@@ -9,12 +9,28 @@ import { pageResults } from "$lib/kysely-sqlite-dialect/pagination.ts";
 
 export type UserId = { id: number };
 
+export interface UserOnboardingState {
+    introduction_dismissed?: boolean;
+}
+
 export type UserRecord =
     & Pick<
         UserTable,
         "name" | "username" | "password" | "timezone" | "role"
     >
     & UserId;
+
+export interface UserLoginRecord extends UserRecord {
+    onboarding_state: UserOnboardingState;
+}
+
+const parseOnboardingState = (state: string): UserOnboardingState => {
+    try {
+        return JSON.parse(state);
+    } catch {
+        return {};
+    }
+};
 
 export const checkIfUserExists = async (username: string): Promise<boolean> => {
     if (
@@ -33,8 +49,8 @@ export const checkIfUserExists = async (username: string): Promise<boolean> => {
 export const getUserByLogin = async (
     username: string,
     password: string,
-): Promise<UserRecord | null> => {
-    const user = await db.selectFrom("user")
+): Promise<UserLoginRecord | null> => {
+    const record = await db.selectFrom("user")
         .select([
             "id",
             "name",
@@ -42,16 +58,24 @@ export const getUserByLogin = async (
             "password",
             "timezone",
             "role",
+            "onboarding_state",
         ])
         .where("username", "=", username)
         .where("is_deleted", "=", false)
         .executeTakeFirst();
 
-    if (!user || !bcrypt.compareSync(password, user.password)) {
+    if (!record || !bcrypt.compareSync(password, record.password)) {
         return null;
     }
 
-    return user ?? null;
+    return record
+        ? {
+            ...record,
+            onboarding_state: parseOnboardingState(
+                record.onboarding_state ?? "{}",
+            ),
+        }
+        : null;
 };
 
 export const getUserByUsername = async (username: string) => {
@@ -66,8 +90,8 @@ export const getUserByUsername = async (username: string) => {
 
 export const getUserById = async (
     id: number,
-): Promise<UserRecord | null> => {
-    const user = await db.selectFrom("user")
+): Promise<UserLoginRecord | null> => {
+    const record = await db.selectFrom("user")
         .select([
             "id",
             "name",
@@ -75,11 +99,20 @@ export const getUserById = async (
             "password",
             "timezone",
             "role",
+            "onboarding_state",
         ])
         .where("id", "=", id)
         .where("is_deleted", "=", false)
         .executeTakeFirst();
-    return user ?? null;
+
+    return record
+        ? {
+            ...record,
+            onboarding_state: parseOnboardingState(
+                record.onboarding_state ?? "{}",
+            ),
+        }
+        : null;
 };
 
 export type CreateUserData = Pick<
@@ -286,6 +319,21 @@ export const deleteUserRecord = async (
             updated_at: getCurrentUnixTimestamp(),
         })
         .where("id", "=", id)
+        .executeTakeFirst();
+
+    return result.numUpdatedRows > 0;
+};
+
+export const updateOnboardingState = async (
+    user_id: number,
+    state: UserOnboardingState,
+): Promise<boolean> => {
+    const result = await db.updateTable("user")
+        .set({
+            onboarding_state: JSON.stringify(state),
+            updated_at: getCurrentUnixTimestamp(),
+        })
+        .where("id", "=", user_id)
         .executeTakeFirst();
 
     return result.numUpdatedRows > 0;

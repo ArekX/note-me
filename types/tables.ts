@@ -8,6 +8,7 @@ export interface UserTable {
     password: string;
     role: Roles;
     timezone: string;
+    onboarding_state?: string;
     created_at: number;
     updated_at: number;
     is_deleted?: boolean;

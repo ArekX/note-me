@@ -1,9 +1,9 @@
 import { SessionState } from "$backend/session/mod.ts";
-import { UserRecord } from "$backend/repository/user-repository.ts";
+import { UserLoginRecord } from "$backend/repository/user-repository.ts";
 import { AppPermissions } from "$backend/rbac/permissions.ts";
 
 export interface AppSessionData {
-    user?: UserRecord;
+    user?: UserLoginRecord;
     storedCsrfToken: string;
 }
 

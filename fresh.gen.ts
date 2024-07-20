@@ -36,15 +36,14 @@ import * as $Checkbox from "./islands/Checkbox.tsx";
 import * as $ConfirmDialog from "./islands/ConfirmDialog.tsx";
 import * as $Dialog from "./islands/Dialog.tsx";
 import * as $DropdownMenu from "./islands/DropdownMenu.tsx";
-import * as $GroupPicker from "./islands/GroupPicker.tsx";
 import * as $InvalidateData from "./islands/InvalidateData.tsx";
 import * as $IslandInitializer from "./islands/IslandInitializer.tsx";
 import * as $LoadMoreWrapper from "./islands/LoadMoreWrapper.tsx";
 import * as $Loader from "./islands/Loader.tsx";
-import * as $MoveGroupDialog from "./islands/MoveGroupDialog.tsx";
 import * as $Pagination from "./islands/Pagination.tsx";
 import * as $ToastMessages from "./islands/ToastMessages.tsx";
 import * as $UserPicker from "./islands/UserPicker.tsx";
+import * as $dashboard_Dashboard from "./islands/dashboard/Dashboard.tsx";
 import * as $dashboard_RecentlyOpenedNotes from "./islands/dashboard/RecentlyOpenedNotes.tsx";
 import * as $files_FileDropWrapper from "./islands/files/FileDropWrapper.tsx";
 import * as $files_FileItem from "./islands/files/FileItem.tsx";
@@ -52,6 +51,9 @@ import * as $files_FilePicker from "./islands/files/FilePicker.tsx";
 import * as $files_FileUpload from "./islands/files/FileUpload.tsx";
 import * as $files_UploadProgressDialog from "./islands/files/UploadProgressDialog.tsx";
 import * as $files_hooks_use_file_uploader from "./islands/files/hooks/use-file-uploader.ts";
+import * as $groups_GroupDetails from "./islands/groups/GroupDetails.tsx";
+import * as $groups_GroupPicker from "./islands/groups/GroupPicker.tsx";
+import * as $groups_MoveGroupDialog from "./islands/groups/MoveGroupDialog.tsx";
 import * as $markdown_NodeItem from "./islands/markdown/NodeItem.tsx";
 import * as $markdown_Viewer from "./islands/markdown/Viewer.tsx";
 import * as $markdown_nodes_CodeBlock from "./islands/markdown/nodes/CodeBlock.tsx";
@@ -113,7 +115,9 @@ import * as $tree_DeleteGroupProgressDialog from "./islands/tree/DeleteGroupProg
 import * as $tree_MoreMenu from "./islands/tree/MoreMenu.tsx";
 import * as $tree_RootGroupBar from "./islands/tree/RootGroupBar.tsx";
 import * as $tree_TreeItem from "./islands/tree/TreeItem.tsx";
+import * as $tree_TreeItemEditor from "./islands/tree/TreeItemEditor.tsx";
 import * as $tree_TreeList from "./islands/tree/TreeList.tsx";
+import * as $tree_TreeWindow from "./islands/tree/TreeWindow.tsx";
 import * as $tree_hooks_record_container from "./islands/tree/hooks/record-container.ts";
 import * as $tree_hooks_use_record_tree from "./islands/tree/hooks/use-record-tree.ts";
 import * as $tree_hooks_use_tree_state from "./islands/tree/hooks/use-tree-state.ts";
@@ -162,15 +166,14 @@ const manifest = {
         "./islands/ConfirmDialog.tsx": $ConfirmDialog,
         "./islands/Dialog.tsx": $Dialog,
         "./islands/DropdownMenu.tsx": $DropdownMenu,
-        "./islands/GroupPicker.tsx": $GroupPicker,
         "./islands/InvalidateData.tsx": $InvalidateData,
         "./islands/IslandInitializer.tsx": $IslandInitializer,
         "./islands/LoadMoreWrapper.tsx": $LoadMoreWrapper,
         "./islands/Loader.tsx": $Loader,
-        "./islands/MoveGroupDialog.tsx": $MoveGroupDialog,
         "./islands/Pagination.tsx": $Pagination,
         "./islands/ToastMessages.tsx": $ToastMessages,
         "./islands/UserPicker.tsx": $UserPicker,
+        "./islands/dashboard/Dashboard.tsx": $dashboard_Dashboard,
         "./islands/dashboard/RecentlyOpenedNotes.tsx":
             $dashboard_RecentlyOpenedNotes,
         "./islands/files/FileDropWrapper.tsx": $files_FileDropWrapper,
@@ -180,6 +183,9 @@ const manifest = {
         "./islands/files/UploadProgressDialog.tsx": $files_UploadProgressDialog,
         "./islands/files/hooks/use-file-uploader.ts":
             $files_hooks_use_file_uploader,
+        "./islands/groups/GroupDetails.tsx": $groups_GroupDetails,
+        "./islands/groups/GroupPicker.tsx": $groups_GroupPicker,
+        "./islands/groups/MoveGroupDialog.tsx": $groups_MoveGroupDialog,
         "./islands/markdown/NodeItem.tsx": $markdown_NodeItem,
         "./islands/markdown/Viewer.tsx": $markdown_Viewer,
         "./islands/markdown/nodes/CodeBlock.tsx": $markdown_nodes_CodeBlock,
@@ -266,7 +272,9 @@ const manifest = {
         "./islands/tree/MoreMenu.tsx": $tree_MoreMenu,
         "./islands/tree/RootGroupBar.tsx": $tree_RootGroupBar,
         "./islands/tree/TreeItem.tsx": $tree_TreeItem,
+        "./islands/tree/TreeItemEditor.tsx": $tree_TreeItemEditor,
         "./islands/tree/TreeList.tsx": $tree_TreeList,
+        "./islands/tree/TreeWindow.tsx": $tree_TreeWindow,
         "./islands/tree/hooks/record-container.ts":
             $tree_hooks_record_container,
         "./islands/tree/hooks/use-record-tree.ts": $tree_hooks_use_record_tree,
