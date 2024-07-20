@@ -10,6 +10,7 @@ import Loader from "$islands/Loader.tsx";
 import { useEffect } from "preact/hooks";
 import { diffText } from "$frontend/diff.ts";
 import { getFormattedTagString } from "$frontend/tags.ts";
+import DecryptionTextWrapper from "$islands/encryption/DecryptionTextWrapper.tsx";
 
 interface HistoryDiffProps {
     id: number;
@@ -53,21 +54,33 @@ export default function HistoryDiff({
     }, [id]);
 
     return (
-        <div class="p-4">
-            {loader.running ? <Loader color="white" /> : data.value && (
-                <>
-                    <h2 class="text-xl">{data.value.title}</h2>
-                    <h4 class="text-lg">
-                        {getFormattedTagString(
-                            data.value.tags.replace(/,/g, " "),
-                        )}
-                    </h4>
-                    {showType === "note"
-                        ? (
-                            <pre class="text-sm whitespace-pre-wrap">{data.value?.note}</pre>
-                        )
-                        : (
-                            <pre class="diff-viewer text-sm whitespace-pre-wrap">
+        <DecryptionTextWrapper
+            encryptedText={data.value?.note ?? ""}
+            isEncrypted={data.value?.is_encrypted ?? false}
+            onDecrypt={(text) => {
+                if (data.value) {
+                    data.value = {
+                        ...data.value,
+                        note: text,
+                    };
+                }
+            }}
+        >
+            <div class="p-4">
+                {loader.running ? <Loader color="white" /> : data.value && (
+                    <>
+                        <h2 class="text-xl">{data.value.title}</h2>
+                        <h4 class="text-lg">
+                            {getFormattedTagString(
+                                data.value.tags.replace(/,/g, " "),
+                            )}
+                        </h4>
+                        {showType === "note"
+                            ? (
+                                <pre class="text-sm whitespace-pre-wrap">{data.value?.note}</pre>
+                            )
+                            : (
+                                <pre class="diff-viewer text-sm whitespace-pre-wrap">
                         {diffLines.map((line, index) => {
                             switch (line.type) {
                                 case "added":
@@ -100,10 +113,11 @@ export default function HistoryDiff({
                                     );
                             }
                         })}
-                            </pre>
-                        )}
-                </>
-            )}
-        </div>
+                                </pre>
+                            )}
+                    </>
+                )}
+            </div>
+        </DecryptionTextWrapper>
     );
 }

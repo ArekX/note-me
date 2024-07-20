@@ -14,6 +14,7 @@ export interface UpdateNoteData {
     title?: string;
     text?: string;
     tags?: string[];
+    is_encrypted?: boolean;
     group_id?: number | null | undefined;
 }
 
@@ -66,6 +67,7 @@ export const runUpdateNoteAction = async (
                         {
                             title: data.title,
                             note: data.text,
+                            is_encrypted: data.is_encrypted,
                         },
                     ),
                 () => Promise.resolve(true),

@@ -43,6 +43,7 @@ export default function Page(props: PageProps<PageData, AppState>) {
                 id: undefined,
                 title: "",
                 note: "",
+                is_encrypted: false,
                 tags: [],
                 group_id: props.data.group?.id ?? null,
                 group_name: props.data.group?.name ?? "",

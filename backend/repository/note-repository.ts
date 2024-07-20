@@ -7,7 +7,11 @@ type NoteId = { id: number };
 
 export type NewNote = Omit<
     NoteTable,
-    "id" | "created_at" | "updated_at" | "is_deleted" | "last_open_at"
+    | "id"
+    | "created_at"
+    | "updated_at"
+    | "is_deleted"
+    | "last_open_at"
 >;
 
 export type NoteRecord = Omit<NoteTable, "id"> & NoteId;
@@ -34,7 +38,9 @@ export const createNote = async (note: NewNote): Promise<NoteRecord> => {
     };
 };
 
-export type UpdateNote = Partial<Pick<NoteTable, "title" | "note">>;
+export type UpdateNote = Partial<
+    Pick<NoteTable, "title" | "note" | "is_encrypted">
+>;
 
 export const updateNote = async (
     id: number,

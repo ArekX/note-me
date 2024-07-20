@@ -28,8 +28,14 @@ import { useNoteWebsocket } from "./hooks/use-note-websocket.ts";
 import DetailsLine from "$islands/notes/DetailsLine.tsx";
 import { useValidation } from "$frontend/hooks/use-validation.ts";
 import Viewer from "$islands/markdown/Viewer.tsx";
+import { useEncryptionLock } from "$frontend/hooks/use-encryption-lock.ts";
+import {
+    EncryptTextMessage,
+    EncryptTextResponse,
+} from "$workers/websocket/api/users/messages.ts";
+import EncryptionNoteWrapper from "$islands/encryption/DecryptionTextWrapper.tsx";
 
-interface NoteData extends Pick<NoteRecord, "title" | "note"> {
+interface NoteData extends Pick<NoteRecord, "title" | "note" | "is_encrypted"> {
     id?: number;
     tags: string[];
     group_id: number | null;
@@ -45,6 +51,7 @@ export default function NoteEditor({
 }: NoteEditorProps) {
     const name = useSignal(note.title);
     const text = useSignal(note.note);
+    const isProtected = useSignal(note.is_encrypted);
     const tags = useSignal<string[]>(note.tags);
     const noteId = useSignal<number | null>(note.id ?? null);
     const groupId = useSignal<number | null>(note.group_id ?? null);
@@ -53,6 +60,8 @@ export default function NoteEditor({
     const windowMode = useSignal<NoteWindowTypes | null>(null);
     const isPreviewMode = useSignal(false);
     const wasDataChanged = useSignal(false);
+
+    const encryptionLock = useEncryptionLock();
 
     const [noteValidation, validateNote] = useValidation<AddNoteRequest>({
         schema: addNoteRequestSchema,
@@ -64,6 +73,8 @@ export default function NoteEditor({
             name.value = data.title ?? name.value;
             text.value = data.text ?? text.value;
             tags.value = data.tags ?? tags.value;
+
+            isProtected.value = data.is_encrypted ?? isProtected.value;
             groupId.value = data.group_id !== undefined
                 ? data.group_id
                 : groupId.value;
@@ -73,12 +84,33 @@ export default function NoteEditor({
         },
     });
 
+    const getNoteTextRequest = async () => {
+        if (!isProtected.value) {
+            return text.value;
+        }
+
+        const encryptionPassword = await encryptionLock.requestPassword();
+
+        const response = await sendMessage<
+            EncryptTextMessage,
+            EncryptTextResponse
+        >("users", "encryptText", {
+            data: {
+                text: text.value,
+                password: encryptionPassword!,
+            },
+            expect: "encryptTextResponse",
+        });
+
+        return response.encrypted;
+    };
+
     const handleSave = isSaving.wrap(async () => {
         const noteToSave: AddNoteRequest = {
             group_id: groupId.value,
             tags: tags.value,
-            is_encrypted: false, // TODO: Implement encryption
-            text: text.value,
+            is_encrypted: isProtected.value,
+            text: await getNoteTextRequest(),
             title: name.value,
         };
 
@@ -125,6 +157,12 @@ export default function NoteEditor({
                 break;
             case "edit":
                 isPreviewMode.value = false;
+                break;
+            case "protect":
+                isProtected.value = true;
+                break;
+            case "unprotect":
+                isProtected.value = false;
                 break;
             case "details":
             case "history":
@@ -214,6 +252,7 @@ export default function NoteEditor({
         name.value = note.title;
         text.value = note.note;
         tags.value = note.tags;
+        isProtected.value = note.is_encrypted;
         noteId.value = note.id ?? null;
         groupId.value = note.group_id ?? null;
         groupName.value = note.group_name ?? null;
@@ -221,100 +260,117 @@ export default function NoteEditor({
     }, [note]);
 
     return (
-        <div class="note-editor flex flex-col">
-            <div class="flex flex-row">
-                <div class="flex-grow">
-                    <input
-                        class="title-editor"
-                        type="text"
-                        placeholder="Name your note"
-                        tabIndex={1}
-                        value={name.value}
-                        disabled={isSaving.running}
-                        onInput={inputHandler((value) =>
-                            withDataChange(name, value)
+        <EncryptionNoteWrapper
+            isEncrypted={isProtected.value}
+            encryptedText={text.value}
+            onDecrypt={(decryptedText) => text.value = decryptedText}
+        >
+            <div class="note-editor flex flex-col">
+                <div class="flex flex-row">
+                    <div class="flex-grow">
+                        <input
+                            class="title-editor"
+                            type="text"
+                            placeholder="Name your note"
+                            tabIndex={1}
+                            value={name.value}
+                            disabled={isSaving.running}
+                            onInput={inputHandler((value) =>
+                                withDataChange(name, value)
+                            )}
+                        />
+                        <ErrorDisplay
+                            state={noteValidation}
+                            path="title"
+                        />
+                    </div>
+                    <div class="text-sm ml-2">
+                        <Button
+                            color={!isSaving.running
+                                ? "success"
+                                : "successDisabled"}
+                            title="Save"
+                            disabled={isSaving.running}
+                            onClick={handleSave}
+                        >
+                            {!isSaving.running
+                                ? <Icon name="save" size="lg" />
+                                : <Loader color="white">Saving...</Loader>}
+                        </Button>{" "}
+                        {noteId.value && (
+                            <>
+                                <Button
+                                    color="primary"
+                                    disabled={isSaving.running}
+                                    title="Cancel changes"
+                                    onClick={handleCancelChanges}
+                                >
+                                    <Icon
+                                        name="tag-x"
+                                        size="lg"
+                                        type="solid"
+                                    />
+                                </Button>
+                                {" "}
+                            </>
                         )}
+                        {!isSaving.running && (
+                            <MoreMenu
+                                onMenuItemClick={handleMenuItemClicked}
+                                inPreviewMode={isPreviewMode.value}
+                                isProtected={isProtected.value}
+                                mode={noteId.value
+                                    ? "edit-existing"
+                                    : "edit-new"}
+                            />
+                        )}
+                    </div>
+                </div>
+
+                <div class="flex-grow">
+                    <TagInput
+                        isSaving={isSaving.running}
+                        onChange={(newTags) => withTagsDataChange(newTags)}
+                        initialTags={tags.value}
                     />
                     <ErrorDisplay
                         state={noteValidation}
-                        path="title"
+                        path="tags"
                     />
                 </div>
-                <div class="text-sm ml-2">
-                    <Button
-                        color={!isSaving.running
-                            ? "success"
-                            : "successDisabled"}
-                        title="Save"
-                        disabled={isSaving.running}
-                        onClick={handleSave}
-                    >
-                        {!isSaving.running
-                            ? <Icon name="save" size="lg" />
-                            : <Loader color="white">Saving...</Loader>}
-                    </Button>{" "}
-                    {noteId.value && (
-                        <>
-                            <Button
-                                color="primary"
-                                disabled={isSaving.running}
-                                title="Cancel changes"
-                                onClick={handleCancelChanges}
-                            >
-                                <Icon
-                                    name="tag-x"
-                                    size="lg"
-                                    type="solid"
-                                />
-                            </Button>
-                            {" "}
-                        </>
-                    )}
-                    {!isSaving.running && (
-                        <MoreMenu
-                            onMenuItemClick={handleMenuItemClicked}
-                            inPreviewMode={isPreviewMode.value}
-                            mode={noteId.value ? "edit-existing" : "edit-new"}
+                <DetailsLine
+                    groupName={groupName.value}
+                />
+                <div class="mt-2">
+                    <ErrorDisplay
+                        state={noteValidation}
+                        path="text"
+                    />
+                </div>
+
+                {isPreviewMode.value
+                    ? <Viewer text={text.value} />
+                    : (
+                        <NoteTextArea
+                            initialText={text.value}
+                            isSaving={isSaving.running}
+                            onChange={(newText) =>
+                                withDataChange(
+                                    text,
+                                    newText,
+                                )}
                         />
                     )}
-                </div>
-            </div>
 
-            <div class="flex-grow">
-                <TagInput
-                    isSaving={isSaving.running}
-                    onChange={(newTags) => withTagsDataChange(newTags)}
-                    initialTags={tags.value}
-                />
-                <ErrorDisplay
-                    state={noteValidation}
-                    path="tags"
-                />
+                {noteId.value && (
+                    <NoteWindow
+                        onClose={() => windowMode.value = null}
+                        type={windowMode.value}
+                        noteText={text.value}
+                        noteId={noteId.value}
+                    />
+                )}
             </div>
-            <DetailsLine
-                groupName={groupName.value}
-            />
-            <div class="mt-2">
-                <ErrorDisplay
-                    state={noteValidation}
-                    path="text"
-                />
-            </div>
-            {isPreviewMode.value ? <Viewer text={text.value} /> : (
-                <NoteTextArea
-                    initialText={text.value}
-                    isSaving={isSaving.running}
-                    onChange={(newText) => withDataChange(text, newText)}
-                />
-            )}
-            {noteId.value && (
-                <NoteWindow
-                    onClose={() => windowMode.value = null}
-                    type={windowMode.value}
-                    noteText={text.value}
-                    noteId={noteId.value}
-                />
-            )}
-        </div>
+        </EncryptionNoteWrapper>
     );
 }

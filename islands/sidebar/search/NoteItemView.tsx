@@ -30,6 +30,9 @@ export default function NoteItemView({
             onClick={onNoteClick}
         >
             <Icon name="note" /> <span class="text-lg">{record.title}</span>
+            {record.is_encrypted && (
+                <div class="text-xs py-2">(Protected contents)</div>
+            )}
             {foundLines.length > 0 && (
                 <div class="pt-2 pb-2">
                     {foundLines.map((line, index) => (

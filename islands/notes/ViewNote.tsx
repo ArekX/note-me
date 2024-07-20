@@ -10,6 +10,7 @@ import { useEffect } from "preact/hooks";
 import DetailsLine from "$islands/notes/DetailsLine.tsx";
 import Viewer from "$islands/markdown/Viewer.tsx";
 import { useSearch } from "$frontend/hooks/use-search.ts";
+import DecryptionTextWrapper from "$islands/encryption/DecryptionTextWrapper.tsx";
 
 export interface ViewNoteProps {
     readonly?: boolean;
@@ -76,72 +77,84 @@ export default function ViewNote(
     };
 
     return (
-        <div class="view-note flex flex-col">
-            <div class="flex flex-row">
-                <div class="title w-10/12">
-                    {recordData.value.title}
-                </div>
-                {shareMode !== "everyone" && (
-                    <div class="text-md ml-2 w-2/12 text-right">
-                        {!readonly && (
-                            <Button
-                                color="success"
-                                title="Edit"
-                                onClick={() => {
-                                    redirectTo.editNote({
-                                        noteId: recordData.value.id,
-                                    });
-                                }}
-                            >
-                                <Icon name="pencil" size="lg" />
-                            </Button>
-                        )}{" "}
-                        <div class="text-left inline-block">
-                            <MoreMenu
-                                onMenuItemClick={handleMenuItemClicked}
-                                inPreviewMode={false}
-                                mode={readonly ? "view-readonly" : "view"}
-                            />
-                        </div>
+        <DecryptionTextWrapper
+            encryptedText={recordData.value.note}
+            isEncrypted={recordData.value.is_encrypted}
+            onDecrypt={(text) => {
+                recordData.value = {
+                    ...recordData.value,
+                    note: text,
+                };
+            }}
+        >
+            <div class="view-note flex flex-col">
+                <div class="flex flex-row">
+                    <div class="title w-10/12">
+                        {recordData.value.title}
                     </div>
+                    {shareMode !== "everyone" && (
+                        <div class="text-md ml-2 w-2/12 text-right">
+                            {!readonly && (
+                                <Button
+                                    color="success"
+                                    title="Edit"
+                                    onClick={() => {
+                                        redirectTo.editNote({
+                                            noteId: recordData.value.id,
+                                        });
+                                    }}
+                                >
+                                    <Icon name="pencil" size="lg" />
+                                </Button>
+                            )}{" "}
+                            <div class="text-left inline-block">
+                                <MoreMenu
+                                    onMenuItemClick={handleMenuItemClicked}
+                                    inPreviewMode={false}
+                                    isProtected={recordData.value.is_encrypted}
+                                    mode={readonly ? "view-readonly" : "view"}
+                                />
+                            </div>
+                        </div>
+                    )}
+                </div>
+                <div>
+                    {recordData.value.tags.map((tag) => (
+                        <span
+                            class={`tag ${
+                                disableTagLinks
+                                    ? "cursor-default pointer-events-none"
+                                    : "cursor-pointer"
+                            }`}
+                            key={tag}
+                            onClick={() => handleTagClick(tag)}
+                        >
+                            #{tag}
+                        </span>
+                    ))}
+                </div>
+                <DetailsLine
+                    groupName={recordData.value.group_name}
+                    lastUpdatedUnix={recordData.value.updated_at}
+                    author={author}
+                />
+                <div>
+                    <Viewer
+                        text={recordData.value.note}
+                        options={{
+                            isSharing: shareMode !== "none",
+                        }}
+                    />
+                </div>
+                {recordData.value.id && (
+                    <NoteWindow
+                        onClose={() => windowMode.value = null}
+                        type={windowMode.value}
+                        noteText={recordData.value.note}
+                        noteId={recordData.value.id}
+                    />
                 )}
             </div>
-            <div>
-                {recordData.value.tags.map((tag) => (
-                    <span
-                        class={`tag ${
-                            disableTagLinks
-                                ? "cursor-default pointer-events-none"
-                                : "cursor-pointer"
-                        }`}
-                        key={tag}
-                        onClick={() => handleTagClick(tag)}
-                    >
-                        #{tag}
-                    </span>
-                ))}
-            </div>
-            <DetailsLine
-                groupName={recordData.value.group_name}
-                lastUpdatedUnix={recordData.value.updated_at}
-                author={author}
-            />
-            <div>
-                <Viewer
-                    text={recordData.value.note}
-                    options={{
-                        isSharing: shareMode !== "none",
-                    }}
-                />
-            </div>
-            {recordData.value.id && (
-                <NoteWindow
-                    onClose={() => windowMode.value = null}
-                    type={windowMode.value}
-                    noteText={recordData.value.note}
-                    noteId={recordData.value.id}
-                />
-            )}
-        </div>
+        </DecryptionTextWrapper>
     );
 }

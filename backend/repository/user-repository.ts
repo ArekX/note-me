@@ -133,7 +133,7 @@ export const createUserRecord = async (
         role: user.role,
         timezone: user.timezone,
         password: bcrypt.hashSync(user.password),
-        note_encryption_key: await generateNoteEncryptionKey(user.password),
+        encryption_key: await generateNoteEncryptionKey(user.password),
         created_at: getCurrentUnixTimestamp(),
         updated_at: getCurrentUnixTimestamp(),
     };
@@ -170,7 +170,7 @@ export const updateUserRecord = async (
             | "role"
             | "timezone"
             | "updated_at"
-            | "note_encryption_key"
+            | "encryption_key"
             | "is_deleted"
         >
     > = {
@@ -183,7 +183,7 @@ export const updateUserRecord = async (
 
     if (user.new_password) {
         userRecord.password = bcrypt.hashSync(user.new_password);
-        userRecord.note_encryption_key = await generateNoteEncryptionKey(
+        userRecord.encryption_key = await generateNoteEncryptionKey(
             user.new_password,
         );
     }
@@ -285,7 +285,7 @@ export const updateUserProfile = async (
             | "timezone"
             | "updated_at"
             | "password"
-            | "note_encryption_key"
+            | "encryption_key"
         >
     > = {
         name: data.name,
@@ -300,15 +300,13 @@ export const updateUserProfile = async (
 
         toUpdate.password = bcrypt.hashSync(data.new_password);
 
-        const { note_encryption_key } = (await db.selectFrom("user")
-            .select(["note_encryption_key"])
-            .where("id", "=", profile_user_id)
-            .executeTakeFirst())!;
+        const noteEnvryptionKey =
+            (await getNoteEncryptionKey(profile_user_id))!;
 
-        toUpdate.note_encryption_key = await reEncryptNoteKey(
+        toUpdate.encryption_key = await reEncryptNoteKey(
             data.old_password,
             data.new_password,
-            note_encryption_key,
+            noteEnvryptionKey,
         );
     }
 
@@ -364,4 +362,15 @@ export const updateOnboardingState = async (
         .executeTakeFirst();
 
     return result.numUpdatedRows > 0;
+};
+
+export const getNoteEncryptionKey = async (
+    user_id: number,
+): Promise<string | null> => {
+    const result = await db.selectFrom("user")
+        .select(["encryption_key"])
+        .where("id", "=", user_id)
+        .executeTakeFirst();
+
+    return result?.encryption_key ?? null;
 };

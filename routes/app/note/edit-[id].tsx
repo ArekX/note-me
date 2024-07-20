@@ -36,6 +36,7 @@ export default function Page(props: PageProps<PageData, AppState>) {
                 title: note.title,
                 note: note.note,
                 tags: note.tags,
+                is_encrypted: note.is_encrypted,
                 group_id: note.group_id,
                 group_name: note.group_name,
             }}

@@ -9,7 +9,7 @@ export interface UserTable {
     role: Roles;
     timezone: string;
     onboarding_state?: string;
-    note_encryption_key: string;
+    encryption_key: string;
     created_at: number;
     updated_at: number;
     is_deleted?: boolean;

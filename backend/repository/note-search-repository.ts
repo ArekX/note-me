@@ -15,6 +15,7 @@ export interface NoteSearchRecord {
     title: string;
     note: string;
     group_name: string;
+    is_encrypted: boolean;
     updated_at: number;
     user_name: string;
 }

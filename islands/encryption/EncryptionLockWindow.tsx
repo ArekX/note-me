@@ -70,7 +70,7 @@ export default function EncryptionLockWindow() {
 
     return (
         <Dialog
-            props={{ class: "w-2/3" }}
+            props={{ class: "w-2/5" }}
             visible={true}
             canCancel={true}
             onCancel={handleCancelLockWindow}

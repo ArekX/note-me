@@ -14,6 +14,8 @@ export type MenuItemActions =
     | "preview"
     | "edit"
     | "details"
+    | "protect"
+    | "unprotect"
     | "history"
     | "share"
     | "remind"
@@ -23,11 +25,12 @@ export type MenuItemActions =
 interface MoreMenuProps {
     mode: ModeType;
     inPreviewMode: boolean;
+    isProtected: boolean;
     onMenuItemClick?: (name: MenuItemActions) => void;
 }
 
 export default function MoreMenu(
-    { mode, inPreviewMode, onMenuItemClick }: MoreMenuProps,
+    { mode, inPreviewMode, isProtected, onMenuItemClick }: MoreMenuProps,
 ) {
     const sendAction = (action: MenuItemActions) => {
         onMenuItemClick?.(action);
@@ -40,6 +43,12 @@ export default function MoreMenu(
             icon: inPreviewMode ? "pencil" : "show",
             modes: ["edit-new", "edit-existing"],
             onClick: () => sendAction(inPreviewMode ? "edit" : "preview"),
+        },
+        {
+            name: isProtected ? "Unprotect" : "Protect",
+            icon: isProtected ? "lock-open-alt" : "lock-alt",
+            modes: ["edit-new", "edit-existing"],
+            onClick: () => sendAction(isProtected ? "unprotect" : "protect"),
         },
         {
             name: "Details",

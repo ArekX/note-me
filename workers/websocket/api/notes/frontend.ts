@@ -114,7 +114,9 @@ const handleCreateNote: ListenerFn<CreateNoteMessage> = async (
 const handleUpdateNote: ListenerFn<UpdateNoteMessage> = async (
     { message: { id, data }, sourceClient, respond },
 ) => {
-    await runUpdateNoteAction(data, {
+    await runUpdateNoteAction({
+        ...data,
+    }, {
         noteId: id,
         userId: sourceClient!.userId,
     });

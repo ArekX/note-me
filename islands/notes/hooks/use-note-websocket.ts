@@ -7,10 +7,12 @@ import {
     GetSingleGroupResponse,
 } from "$workers/websocket/api/groups/messages.ts";
 
-export type UpdatedData = Pick<UpdateNoteRequest, "tags" | "title" | "text"> & {
-    group_id?: number | null;
-    group_name?: string | null;
-};
+export type UpdatedData =
+    & Pick<UpdateNoteRequest, "tags" | "title" | "text" | "is_encrypted">
+    & {
+        group_id?: number | null;
+        group_name?: string | null;
+    };
 
 export interface NoteWebsocketOptions {
     noteId?: number | null;
@@ -29,6 +31,7 @@ export const useNoteWebsocket = (options: NoteWebsocketOptions) => {
                             tags: response.tags,
                             title: response.title,
                             text: response.note,
+                            is_encrypted: response.is_encrypted,
                         });
                     }
                 },
@@ -38,6 +41,7 @@ export const useNoteWebsocket = (options: NoteWebsocketOptions) => {
                             tags: response.updated_data.tags,
                             title: response.updated_data.title,
                             text: response.updated_data.text,
+                            is_encrypted: response.updated_data.is_encrypted,
                         });
                     }
 

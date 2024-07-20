@@ -22,7 +22,7 @@ export async function up(db: Kysely<unknown>): Promise<void> {
             (col) => col.notNull().defaultTo("{}"),
         )
         .addColumn(
-            "note_encryption_key",
+            "encryption_key",
             "text",
             (col) => col.notNull(),
         )

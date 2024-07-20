@@ -101,6 +101,26 @@ export type VerifyOwnPasswordResponse = UserMessage<
     { verified: boolean }
 >;
 
+export type EncryptTextMessage = UserMessage<
+    "encryptText",
+    { text: string; password: string }
+>;
+
+export type EncryptTextResponse = UserMessage<
+    "encryptTextResponse",
+    { encrypted: string }
+>;
+
+export type DecryptTextMessage = UserMessage<
+    "decryptText",
+    { encrypted: string; password: string }
+>;
+
+export type DecryptTextResponse = UserMessage<
+    "decryptTextResponse",
+    { text: string }
+>;
+
 export type UserFrontendResponse =
     | CreateUserResponse
     | UpdateUserResponse
@@ -109,7 +129,9 @@ export type UserFrontendResponse =
     | UpdateProfileResponse
     | FindPickUsersResponse
     | UpdateOnboardingStateResponse
-    | VerifyOwnPasswordResponse;
+    | VerifyOwnPasswordResponse
+    | EncryptTextResponse
+    | DecryptTextResponse;
 
 export type UserFrontendMessage =
     | CreateUserMessage
@@ -119,4 +141,6 @@ export type UserFrontendMessage =
     | UpdateProfileMessage
     | FindPickUsersMessage
     | UpdateOnboardingStateMessage
-    | VerifyOwnPasswordMessage;
+    | VerifyOwnPasswordMessage
+    | EncryptTextMessage
+    | DecryptTextMessage;

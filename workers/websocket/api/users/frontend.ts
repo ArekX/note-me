@@ -4,6 +4,8 @@ import {
     CreateUserResponse,
     DeleteUserMessage,
     DeleteUserResponse,
+    EncryptTextMessage,
+    EncryptTextResponse,
     FindPickUsersMessage,
     FindPickUsersResponse,
     FindUsersMessage,
@@ -25,6 +27,7 @@ import {
     deleteUserRecord,
     findPickerUsers,
     findUsers,
+    getNoteEncryptionKey,
     getUserById,
     getUserByUsername,
     updateOnboardingState,
@@ -41,6 +44,9 @@ import {
 import { requireValidSchema } from "$schemas/mod.ts";
 import { addUserSchema, updateUserSchema } from "$schemas/users.ts";
 import { CanManageUsers } from "$backend/rbac/permissions.ts";
+import { decryptNote, encryptNote } from "$backend/encryption.ts";
+import { DecryptTextMessage } from "$workers/websocket/api/users/messages.ts";
+import { DecryptTextResponse } from "$workers/websocket/api/users/messages.ts";
 
 const handleCreateUser: ListenerFn<CreateUserMessage> = async (
     { message: { data }, respond, sourceClient },
@@ -187,6 +193,42 @@ const handleVerifyOwnPassword: ListenerFn<VerifyOwnPasswordMessage> = async (
     });
 };
 
+const handleEncryptText: ListenerFn<EncryptTextMessage> = async (
+    { message: { text, password }, respond, sourceClient },
+) => {
+    const noteEncryptionKey =
+        (await getNoteEncryptionKey(sourceClient?.userId!))!;
+
+    const encrypted = await encryptNote(
+        text,
+        noteEncryptionKey,
+        password,
+    );
+
+    respond<EncryptTextResponse>({
+        type: "encryptTextResponse",
+        encrypted,
+    });
+};
+
+const handleDecryptText: ListenerFn<DecryptTextMessage> = async (
+    { message: { encrypted, password }, respond, sourceClient },
+) => {
+    const noteEncryptionKey =
+        (await getNoteEncryptionKey(sourceClient?.userId!))!;
+
+    const text = await decryptNote(
+        encrypted,
+        noteEncryptionKey,
+        password,
+    );
+
+    respond<DecryptTextResponse>({
+        type: "decryptTextResponse",
+        text,
+    });
+};
+
 export const frontendMap: RegisterListenerMap<UserFrontendMessage> = {
     createUser: handleCreateUser,
     updateUser: handleUpdateUser,
@@ -196,4 +238,6 @@ export const frontendMap: RegisterListenerMap<UserFrontendMessage> = {
     updateProfile: handleUpdateProfile,
     updateOnboarding: handleUpdateOnboarding,
     verifyOwnPassword: handleVerifyOwnPassword,
+    encryptText: handleEncryptText,
+    decryptText: handleDecryptText,
 };
