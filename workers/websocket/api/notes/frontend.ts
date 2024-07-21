@@ -214,6 +214,7 @@ const handleRevertNoteToHistory: ListenerFn<RevertNoteToHistoryMessage> =
             title: data.title,
             text: data.note,
             tags: data.tags ? data.tags.split(",") : [],
+            is_encrypted: !!data.is_encrypted,
         }, {
             noteId: note_id,
             userId: sourceClient!.userId,

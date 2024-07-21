@@ -1,6 +1,6 @@
 import { diff } from "$frontend/deps.ts";
 
-type DiffLine = {
+export type DiffLine = {
     type: "added" | "removed" | "same";
     value: string;
 } | {

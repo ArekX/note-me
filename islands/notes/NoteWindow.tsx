@@ -2,17 +2,15 @@ import NoteDelete from "$islands/notes/windows/NoteDelete.tsx";
 import NoteDetails from "./windows/NoteDetails.tsx";
 import NoteHelp from "$islands/notes/windows/NoteHelp.tsx";
 import NoteHistory from "$islands/notes/windows/NoteHistory.tsx";
-import { useSignal } from "@preact/signals";
-import { useEffect } from "preact/hooks";
-import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
-import {
-    GetNoteDetailsMessage,
-    GetNoteDetailsResponse,
-} from "$workers/websocket/api/notes/messages.ts";
 import NoteShare from "$islands/notes/windows/NoteShare.tsx";
 import Picker from "$components/Picker.tsx";
 import NoteReminder from "$islands/notes/windows/NoteReminder.tsx";
 import MoveGroupDialog from "../groups/MoveGroupDialog.tsx";
+import {
+    NoteTextHook,
+    NoteTextRecord,
+    useNoteText,
+} from "$islands/notes/hooks/use-note-text.ts";
 
 export type NoteWindowTypes =
     | "details"
@@ -25,64 +23,31 @@ export type NoteWindowTypes =
 
 export interface NoteWindowComponentProps {
     onClose: () => void;
-    noteText: string;
+    noteText: NoteTextHook;
     noteId: number;
 }
 
 interface NoteWindowProps {
     type: NoteWindowTypes | null;
     noteId: number;
-    noteText?: string;
+    textRecord: NoteTextRecord;
     onClose: () => void;
 }
 
 export default function NoteWindow({
     type,
     noteId,
-    noteText,
+    textRecord,
     onClose,
 }: NoteWindowProps) {
-    const noteTextView = useSignal<string>("");
-
-    const { sendMessage } = useWebsocketService();
-
-    const loadNoteText = async () => {
-        const data = await sendMessage<
-            GetNoteDetailsMessage,
-            GetNoteDetailsResponse
-        >(
-            "notes",
-            "getNoteDetails",
-            {
-                data: {
-                    id: noteId,
-                    options: {
-                        include_note: true,
-                    },
-                },
-                expect: "getNoteDetailsResponse",
-            },
-        );
-
-        noteTextView.value = data.record.note;
-    };
-
-    useEffect(() => {
-        if (noteText === undefined) {
-            loadNoteText();
-            return;
-        }
-
-        noteTextView.value = noteText ?? "";
-    }, [noteText]);
-
+    const noteText = useNoteText({ record: textRecord });
     return (
         <Picker<NoteWindowTypes, NoteWindowComponentProps>
             selector={type}
             propsGetter={() => ({
                 onClose,
                 noteId,
-                noteText: noteTextView.value,
+                noteText,
             })}
             map={{
                 details: (props) => <NoteDetails {...props} />,

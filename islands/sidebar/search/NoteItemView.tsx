@@ -19,7 +19,7 @@ export default function NoteItemView({
 }: NoteItemViewProps) {
     const foundLines = useMemo(() =>
         findHighlightedLines(
-            record.note,
+            record.is_encrypted ? "" : record.note,
             searchQuery,
             100,
         ), [record, searchQuery]);

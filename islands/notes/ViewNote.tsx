@@ -11,6 +11,7 @@ import DetailsLine from "$islands/notes/DetailsLine.tsx";
 import Viewer from "$islands/markdown/Viewer.tsx";
 import { useSearch } from "$frontend/hooks/use-search.ts";
 import DecryptionTextWrapper from "$islands/encryption/DecryptionTextWrapper.tsx";
+import { useNoteText } from "$islands/notes/hooks/use-note-text.ts";
 
 export interface ViewNoteProps {
     readonly?: boolean;
@@ -31,10 +32,24 @@ export default function ViewNote(
 ) {
     const windowMode = useSignal<NoteWindowTypes | null>(null);
     const recordData = useSignal<ViewNoteRecord>(record);
+    const noteText = useNoteText({
+        record: {
+            text: record.note,
+            is_encrypted: record.is_encrypted,
+        },
+    });
     const search = disableTagLinks ? null : useSearch();
 
     useEffect(() => {
-        recordData.value = { ...record };
+        recordData.value = {
+            ...record,
+            note: record.is_encrypted ? "" : record.note,
+        };
+
+        noteText.setRecord({
+            text: record.note,
+            is_encrypted: recordData.value.is_encrypted,
+        });
     }, [record]);
 
     useNoteWebsocket({
@@ -52,6 +67,10 @@ export default function ViewNote(
                     ? data.group_name
                     : recordData.value.group_name,
             };
+            noteText.setRecord({
+                text: recordData.value.note,
+                is_encrypted: recordData.value.is_encrypted,
+            });
         },
     });
 
@@ -78,8 +97,7 @@ export default function ViewNote(
 
     return (
         <DecryptionTextWrapper
-            encryptedText={recordData.value.note}
-            isEncrypted={recordData.value.is_encrypted}
+            noteText={noteText}
             onDecrypt={(text) => {
                 recordData.value = {
                     ...recordData.value,
@@ -150,7 +168,10 @@ export default function ViewNote(
                     <NoteWindow
                         onClose={() => windowMode.value = null}
                         type={windowMode.value}
-                        noteText={recordData.value.note}
+                        textRecord={{
+                            text: recordData.value.note,
+                            is_encrypted: false,
+                        }}
                         noteId={recordData.value.id}
                     />
                 )}

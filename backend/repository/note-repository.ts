@@ -156,6 +156,7 @@ export interface NoteDetailsRecord {
     created_at: number;
     updated_at: number;
     user_name: string;
+    is_encrypted: boolean;
     note: string;
     title: string;
 }

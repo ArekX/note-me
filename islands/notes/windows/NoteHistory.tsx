@@ -26,7 +26,7 @@ import { useTimeFormat } from "$frontend/hooks/use-time-format.ts";
 import ConfirmDialog from "$islands/ConfirmDialog.tsx";
 import { usePagedData } from "$frontend/hooks/use-paged-data.ts";
 
-export default function NoteDetails(
+export default function NoteHistory(
     { noteId, onClose, noteText }: NoteWindowComponentProps,
 ) {
     const {

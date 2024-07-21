@@ -48,6 +48,7 @@ import * as $dashboard_RecentlyOpenedNotes from "./islands/dashboard/RecentlyOpe
 import * as $encryption_DecryptionTextWrapper from "./islands/encryption/DecryptionTextWrapper.tsx";
 import * as $encryption_EncryptionLockButton from "./islands/encryption/EncryptionLockButton.tsx";
 import * as $encryption_EncryptionLockWindow from "./islands/encryption/EncryptionLockWindow.tsx";
+import * as $encryption_ProtectedAreaWrapper from "./islands/encryption/ProtectedAreaWrapper.tsx";
 import * as $files_FileDropWrapper from "./islands/files/FileDropWrapper.tsx";
 import * as $files_FileItem from "./islands/files/FileItem.tsx";
 import * as $files_FilePicker from "./islands/files/FilePicker.tsx";
@@ -75,6 +76,7 @@ import * as $notes_blocks_NoteLink from "./islands/notes/blocks/NoteLink.tsx";
 import * as $notes_blocks_NoteList from "./islands/notes/blocks/NoteList.tsx";
 import * as $notes_blocks_TableOfContents from "./islands/notes/blocks/TableOfContents.tsx";
 import * as $notes_helpers_markdown from "./islands/notes/helpers/markdown.ts";
+import * as $notes_hooks_use_note_text from "./islands/notes/hooks/use-note-text.ts";
 import * as $notes_hooks_use_note_websocket from "./islands/notes/hooks/use-note-websocket.ts";
 import * as $notes_insert_components_InsertFile from "./islands/notes/insert-components/InsertFile.tsx";
 import * as $notes_insert_components_InsertImage from "./islands/notes/insert-components/InsertImage.tsx";
@@ -185,6 +187,8 @@ const manifest = {
             $encryption_EncryptionLockButton,
         "./islands/encryption/EncryptionLockWindow.tsx":
             $encryption_EncryptionLockWindow,
+        "./islands/encryption/ProtectedAreaWrapper.tsx":
+            $encryption_ProtectedAreaWrapper,
         "./islands/files/FileDropWrapper.tsx": $files_FileDropWrapper,
         "./islands/files/FileItem.tsx": $files_FileItem,
         "./islands/files/FilePicker.tsx": $files_FilePicker,
@@ -214,6 +218,7 @@ const manifest = {
         "./islands/notes/blocks/TableOfContents.tsx":
             $notes_blocks_TableOfContents,
         "./islands/notes/helpers/markdown.ts": $notes_helpers_markdown,
+        "./islands/notes/hooks/use-note-text.ts": $notes_hooks_use_note_text,
         "./islands/notes/hooks/use-note-websocket.ts":
             $notes_hooks_use_note_websocket,
         "./islands/notes/insert-components/InsertFile.tsx":

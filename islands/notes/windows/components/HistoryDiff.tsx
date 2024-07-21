@@ -8,13 +8,17 @@ import {
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import Loader from "$islands/Loader.tsx";
 import { useEffect } from "preact/hooks";
-import { diffText } from "$frontend/diff.ts";
+import { DiffLine, diffText } from "$frontend/diff.ts";
 import { getFormattedTagString } from "$frontend/tags.ts";
-import DecryptionTextWrapper from "$islands/encryption/DecryptionTextWrapper.tsx";
+import {
+    NoteTextHook,
+    useNoteText,
+} from "$islands/notes/hooks/use-note-text.ts";
+import ProtectedAreaWrapper from "$islands/encryption/ProtectedAreaWrapper.tsx";
 
 interface HistoryDiffProps {
     id: number;
-    noteText: string;
+    noteText: NoteTextHook;
     showType: ShowNoteType;
 }
 
@@ -28,8 +32,13 @@ export default function HistoryDiff({
     const { sendMessage } = useWebsocketService();
     const loader = useLoader(true);
     const data = useSignal<NoteHistoryDataRecord | null>(null);
-
-    const diffLines = data.value ? diffText(noteText, data.value.note) : [];
+    const historyNoteText = useNoteText({
+        record: {
+            text: "",
+            is_encrypted: false,
+        },
+    });
+    const diffLines = useSignal<DiffLine[]>([]);
 
     const loadHistoryData = loader.wrap(async (id: number) => {
         const response = await sendMessage<
@@ -46,7 +55,21 @@ export default function HistoryDiff({
             },
         );
 
-        data.value = response.data;
+        historyNoteText.setRecord({
+            text: response.data.note,
+            is_encrypted: response.data.is_encrypted,
+        });
+
+        const note = await noteText.getText();
+
+        data.value = {
+            ...response.data,
+            note: (await historyNoteText.getText())!,
+        };
+
+        if (note) {
+            diffLines.value = diffText(data.value.note, note);
+        }
     });
 
     useEffect(() => {
@@ -54,17 +77,9 @@ export default function HistoryDiff({
     }, [id]);
 
     return (
-        <DecryptionTextWrapper
-            encryptedText={data.value?.note ?? ""}
-            isEncrypted={data.value?.is_encrypted ?? false}
-            onDecrypt={(text) => {
-                if (data.value) {
-                    data.value = {
-                        ...data.value,
-                        note: text,
-                    };
-                }
-            }}
+        <ProtectedAreaWrapper
+            requirePassword={historyNoteText.isEncrypted() ||
+                noteText.isEncrypted()}
         >
             <div class="p-4">
                 {loader.running ? <Loader color="white" /> : data.value && (
@@ -81,7 +96,7 @@ export default function HistoryDiff({
                             )
                             : (
                                 <pre class="diff-viewer text-sm whitespace-pre-wrap">
-                        {diffLines.map((line, index) => {
+                        {diffLines.value.map((line, index) => {
                             switch (line.type) {
                                 case "added":
                                     return (
@@ -118,6 +133,6 @@ export default function HistoryDiff({
                     </>
                 )}
             </div>
-        </DecryptionTextWrapper>
+        </ProtectedAreaWrapper>
     );
 }

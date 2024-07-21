@@ -21,7 +21,8 @@ export default function TreeWindow({
         <>
             {container.type === "note" && (
                 <NoteWindow
-                    noteId={+container.id!}
+                    noteId={container.id!}
+                    textRecord={{ noteId: container.id! }}
                     type={windowType}
                     onClose={() => onAction("closed")}
                 />

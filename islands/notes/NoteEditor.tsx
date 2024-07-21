@@ -34,6 +34,7 @@ import {
     EncryptTextResponse,
 } from "$workers/websocket/api/users/messages.ts";
 import EncryptionNoteWrapper from "$islands/encryption/DecryptionTextWrapper.tsx";
+import { useNoteText } from "$islands/notes/hooks/use-note-text.ts";
 
 interface NoteData extends Pick<NoteRecord, "title" | "note" | "is_encrypted"> {
     id?: number;
@@ -51,7 +52,7 @@ export default function NoteEditor({
 }: NoteEditorProps) {
     const name = useSignal(note.title);
     const text = useSignal(note.note);
-    const isProtected = useSignal(note.is_encrypted);
+    const isProtected = useSignal(!!note.is_encrypted);
     const tags = useSignal<string[]>(note.tags);
     const noteId = useSignal<number | null>(note.id ?? null);
     const groupId = useSignal<number | null>(note.group_id ?? null);
@@ -61,6 +62,13 @@ export default function NoteEditor({
     const isPreviewMode = useSignal(false);
     const wasDataChanged = useSignal(false);
 
+    const noteText = useNoteText({
+        record: {
+            text: text.value,
+            is_encrypted: isProtected.value,
+        },
+    });
+
     const encryptionLock = useEncryptionLock();
 
     const [noteValidation, validateNote] = useValidation<AddNoteRequest>({
@@ -69,12 +77,23 @@ export default function NoteEditor({
 
     const { sendMessage } = useNoteWebsocket({
         noteId: noteId.value,
-        onNoteUpdated: (data) => {
+        onNoteUpdated: async (data) => {
             name.value = data.title ?? name.value;
-            text.value = data.text ?? text.value;
+
+            if (data.text && data.is_encrypted) {
+                noteText.setRecord({
+                    text: data.text,
+                    is_encrypted: true,
+                });
+                text.value = await noteText.getText() ?? "";
+            } else {
+                text.value = data.text ?? text.value;
+            }
+
             tags.value = data.tags ?? tags.value;
 
-            isProtected.value = data.is_encrypted ?? isProtected.value;
+            isProtected.value = !!(data.is_encrypted ?? isProtected.value);
+
             groupId.value = data.group_id !== undefined
                 ? data.group_id
                 : groupId.value;
@@ -110,13 +129,15 @@ export default function NoteEditor({
             group_id: groupId.value,
             tags: tags.value,
             is_encrypted: isProtected.value,
-            text: await getNoteTextRequest(),
+            text: text.value,
             title: name.value,
         };
 
         if (!await validateNote(noteToSave)) {
             return;
         }
+
+        noteToSave.text = await getNoteTextRequest();
 
         if (noteId.value) {
             await sendMessage<UpdateNoteMessage, UpdateNoteResponse>(
@@ -252,17 +273,20 @@ export default function NoteEditor({
         name.value = note.title;
         text.value = note.note;
         tags.value = note.tags;
-        isProtected.value = note.is_encrypted;
+        isProtected.value = !!note.is_encrypted;
         noteId.value = note.id ?? null;
         groupId.value = note.group_id ?? null;
         groupName.value = note.group_name ?? null;
         wasDataChanged.value = false;
+        noteText.setRecord({
+            text: note.note,
+            is_encrypted: note.is_encrypted,
+        });
     }, [note]);
 
     return (
         <EncryptionNoteWrapper
-            isEncrypted={isProtected.value}
-            encryptedText={text.value}
+            noteText={noteText}
             onDecrypt={(decryptedText) => text.value = decryptedText}
         >
             <div class="note-editor flex flex-col">
@@ -366,7 +390,10 @@ export default function NoteEditor({
                     <NoteWindow
                         onClose={() => windowMode.value = null}
                         type={windowMode.value}
-                        noteText={text.value}
+                        textRecord={{
+                            text: text.value,
+                            is_encrypted: false,
+                        }}
                         noteId={noteId.value}
                     />
                 )}
