@@ -1,9 +1,9 @@
 export const store = <T>(key: string, value: T) => {
-    sessionStorage.setItem(key, JSON.stringify(value));
+    localStorage.setItem(key, JSON.stringify(value));
 };
 
 export const restore = <T>(key: string, defaultValue: T | null = null) => {
-    const value = sessionStorage.getItem(key);
+    const value = localStorage.getItem(key);
 
     try {
         return JSON.parse(value!) as T;
@@ -13,5 +13,5 @@ export const restore = <T>(key: string, defaultValue: T | null = null) => {
 };
 
 export const clearStorage = () => {
-    sessionStorage.clear();
+    localStorage.clear();
 };

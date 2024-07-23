@@ -21,6 +21,10 @@ export default function EncryptionNoteWrapper({
     const decryptionLoader = useLoader(!noteText.isResolved());
 
     const handleDecrypt = decryptionLoader.wrap(async () => {
+        if (encryptionLock.isLocked.value) {
+            noteText.clearResolvedText();
+        }
+
         const result = await noteText.getText();
         if (result) {
             onDecrypt?.(result);
@@ -71,7 +75,9 @@ export default function EncryptionNoteWrapper({
                                             color="success"
                                             onClick={handleDecrypt}
                                         >
-                                            Retry
+                                            {noteText.getFailReason()
+                                                ? "Retry"
+                                                : "Unlock"}
                                         </Button>
                                     </div>
                                 </div>

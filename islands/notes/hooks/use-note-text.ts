@@ -32,6 +32,7 @@ export interface NoteTextHook {
     getFailReason: () => string | null;
     isEncrypted: () => boolean;
     isResolved: () => boolean;
+    clearResolvedText: () => void;
 }
 
 export const useNoteText = (options: NoteTextOptions): NoteTextHook => {
@@ -165,11 +166,14 @@ export const useNoteText = (options: NoteTextOptions): NoteTextHook => {
 
     const isResolved = () => resolvedText.value !== null;
 
+    const clearResolvedText = () => resolvedText.value = null;
+
     return {
         getFailReason,
         setRecord,
         isEncrypted,
         getText,
         isResolved,
+        clearResolvedText,
     };
 };

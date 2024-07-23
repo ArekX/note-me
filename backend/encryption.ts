@@ -156,3 +156,26 @@ export const decryptNote = async (
 
     return new TextDecoder().decode(decrypted);
 };
+
+export const encryptText = async (
+    text: string,
+    password: string,
+): Promise<string> => {
+    const encrypted = await encryptBinary(
+        new TextEncoder().encode(text),
+        password,
+    );
+    return encodeBase64(encrypted);
+};
+
+export const decryptText = async (
+    encryptedTextBase64: string,
+    password: string,
+): Promise<string> => {
+    const decrypted = await decryptBinary(
+        decodeBase64(encryptedTextBase64),
+        password,
+    );
+
+    return new TextDecoder().decode(decrypted);
+};
