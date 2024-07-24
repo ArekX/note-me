@@ -145,7 +145,6 @@ export default function ViewNote(
                                 <MoreMenu
                                     onMenuItemClick={handleMenuItemClicked}
                                     inPreviewMode={false}
-                                    isProtected={recordData.value.is_encrypted}
                                     mode={readonly ? "view-readonly" : "view"}
                                 />
                             </div>

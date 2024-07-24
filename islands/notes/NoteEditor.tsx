@@ -179,12 +179,6 @@ export default function NoteEditor({
             case "edit":
                 isPreviewMode.value = false;
                 break;
-            case "protect":
-                isProtected.value = true;
-                break;
-            case "unprotect":
-                isProtected.value = false;
-                break;
             case "details":
             case "history":
             case "share":
@@ -325,6 +319,21 @@ export default function NoteEditor({
                                 ? <Icon name="save" size="lg" />
                                 : <Loader color="white">Saving...</Loader>}
                         </Button>{" "}
+                        <Button
+                            color="primary"
+                            title={isProtected.value ? "Unprotect" : "Protect"}
+                            disabled={isSaving.running}
+                            onClick={() =>
+                                isProtected.value = !isProtected.value}
+                        >
+                            <Icon
+                                name={isProtected.value
+                                    ? "lock-alt"
+                                    : "lock-open-alt"}
+                                type={isProtected.value ? "solid" : "regular"}
+                                size="lg"
+                            />
+                        </Button>{" "}
                         {noteId.value && (
                             <>
                                 <Button
@@ -346,7 +355,6 @@ export default function NoteEditor({
                             <MoreMenu
                                 onMenuItemClick={handleMenuItemClicked}
                                 inPreviewMode={isPreviewMode.value}
-                                isProtected={isProtected.value}
                                 mode={noteId.value
                                     ? "edit-existing"
                                     : "edit-new"}
