@@ -278,7 +278,6 @@ export default function NoteEditor({
         groupId.value = note.group_id ?? null;
         groupName.value = note.group_name ?? null;
         wasDataChanged.value = false;
-        noteText.clearResolvedText();
         noteText.setInputData({
             text: note.note,
             is_encrypted: note.is_encrypted,
@@ -291,7 +290,7 @@ export default function NoteEditor({
 
     return (
         <ProtectedAreaWrapper
-            requirePassword={noteText.isEncrypted()}
+            requirePassword={noteText.isEncrypted() && !noteText.isResolved()}
             onUnlock={handleUnlock}
         >
             <div class="note-editor flex flex-col">

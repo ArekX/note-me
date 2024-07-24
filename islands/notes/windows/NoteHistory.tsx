@@ -25,6 +25,7 @@ import { addMessage } from "$frontend/toast-message.ts";
 import ConfirmDialog from "$islands/ConfirmDialog.tsx";
 import { usePagedData } from "$frontend/hooks/use-paged-data.ts";
 import { timeAgo } from "$lib/time/time-ago.ts";
+import Icon from "$components/Icon.tsx";
 
 export default function NoteHistory(
     { noteId, onClose, noteText }: NoteWindowComponentProps,
@@ -150,6 +151,16 @@ export default function NoteHistory(
                                             >
                                                 {record.version}
                                                 <span class="text-xs block">
+                                                    {record.is_encrypted
+                                                        ? (
+                                                            <Icon
+                                                                name="lock-alt"
+                                                                size="sm"
+                                                                type="solid"
+                                                                className="mr-1"
+                                                            />
+                                                        )
+                                                        : null}
                                                     {timeAgo(
                                                         record.created_at,
                                                     )}

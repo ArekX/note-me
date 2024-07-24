@@ -39,7 +39,7 @@ export default function ProtectedAreaWrapper(
             !encryptionLock.isLockWindowOpen.value
         ) {
             requestUnlock();
-        } else if (onUnlock) {
+        } else if (requirePassword && onUnlock) {
             lockLoader.run(onUnlock);
         }
     }, [requirePassword, encryptionLock.isLocked.value]);

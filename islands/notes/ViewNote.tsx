@@ -31,7 +31,10 @@ export default function ViewNote(
     }: ViewNoteProps,
 ) {
     const windowMode = useSignal<NoteWindowTypes | null>(null);
-    const recordData = useSignal<ViewNoteRecord>(record);
+    const recordData = useSignal<ViewNoteRecord>({
+        ...record,
+        note: record.is_encrypted ? "" : record.note,
+    });
     const noteText = useNoteText({
         initialData: {
             text: record.note,
@@ -54,12 +57,21 @@ export default function ViewNote(
 
     useNoteWebsocket({
         noteId: record.id,
-        onNoteUpdated: (data) => {
+        onNoteUpdated: async (data) => {
+            let text = data.text ?? recordData.value.note;
+            if (data.text && data.is_encrypted) {
+                noteText.setInputData({
+                    text: data.text,
+                    is_encrypted: true,
+                });
+                text = await noteText.getText() ?? "";
+            }
+
             recordData.value = {
                 ...recordData.value,
                 title: data.title ?? recordData.value.title,
                 tags: data.tags ?? recordData.value.tags,
-                note: data.text ?? recordData.value.note,
+                note: text,
                 is_encrypted: data.is_encrypted ??
                     recordData.value.is_encrypted,
                 group_id: data.group_id !== undefined
@@ -106,7 +118,7 @@ export default function ViewNote(
 
     return (
         <ProtectedAreaWrapper
-            requirePassword={noteText.isEncrypted()}
+            requirePassword={noteText.isEncrypted() && !noteText.isResolved()}
             onUnlock={handleUnlock}
         >
             <div class="view-note flex flex-col">

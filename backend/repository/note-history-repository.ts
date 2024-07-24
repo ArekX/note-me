@@ -42,6 +42,7 @@ export type NoteHistoryMetaRecord =
         NoteHistoryTable,
         | "version"
         | "created_at"
+        | "is_encrypted"
     >
     & RecordId;
 
@@ -55,6 +56,7 @@ export const findHistory = async (
             "note_history.id",
             "note_history.version",
             "note_history.created_at",
+            "note_history.is_encrypted",
         ])
         .where("note_history.note_id", "=", note_id)
         .innerJoin(
