@@ -8,7 +8,7 @@ import { useEffect } from "preact/hooks";
 interface ProtectedAreaWrapperProps {
     requirePassword: boolean;
     children?: ComponentChildren;
-    onUnlock?: () => void;
+    onUnlock?: () => Promise<void>;
 }
 
 export default function ProtectedAreaWrapper(
@@ -21,29 +21,28 @@ export default function ProtectedAreaWrapper(
 
     const requestUnlock = lockLoader.wrap(async () => {
         if (!encryptionLock.isLocked.value) {
-            onUnlock?.();
+            await onUnlock?.();
             return;
         }
 
         try {
             await encryptionLock.requestPassword();
-            onUnlock?.();
+            await onUnlock?.();
         } catch {
             // Ignore
         }
     });
 
     useEffect(() => {
-        if (!requirePassword || !encryptionLock.isLocked.value) {
+        if (
+            requirePassword && encryptionLock.isLocked.value &&
+            !encryptionLock.isLockWindowOpen.value
+        ) {
             requestUnlock();
+        } else if (onUnlock) {
+            lockLoader.run(onUnlock);
         }
     }, [requirePassword, encryptionLock.isLocked.value]);
-
-    useEffect(() => {
-        if (requirePassword && encryptionLock.isLocked.value) {
-            requestUnlock();
-        }
-    }, []);
 
     return lockLoader.running
         ? (

@@ -10,8 +10,8 @@ import { useEffect } from "preact/hooks";
 import DetailsLine from "$islands/notes/DetailsLine.tsx";
 import Viewer from "$islands/markdown/Viewer.tsx";
 import { useSearch } from "$frontend/hooks/use-search.ts";
-import DecryptionTextWrapper from "$islands/encryption/DecryptionTextWrapper.tsx";
 import { useNoteText } from "$islands/notes/hooks/use-note-text.ts";
+import ProtectedAreaWrapper from "$islands/encryption/ProtectedAreaWrapper.tsx";
 
 export interface ViewNoteProps {
     readonly?: boolean;
@@ -33,7 +33,7 @@ export default function ViewNote(
     const windowMode = useSignal<NoteWindowTypes | null>(null);
     const recordData = useSignal<ViewNoteRecord>(record);
     const noteText = useNoteText({
-        record: {
+        initialData: {
             text: record.note,
             is_encrypted: record.is_encrypted,
         },
@@ -46,7 +46,7 @@ export default function ViewNote(
             note: record.is_encrypted ? "" : record.note,
         };
 
-        noteText.setRecord({
+        noteText.setInputData({
             text: record.note,
             is_encrypted: recordData.value.is_encrypted,
         });
@@ -60,6 +60,8 @@ export default function ViewNote(
                 title: data.title ?? recordData.value.title,
                 tags: data.tags ?? recordData.value.tags,
                 note: data.text ?? recordData.value.note,
+                is_encrypted: data.is_encrypted ??
+                    recordData.value.is_encrypted,
                 group_id: data.group_id !== undefined
                     ? data.group_id
                     : recordData.value.group_id,
@@ -67,7 +69,7 @@ export default function ViewNote(
                     ? data.group_name
                     : recordData.value.group_name,
             };
-            noteText.setRecord({
+            noteText.setInputData({
                 text: recordData.value.note,
                 is_encrypted: recordData.value.is_encrypted,
             });
@@ -95,15 +97,17 @@ export default function ViewNote(
         search?.setTags([tag]);
     };
 
+    const handleUnlock = async () => {
+        recordData.value = {
+            ...recordData.value,
+            note: await noteText.getText() ?? "",
+        };
+    };
+
     return (
-        <DecryptionTextWrapper
-            noteText={noteText}
-            onDecrypt={(text) => {
-                recordData.value = {
-                    ...recordData.value,
-                    note: text,
-                };
-            }}
+        <ProtectedAreaWrapper
+            requirePassword={noteText.isEncrypted()}
+            onUnlock={handleUnlock}
         >
             <div class="view-note flex flex-col">
                 <div class="flex flex-row">
@@ -168,14 +172,15 @@ export default function ViewNote(
                     <NoteWindow
                         onClose={() => windowMode.value = null}
                         type={windowMode.value}
-                        textRecord={{
+                        existingNoteData={{
                             text: recordData.value.note,
-                            is_encrypted: false,
+                            is_encrypted: recordData.value.is_encrypted,
+                            is_resolved: true,
                         }}
                         noteId={recordData.value.id}
                     />
                 )}
             </div>
-        </DecryptionTextWrapper>
+        </ProtectedAreaWrapper>
     );
 }

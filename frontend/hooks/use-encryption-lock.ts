@@ -128,11 +128,7 @@ export const useEncryptionLock = () => {
 
         isLockWindowOpen.value = false;
 
-        for (const request of pendingRequests.value) {
-            request.resolve(password);
-        }
-
-        pendingRequests.value = [];
+        processPendingRequests((request) => request.resolve(password));
 
         addMessage({
             type: "success",
@@ -143,6 +139,12 @@ export const useEncryptionLock = () => {
     };
 
     const lock = () => {
+        if (userPassword.value === null) {
+            isLockWindowOpen.value = false;
+            processPendingRequests((request) => request.reject());
+            return;
+        }
+
         if (!isLockWindowOpen.value) {
             addMessage({
                 type: "info",
@@ -155,13 +157,17 @@ export const useEncryptionLock = () => {
 
         lockAt.value = null;
 
-        for (const request of pendingRequests.value) {
-            request.reject();
-        }
-
-        pendingRequests.value = [];
-
+        processPendingRequests((request) => request.reject());
         storeState();
+    };
+
+    const processPendingRequests = (
+        processCall: (p: PendingRequest) => void,
+    ) => {
+        for (const request of pendingRequests.value) {
+            processCall(request);
+        }
+        pendingRequests.value = [];
     };
 
     const isLocked = useComputed(() => userPassword.value === null);

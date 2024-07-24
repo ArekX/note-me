@@ -19,6 +19,12 @@ export const handler: Handlers<PageData> = {
             throw new Deno.errors.NotFound("Requested note not found.");
         }
 
+        if (note.is_encrypted) {
+            throw new Deno.errors.PermissionDenied(
+                "This note is protected by its owner and cannot be viewed.",
+            );
+        }
+
         return ctx.render({
             note,
         });

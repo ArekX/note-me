@@ -5,96 +5,58 @@ import {
     useWebsocketService,
 } from "$frontend/hooks/use-websocket-service.ts";
 import {
-    GetNoteDetailsMessage,
-    GetNoteDetailsResponse,
-} from "$workers/websocket/api/notes/messages.ts";
-import {
     DecryptTextMessage,
     DecryptTextResponse,
 } from "$workers/websocket/api/users/messages.ts";
 
-export type NoteTextRecord = {
-    noteId: number;
-} | NoteData;
-
-type NoteData = {
+export type InputNoteData = {
     text: string;
     is_encrypted: boolean;
+    is_resolved?: boolean;
 };
 
 interface NoteTextOptions {
-    record: NoteTextRecord;
+    initialData?: InputNoteData;
 }
 
 export interface NoteTextHook {
     getText: () => Promise<string | null>;
-    setRecord: (record: NoteTextRecord) => void;
+    setInputData: (record: InputNoteData) => void;
     getFailReason: () => string | null;
     isEncrypted: () => boolean;
     isResolved: () => boolean;
     clearResolvedText: () => void;
 }
 
-export const useNoteText = (options: NoteTextOptions): NoteTextHook => {
+export const useNoteText = ({
+    initialData = { text: "", is_encrypted: false },
+}: NoteTextOptions = {}): NoteTextHook => {
     const encryptionLock = useEncryptionLock();
     const { sendMessage } = useWebsocketService();
     const failReason = useSignal<string | null>(null);
-    const textRecord = useSignal<NoteTextRecord>(options.record);
+    const textRecord = useSignal<InputNoteData>(initialData);
     const resolvedText = useSignal<string | null>(
-        ("text" in options.record) && !options.record.is_encrypted
-            ? options.record.text
+        !initialData.is_encrypted || initialData.is_resolved
+            ? initialData.text
             : null,
     );
 
-    const setRecord = (record: NoteTextRecord) => {
-        if (
-            ("text" in record) && record.text === resolvedText.value
-        ) {
+    const setInputData = (record: InputNoteData) => {
+        if (record.text === resolvedText.value) {
             return;
         }
 
         textRecord.value = record;
 
         failReason.value = null;
-        if (("text" in record) && !record.is_encrypted) {
+        if (!record.is_encrypted || record.is_resolved) {
             resolvedText.value = record.text;
         } else {
             resolvedText.value = null;
         }
     };
 
-    const isEncrypted = () =>
-        "is_encrypted" in textRecord.value
-            ? textRecord.value.is_encrypted
-            : false;
-
-    const getNoteText = async (id: number): Promise<NoteData | null> => {
-        try {
-            const response = await sendMessage<
-                GetNoteDetailsMessage,
-                GetNoteDetailsResponse
-            >("notes", "getNoteDetails", {
-                data: {
-                    id,
-                    options: {
-                        include_note: true,
-                    },
-                },
-                expect: "getNoteDetailsResponse",
-            });
-
-            return {
-                text: response.record.note,
-                is_encrypted: response.record.is_encrypted ?? false,
-            };
-        } catch (e) {
-            const error = e as SystemErrorMessage;
-            failReason.value =
-                `Note text retrieve failed: ${error.data.message}`;
-
-            return null;
-        }
-    };
+    const isEncrypted = () => textRecord.value.is_encrypted;
 
     const decryptText = async (text: string): Promise<string | null> => {
         let password;
@@ -129,24 +91,9 @@ export const useNoteText = (options: NoteTextOptions): NoteTextHook => {
             return resolvedText.value;
         }
 
-        let text;
-        let isEncrypted;
+        let text = textRecord.value.text;
 
-        if ("noteId" in textRecord.value) {
-            const result = await getNoteText(textRecord.value.noteId);
-
-            if (!result) {
-                return null;
-            }
-
-            text = result.text;
-            isEncrypted = result.is_encrypted;
-        } else {
-            text = textRecord.value.text;
-            isEncrypted = textRecord.value.is_encrypted;
-        }
-
-        if (isEncrypted) {
+        if (textRecord.value.is_encrypted) {
             const result = await decryptText(text);
 
             if (!result) {
@@ -170,7 +117,7 @@ export const useNoteText = (options: NoteTextOptions): NoteTextHook => {
 
     return {
         getFailReason,
-        setRecord,
+        setInputData,
         isEncrypted,
         getText,
         isResolved,

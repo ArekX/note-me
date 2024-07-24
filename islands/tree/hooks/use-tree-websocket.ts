@@ -39,7 +39,7 @@ export const useTreeWebsocket = (options: TreeWebsocketOptions) => {
                         type: "note",
                         id: data.record.id,
                         name: data.record.title,
-
+                        is_encrypted: +data.record.is_encrypted,
                         has_children: 0,
                     });
 
@@ -108,7 +108,7 @@ export const useTreeWebsocket = (options: TreeWebsocketOptions) => {
                         type: "group",
                         id: data.record.id,
                         name: data.record.name,
-
+                        is_encrypted: 0,
                         has_children: 0,
                     });
 

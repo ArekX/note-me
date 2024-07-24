@@ -15,14 +15,10 @@ import TableOfContents from "$islands/notes/blocks/TableOfContents.tsx";
 import ButtonGroup from "$components/ButtonGroup.tsx";
 import { useListState } from "$frontend/hooks/use-list-state.ts";
 import Picker from "$components/Picker.tsx";
-
-interface NoteDetailsProps {
-    noteId: number;
-    onClose: () => void;
-}
+import { NoteWindowComponentProps } from "$islands/notes/NoteWindow.tsx";
 
 export default function NoteDetails(
-    { noteId, onClose }: NoteDetailsProps,
+    { noteId, onClose, noteText }: NoteWindowComponentProps,
 ) {
     const noteData = useSignal<NoteDetailsRecord | null>(null);
 
@@ -45,7 +41,7 @@ export default function NoteDetails(
             data: {
                 id: noteId,
                 options: {
-                    include_note: true,
+                    include_note: false,
                     include_group: true,
                     include_user: true,
                     include_timestamp: true,
@@ -56,6 +52,7 @@ export default function NoteDetails(
         });
 
         noteData.value = response.record;
+        noteData.value.note = (await noteText.getText())!;
     });
 
     useEffect(() => {

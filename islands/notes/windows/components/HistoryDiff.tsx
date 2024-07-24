@@ -33,7 +33,7 @@ export default function HistoryDiff({
     const loader = useLoader(true);
     const data = useSignal<NoteHistoryDataRecord | null>(null);
     const historyNoteText = useNoteText({
-        record: {
+        initialData: {
             text: "",
             is_encrypted: false,
         },
@@ -55,7 +55,7 @@ export default function HistoryDiff({
             },
         );
 
-        historyNoteText.setRecord({
+        historyNoteText.setInputData({
             text: response.data.note,
             is_encrypted: response.data.is_encrypted,
         });

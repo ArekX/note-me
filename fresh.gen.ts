@@ -45,7 +45,6 @@ import * as $ToastMessages from "./islands/ToastMessages.tsx";
 import * as $UserPicker from "./islands/UserPicker.tsx";
 import * as $dashboard_Dashboard from "./islands/dashboard/Dashboard.tsx";
 import * as $dashboard_RecentlyOpenedNotes from "./islands/dashboard/RecentlyOpenedNotes.tsx";
-import * as $encryption_DecryptionTextWrapper from "./islands/encryption/DecryptionTextWrapper.tsx";
 import * as $encryption_EncryptionLockButton from "./islands/encryption/EncryptionLockButton.tsx";
 import * as $encryption_EncryptionLockWindow from "./islands/encryption/EncryptionLockWindow.tsx";
 import * as $encryption_ProtectedAreaWrapper from "./islands/encryption/ProtectedAreaWrapper.tsx";
@@ -181,8 +180,6 @@ const manifest = {
         "./islands/dashboard/Dashboard.tsx": $dashboard_Dashboard,
         "./islands/dashboard/RecentlyOpenedNotes.tsx":
             $dashboard_RecentlyOpenedNotes,
-        "./islands/encryption/DecryptionTextWrapper.tsx":
-            $encryption_DecryptionTextWrapper,
         "./islands/encryption/EncryptionLockButton.tsx":
             $encryption_EncryptionLockButton,
         "./islands/encryption/EncryptionLockWindow.tsx":

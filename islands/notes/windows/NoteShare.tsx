@@ -21,6 +21,7 @@ import { PickUserRecord } from "$backend/repository/user-repository.ts";
 export default function NoteShare({
     noteId,
     onClose,
+    noteText,
 }: NoteWindowComponentProps) {
     const {
         items,
@@ -104,6 +105,15 @@ export default function NoteShare({
             props={{ "class": "w-2/4" }}
         >
             <h1 class="text-2xl pb-4">Share Note</h1>
+
+            {noteText.isEncrypted() && (
+                <div class="my-4 border-2 border-red-700 p-4 bg-red-950">
+                    <strong>Important:</strong>{" "}
+                    This note is protected. You are the only person who can view
+                    it, any other user attempting to view this note will not be
+                    able to open it.
+                </div>
+            )}
 
             {shareDataLoader.running ? <Loader color="white" /> : (
                 <div>

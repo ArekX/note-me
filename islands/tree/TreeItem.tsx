@@ -134,6 +134,7 @@ export default function TreeItem({
                         id: container.id!,
                         name: container.name,
                         has_children: Number(container.has_children),
+                        is_encrypted: 0,
                         type: "group",
                     });
                 }
@@ -207,17 +208,28 @@ export default function TreeItem({
                     )
                     : (
                         <span class="group-item-name pl-2 pr-2">
-                            <Icon
-                                name={container.type == "group"
-                                    ? `folder${
-                                        container.is_open ? "-open" : ""
-                                    }`
-                                    : "file"}
-                                type={container.type == "group" &&
-                                        container.has_children
-                                    ? "solid"
-                                    : "regular"}
-                            />{" "}
+                            <div class="relative inline-block">
+                                {container.is_protected && (
+                                    <div class="absolute -bottom-1 right-0">
+                                        <Icon
+                                            name="lock-alt"
+                                            type="solid"
+                                            size="sm"
+                                        />
+                                    </div>
+                                )}
+                                <Icon
+                                    name={container.type == "group"
+                                        ? `folder${
+                                            container.is_open ? "-open" : ""
+                                        }`
+                                        : "file"}
+                                    type={container.type == "group" &&
+                                            container.has_children
+                                        ? "solid"
+                                        : "regular"}
+                                />
+                            </div>{" "}
                             <span class="name-text">
                                 {container.name}
                             </span>

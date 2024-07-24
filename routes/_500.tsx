@@ -23,20 +23,27 @@ export default function Error500({ error }: PageProps) {
             <Head>
                 <title>{statusCode} - {message}</title>
             </Head>
-            <div class="px-4 py-8 mx-auto bg-[#86efac]">
+            <div class="px-4 py-8 mx-auto text-white">
                 <div class="max-w-screen-md mx-auto flex flex-col items-center justify-center">
                     <img
                         class="my-6"
-                        src="/logo.svg"
+                        src="/logo-white.svg"
                         width="128"
                         height="128"
-                        alt="the Fresh logo: a sliced lemon dripping with juice"
+                        alt="NoteMe"
                     />
-                    <h1 class="text-4xl font-bold">{statusCode} - {message}</h1>
-                    <p class="my-4">
-                        {(error as Error).message}
-                    </p>
-                    <a href="/" class="underline">Go back home</a>
+
+                    <h1 class="text-4xl font-bold">
+                        {message} ({statusCode})
+                    </h1>
+
+                    <div class="border-2 py-2 px-8 my-4 border-red-800 bg-red-950">
+                        <p class="my-4">
+                            {(error as Error).message}
+                        </p>
+                    </div>
+
+                    <a href="/" class="underline">Go to home page</a>
                 </div>
             </div>
         </>

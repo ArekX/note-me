@@ -33,8 +33,8 @@ import {
     EncryptTextMessage,
     EncryptTextResponse,
 } from "$workers/websocket/api/users/messages.ts";
-import EncryptionNoteWrapper from "$islands/encryption/DecryptionTextWrapper.tsx";
 import { useNoteText } from "$islands/notes/hooks/use-note-text.ts";
+import ProtectedAreaWrapper from "$islands/encryption/ProtectedAreaWrapper.tsx";
 
 interface NoteData extends Pick<NoteRecord, "title" | "note" | "is_encrypted"> {
     id?: number;
@@ -63,7 +63,7 @@ export default function NoteEditor({
     const wasDataChanged = useSignal(false);
 
     const noteText = useNoteText({
-        record: {
+        initialData: {
             text: text.value,
             is_encrypted: isProtected.value,
         },
@@ -81,7 +81,7 @@ export default function NoteEditor({
             name.value = data.title ?? name.value;
 
             if (data.text && data.is_encrypted) {
-                noteText.setRecord({
+                noteText.setInputData({
                     text: data.text,
                     is_encrypted: true,
                 });
@@ -271,23 +271,28 @@ export default function NoteEditor({
 
     useEffect(() => {
         name.value = note.title;
-        text.value = note.note;
+        text.value = note.is_encrypted ? "" : note.note;
         tags.value = note.tags;
         isProtected.value = !!note.is_encrypted;
         noteId.value = note.id ?? null;
         groupId.value = note.group_id ?? null;
         groupName.value = note.group_name ?? null;
         wasDataChanged.value = false;
-        noteText.setRecord({
+        noteText.clearResolvedText();
+        noteText.setInputData({
             text: note.note,
             is_encrypted: note.is_encrypted,
         });
     }, [note]);
 
+    const handleUnlock = async () => {
+        text.value = (await noteText.getText())!;
+    };
+
     return (
-        <EncryptionNoteWrapper
-            noteText={noteText}
-            onDecrypt={(decryptedText) => text.value = decryptedText}
+        <ProtectedAreaWrapper
+            requirePassword={noteText.isEncrypted()}
+            onUnlock={handleUnlock}
         >
             <div class="note-editor flex flex-col">
                 <div class="flex flex-row">
@@ -374,7 +379,7 @@ export default function NoteEditor({
 
                 {isPreviewMode.value
                     ? <Viewer text={text.value} />
-                    : (
+                    : noteText.isResolved() && (
                         <NoteTextArea
                             initialText={text.value}
                             isSaving={isSaving.running}
@@ -390,14 +395,15 @@ export default function NoteEditor({
                     <NoteWindow
                         onClose={() => windowMode.value = null}
                         type={windowMode.value}
-                        textRecord={{
+                        existingNoteData={{
                             text: text.value,
-                            is_encrypted: false,
+                            is_encrypted: isProtected.value,
+                            is_resolved: true,
                         }}
                         noteId={noteId.value}
                     />
                 )}
             </div>
-        </EncryptionNoteWrapper>
+        </ProtectedAreaWrapper>
     );
 }

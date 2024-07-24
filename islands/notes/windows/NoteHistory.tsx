@@ -22,9 +22,9 @@ import HistoryDiff, {
 } from "$islands/notes/windows/components/HistoryDiff.tsx";
 import { NoteWindowComponentProps } from "$islands/notes/NoteWindow.tsx";
 import { addMessage } from "$frontend/toast-message.ts";
-import { useTimeFormat } from "$frontend/hooks/use-time-format.ts";
 import ConfirmDialog from "$islands/ConfirmDialog.tsx";
 import { usePagedData } from "$frontend/hooks/use-paged-data.ts";
+import { timeAgo } from "$lib/time/time-ago.ts";
 
 export default function NoteHistory(
     { noteId, onClose, noteText }: NoteWindowComponentProps,
@@ -109,8 +109,6 @@ export default function NoteHistory(
         confirmDelete.value = false;
     };
 
-    const timeFormatter = useTimeFormat();
-
     useEffect(() => {
         loadNoteHistory();
     }, [noteId]);
@@ -152,10 +150,9 @@ export default function NoteHistory(
                                             >
                                                 {record.version}
                                                 <span class="text-xs block">
-                                                    {timeFormatter
-                                                        .formatDateTime(
-                                                            record.created_at,
-                                                        )}
+                                                    {timeAgo(
+                                                        record.created_at,
+                                                    )}
                                                 </span>
                                             </Button>
                                         </div>

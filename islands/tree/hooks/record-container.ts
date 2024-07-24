@@ -11,6 +11,7 @@ export interface RecordContainer {
     type: RecordType;
     is_processing: boolean;
     is_open: boolean;
+    is_protected: boolean;
     children_loaded: boolean;
     has_children: boolean;
     display_mode: DisplayMode;
@@ -27,6 +28,7 @@ export const fromTreeRecord = (
         id: record.id,
         name: record.name,
         type: record.type,
+        is_protected: !!record.is_encrypted,
         has_children: !!record.has_children,
     });
 
@@ -39,6 +41,7 @@ export const createContainer = (
     type: "root",
     is_open: false,
     is_processing: false,
+    is_protected: false,
     children_loaded: false,
     has_children: false,
     display_mode: "view",

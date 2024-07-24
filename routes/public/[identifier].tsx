@@ -15,6 +15,12 @@ export const handler = async (_req: Request, ctx: FreshContext<AppState>) => {
         throw new Deno.errors.NotFound("Note not found.");
     }
 
+    if (sharedNote.is_encrypted) {
+        throw new Deno.errors.PermissionDenied(
+            "This note is protected by its owner and cannot be viewed.",
+        );
+    }
+
     return ctx.render({
         pageTitle: sharedNote.title,
         note: sharedNote,

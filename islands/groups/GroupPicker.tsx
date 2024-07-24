@@ -157,6 +157,7 @@ export default function GroupPicker({
                                 id: 0,
                                 type: "group",
                                 name: "Top Level",
+                                is_encrypted: 0,
                                 has_children: 1,
                             }}
                             selectedId={selectedId}

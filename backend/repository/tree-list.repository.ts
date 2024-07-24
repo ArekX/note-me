@@ -7,6 +7,7 @@ export interface TreeRecord {
     type: ItemType;
     id: number;
     name: string;
+    is_encrypted: number;
     has_children: number;
 }
 
@@ -34,6 +35,7 @@ const getGroupQuery = (
             sql<string>`'group'`.as("type"),
             "id",
             "name",
+            sql<number>`0`.as("is_encrypted"),
             hasChildren,
         ])
         .where("user_id", "=", options.user_id)
@@ -56,6 +58,7 @@ const getGroupNoteQuery = (options: {
             sql<string>`'note'`.as("type"),
             sql<number>`note.id`.as("id"),
             sql<string>`note.title`.as("name"),
+            sql<number>`note.is_encrypted`.as("is_encrypted"),
             sql<number>`0`.as("has_children"),
         ])
         .innerJoin("note", "note.id", "group_note.note_id")
