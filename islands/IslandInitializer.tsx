@@ -1,6 +1,7 @@
 import { useEffect } from "preact/hooks";
 import { connect } from "$frontend/socket-manager.ts";
 import { FrontendUserData, setupUserData } from "$frontend/hooks/use-user.ts";
+import { initializeProtectionLock } from "../frontend/hooks/use-protection-lock.ts";
 
 interface ScriptsProps {
     socketHost: string;
@@ -18,6 +19,7 @@ export default function IslandInitializer(props: ScriptsProps) {
 
     useEffect(() => {
         connectToSocketManager();
+        initializeProtectionLock();
     }, []);
 
     return null;

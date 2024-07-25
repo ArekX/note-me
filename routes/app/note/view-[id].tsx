@@ -5,10 +5,10 @@ import {
     updateLastOpenAt,
     ViewNoteRecord,
 } from "$backend/repository/note-repository.ts";
-import ViewNote from "$islands/notes/ViewNote.tsx";
+import ViewNotePage from "$islands/notes/pages/ViewNotePage.tsx";
 
 export interface PageData {
-    note: ViewNoteRecord | null;
+    note: ViewNoteRecord;
 }
 
 export const handler: Handlers<PageData> = {
@@ -33,5 +33,5 @@ export const handler: Handlers<PageData> = {
 };
 
 export default function Page(props: PageProps<PageData, AppState>) {
-    return <ViewNote record={props.data.note!} />;
+    return <ViewNotePage note={props.data.note} />;
 }

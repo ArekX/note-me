@@ -1,10 +1,10 @@
 import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
 import { AppState } from "$types";
-import NoteEditor from "$islands/notes/NoteEditor.tsx";
 import {
     getNote,
     ViewNoteRecord,
 } from "$backend/repository/note-repository.ts";
+import EditNotePage from "$islands/notes/pages/EditNotePage.tsx";
 
 interface PageData {
     note: ViewNoteRecord;
@@ -27,19 +27,5 @@ export const handler: Handlers<PageData> = {
 };
 
 export default function Page(props: PageProps<PageData, AppState>) {
-    const { note } = props.data;
-
-    return (
-        <NoteEditor
-            note={{
-                id: note.id,
-                title: note.title,
-                note: note.note,
-                tags: note.tags,
-                is_encrypted: note.is_encrypted,
-                group_id: note.group_id,
-                group_name: note.group_name,
-            }}
-        />
-    );
+    return <EditNotePage note={props.data.note} />;
 }

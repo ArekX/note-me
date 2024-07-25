@@ -1,13 +1,6 @@
-import { useEncryptionLock } from "$frontend/hooks/use-encryption-lock.ts";
 import { ReadonlySignal, useComputed, useSignal } from "@preact/signals";
-import {
-    SystemErrorMessage,
-    useWebsocketService,
-} from "$frontend/hooks/use-websocket-service.ts";
-import {
-    DecryptTextMessage,
-    DecryptTextResponse,
-} from "$workers/websocket/api/users/messages.ts";
+import { LoaderHook, useLoader } from "$frontend/hooks/use-loader.ts";
+import { useContentEncryption } from "$frontend/hooks/use-content-encryption.ts";
 
 export type InputNoteData = {
     text: string;
@@ -18,12 +11,14 @@ export type InputNoteData = {
 interface NoteTextOptions {
     initialData?: InputNoteData;
     onLock?: () => void;
+    onInputDataChange?: (record: InputNoteData) => void;
 }
 
 export interface NoteTextHook {
     isEncrypted: ReadonlySignal<boolean>;
     isResolved: ReadonlySignal<boolean>;
     needsUnlocking: ReadonlySignal<boolean>;
+    processingLoader: LoaderHook;
     getText: () => Promise<string | null>;
     setInputData: (record: InputNoteData) => void;
     getFailReason: () => string | null;
@@ -32,15 +27,10 @@ export interface NoteTextHook {
 
 export const useNoteText = ({
     initialData = { text: "", is_encrypted: false },
-    onLock,
+    onInputDataChange,
 }: NoteTextOptions = {}): NoteTextHook => {
-    const encryptionLock = useEncryptionLock({
-        onLock: () => {
-            clearResolvedText();
-            onLock?.();
-        },
-    });
-    const { sendMessage } = useWebsocketService();
+    const contentEncryption = useContentEncryption();
+    const processingLoader = useLoader();
     const failReason = useSignal<string | null>(null);
     const textRecord = useSignal<InputNoteData>(initialData);
     const resolvedText = useSignal<string | null>(
@@ -62,37 +52,11 @@ export const useNoteText = ({
         } else {
             resolvedText.value = null;
         }
+
+        onInputDataChange?.(record);
     };
 
-    const decryptText = async (text: string): Promise<string | null> => {
-        let password;
-        try {
-            password = await encryptionLock.requestPassword();
-        } catch {
-            failReason.value = "Password enter cancelled.";
-            return null;
-        }
-
-        try {
-            const response = await sendMessage<
-                DecryptTextMessage,
-                DecryptTextResponse
-            >("users", "decryptText", {
-                data: {
-                    encrypted: text,
-                    password,
-                },
-                expect: "decryptTextResponse",
-            });
-            return response.text;
-        } catch (e) {
-            const error = e as SystemErrorMessage;
-            failReason.value = `Decryption failed: ${error.data.message}`;
-            return null;
-        }
-    };
-
-    const getText = async (): Promise<string | null> => {
+    const getText = processingLoader.wrap(async (): Promise<string | null> => {
         if (resolvedText.value !== null) {
             return resolvedText.value;
         }
@@ -100,7 +64,7 @@ export const useNoteText = ({
         let text = textRecord.value.text;
 
         if (textRecord.value.is_encrypted) {
-            const result = await decryptText(text);
+            const result = await contentEncryption.decryptText(text);
 
             if (!result) {
                 return null;
@@ -113,7 +77,7 @@ export const useNoteText = ({
         resolvedText.value = text;
 
         return text;
-    };
+    });
 
     const getFailReason = () => failReason.value;
 
@@ -130,6 +94,7 @@ export const useNoteText = ({
         isResolved,
         isEncrypted,
         needsUnlocking,
+        processingLoader,
         getFailReason,
         setInputData,
         getText,

@@ -1,13 +1,13 @@
-import { useEncryptionLock } from "$frontend/hooks/use-encryption-lock.ts";
 import Icon from "$components/Icon.tsx";
 import EncryptionLockWindow from "$islands/encryption/EncryptionLockWindow.tsx";
+import { useProtectionLock } from "../../frontend/hooks/use-protection-lock.ts";
 
 export default function EncryptionLockButton() {
-    const lock = useEncryptionLock();
+    const lock = useProtectionLock();
 
     const handleUnlock = () => {
-        if (lock.isLocked.value) {
-            lock.requestPassword().catch(() => {});
+        if (lock.isLocked()) {
+            lock.requestUnlock();
             return;
         }
 
@@ -18,15 +18,17 @@ export default function EncryptionLockButton() {
         <>
             <a
                 class="hover:text-gray-300 cursor-pointer"
-                title={lock.isLocked.value ? "Unlock" : "Lock"}
+                title={lock.isLocked() ? "Unlock" : "Lock"}
                 onClick={handleUnlock}
             >
                 <Icon
-                    type={lock.isLocked.value ? "solid" : "regular"}
-                    name={lock.isLocked.value ? "lock-alt" : "lock-open-alt"}
+                    type={lock.isLocked() ? "solid" : "regular"}
+                    name={lock.isLocked() ? "lock-alt" : "lock-open-alt"}
                 />
             </a>
-            <EncryptionLockWindow />
+            {lock.isUnlockRequested.value && (
+                <EncryptionLockWindow lock={lock} />
+            )}
         </>
     );
 }

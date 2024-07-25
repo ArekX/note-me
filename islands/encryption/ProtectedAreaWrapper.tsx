@@ -1,38 +1,34 @@
 import { ComponentChildren } from "preact";
-import { useLoader } from "$frontend/hooks/use-loader.ts";
-import { useEncryptionLock } from "$frontend/hooks/use-encryption-lock.ts";
+import { LoaderHook, useLoader } from "$frontend/hooks/use-loader.ts";
 import Loader from "$islands/Loader.tsx";
 import Button from "$components/Button.tsx";
-import { useEffect } from "preact/hooks";
 import { useSignal } from "@preact/signals";
+import { useEffect } from "preact/hooks";
+import { useProtectionLock } from "$frontend/hooks/use-protection-lock.ts";
 
 interface ProtectedAreaWrapperProps {
+    loader?: LoaderHook;
     requirePassword: boolean;
     children?: ComponentChildren;
     onUnlock?: () => Promise<void>;
 }
 
 export default function ProtectedAreaWrapper(
-    { children, requirePassword, onUnlock }: ProtectedAreaWrapperProps,
+    { children, requirePassword, onUnlock, loader }: ProtectedAreaWrapperProps,
 ) {
-    const encryptionLock = useEncryptionLock();
-    const isFirstAttempt = useSignal(true);
-    const requestFailReason = useSignal<string | null>(null);
-    const lockLoader = useLoader(
-        encryptionLock.isLocked.value && requirePassword,
+    const encryptionLock = useProtectionLock();
+    const isUnlocked = useSignal(
+        !encryptionLock.isLocked() || !requirePassword,
     );
+    const requestFailReason = useSignal<string | null>(null);
+    const lockLoader = useLoader(false);
 
     const requestUnlock = lockLoader.wrap(async () => {
-        isFirstAttempt.value = false;
         requestFailReason.value = null;
-        if (!encryptionLock.isLocked.value) {
-            await onUnlock?.();
-            return;
-        }
-
         try {
-            await encryptionLock.requestPassword();
+            await encryptionLock.requestUnlock();
             await onUnlock?.();
+            isUnlocked.value = true;
         } catch (e) {
             if (e) {
                 requestFailReason.value = e.message;
@@ -41,19 +37,17 @@ export default function ProtectedAreaWrapper(
     });
 
     useEffect(() => {
-        if (
-            requirePassword && encryptionLock.isLocked.value &&
-            !encryptionLock.isLockWindowOpen.value
-        ) {
-            if (isFirstAttempt.value) {
-                requestUnlock();
-            }
-        } else if (requirePassword && onUnlock) {
-            lockLoader.run(onUnlock);
-        }
-    }, [requirePassword, encryptionLock.isLocked.value]);
+        const isUnlockedNow = !requirePassword ||
+            !encryptionLock.isLocked();
 
-    return lockLoader.running
+        if (!isUnlocked.value && isUnlockedNow) {
+            onUnlock?.();
+        }
+
+        isUnlocked.value = isUnlockedNow;
+    }, [requirePassword, encryptionLock.isLocked()]);
+
+    return lockLoader.running || (loader?.running ?? false)
         ? (
             <Loader color="white">
                 Waiting for protection unlock...
@@ -61,7 +55,7 @@ export default function ProtectedAreaWrapper(
         )
         : (
             <>
-                {requirePassword && encryptionLock.isLocked.value
+                {!isUnlocked.value
                     ? (
                         <div>
                             <div>
@@ -84,7 +78,9 @@ export default function ProtectedAreaWrapper(
                                         color="success"
                                         onClick={requestUnlock}
                                     >
-                                        Unlock
+                                        {requestFailReason.value !== null
+                                            ? "Retry"
+                                            : "Unlock"}
                                     </Button>
                                 </div>
                             </div>

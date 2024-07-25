@@ -10,8 +10,6 @@ import { useEffect } from "preact/hooks";
 import DetailsLine from "$islands/notes/DetailsLine.tsx";
 import Viewer from "$islands/markdown/Viewer.tsx";
 import { useSearch } from "$frontend/hooks/use-search.ts";
-import { useNoteText } from "$islands/notes/hooks/use-note-text.ts";
-import ProtectedAreaWrapper from "$islands/encryption/ProtectedAreaWrapper.tsx";
 
 export interface ViewNoteProps {
     readonly?: boolean;
@@ -33,45 +31,24 @@ export default function ViewNote(
     const windowMode = useSignal<NoteWindowTypes | null>(null);
     const recordData = useSignal<ViewNoteRecord>({
         ...record,
-        note: record.is_encrypted ? "" : record.note,
-    });
-    const noteText = useNoteText({
-        initialData: {
-            text: record.note,
-            is_encrypted: record.is_encrypted,
-        },
     });
     const search = disableTagLinks ? null : useSearch();
 
     useEffect(() => {
         recordData.value = {
             ...record,
-            note: record.is_encrypted ? "" : record.note,
         };
-
-        noteText.setInputData({
-            text: record.note,
-            is_encrypted: recordData.value.is_encrypted,
-        });
+        console.log(record);
     }, [record]);
 
     useNoteWebsocket({
         noteId: record.id,
-        onNoteUpdated: async (data) => {
-            let text = data.text ?? recordData.value.note;
-            if (data.text && data.is_encrypted) {
-                noteText.setInputData({
-                    text: data.text,
-                    is_encrypted: true,
-                });
-                text = await noteText.getText() ?? "";
-            }
-
+        onNoteUpdated: (data) => {
             recordData.value = {
                 ...recordData.value,
                 title: data.title ?? recordData.value.title,
                 tags: data.tags ?? recordData.value.tags,
-                note: text,
+                note: data.text ?? recordData.value.note,
                 is_encrypted: data.is_encrypted ??
                     recordData.value.is_encrypted,
                 group_id: data.group_id !== undefined
@@ -81,10 +58,6 @@ export default function ViewNote(
                     ? data.group_name
                     : recordData.value.group_name,
             };
-            noteText.setInputData({
-                text: recordData.value.note,
-                is_encrypted: recordData.value.is_encrypted,
-            });
         },
     });
 
@@ -109,89 +82,77 @@ export default function ViewNote(
         search?.setTags([tag]);
     };
 
-    const handleUnlock = async () => {
-        recordData.value = {
-            ...recordData.value,
-            note: await noteText.getText() ?? "",
-        };
-    };
-
     return (
-        <ProtectedAreaWrapper
-            requirePassword={noteText.needsUnlocking.value}
-            onUnlock={handleUnlock}
-        >
-            <div class="view-note flex flex-col">
-                <div class="flex flex-row">
-                    <div class="title w-10/12">
-                        {recordData.value.title}
-                    </div>
-                    {shareMode !== "everyone" && (
-                        <div class="text-md ml-2 w-2/12 text-right">
-                            {!readonly && (
-                                <Button
-                                    color="success"
-                                    title="Edit"
-                                    onClick={() => {
-                                        redirectTo.editNote({
-                                            noteId: recordData.value.id,
-                                        });
-                                    }}
-                                >
-                                    <Icon name="pencil" size="lg" />
-                                </Button>
-                            )}{" "}
-                            <div class="text-left inline-block">
-                                <MoreMenu
-                                    onMenuItemClick={handleMenuItemClicked}
-                                    inPreviewMode={false}
-                                    mode={readonly ? "view-readonly" : "view"}
-                                />
-                            </div>
+        <div class="view-note flex flex-col">
+            <div class="flex flex-row">
+                <div class="title w-10/12">
+                    {recordData.value.title}
+                </div>
+                {shareMode !== "everyone" && (
+                    <div class="text-md ml-2 w-2/12 text-right">
+                        {!readonly && (
+                            <Button
+                                color="success"
+                                title="Edit"
+                                onClick={() => {
+                                    redirectTo.editNote({
+                                        noteId: recordData.value.id,
+                                    });
+                                }}
+                            >
+                                <Icon name="pencil" size="lg" />
+                            </Button>
+                        )}{" "}
+                        <div class="text-left inline-block">
+                            <MoreMenu
+                                onMenuItemClick={handleMenuItemClicked}
+                                inPreviewMode={false}
+                                mode={readonly ? "view-readonly" : "view"}
+                            />
                         </div>
-                    )}
-                </div>
-                <div>
-                    {recordData.value.tags.map((tag) => (
-                        <span
-                            class={`tag ${
-                                disableTagLinks
-                                    ? "cursor-default pointer-events-none"
-                                    : "cursor-pointer"
-                            }`}
-                            key={tag}
-                            onClick={() => handleTagClick(tag)}
-                        >
-                            #{tag}
-                        </span>
-                    ))}
-                </div>
-                <DetailsLine
-                    groupName={recordData.value.group_name}
-                    lastUpdatedUnix={recordData.value.updated_at}
-                    author={author}
-                />
-                <div>
-                    <Viewer
-                        text={recordData.value.note}
-                        options={{
-                            isSharing: shareMode !== "none",
-                        }}
-                    />
-                </div>
-                {recordData.value.id && (
-                    <NoteWindow
-                        onClose={() => windowMode.value = null}
-                        type={windowMode.value}
-                        existingNoteData={{
-                            text: recordData.value.note,
-                            is_encrypted: recordData.value.is_encrypted,
-                            is_resolved: true,
-                        }}
-                        noteId={recordData.value.id}
-                    />
+                    </div>
                 )}
             </div>
-        </ProtectedAreaWrapper>
+            <div>
+                {recordData.value.tags.map((tag) => (
+                    <span
+                        class={`tag ${
+                            disableTagLinks
+                                ? "cursor-default pointer-events-none"
+                                : "cursor-pointer"
+                        }`}
+                        key={tag}
+                        onClick={() => handleTagClick(tag)}
+                    >
+                        #{tag}
+                    </span>
+                ))}
+            </div>
+            <DetailsLine
+                groupName={recordData.value.group_name}
+                lastUpdatedUnix={recordData.value.updated_at}
+                author={author}
+            />
+            <div>
+                <Viewer
+                    text={recordData.value.note}
+                    options={{
+                        isSharing: shareMode !== "none",
+                    }}
+                />
+            </div>
+            {recordData.value.id && (
+                <NoteWindow
+                    onClose={() => windowMode.value = null}
+                    type={windowMode.value}
+                    existingNoteData={{
+                        text: recordData.value.note,
+                        is_encrypted: recordData.value.is_encrypted,
+                        is_resolved: true,
+                    }}
+                    noteId={recordData.value.id}
+                />
+            )}
+        </div>
     );
 }

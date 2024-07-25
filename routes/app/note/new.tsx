@@ -5,7 +5,7 @@ import {
     getSingleUserGroup,
     GroupRecord,
 } from "$backend/repository/group-repository.ts";
-import NoteEditor from "$islands/notes/NoteEditor.tsx";
+import EditNotePage from "$islands/notes/pages/EditNotePage.tsx";
 
 interface PageData {
     group: GroupRecord | null;
@@ -38,15 +38,16 @@ export const handler: Handlers<PageData> = {
 
 export default function Page(props: PageProps<PageData, AppState>) {
     return (
-        <NoteEditor
+        <EditNotePage
             note={{
-                id: undefined,
+                id: 0,
                 title: "",
                 note: "",
                 is_encrypted: false,
                 tags: [],
                 group_id: props.data.group?.id ?? null,
                 group_name: props.data.group?.name ?? "",
+                updated_at: 0,
             }}
         />
     );

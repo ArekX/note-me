@@ -1,8 +1,5 @@
 import Dialog from "$islands/Dialog.tsx";
-import {
-    UNLOCK_DURATION_MINUTES,
-    useEncryptionLock,
-} from "$frontend/hooks/use-encryption-lock.ts";
+
 import Input from "$components/Input.tsx";
 import { useSignal } from "@preact/signals";
 import Button from "$components/Button.tsx";
@@ -15,10 +12,15 @@ import {
     VerifyOwnPasswordResponse,
 } from "$workers/websocket/api/users/messages.ts";
 import Loader from "$islands/Loader.tsx";
+import { ProtectionLockHook } from "../../frontend/hooks/use-protection-lock.ts";
 
-export default function EncryptionLockWindow() {
-    const encryptionLock = useEncryptionLock();
+interface EncryptionLockWindowProps {
+    lock: ProtectionLockHook;
+}
 
+export default function EncryptionLockWindow({
+    lock,
+}: EncryptionLockWindowProps) {
     const isInvalidPassword = useSignal(false);
 
     const loader = useLoader();
@@ -27,7 +29,7 @@ export default function EncryptionLockWindow() {
 
     const password = useSignal("");
 
-    const handleCancelLockWindow = () => encryptionLock.lock();
+    const handleCancelLockWindow = () => lock.lock();
 
     const handleConfirmUnlock = loader.wrap(async () => {
         const response = await sendMessage<
@@ -49,7 +51,7 @@ export default function EncryptionLockWindow() {
             return;
         }
 
-        encryptionLock.unlock(password.value);
+        lock.resolveUnlockRequest(password.value);
     });
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -62,11 +64,7 @@ export default function EncryptionLockWindow() {
     useEffect(() => {
         password.value = "";
         isInvalidPassword.value = false;
-    }, [encryptionLock.isLocked.value]);
-
-    if (!encryptionLock.isLockWindowOpen.value) {
-        return null;
-    }
+    }, [lock.isLocked()]);
 
     return (
         <Dialog
@@ -102,11 +100,9 @@ export default function EncryptionLockWindow() {
                             <p class="py-2">
                                 <strong>Important:</strong>{" "}
                                 After entering your password, all your protected
-                                notes will be decrypted viewable for the next
-                                {" "}
-                                {UNLOCK_DURATION_MINUTES}{" "}
-                                minutes or until you lock them again by clicking
-                                on the lock icon.
+                                notes will be decrypted viewable unless idle for
+                                5 minutes or until you lock them again by
+                                clicking on the lock icon.
                             </p>
                             <div class="text-right">
                                 <Button

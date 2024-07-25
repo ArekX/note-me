@@ -47,6 +47,7 @@ import * as $dashboard_Dashboard from "./islands/dashboard/Dashboard.tsx";
 import * as $dashboard_RecentlyOpenedNotes from "./islands/dashboard/RecentlyOpenedNotes.tsx";
 import * as $encryption_EncryptionLockButton from "./islands/encryption/EncryptionLockButton.tsx";
 import * as $encryption_EncryptionLockWindow from "./islands/encryption/EncryptionLockWindow.tsx";
+import * as $encryption_LockedContentWrapper from "./islands/encryption/LockedContentWrapper.tsx";
 import * as $encryption_ProtectedAreaWrapper from "./islands/encryption/ProtectedAreaWrapper.tsx";
 import * as $files_FileDropWrapper from "./islands/files/FileDropWrapper.tsx";
 import * as $files_FileItem from "./islands/files/FileItem.tsx";
@@ -84,6 +85,8 @@ import * as $notes_insert_components_InsertNoteLink from "./islands/notes/insert
 import * as $notes_insert_components_InsertNoteList from "./islands/notes/insert-components/InsertNoteList.tsx";
 import * as $notes_insert_components_InsertToc from "./islands/notes/insert-components/InsertToc.tsx";
 import * as $notes_insert_components_LinkForm from "./islands/notes/insert-components/LinkForm.tsx";
+import * as $notes_pages_EditNotePage from "./islands/notes/pages/EditNotePage.tsx";
+import * as $notes_pages_ViewNotePage from "./islands/notes/pages/ViewNotePage.tsx";
 import * as $notes_windows_NoteDelete from "./islands/notes/windows/NoteDelete.tsx";
 import * as $notes_windows_NoteDetails from "./islands/notes/windows/NoteDetails.tsx";
 import * as $notes_windows_NoteHelp from "./islands/notes/windows/NoteHelp.tsx";
@@ -184,6 +187,8 @@ const manifest = {
             $encryption_EncryptionLockButton,
         "./islands/encryption/EncryptionLockWindow.tsx":
             $encryption_EncryptionLockWindow,
+        "./islands/encryption/LockedContentWrapper.tsx":
+            $encryption_LockedContentWrapper,
         "./islands/encryption/ProtectedAreaWrapper.tsx":
             $encryption_ProtectedAreaWrapper,
         "./islands/files/FileDropWrapper.tsx": $files_FileDropWrapper,
@@ -232,6 +237,8 @@ const manifest = {
             $notes_insert_components_InsertToc,
         "./islands/notes/insert-components/LinkForm.tsx":
             $notes_insert_components_LinkForm,
+        "./islands/notes/pages/EditNotePage.tsx": $notes_pages_EditNotePage,
+        "./islands/notes/pages/ViewNotePage.tsx": $notes_pages_ViewNotePage,
         "./islands/notes/windows/NoteDelete.tsx": $notes_windows_NoteDelete,
         "./islands/notes/windows/NoteDetails.tsx": $notes_windows_NoteDetails,
         "./islands/notes/windows/NoteHelp.tsx": $notes_windows_NoteHelp,
