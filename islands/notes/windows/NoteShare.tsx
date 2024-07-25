@@ -106,7 +106,7 @@ export default function NoteShare({
         >
             <h1 class="text-2xl pb-4">Share Note</h1>
 
-            {noteText.isEncrypted() && (
+            {noteText.isEncrypted.value && (
                 <div class="my-4 border-2 border-red-700 p-4 bg-red-950">
                     <strong>Important:</strong>{" "}
                     This note is protected. You are the only person who can view

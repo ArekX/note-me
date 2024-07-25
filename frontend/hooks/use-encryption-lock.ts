@@ -3,6 +3,7 @@ import { addMessage } from "$frontend/toast-message.ts";
 import { restore, store } from "$frontend/session-storage.ts";
 import { useEffect } from "preact/hooks";
 import { decodeBase64, encodeBase64 } from "$frontend/deps.ts";
+import { useIdleEffect } from "./use-idle-effect.ts";
 
 export const UNLOCK_DURATION_MINUTES = 15;
 
@@ -12,6 +13,7 @@ interface PendingRequest {
 }
 
 interface EncryptionLockState {
+    startAt: number | null;
     userPassword: string | null;
     lockAt: number | null;
 }
@@ -44,13 +46,15 @@ const decrypt = (encryptedPassword: string, key: number): string => {
 };
 
 const getInitialState = (): EncryptionLockState => {
-    const { userPassword = null, lockAt = null } = restore<EncryptionLockState>(
-        "encryptionLock",
-        {
-            userPassword: null,
-            lockAt: null,
-        },
-    ) ?? {};
+    const { userPassword = null, lockAt = null, startAt = null } =
+        restore<EncryptionLockState>(
+            "encryptionLock",
+            {
+                userPassword: null,
+                lockAt: null,
+                startAt: null,
+            },
+        ) ?? {};
 
     if (
         lockAt === null ||
@@ -59,12 +63,14 @@ const getInitialState = (): EncryptionLockState => {
         return {
             userPassword: null,
             lockAt: null,
+            startAt: null,
         };
     }
 
     return {
         userPassword,
         lockAt,
+        startAt,
     };
 };
 
@@ -75,7 +81,7 @@ const userPassword = signal<string | null>(
     initialState.userPassword
         ? decrypt(
             initialState.userPassword,
-            initialState.lockAt ?? 1,
+            initialState.startAt ?? 1,
         )
         : null,
 );
@@ -83,14 +89,22 @@ const userPassword = signal<string | null>(
 const pendingRequests = signal<PendingRequest[]>([]);
 
 const lockAt = signal<number | null>(initialState.lockAt);
+const startAt = signal<number | null>(initialState.startAt);
 
-export const useEncryptionLock = () => {
+interface EncryptionLockOptions {
+    onLock?: () => void;
+}
+
+export const useEncryptionLock = ({
+    onLock,
+}: EncryptionLockOptions = {}) => {
     const storeState = () => {
         store<EncryptionLockState>("encryptionLock", {
             userPassword: userPassword.value
-                ? encrypt(userPassword.value, lockAt.value ?? 1)
+                ? encrypt(userPassword.value, startAt.value ?? 1)
                 : null,
             lockAt: lockAt.value,
+            startAt: startAt.value,
         });
     };
 
@@ -104,6 +118,7 @@ export const useEncryptionLock = () => {
 
             userPassword.value = data?.userPassword ?? null;
             lockAt.value = data?.lockAt ?? null;
+            startAt.value = data?.startAt ?? null;
         };
 
         globalThis.addEventListener("storage", handleStorage);
@@ -114,17 +129,26 @@ export const useEncryptionLock = () => {
     }, []);
 
     useEffect(() => {
-        if (lockAt.value === null) {
-            return;
+        if (userPassword.value === null) {
+            onLock?.();
         }
+    }, [userPassword.value]);
 
-        const timeout = setTimeout(lock, lockAt.value - Date.now());
-        return () => clearTimeout(timeout);
-    }, [lockAt.value]);
+    useIdleEffect(
+        () => {
+            if (lockAt.value === null) {
+                return;
+            }
+
+            lock();
+        },
+        lockAt.value ? lockAt.value - Date.now() : null,
+    );
 
     const unlock = (password: string) => {
         userPassword.value = password;
         lockAt.value = Date.now() + 1000 * 60 * UNLOCK_DURATION_MINUTES;
+        startAt.value = Date.now();
 
         isLockWindowOpen.value = false;
 
@@ -156,6 +180,7 @@ export const useEncryptionLock = () => {
         userPassword.value = null;
 
         lockAt.value = null;
+        startAt.value = null;
 
         processPendingRequests((request) => request.reject());
         storeState();

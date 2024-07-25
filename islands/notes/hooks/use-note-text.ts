@@ -1,5 +1,5 @@
 import { useEncryptionLock } from "$frontend/hooks/use-encryption-lock.ts";
-import { useSignal } from "@preact/signals";
+import { ReadonlySignal, useComputed, useSignal } from "@preact/signals";
 import {
     SystemErrorMessage,
     useWebsocketService,
@@ -17,21 +17,29 @@ export type InputNoteData = {
 
 interface NoteTextOptions {
     initialData?: InputNoteData;
+    onLock?: () => void;
 }
 
 export interface NoteTextHook {
+    isEncrypted: ReadonlySignal<boolean>;
+    isResolved: ReadonlySignal<boolean>;
+    needsUnlocking: ReadonlySignal<boolean>;
     getText: () => Promise<string | null>;
     setInputData: (record: InputNoteData) => void;
     getFailReason: () => string | null;
-    isEncrypted: () => boolean;
-    isResolved: () => boolean;
     clearResolvedText: () => void;
 }
 
 export const useNoteText = ({
     initialData = { text: "", is_encrypted: false },
+    onLock,
 }: NoteTextOptions = {}): NoteTextHook => {
-    const encryptionLock = useEncryptionLock();
+    const encryptionLock = useEncryptionLock({
+        onLock: () => {
+            clearResolvedText();
+            onLock?.();
+        },
+    });
     const { sendMessage } = useWebsocketService();
     const failReason = useSignal<string | null>(null);
     const textRecord = useSignal<InputNoteData>(initialData);
@@ -55,8 +63,6 @@ export const useNoteText = ({
             resolvedText.value = null;
         }
     };
-
-    const isEncrypted = () => textRecord.value.is_encrypted;
 
     const decryptText = async (text: string): Promise<string | null> => {
         let password;
@@ -111,16 +117,22 @@ export const useNoteText = ({
 
     const getFailReason = () => failReason.value;
 
-    const isResolved = () => resolvedText.value !== null;
+    const isEncrypted = useComputed(() => textRecord.value.is_encrypted);
+    const isResolved = useComputed(() => resolvedText.value !== null);
+
+    const needsUnlocking = useComputed(() =>
+        isEncrypted.value && !isResolved.value
+    );
 
     const clearResolvedText = () => resolvedText.value = null;
 
     return {
+        isResolved,
+        isEncrypted,
+        needsUnlocking,
         getFailReason,
         setInputData,
-        isEncrypted,
         getText,
-        isResolved,
         clearResolvedText,
     };
 };

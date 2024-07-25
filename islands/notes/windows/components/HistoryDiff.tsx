@@ -78,8 +78,8 @@ export default function HistoryDiff({
 
     return (
         <ProtectedAreaWrapper
-            requirePassword={historyNoteText.isEncrypted() ||
-                noteText.isEncrypted()}
+            requirePassword={historyNoteText.isEncrypted.value ||
+                noteText.isEncrypted.value}
         >
             <div class="p-4">
                 {loader.running ? <Loader color="white" /> : data.value && (

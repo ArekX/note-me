@@ -284,7 +284,7 @@ export default function NoteEditor({
 
     return (
         <ProtectedAreaWrapper
-            requirePassword={noteText.isEncrypted() && !noteText.isResolved()}
+            requirePassword={noteText.needsUnlocking.value}
             onUnlock={handleUnlock}
         >
             <div class="note-editor flex flex-col">
@@ -386,7 +386,7 @@ export default function NoteEditor({
 
                 {isPreviewMode.value
                     ? <Viewer text={text.value} />
-                    : noteText.isResolved() && (
+                    : noteText.isResolved.value && (
                         <NoteTextArea
                             initialText={text.value}
                             isSaving={isSaving.running}

@@ -118,7 +118,7 @@ export default function ViewNote(
 
     return (
         <ProtectedAreaWrapper
-            requirePassword={noteText.isEncrypted() && !noteText.isResolved()}
+            requirePassword={noteText.needsUnlocking.value}
             onUnlock={handleUnlock}
         >
             <div class="view-note flex flex-col">

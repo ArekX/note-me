@@ -4,6 +4,7 @@ import { useEncryptionLock } from "$frontend/hooks/use-encryption-lock.ts";
 import Loader from "$islands/Loader.tsx";
 import Button from "$components/Button.tsx";
 import { useEffect } from "preact/hooks";
+import { useSignal } from "@preact/signals";
 
 interface ProtectedAreaWrapperProps {
     requirePassword: boolean;
@@ -15,11 +16,15 @@ export default function ProtectedAreaWrapper(
     { children, requirePassword, onUnlock }: ProtectedAreaWrapperProps,
 ) {
     const encryptionLock = useEncryptionLock();
+    const isFirstAttempt = useSignal(true);
+    const requestFailReason = useSignal<string | null>(null);
     const lockLoader = useLoader(
         encryptionLock.isLocked.value && requirePassword,
     );
 
     const requestUnlock = lockLoader.wrap(async () => {
+        isFirstAttempt.value = false;
+        requestFailReason.value = null;
         if (!encryptionLock.isLocked.value) {
             await onUnlock?.();
             return;
@@ -28,8 +33,10 @@ export default function ProtectedAreaWrapper(
         try {
             await encryptionLock.requestPassword();
             await onUnlock?.();
-        } catch {
-            // Ignore
+        } catch (e) {
+            if (e) {
+                requestFailReason.value = e.message;
+            }
         }
     });
 
@@ -38,7 +45,9 @@ export default function ProtectedAreaWrapper(
             requirePassword && encryptionLock.isLocked.value &&
             !encryptionLock.isLockWindowOpen.value
         ) {
-            requestUnlock();
+            if (isFirstAttempt.value) {
+                requestUnlock();
+            }
         } else if (requirePassword && onUnlock) {
             lockLoader.run(onUnlock);
         }
@@ -63,6 +72,12 @@ export default function ProtectedAreaWrapper(
                                 This area contains password protected content
                                 which cannot be managed without entering the
                                 password.
+
+                                {requestFailReason.value && (
+                                    <div class="text-red-500 py-2">
+                                        Fail reason: {requestFailReason.value}
+                                    </div>
+                                )}
 
                                 <div class="py-2">
                                     <Button
