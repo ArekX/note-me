@@ -195,12 +195,12 @@ export type RemoveReminderResponse = NoteMessage<
 
 export type FindNoteRemindersMessage = NoteMessage<
     "findNoteReminders",
-    { filters: UserReminderNotesFilters; page: number }
+    { filters: UserReminderNotesFilters }
 >;
 
 export type FindNoteRemindersResponse = NoteMessage<
     "findNoteRemindersResponse",
-    { records: Paged<ReminderNoteRecord> }
+    { records: ReminderNoteRecord[] }
 >;
 
 export type GetNoteReminderDataMessage = NoteMessage<

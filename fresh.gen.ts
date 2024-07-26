@@ -110,11 +110,13 @@ import * as $periodic_tasks_PeriodicTaskList from "./islands/periodic-tasks/Peri
 import * as $profile_UserProfile from "./islands/profile/UserProfile.tsx";
 import * as $sidebar_ListSwitcher from "./islands/sidebar/ListSwitcher.tsx";
 import * as $sidebar_LogoutButton from "./islands/sidebar/LogoutButton.tsx";
-import * as $sidebar_RemindersList from "./islands/sidebar/RemindersList.tsx";
+import * as $sidebar_NoItemMessage from "./islands/sidebar/NoItemMessage.tsx";
 import * as $sidebar_SearchBar from "./islands/sidebar/SearchBar.tsx";
 import * as $sidebar_SearchView from "./islands/sidebar/SearchView.tsx";
 import * as $sidebar_SharedNotesList from "./islands/sidebar/SharedNotesList.tsx";
 import * as $sidebar_SideBarPanel from "./islands/sidebar/SideBarPanel.tsx";
+import * as $sidebar_reminders_ReminderItem from "./islands/sidebar/reminders/ReminderItem.tsx";
+import * as $sidebar_reminders_RemindersList from "./islands/sidebar/reminders/RemindersList.tsx";
 import * as $sidebar_search_AdvancedSearch from "./islands/sidebar/search/AdvancedSearch.tsx";
 import * as $sidebar_search_NoteItemView from "./islands/sidebar/search/NoteItemView.tsx";
 import * as $tags_EditTagForm from "./islands/tags/EditTagForm.tsx";
@@ -278,11 +280,15 @@ const manifest = {
         "./islands/profile/UserProfile.tsx": $profile_UserProfile,
         "./islands/sidebar/ListSwitcher.tsx": $sidebar_ListSwitcher,
         "./islands/sidebar/LogoutButton.tsx": $sidebar_LogoutButton,
-        "./islands/sidebar/RemindersList.tsx": $sidebar_RemindersList,
+        "./islands/sidebar/NoItemMessage.tsx": $sidebar_NoItemMessage,
         "./islands/sidebar/SearchBar.tsx": $sidebar_SearchBar,
         "./islands/sidebar/SearchView.tsx": $sidebar_SearchView,
         "./islands/sidebar/SharedNotesList.tsx": $sidebar_SharedNotesList,
         "./islands/sidebar/SideBarPanel.tsx": $sidebar_SideBarPanel,
+        "./islands/sidebar/reminders/ReminderItem.tsx":
+            $sidebar_reminders_ReminderItem,
+        "./islands/sidebar/reminders/RemindersList.tsx":
+            $sidebar_reminders_RemindersList,
         "./islands/sidebar/search/AdvancedSearch.tsx":
             $sidebar_search_AdvancedSearch,
         "./islands/sidebar/search/NoteItemView.tsx":

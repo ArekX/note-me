@@ -1,6 +1,5 @@
 import { db } from "$backend/database.ts";
 import { sql } from "$lib/kysely-sqlite-dialect/deps.ts";
-import { Paged, pageResults } from "$lib/kysely-sqlite-dialect/pagination.ts";
 import { NoteReminderTable } from "$types";
 import { getCurrentUnixTimestamp } from "$lib/time/unix.ts";
 import { RecordId } from "$types";
@@ -78,7 +77,6 @@ export const removeReminder = async (note_id: number, user_id: number) => {
 export interface ReminderNoteRecord extends
     Pick<
         NoteReminderTable,
-        | "id"
         | "note_id"
         | "done_count"
         | "interval"
@@ -86,23 +84,24 @@ export interface ReminderNoteRecord extends
         | "repeat_count"
         | "next_at"
     > {
+    id: number;
     title: string;
-    is_encrypted: number;
+    is_encrypted: boolean;
     author_id: number;
     author_name: string;
     type: "once" | "repeat";
 }
 
 export interface UserReminderNotesFilters {
+    fromNextAt?: number;
     limit?: number;
 }
 
 export const findUserReminderNotes = async (
     filters: UserReminderNotesFilters,
-    page: number,
     user_id: number,
-): Promise<Paged<ReminderNoteRecord>> => {
-    const query = db.selectFrom("note_reminder")
+): Promise<ReminderNoteRecord[]> => {
+    return await db.selectFrom("note_reminder")
         .innerJoin("note", "note.id", "note_reminder.note_id")
         .innerJoin("user", "user.id", "note.user_id")
         .select([
@@ -112,7 +111,9 @@ export const findUserReminderNotes = async (
             "note.is_encrypted",
             sql<number>`note.user_id`.as("author_id"),
             sql<string>`user.name`.as("author_name"),
-            sql<string>`(CASE WHEN note_reminder.interval IS NULL THEN 'once' ELSE 'repeat' END)`
+            sql<
+                "once" | "repeat"
+            >`(CASE WHEN note_reminder.interval IS NULL THEN 'once' ELSE 'repeat' END)`
                 .as("type"),
             "note_reminder.done_count",
             "note_reminder.interval",
@@ -121,11 +122,11 @@ export const findUserReminderNotes = async (
             "note_reminder.next_at",
         ])
         .where("note_reminder.user_id", "=", user_id)
-        .orderBy("note_reminder.next_at", "asc");
-
-    const limit = Math.min(filters.limit ?? 10, 10);
-
-    return await pageResults(query, page, limit);
+        .where("note.is_deleted", "=", false)
+        .where("note_reminder.next_at", ">", filters.fromNextAt ?? 0)
+        .orderBy("note_reminder.next_at", "asc")
+        .limit(Math.min(filters.limit ?? 10, 10))
+        .execute();
 };
 
 export type NoteReminderData =

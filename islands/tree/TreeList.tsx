@@ -8,6 +8,9 @@ import TreeItem from "./TreeItem.tsx";
 import Icon from "$components/Icon.tsx";
 import { RecordContainer } from "$islands/tree/hooks/record-container.ts";
 import { DeleteGroupProgressDialog } from "$islands/tree/DeleteGroupProgressDialog.tsx";
+import NoItemMessage from "../sidebar/NoItemMessage.tsx";
+import { useEffect } from "preact/hooks";
+import { useSearch } from "$frontend/hooks/use-search.ts";
 
 interface TreeListProps {
     switcherComponent: ComponentChild;
@@ -16,8 +19,13 @@ interface TreeListProps {
 export default function TreeList({
     switcherComponent,
 }: TreeListProps) {
+    const search = useSearch();
     const tree = useRecordTree();
     const dragManager = useDragManager<RecordContainer>();
+
+    useEffect(() => {
+        search.setType("general");
+    }, []);
 
     return (
         <>
@@ -39,13 +47,18 @@ export default function TreeList({
                     tree.root.children.length === 0 &&
                     (
                         <div
-                            class="text-center text-gray-400 pt-14 cursor-pointer"
+                            class="cursor-pointer"
                             onClick={() => redirectTo.newNote()}
                         >
-                            <div>
-                                <Icon name="note" size="5xl" />
-                            </div>
-                            Add your first note with <Icon name="plus" />!
+                            <NoItemMessage
+                                icon="note"
+                                message={
+                                    <>
+                                        Add your first note with{" "}
+                                        <Icon name="plus" />!
+                                    </>
+                                }
+                            />
                         </div>
                     )}
                 {!tree.rootLoader.running &&

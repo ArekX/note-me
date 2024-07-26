@@ -397,12 +397,11 @@ const handleRemoveReminder: ListenerFn<RemoveReminderMessage> = async (
 };
 
 const handleFindNoteReminders: ListenerFn<FindNoteRemindersMessage> = async (
-    { message: { filters, page }, sourceClient, respond },
+    { message: { filters }, sourceClient, respond },
 ) => {
     const records = await findUserReminderNotes(
         filters,
         sourceClient!.userId,
-        page,
     );
 
     respond<FindNoteRemindersResponse>({
