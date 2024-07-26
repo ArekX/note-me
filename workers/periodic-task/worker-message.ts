@@ -1,11 +1,14 @@
 import { workerSendMesage } from "$workers/services/worker-bus.ts";
-import { createBackendMessage } from "$workers/websocket/websocket-backend.ts";
+import {
+    BackendMessage,
+    createBackendMessage,
+} from "$workers/websocket/websocket-backend.ts";
 
-export const sendMessageToWebsocket = (
-    ...params: Parameters<typeof createBackendMessage>
+export const sendMessageToWebsocket = <T extends BackendMessage>(
+    ...params: Parameters<typeof createBackendMessage<T>>
 ) => {
     workerSendMesage(
         "websocket",
-        createBackendMessage(...params),
+        createBackendMessage<T>(...params),
     );
 };

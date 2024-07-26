@@ -1,9 +1,9 @@
-import Icon from "$components/Icon.tsx";
 import { ComponentChild } from "preact";
 import { RecordTreeHook } from "./hooks/use-record-tree.ts";
 import { DragManagerHook } from "$frontend/hooks/use-drag-manager.ts";
 import { redirectTo } from "$frontend/redirection-manager.ts";
 import { RecordContainer } from "$islands/tree/hooks/record-container.ts";
+import SwitcherContainer from "$islands/sidebar/SwitcherContainer.tsx";
 
 interface RootGroupBarProps {
     treeManager: RecordTreeHook;
@@ -31,47 +31,40 @@ export default function RootGroupBar({
     const { source, target } = dragManager;
 
     return (
-        <div
-            class={`flex select-none  ${
-                target === treeManager.root ? "bg-red-500" : ""
-            }`}
-        >
-            <div
-                class={`flex-1`}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-            >
-                {source
-                    ? <div class="pl-2">Drop here to move to top level</div>
-                    : switcherComponent}
-            </div>
-            <div class="flex-1 text-right opacity-30 hover:opacity-100 pr-1">
-                <span
-                    class="cursor-pointer hover:text-gray-300"
-                    title="Add Note"
-                    onClick={() => redirectTo.newNote()}
+        <SwitcherContainer
+            addClass={target === treeManager.root ? "bg-red-500" : ""}
+            switcherComponent={
+                <div
+                    class={`flex-1`}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
                 >
-                    <Icon name="plus" />
-                </span>
-                <span
-                    class="cursor-pointer hover:text-gray-300"
-                    title="Add Group"
-                    onClick={() =>
+                    {source
+                        ? <div class="pl-2">Drop here to move to top level</div>
+                        : switcherComponent}
+                </div>
+            }
+            icons={[
+                {
+                    name: "Add Note",
+                    icon: "plus",
+                    onClick: () => redirectTo.newNote(),
+                },
+                {
+                    name: "Add Group",
+                    icon: "folder-plus",
+                    onClick: () =>
                         treeManager.addNew(treeManager.root, {
                             type: "group",
                             display_mode: "edit",
-                        })}
-                >
-                    <Icon name="folder-plus" />
-                </span>
-                <span
-                    class="cursor-pointer hover:text-gray-300"
-                    title="Reload"
-                    onClick={() => treeManager.reload(treeManager.root)}
-                >
-                    <Icon name="refresh" />
-                </span>
-            </div>
-        </div>
+                        }),
+                },
+                {
+                    name: "Reload",
+                    icon: "refresh",
+                    onClick: () => treeManager.reload(treeManager.root),
+                },
+            ]}
+        />
     );
 }

@@ -5,10 +5,13 @@ import {
     UpdateNoteRequest,
 } from "$schemas/notes.ts";
 import {
+    DeletedNoteRecord,
+    DeletedNotesFilter,
     NoteDetailsOptions,
     NoteDetailsRecord,
     NoteRecord,
     RecentNoteRecord,
+    ViewNoteRecord,
 } from "$backend/repository/note-repository.ts";
 import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
 import {
@@ -232,6 +235,36 @@ export type GetRecentlyOpenedNotesResponse = NoteMessage<
     { records: RecentNoteRecord[] }
 >;
 
+export type FindDeletedNotesMessage = NoteMessage<
+    "findDeletedNotes",
+    { filters: DeletedNotesFilter }
+>;
+
+export type FindDeletedNotesResponse = NoteMessage<
+    "findDeletedNotesResponse",
+    { records: DeletedNoteRecord[] }
+>;
+
+export type RestoreDeletedNoteMessage = NoteMessage<
+    "restoreDeletedNote",
+    { id: number }
+>;
+
+export type RestoreDeletedNoteResponse = NoteMessage<
+    "restoreDeletedNoteResponse",
+    { restored_note: ViewNoteRecord | null }
+>;
+
+export type FullyDeleteNoteMessage = NoteMessage<
+    "fullyDeleteNote",
+    { id: number }
+>;
+
+export type FullyDeleteNoteResponse = NoteMessage<
+    "fullyDeleteNoteResponse",
+    { deleted_id: number }
+>;
+
 export type NoteFrontendResponse =
     | CreateNoteResponse
     | UpdateNoteResponse
@@ -251,7 +284,10 @@ export type NoteFrontendResponse =
     | FindNoteRemindersResponse
     | GetNoteReminderDataResponse
     | SearchNoteResponse
-    | GetRecentlyOpenedNotesResponse;
+    | GetRecentlyOpenedNotesResponse
+    | FindDeletedNotesResponse
+    | RestoreDeletedNoteResponse
+    | FullyDeleteNoteResponse;
 
 export type NoteFrontendMessage =
     | CreateNoteMessage
@@ -272,4 +308,14 @@ export type NoteFrontendMessage =
     | FindNoteRemindersMessage
     | GetNoteReminderDataMessage
     | SearchNoteMessage
-    | GetRecentlyOpenedNotesMessage;
+    | GetRecentlyOpenedNotesMessage
+    | FindDeletedNotesMessage
+    | RestoreDeletedNoteMessage
+    | FullyDeleteNoteMessage;
+
+export type NotifyFullyDeletedNoteMessage = NoteMessage<
+    "notifyFullyDeletedNote",
+    { user_id: number; note_id: number }
+>;
+
+export type NoteBackendMessage = NotifyFullyDeletedNoteMessage;

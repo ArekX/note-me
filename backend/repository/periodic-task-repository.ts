@@ -87,3 +87,9 @@ export const getAllPeriodicTasks = async (): Promise<PeriodicTaskRecord[]> => {
         ])
         .execute();
 };
+
+export const deleteUnusedPeriodicTasks = async (identifiersInUse: string[]) => {
+    await db.deleteFrom("periodic_task_schedule")
+        .where("task_identifier", "not in", identifiersInUse)
+        .execute();
+};

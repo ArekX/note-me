@@ -4,11 +4,11 @@ import { useUser } from "$frontend/hooks/use-user.ts";
 import TreeItemIcon from "$islands/tree/TreeItemIcon.tsx";
 import { fromTreeRecord } from "$islands/tree/hooks/record-container.ts";
 import { useTimeFormat } from "$frontend/hooks/use-time-format.ts";
-import { timeAgo } from "$lib/time/time-ago.ts";
 import Button from "$components/Button.tsx";
 import Icon from "$components/Icon.tsx";
 import { useSignal } from "@preact/signals";
 import NoteWindow from "$islands/notes/NoteWindow.tsx";
+import TimeAgo from "$components/TimeAgo.tsx";
 
 interface ReminderItemProps {
     record: ReminderNoteRecord;
@@ -62,8 +62,7 @@ export default function ReminderItem({ record }: ReminderItemProps) {
                             )
                             : ""}
                     >
-                        Reminder set{" "}
-                        {record.next_at ? timeAgo(record.next_at) : "N/A"}
+                        Reminder set{"  "}<TimeAgo time={record.next_at} />
                     </span>
                 </div>
             </div>

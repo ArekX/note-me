@@ -5,7 +5,7 @@ import { startOfNextDay } from "$workers/periodic-task/next-at.ts";
 
 // TODO: Test this
 export const removeExpiredShareLinks: PeriodicTask = {
-    name: "cleanup-expired-share-links",
+    name: "remove-expired-share-links",
     getNextAt: startOfNextDay,
     async trigger(): Promise<void> {
         logger.info("Removing expired public share links");

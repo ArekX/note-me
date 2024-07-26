@@ -7,6 +7,7 @@ import RemindersList from "./reminders/RemindersList.tsx";
 import SharedNotesList from "./shared/SharedNotesList.tsx";
 import SearchView from "$islands/sidebar/SearchView.tsx";
 import { useSearch } from "$frontend/hooks/use-search.ts";
+import RecycleBinList from "$islands/sidebar/recycle-bin/RecycleBinList.tsx";
 
 interface ListView {
     type: "notes" | "reminders" | "shared" | "recycleBin";
@@ -48,10 +49,7 @@ export default function ListPanel() {
                             <SharedNotesList switcherComponent={switcher} />
                         ),
                         recycleBin: () => (
-                            <div>
-                                {switcher}
-                                Recycle Bin
-                            </div>
+                            <RecycleBinList switcherComponent={switcher} />
                         ),
                     }}
                 />

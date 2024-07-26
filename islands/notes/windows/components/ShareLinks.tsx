@@ -8,8 +8,6 @@ import {
     RemovePublicShareResponse,
 } from "$workers/websocket/api/notes/messages.ts";
 import Icon from "$components/Icon.tsx";
-import { useTimeFormat } from "$frontend/hooks/use-time-format.ts";
-import { timeAgo } from "$lib/time/time-ago.ts";
 import { addMessage } from "$frontend/toast-message.ts";
 import TimeAgo from "$components/TimeAgo.tsx";
 
@@ -27,8 +25,6 @@ export default function ShareLinks({
     const { sendMessage } = useWebsocketService();
 
     const linkList = useSignal<PublicNoteShareRecord[]>(initialLinks);
-
-    const timeFormatter = useTimeFormat();
 
     const handleLinkCreated = (link: PublicNoteShareRecord) => {
         linkList.value = [link, ...linkList.value];
@@ -84,24 +80,14 @@ export default function ShareLinks({
                                 Link: {link.identifier}
                             </a>
                             <div class="text-sm">
-                                <p
-                                    title={link.expires_at
-                                        ? timeFormatter.formatDateTime(
-                                            link.expires_at,
-                                        )
-                                        : "Never expires"}
-                                >
-                                    Expires {link.expires_at
-                                        ? timeAgo(
-                                            link.expires_at,
-                                        )
-                                        : "- never"}
+                                <p>
+                                    Expires{" "}
+                                    <TimeAgo
+                                        time={link.expires_at}
+                                        emptyText="- never"
+                                    />
                                 </p>
-                                <p
-                                    title={timeFormatter.formatDateTime(
-                                        link.created_at,
-                                    )}
-                                >
+                                <p>
                                     Created <TimeAgo time={link.created_at} />
                                 </p>
                             </div>

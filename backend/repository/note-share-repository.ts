@@ -261,7 +261,7 @@ export const findUserSharedNotes = async (
         )
         .orderBy("note_share_user.created_at", "desc")
         .orderBy("note_share_user.id", "desc")
-        .limit(Math.min(filters.limit ?? 10, 10))
+        .limit(Math.min(filters.limit ?? 10, 1))
         .execute();
 };
 

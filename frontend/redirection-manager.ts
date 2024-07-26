@@ -7,7 +7,7 @@ export type PathResult = string | {
 };
 
 const paths = {
-    root: () => "/app",
+    root: () => "/app/note",
     logout: () => ({ url: "/app/logout", fullRender: true }),
     newNote: (data: { groupId?: number } = {}) => ({
         url: `/app/note/new${data.groupId ? `?group_id=${data.groupId}` : ""}`,

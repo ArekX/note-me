@@ -3,7 +3,7 @@ import { redirectTo } from "$frontend/redirection-manager.ts";
 import { useUser } from "$frontend/hooks/use-user.ts";
 import RecentlyOpenedNotes from "$islands/dashboard/RecentlyOpenedNotes.tsx";
 import Button from "$components/Button.tsx";
-import RemindersEndingSoon from "$islands/dashboard/RemindersEndingSoon.tsx";
+import CurrentReminders from "./CurrentReminders.tsx";
 import RecentlySharedWithMe from "$islands/dashboard/RecentlySharedWithMe.tsx";
 
 export default function Dashboard() {
@@ -57,7 +57,7 @@ export default function Dashboard() {
                     <RecentlyOpenedNotes />
                 </div>
                 <div class="pl-5 w-1/3">
-                    <RemindersEndingSoon />
+                    <CurrentReminders />
                 </div>
                 <div class="pl-5 w-1/3">
                     <RecentlySharedWithMe />

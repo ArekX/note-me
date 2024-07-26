@@ -100,6 +100,32 @@ export const useTreeWebsocket = (options: TreeWebsocketOptions) => {
 
                     propagateChanges();
                 },
+                restoreDeletedNoteResponse: (data) => {
+                    const { restored_note } = data;
+
+                    if (!restored_note) {
+                        return;
+                    }
+
+                    const parent = restored_note.group_id
+                        ? findContainerById(restored_note.group_id, "group")
+                        : tree;
+
+                    if (!parent) {
+                        return;
+                    }
+
+                    const restoredNote = fromTreeRecord({
+                        type: "note",
+                        id: restored_note.id,
+                        name: restored_note.title,
+                        is_encrypted: +restored_note.is_encrypted,
+                        has_children: 0,
+                    });
+
+                    addChild(tree, restoredNote);
+                    propagateChanges();
+                },
             },
             groups: {
                 createGroupResponse: (data) => {

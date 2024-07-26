@@ -46,6 +46,7 @@ export async function up(db: Kysely<unknown>): Promise<void> {
         .addColumn("created_at", "int8", (col) => col.notNull())
         .addColumn("updated_at", "int8", (col) => col.notNull())
         .addColumn("last_open_at", "int8")
+        .addColumn("deleted_at", "int8")
         .addColumn(
             "is_deleted",
             "boolean",

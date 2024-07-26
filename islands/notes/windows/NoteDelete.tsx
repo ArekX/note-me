@@ -39,8 +39,8 @@ export default function NoteDelete({ noteId, onClose }: NoteDeleteProps) {
                         <div>Are you sure you want to delete this note?</div>
                         <div>
                             <strong>Important:</strong>{" "}
-                            Deleted notes cannot be recovered and will no longer
-                            be accessible to you or anyone else.
+                            Deleted notes can still be recovered for the next 30
+                            days from the time they are deleted.
                         </div>
                     </>
                 )}

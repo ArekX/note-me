@@ -25,6 +25,7 @@ export interface NoteTable {
     updated_at: number;
     last_open_at: number | null;
     is_deleted?: boolean;
+    deleted_at?: number | null;
 }
 
 export interface NoteReminderTable {

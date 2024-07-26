@@ -9,6 +9,7 @@ import { periodicTaskService } from "./periodic-task-service.ts";
 import { cleanupTempFolder } from "$workers/periodic-task/tasks/cleanup-temp-folder.ts";
 import { connectWorkerToBus } from "$workers/services/worker-bus.ts";
 import { removeExpiredShareLinks } from "$workers/periodic-task/tasks/remove-expired-share-links.ts";
+import { removeExpiredNotes } from "$workers/periodic-task/tasks/remove-expired-deleted-notes.ts";
 
 setLoggerName("periodic-task");
 
@@ -25,6 +26,7 @@ if (import.meta.main) {
     periodicTaskService.registerPeriodicTask(checkReminders);
     periodicTaskService.registerPeriodicTask(cleanupTempFolder);
     periodicTaskService.registerPeriodicTask(removeExpiredShareLinks);
+    periodicTaskService.registerPeriodicTask(removeExpiredNotes);
 
     connectWorkerToBus(self);
 

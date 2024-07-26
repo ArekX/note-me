@@ -13,7 +13,7 @@ import Button from "$components/Button.tsx";
 import { ReminderNoteRecord } from "$backend/repository/note-reminder-repository.ts";
 import ReminderItem from "$islands/sidebar/reminders/ReminderItem.tsx";
 
-export default function RemindersEndingSoon() {
+export default function CurrentReminders() {
     const loader = useLoader(true);
 
     const { sendMessage } = useWebsocketService<NoteFrontendResponse>({
@@ -64,7 +64,7 @@ export default function RemindersEndingSoon() {
     return (
         <div>
             <strong class="text-lg py-2 flex justify-between">
-                <span>Reminders Ending Soon{" "}</span>
+                <span>Your current reminders{" "}</span>
                 {!loader.running && (
                     <span>
                         <Button color="success" onClick={fetchNotes} size="sm">

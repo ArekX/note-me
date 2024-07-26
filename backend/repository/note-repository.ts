@@ -1,5 +1,5 @@
-import { NoteTable } from "$types";
-import { db } from "$backend/database.ts";
+import { NoteTable, RecordId } from "$types";
+import { createTransaction, db } from "$backend/database.ts";
 import { getCurrentUnixTimestamp } from "$lib/time/unix.ts";
 import { sql } from "$lib/kysely-sqlite-dialect/deps.ts";
 
@@ -246,6 +246,7 @@ export const deleteNote = async (
     const result = await db.updateTable("note")
         .set({
             is_deleted: true,
+            deleted_at: getCurrentUnixTimestamp(),
         })
         .where("id", "=", note_id)
         .where("user_id", "=", user_id)
@@ -258,11 +259,13 @@ export const deleteNote = async (
 export const noteExists = async (
     note_id: number,
     user_id: number,
+    is_deleted = false,
 ): Promise<boolean> => {
     const result = await db.selectFrom("note")
         .select(sql<number>`1`.as("exists"))
         .where("id", "=", note_id)
         .where("user_id", "=", user_id)
+        .where("is_deleted", "=", is_deleted)
         .executeTakeFirst();
 
     return (result?.exists ?? 0) > 0;
@@ -341,4 +344,110 @@ export const findRecentlyOpenedNotes = async (
         .orderBy("last_open_at", "desc")
         .limit(5)
         .execute();
+};
+
+export type DeletedNoteRecord =
+    & RecordId
+    & Pick<NoteTable, "title" | "is_encrypted" | "deleted_at">;
+
+export interface DeletedNotesFilter {
+    fromId?: number;
+}
+
+export const findDeletedNotes = async (
+    filters: DeletedNotesFilter,
+    user_id: number,
+): Promise<DeletedNoteRecord[]> => {
+    return await db.selectFrom("note")
+        .select([
+            "note.id",
+            "note.title",
+            "note.is_encrypted",
+            "note.deleted_at",
+        ])
+        .where("note.user_id", "=", user_id)
+        .where("note.is_deleted", "=", true)
+        .where("note.id", ">", filters.fromId ?? 0)
+        .orderBy("id", "asc")
+        .limit(10)
+        .execute();
+};
+
+interface RemovedNote {
+    id: number;
+    user_id: number;
+}
+
+export const removeExpiredDeletedNotes = async (
+    days: number,
+): Promise<RemovedNote[]> => {
+    const notes = await db.selectFrom("note")
+        .select([
+            "note.id",
+            "note.user_id",
+        ])
+        .where(
+            "note.deleted_at",
+            "<",
+            getCurrentUnixTimestamp() - days * 24 * 60 * 60,
+        )
+        .execute();
+
+    await fullyDeleteNotes(notes.map((note) => note.id));
+
+    return notes;
+};
+
+export const fullyDeleteNotes = async (
+    note_ids: number[],
+): Promise<void> => {
+    const transaction = await createTransaction();
+
+    await transaction.run(async () => {
+        await db.deleteFrom("note_tag_note")
+            .where("note_id", "in", note_ids)
+            .execute();
+
+        await db.deleteFrom("group_note")
+            .where("note_id", "in", note_ids)
+            .execute();
+
+        await db.deleteFrom("note_history")
+            .where("note_id", "in", note_ids)
+            .execute();
+
+        await db.deleteFrom("note_reminder")
+            .where("note_id", "in", note_ids)
+            .execute();
+
+        await db.deleteFrom("note_share_link")
+            .where("note_id", "in", note_ids)
+            .execute();
+
+        await db.deleteFrom("note")
+            .where("id", "in", note_ids)
+            .execute();
+    });
+};
+
+export const restoreDeletedNote = async (
+    note_id: number,
+    user_id: number,
+): Promise<boolean> => {
+    await db.deleteFrom("group_note")
+        .where("note_id", "=", note_id)
+        .where("group_id", "is not", null)
+        .execute();
+
+    const result = await db.updateTable("note")
+        .set({
+            is_deleted: false,
+            deleted_at: null,
+        })
+        .where("id", "=", note_id)
+        .where("user_id", "=", user_id)
+        .where("is_deleted", "=", true)
+        .executeTakeFirst();
+
+    return result.numUpdatedRows > 0;
 };

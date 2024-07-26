@@ -1,5 +1,6 @@
 import { logger } from "$backend/logger.ts";
 import {
+    deleteUnusedPeriodicTasks,
     findPendingPeriodicTasks,
     getScheduledTasks,
     savePeriodicTaskRun,
@@ -62,6 +63,16 @@ const restorePreviouslyScheduledTasks = async () => {
     }
 };
 
+const deleteInvalidPeriodicTasks = async () => {
+    const tasks = [];
+
+    for (const handler of handlers) {
+        tasks.push(handler.task.name);
+    }
+
+    await deleteUnusedPeriodicTasks(tasks);
+};
+
 const triggerHandler = async (handler: RegisteredTask) => {
     let failureReason: string | null = null;
     let isSuccessful = false;
@@ -96,6 +107,7 @@ const triggerHandler = async (handler: RegisteredTask) => {
 
 const scheduleFirstTimeJobs = async () => {
     const now = getCurrentUnixTimestamp();
+    const tasksInUse = [];
 
     const tasks = [];
 
@@ -124,11 +136,13 @@ const scheduleFirstTimeJobs = async () => {
             handler.task.name,
             handler.task.getNextAt(now),
         );
+        tasksInUse.push(handler.task.name);
     }
 };
 
 const start = async () => {
     logger.info("Periodic task service started.");
+    await deleteInvalidPeriodicTasks();
     await restorePreviouslyScheduledTasks();
     await scheduleFirstTimeJobs();
 

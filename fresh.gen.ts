@@ -44,10 +44,10 @@ import * as $Pagination from "./islands/Pagination.tsx";
 import * as $TextDiff from "./islands/TextDiff.tsx";
 import * as $ToastMessages from "./islands/ToastMessages.tsx";
 import * as $UserPicker from "./islands/UserPicker.tsx";
+import * as $dashboard_CurrentReminders from "./islands/dashboard/CurrentReminders.tsx";
 import * as $dashboard_Dashboard from "./islands/dashboard/Dashboard.tsx";
 import * as $dashboard_RecentlyOpenedNotes from "./islands/dashboard/RecentlyOpenedNotes.tsx";
 import * as $dashboard_RecentlySharedWithMe from "./islands/dashboard/RecentlySharedWithMe.tsx";
-import * as $dashboard_RemindersEndingSoon from "./islands/dashboard/RemindersEndingSoon.tsx";
 import * as $encryption_EncryptionLockButton from "./islands/encryption/EncryptionLockButton.tsx";
 import * as $encryption_EncryptionLockWindow from "./islands/encryption/EncryptionLockWindow.tsx";
 import * as $encryption_LockedContentWrapper from "./islands/encryption/LockedContentWrapper.tsx";
@@ -114,6 +114,9 @@ import * as $sidebar_NoItemMessage from "./islands/sidebar/NoItemMessage.tsx";
 import * as $sidebar_SearchBar from "./islands/sidebar/SearchBar.tsx";
 import * as $sidebar_SearchView from "./islands/sidebar/SearchView.tsx";
 import * as $sidebar_SideBarPanel from "./islands/sidebar/SideBarPanel.tsx";
+import * as $sidebar_SwitcherContainer from "./islands/sidebar/SwitcherContainer.tsx";
+import * as $sidebar_recycle_bin_RecycleBinItem from "./islands/sidebar/recycle-bin/RecycleBinItem.tsx";
+import * as $sidebar_recycle_bin_RecycleBinList from "./islands/sidebar/recycle-bin/RecycleBinList.tsx";
 import * as $sidebar_reminders_ReminderItem from "./islands/sidebar/reminders/ReminderItem.tsx";
 import * as $sidebar_reminders_RemindersList from "./islands/sidebar/reminders/RemindersList.tsx";
 import * as $sidebar_search_AdvancedSearch from "./islands/sidebar/search/AdvancedSearch.tsx";
@@ -186,13 +189,12 @@ const manifest = {
         "./islands/TextDiff.tsx": $TextDiff,
         "./islands/ToastMessages.tsx": $ToastMessages,
         "./islands/UserPicker.tsx": $UserPicker,
+        "./islands/dashboard/CurrentReminders.tsx": $dashboard_CurrentReminders,
         "./islands/dashboard/Dashboard.tsx": $dashboard_Dashboard,
         "./islands/dashboard/RecentlyOpenedNotes.tsx":
             $dashboard_RecentlyOpenedNotes,
         "./islands/dashboard/RecentlySharedWithMe.tsx":
             $dashboard_RecentlySharedWithMe,
-        "./islands/dashboard/RemindersEndingSoon.tsx":
-            $dashboard_RemindersEndingSoon,
         "./islands/encryption/EncryptionLockButton.tsx":
             $encryption_EncryptionLockButton,
         "./islands/encryption/EncryptionLockWindow.tsx":
@@ -285,6 +287,11 @@ const manifest = {
         "./islands/sidebar/SearchBar.tsx": $sidebar_SearchBar,
         "./islands/sidebar/SearchView.tsx": $sidebar_SearchView,
         "./islands/sidebar/SideBarPanel.tsx": $sidebar_SideBarPanel,
+        "./islands/sidebar/SwitcherContainer.tsx": $sidebar_SwitcherContainer,
+        "./islands/sidebar/recycle-bin/RecycleBinItem.tsx":
+            $sidebar_recycle_bin_RecycleBinItem,
+        "./islands/sidebar/recycle-bin/RecycleBinList.tsx":
+            $sidebar_recycle_bin_RecycleBinList,
         "./islands/sidebar/reminders/ReminderItem.tsx":
             $sidebar_reminders_ReminderItem,
         "./islands/sidebar/reminders/RemindersList.tsx":

@@ -8,12 +8,16 @@ import {
     DeleteHistoryRecordResponse,
     DeleteNoteMessage,
     DeleteNoteResponse,
+    FindDeletedNotesMessage,
+    FindDeletedNotesResponse,
     FindNoteHistoryMessage,
     FindNoteHistoryResponse,
     FindNoteRemindersMessage,
     FindNoteRemindersResponse,
     FindSharedNotesMessage,
     FindSharedNotesResponse,
+    FullyDeleteNoteMessage,
+    FullyDeleteNoteResponse,
     GetNoteDetailsResponse,
     GetNoteHistoryDataMessage,
     GetNoteHistoryDataResponse,
@@ -28,6 +32,8 @@ import {
     RemovePublicShareResponse,
     RemoveReminderMessage,
     RemoveReminderResponse,
+    RestoreDeletedNoteMessage,
+    RestoreDeletedNoteResponse,
     RevertNoteToHistoryMessage,
     RevertNoteToHistoryResponse,
     SearchNoteMessage,
@@ -43,7 +49,10 @@ import { CreateNoteMessage } from "$workers/websocket/api/notes/messages.ts";
 import {
     createNote,
     deleteNote,
+    findDeletedNotes,
     findRecentlyOpenedNotes,
+    fullyDeleteNotes,
+    getNote,
     getNoteDetails,
     getNoteInfo,
     noteExists,
@@ -80,6 +89,7 @@ import {
     setReminder,
 } from "$backend/repository/note-reminder-repository.ts";
 import { searchNotes } from "$backend/repository/note-search-repository.ts";
+import { restoreDeletedNote } from "$backend/repository/note-repository.ts";
 
 const handleCreateNote: ListenerFn<CreateNoteMessage> = async (
     { message: { data }, sourceClient, respond },
@@ -444,6 +454,46 @@ const handleGetRecentlyOpenedNotes: ListenerFn<GetRecentlyOpenedNotesMessage> =
         });
     };
 
+const handleFindDeletedNotes: ListenerFn<FindDeletedNotesMessage> = async (
+    { message: { filters }, sourceClient, respond },
+) => {
+    const records = await findDeletedNotes(
+        filters,
+        sourceClient!.userId,
+    );
+
+    respond<FindDeletedNotesResponse>({
+        type: "findDeletedNotesResponse",
+        records,
+    });
+};
+
+const handleRestoreDeletedNote: ListenerFn<RestoreDeletedNoteMessage> = async (
+    { message: { id }, sourceClient, respond },
+) => {
+    await restoreDeletedNote(id, sourceClient!.userId);
+
+    respond<RestoreDeletedNoteResponse>({
+        type: "restoreDeletedNoteResponse",
+        restored_note: await getNote(id, sourceClient!.userId),
+    });
+};
+
+const handleFullyDeleteNote: ListenerFn<FullyDeleteNoteMessage> = async (
+    { message: { id }, sourceClient, respond },
+) => {
+    if (!await noteExists(id, sourceClient!.userId, true)) {
+        throw new Error("Note does not exist.");
+    }
+
+    await fullyDeleteNotes([id]);
+
+    respond<FullyDeleteNoteResponse>({
+        type: "fullyDeleteNoteResponse",
+        deleted_id: id,
+    });
+};
+
 export const frontendMap: RegisterListenerMap<NoteFrontendMessage> = {
     createNote: handleCreateNote,
     updateNote: handleUpdateNote,
@@ -464,4 +514,7 @@ export const frontendMap: RegisterListenerMap<NoteFrontendMessage> = {
     getNoteReminderData: handleGetNoteReminderData,
     searchNote: handleSearchNote,
     getRecentlyOpenedNotes: handleGetRecentlyOpenedNotes,
+    findDeletedNotes: handleFindDeletedNotes,
+    restoreDeletedNote: handleRestoreDeletedNote,
+    fullyDeleteNote: handleFullyDeleteNote,
 };

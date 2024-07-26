@@ -1,35 +1,45 @@
 import { ComponentChild } from "preact";
-import { useLoadMore } from "$frontend/hooks/use-load-more.ts";
-import { ReminderNoteRecord } from "$backend/repository/note-reminder-repository.ts";
-import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
-import {
-    FindNoteRemindersMessage,
-    FindNoteRemindersResponse,
-    NoteFrontendResponse,
-} from "$workers/websocket/api/notes/messages.ts";
 import Loader from "$islands/Loader.tsx";
+import NoItemMessage from "$islands/sidebar/NoItemMessage.tsx";
 import LoadMoreWrapper from "$islands/LoadMoreWrapper.tsx";
-import ReminderItem from "$islands/sidebar/reminders/ReminderItem.tsx";
-import NoItemMessage from "../NoItemMessage.tsx";
 import { useEffect } from "preact/hooks";
 import { useSearch } from "$frontend/hooks/use-search.ts";
+import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
+import { useLoadMore } from "$frontend/hooks/use-load-more.ts";
+import { DeletedNoteRecord } from "$backend/repository/note-repository.ts";
+import {
+    FindDeletedNotesMessage,
+    FindDeletedNotesResponse,
+    NoteFrontendResponse,
+} from "$workers/websocket/api/notes/messages.ts";
+import RecycleBinItem from "$islands/sidebar/recycle-bin/RecycleBinItem.tsx";
+import { useTreeWebsocket } from "$islands/tree/hooks/use-tree-websocket.ts";
+import { useTreeState } from "$islands/tree/hooks/use-tree-state.ts";
 import SwitcherContainer from "$islands/sidebar/SwitcherContainer.tsx";
 
-interface ReminderListProps {
+interface RecycleBinListProps {
     switcherComponent: ComponentChild;
 }
 
-export default function RemindersList({
+export default function RecycleBinList({
     switcherComponent,
-}: ReminderListProps) {
+}: RecycleBinListProps) {
     const search = useSearch();
+
+    useTreeWebsocket({
+        treeState: useTreeState(),
+    });
 
     const { sendMessage } = useWebsocketService<NoteFrontendResponse>({
         eventMap: {
             notes: {
-                updateNoteResponse: () => reload(),
-                setReminderResponse: () => reload(),
-                removeReminderResponse: () => reload(),
+                deleteNoteResponse: () => reload(),
+                restoreDeletedNoteResponse: () => reload(),
+                fullyDeleteNoteResponse: (data) => {
+                    records.value = records.value.filter(
+                        (r) => r.id !== data.deleted_id,
+                    );
+                },
             },
         },
     });
@@ -45,23 +55,21 @@ export default function RemindersList({
         loader,
         reset,
         loadMore,
-    } = useLoadMore<ReminderNoteRecord>({
-        onLoadMore: async (lastRecord: ReminderNoteRecord | null) => {
-            const response = await sendMessage<
-                FindNoteRemindersMessage,
-                FindNoteRemindersResponse
-            >("notes", "findNoteReminders", {
+    } = useLoadMore<DeletedNoteRecord>({
+        onLoadMore: async (lastRecord: DeletedNoteRecord | null) => {
+            const { records } = await sendMessage<
+                FindDeletedNotesMessage,
+                FindDeletedNotesResponse
+            >("notes", "findDeletedNotes", {
                 data: {
                     filters: {
-                        fromNextAt: lastRecord?.next_at ?? 0,
                         fromId: lastRecord?.id ?? 0,
-                        limit: 10,
                     },
                 },
-                expect: "findNoteRemindersResponse",
+                expect: "findDeletedNotesResponse",
             });
 
-            return response.records;
+            return records;
         },
         limit: 10,
         loaderInitialValue: true,
@@ -69,7 +77,7 @@ export default function RemindersList({
 
     useEffect(() => {
         loadMore();
-        search.setType("reminders");
+        search.setType("recycleBin");
     }, []);
 
     return (
@@ -84,7 +92,6 @@ export default function RemindersList({
                     },
                 ]}
             />
-
             {loader.running
                 ? (
                     <div class="text-center">
@@ -95,8 +102,8 @@ export default function RemindersList({
                     <>
                         {records.value.length === 0 && (
                             <NoItemMessage
-                                icon="alarm"
-                                message="No reminders currently set."
+                                icon="recycle"
+                                message="You have no deleted notes."
                             />
                         )}
                         <LoadMoreWrapper
@@ -105,9 +112,9 @@ export default function RemindersList({
                             onLoadMore={loadMore}
                         >
                             <div>
-                                {records.value.map((record) => (
-                                    <ReminderItem
-                                        key={record.id}
+                                {records.value.map((record, index) => (
+                                    <RecycleBinItem
+                                        key={index}
                                         record={record}
                                     />
                                 ))}

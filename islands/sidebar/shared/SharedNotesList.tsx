@@ -15,6 +15,7 @@ import { useLoadMore } from "$frontend/hooks/use-load-more.ts";
 import NoItemMessage from "$islands/sidebar/NoItemMessage.tsx";
 import LoadMoreWrapper from "$islands/LoadMoreWrapper.tsx";
 import SharedNoteItem from "$islands/sidebar/shared/SharedNoteItem.tsx";
+import SwitcherContainer from "$islands/sidebar/SwitcherContainer.tsx";
 
 interface SharedNotesListProps {
     switcherComponent: ComponentChild;
@@ -73,7 +74,16 @@ export default function SharedNotesList({
 
     return (
         <div>
-            {switcherComponent}
+            <SwitcherContainer
+                switcherComponent={switcherComponent}
+                icons={[
+                    {
+                        name: "Reload",
+                        icon: "refresh",
+                        onClick: reload,
+                    },
+                ]}
+            />
             {loader.running
                 ? (
                     <div class="text-center">
@@ -94,9 +104,9 @@ export default function SharedNotesList({
                             onLoadMore={loadMore}
                         >
                             <div>
-                                {records.value.map((record) => (
+                                {records.value.map((record, index) => (
                                     <SharedNoteItem
-                                        key={record.share_id}
+                                        key={index}
                                         record={record}
                                     />
                                 ))}
