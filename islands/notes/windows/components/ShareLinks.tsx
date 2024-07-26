@@ -11,6 +11,7 @@ import Icon from "$components/Icon.tsx";
 import { useTimeFormat } from "$frontend/hooks/use-time-format.ts";
 import { timeAgo } from "$lib/time/time-ago.ts";
 import { addMessage } from "$frontend/toast-message.ts";
+import TimeAgo from "$components/TimeAgo.tsx";
 
 interface ShareLinksProps {
     initialLinks: PublicNoteShareRecord[];
@@ -101,9 +102,7 @@ export default function ShareLinks({
                                         link.created_at,
                                     )}
                                 >
-                                    Created {timeAgo(
-                                        link.created_at,
-                                    )}
+                                    Created <TimeAgo time={link.created_at} />
                                 </p>
                             </div>
                         </div>

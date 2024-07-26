@@ -176,7 +176,7 @@ export default function Notifications(props: NotificationsProps) {
                         </div>
                     </div>
                     {notifications.value.length > 0 && (
-                        <div class="overflow-auto max-h-52">
+                        <div class="notifcation-list">
                             {notifications.value.map((notification) => (
                                 <NotificationItem
                                     key={notification.id}

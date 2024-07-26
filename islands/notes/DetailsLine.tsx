@@ -1,5 +1,5 @@
-import { timeAgo } from "$lib/time/time-ago.ts";
 import { useTimeFormat } from "$frontend/hooks/use-time-format.ts";
+import TimeAgo from "$components/TimeAgo.tsx";
 
 interface DetailsLineProps {
     groupName: string | null;
@@ -27,7 +27,7 @@ export default function DetailsLine({
             )}
             {lastUpdatedUnix !== null && (
                 <div title={lastUpdatedTitle}>
-                    Last updated: {timeAgo(lastUpdatedUnix)}
+                    Last updated: <TimeAgo time={lastUpdatedUnix} />
                 </div>
             )}
             {author && (

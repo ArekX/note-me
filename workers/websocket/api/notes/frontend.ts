@@ -329,12 +329,11 @@ const handleRemovePublicShare: ListenerFn<RemovePublicShareMessage> = async (
 };
 
 const handleFindSharedNotes: ListenerFn<FindSharedNotesMessage> = async (
-    { message: { filters, page }, sourceClient, respond },
+    { message: { filters }, sourceClient, respond },
 ) => {
     const records = await findUserSharedNotes(
         filters,
         sourceClient!.userId,
-        page,
     );
 
     respond<FindSharedNotesResponse>({

@@ -24,8 +24,8 @@ import { NoteWindowComponentProps } from "$islands/notes/NoteWindow.tsx";
 import { addMessage } from "$frontend/toast-message.ts";
 import ConfirmDialog from "$islands/ConfirmDialog.tsx";
 import { usePagedData } from "$frontend/hooks/use-paged-data.ts";
-import { timeAgo } from "$lib/time/time-ago.ts";
 import Icon from "$components/Icon.tsx";
+import TimeAgo from "$components/TimeAgo.tsx";
 
 export default function NoteHistory(
     { noteId, onClose, record }: NoteWindowComponentProps,
@@ -161,9 +161,9 @@ export default function NoteHistory(
                                                             />
                                                         )
                                                         : null}
-                                                    {timeAgo(
-                                                        record.created_at,
-                                                    )}
+                                                    <TimeAgo
+                                                        time={record.created_at}
+                                                    />
                                                 </span>
                                             </Button>
                                         </div>

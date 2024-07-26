@@ -4,7 +4,6 @@ import { getCurrentUnixTimestamp } from "$lib/time/unix.ts";
 import { PickUserRecord } from "$backend/repository/user-repository.ts";
 import { getNoteTagsSql } from "$backend/repository/note-repository.ts";
 import { sql } from "$lib/kysely-sqlite-dialect/deps.ts";
-import { Paged, pageResults } from "$lib/kysely-sqlite-dialect/pagination.ts";
 
 export type PublicShareData = Pick<
     NoteShareLinkTable,
@@ -208,35 +207,62 @@ export const getNoteShareData = async (
 
 export interface UserSharedNoteMeta {
     id: number;
+    share_id: number;
     title: string;
+    is_encrypted: boolean;
     user_name: string;
-    is_encrypted: number;
+    created_at: number;
 }
 
 export interface FindUserSharedNotesFilters {
+    fromCreatedAt?: number;
+    fromShareId?: number;
     limit?: number;
 }
 
 export const findUserSharedNotes = async (
     filters: FindUserSharedNotesFilters,
     user_id: number,
-    page: number,
-): Promise<Paged<PublicSharedNote>> => {
-    const query = db.selectFrom("note_share_user")
+): Promise<UserSharedNoteMeta[]> => {
+    const currentTime = getCurrentUnixTimestamp();
+    return await db.selectFrom("note_share_user")
         .innerJoin("note", "note.id", "note_share_user.note_id")
         .innerJoin("user", "user.id", "note.user_id")
         .select([
             "note.id",
+            sql<number>`note_share_user.id`.as("share_id"),
             "note.title",
             "note.is_encrypted",
             sql<string>`user.name`.as("user_name"),
+            "note_share_user.created_at",
         ])
         .where("note_share_user.user_id", "=", user_id)
-        .orderBy("note_share_user.created_at", "desc");
-
-    const limit = Math.min(filters.limit ?? 10, 10);
-
-    return await pageResults(query, page, limit);
+        .where("note.is_deleted", "=", false)
+        .where((e) =>
+            e.or([
+                e(
+                    "note_share_user.created_at",
+                    "<",
+                    filters.fromCreatedAt ?? currentTime,
+                ),
+                e.and([
+                    e(
+                        "note_share_user.created_at",
+                        "=",
+                        filters.fromCreatedAt ?? currentTime,
+                    ),
+                    e(
+                        "note_share_user.id",
+                        "<",
+                        filters.fromShareId ?? Number.MAX_VALUE,
+                    ),
+                ]),
+            ])
+        )
+        .orderBy("note_share_user.created_at", "desc")
+        .orderBy("note_share_user.id", "desc")
+        .limit(Math.min(filters.limit ?? 10, 10))
+        .execute();
 };
 
 export const removeExpiredPublicShares = async (): Promise<void> => {

@@ -2,7 +2,6 @@ import { useLoader } from "$frontend/hooks/use-loader.ts";
 import { PeriodicTaskRecord } from "$backend/repository/periodic-task-repository.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import Table from "$components/Table.tsx";
-import { timeAgo } from "$lib/time/time-ago.ts";
 import {
     GetPeriodicTasksMessage,
     GetPeriodicTasksResponse,
@@ -10,21 +9,8 @@ import {
 import { useEffect } from "preact/hooks";
 import { useSignal } from "@preact/signals";
 import Button from "$components/Button.tsx";
-import { useTimeFormat } from "$frontend/hooks/use-time-format.ts";
 import Icon from "$components/Icon.tsx";
-
-const TimeAgo = (props: { time: number | null | undefined }) => {
-    const format = useTimeFormat();
-    return (
-        props.time
-            ? (
-                <span title={format.formatDateTime(props.time)}>
-                    {timeAgo(props.time)}
-                </span>
-            )
-            : <span>N/A</span>
-    );
-};
+import TimeAgo from "$components/TimeAgo.tsx";
 
 export default function PeriodicTaskList() {
     const tasksLoader = useLoader(true);

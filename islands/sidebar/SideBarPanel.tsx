@@ -4,7 +4,7 @@ import { useSignal } from "@preact/signals";
 import Picker from "$components/Picker.tsx";
 import TreeList from "$islands/tree/TreeList.tsx";
 import RemindersList from "./reminders/RemindersList.tsx";
-import SharedNotesList from "$islands/sidebar/SharedNotesList.tsx";
+import SharedNotesList from "./shared/SharedNotesList.tsx";
 import SearchView from "$islands/sidebar/SearchView.tsx";
 import { useSearch } from "$frontend/hooks/use-search.ts";
 

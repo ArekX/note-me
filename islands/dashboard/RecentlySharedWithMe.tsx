@@ -8,18 +8,16 @@ import {
 import Loader from "$islands/Loader.tsx";
 import { useEffect } from "preact/hooks";
 import Icon from "$components/Icon.tsx";
-import { redirectTo } from "$frontend/redirection-manager.ts";
 import Button from "$components/Button.tsx";
-import TreeItemIcon from "$islands/tree/TreeItemIcon.tsx";
-import { fromTreeRecord } from "$islands/tree/hooks/record-container.ts";
-import { PublicSharedNote } from "$backend/repository/note-share-repository.ts";
+import { UserSharedNoteMeta } from "$backend/repository/note-share-repository.ts";
+import SharedNoteItem from "$islands/sidebar/shared/SharedNoteItem.tsx";
 
 export default function RecentlySharedWithMe() {
     const loader = useLoader(true);
 
     const { sendMessage } = useWebsocketService();
 
-    const results = useSignal<PublicSharedNote[]>([]);
+    const results = useSignal<UserSharedNoteMeta[]>([]);
 
     const fetchNotes = loader.wrap(async () => {
         const { records } = await sendMessage<
@@ -30,19 +28,12 @@ export default function RecentlySharedWithMe() {
                 filters: {
                     limit: 5,
                 },
-                page: 1,
             },
             expect: "findSharedNotesResponse",
         });
 
-        results.value = records.results;
+        results.value = records;
     });
-
-    const handleOpenNote = (noteId: number) => {
-        redirectTo.viewSharedNote({
-            noteId,
-        });
-    };
 
     useEffect(() => {
         fetchNotes();
@@ -69,27 +60,7 @@ export default function RecentlySharedWithMe() {
                             </div>
                         )}
                         {results.value.map((note) => (
-                            <div
-                                key={note.id}
-                                class="p-2 hover:bg-gray-700 cursor-pointer"
-                                onClick={() => handleOpenNote(note.id)}
-                            >
-                                <TreeItemIcon
-                                    container={fromTreeRecord({
-                                        type: "note",
-                                        id: note.id,
-                                        name: note.title,
-                                        is_encrypted: +note.is_encrypted,
-                                        has_children: 0,
-                                    })}
-                                />{" "}
-                                {note.title}
-                                <div class="text-sm text-gray-500">
-                                    <span>
-                                        Shared by {note.user_name}
-                                    </span>
-                                </div>
-                            </div>
+                            <SharedNoteItem key={note.share_id} record={note} />
                         ))}
                     </>
                 )}

@@ -94,6 +94,7 @@ export interface ReminderNoteRecord extends
 
 export interface UserReminderNotesFilters {
     fromNextAt?: number;
+    fromId?: number;
     limit?: number;
 }
 
@@ -123,8 +124,17 @@ export const findUserReminderNotes = async (
         ])
         .where("note_reminder.user_id", "=", user_id)
         .where("note.is_deleted", "=", false)
-        .where("note_reminder.next_at", ">", filters.fromNextAt ?? 0)
+        .where((e) =>
+            e.or([
+                e("note_reminder.next_at", ">", filters.fromNextAt ?? 0),
+                e.and([
+                    e("note_reminder.next_at", "=", filters.fromNextAt ?? 0),
+                    e("note_reminder.id", ">", filters.fromId ?? 0),
+                ]),
+            ])
+        )
         .orderBy("note_reminder.next_at", "asc")
+        .orderBy("note_reminder.id", "asc")
         .limit(Math.min(filters.limit ?? 10, 10))
         .execute();
 };

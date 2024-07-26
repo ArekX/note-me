@@ -26,6 +26,11 @@ body.allow-scrolling {
     line-height: 1.2rem;
 }
 
+.notification-menu .notifcation-list {
+    overflow: auto;
+    max-height: calc(100vh - 8rem);
+}
+
 .notification-menu:hover {
     @apply text-gray-300;
 }

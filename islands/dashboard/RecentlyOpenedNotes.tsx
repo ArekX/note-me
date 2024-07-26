@@ -8,7 +8,6 @@ import {
     NoteFrontendResponse,
 } from "$workers/websocket/api/notes/messages.ts";
 import Loader from "$islands/Loader.tsx";
-import { timeAgo } from "$lib/time/time-ago.ts";
 import { useEffect } from "preact/hooks";
 import Icon from "$components/Icon.tsx";
 import { useTimeFormat } from "$frontend/hooks/use-time-format.ts";
@@ -17,6 +16,7 @@ import { getCurrentUnixTimestamp } from "$lib/time/unix.ts";
 import Button from "$components/Button.tsx";
 import TreeItemIcon from "$islands/tree/TreeItemIcon.tsx";
 import { fromTreeRecord } from "$islands/tree/hooks/record-container.ts";
+import TimeAgo from "$components/TimeAgo.tsx";
 
 export default function RecentlyOpenedNotes() {
     const loader = useLoader(true);
@@ -114,9 +114,7 @@ export default function RecentlyOpenedNotes() {
                                             : ""}
                                     >
                                         <Icon name="show" size="sm" />{" "}
-                                        {note.last_open_at
-                                            ? timeAgo(note.last_open_at)
-                                            : "N/A"}
+                                        <TimeAgo time={note.last_open_at} />
                                     </span>{" "}
                                     <span
                                         title={timeFormatter.formatDateTime(
@@ -124,7 +122,7 @@ export default function RecentlyOpenedNotes() {
                                         )}
                                     >
                                         <Icon name="pencil" size="sm" />{" "}
-                                        {timeAgo(note.updated_at)}
+                                        <TimeAgo time={note.updated_at} />
                                     </span>
                                 </div>
                             </div>

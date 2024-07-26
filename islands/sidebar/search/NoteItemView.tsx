@@ -2,9 +2,9 @@ import Icon from "$components/Icon.tsx";
 import { NoteSearchRecord } from "$backend/repository/note-search-repository.ts";
 import { findHighlightedLines } from "$frontend/text-highlight.ts";
 import { useMemo } from "preact/hooks";
-import { timeAgo } from "$lib/time/time-ago.ts";
 import TreeItemIcon from "$islands/tree/TreeItemIcon.tsx";
 import { fromTreeRecord } from "$islands/tree/hooks/record-container.ts";
+import TimeAgo from "$components/TimeAgo.tsx";
 
 interface NoteItemViewProps {
     record: NoteSearchRecord;
@@ -73,7 +73,8 @@ export default function NoteItemView({
                     </>
                 )}
                 <Icon name="user" size="sm" /> {record.user_name}{"  "}
-                <Icon name="time-five" size="sm" /> {timeAgo(record.updated_at)}
+                <Icon name="time-five" size="sm" />{" "}
+                <TimeAgo time={record.updated_at} />
             </div>
         </div>
     );

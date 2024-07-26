@@ -19,7 +19,7 @@ import {
     FindUserSharedNotesFilters,
     NoteShareData,
     PublicNoteShareRecord,
-    PublicSharedNote,
+    UserSharedNoteMeta,
 } from "$backend/repository/note-share-repository.ts";
 import {
     NoteReminderData,
@@ -165,12 +165,12 @@ export type ShareToUsersResponse = NoteMessage<
 
 export type FindSharedNotesMessage = NoteMessage<
     "findSharedNotes",
-    { filters: FindUserSharedNotesFilters; page: number }
+    { filters: FindUserSharedNotesFilters }
 >;
 
 export type FindSharedNotesResponse = NoteMessage<
     "findSharedNotesResponse",
-    { records: Paged<PublicSharedNote> }
+    { records: UserSharedNoteMeta[] }
 >;
 
 export type SetReminderMessage = NoteMessage<

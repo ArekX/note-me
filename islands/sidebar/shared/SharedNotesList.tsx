@@ -1,34 +1,34 @@
 import { ComponentChild } from "preact";
-import { useLoadMore } from "$frontend/hooks/use-load-more.ts";
-import { ReminderNoteRecord } from "$backend/repository/note-reminder-repository.ts";
-import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import {
-    FindNoteRemindersMessage,
-    FindNoteRemindersResponse,
+    FindSharedNotesMessage,
+    FindSharedNotesResponse,
     NoteFrontendResponse,
 } from "$workers/websocket/api/notes/messages.ts";
+import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
+import {
+    UserSharedNoteMeta,
+} from "$backend/repository/note-share-repository.ts";
 import Loader from "$islands/Loader.tsx";
-import LoadMoreWrapper from "$islands/LoadMoreWrapper.tsx";
-import ReminderItem from "$islands/sidebar/reminders/ReminderItem.tsx";
-import NoItemMessage from "../NoItemMessage.tsx";
 import { useEffect } from "preact/hooks";
 import { useSearch } from "$frontend/hooks/use-search.ts";
+import { useLoadMore } from "$frontend/hooks/use-load-more.ts";
+import NoItemMessage from "$islands/sidebar/NoItemMessage.tsx";
+import LoadMoreWrapper from "$islands/LoadMoreWrapper.tsx";
+import SharedNoteItem from "$islands/sidebar/shared/SharedNoteItem.tsx";
 
-interface ReminderListProps {
+interface SharedNotesListProps {
     switcherComponent: ComponentChild;
 }
 
-export default function RemindersList({
+export default function SharedNotesList({
     switcherComponent,
-}: ReminderListProps) {
+}: SharedNotesListProps) {
     const search = useSearch();
 
     const { sendMessage } = useWebsocketService<NoteFrontendResponse>({
         eventMap: {
             notes: {
                 updateNoteResponse: () => reload(),
-                setReminderResponse: () => reload(),
-                removeReminderResponse: () => reload(),
             },
         },
     });
@@ -44,23 +44,23 @@ export default function RemindersList({
         loader,
         reset,
         loadMore,
-    } = useLoadMore<ReminderNoteRecord>({
-        onLoadMore: async (lastRecord: ReminderNoteRecord | null) => {
-            const response = await sendMessage<
-                FindNoteRemindersMessage,
-                FindNoteRemindersResponse
-            >("notes", "findNoteReminders", {
+    } = useLoadMore<UserSharedNoteMeta>({
+        onLoadMore: async (lastRecord: UserSharedNoteMeta | null) => {
+            const { records } = await sendMessage<
+                FindSharedNotesMessage,
+                FindSharedNotesResponse
+            >("notes", "findSharedNotes", {
                 data: {
                     filters: {
-                        fromNextAt: lastRecord?.next_at ?? 0,
-                        fromId: lastRecord?.id ?? 0,
-                        limit: 10,
+                        fromCreatedAt: lastRecord?.created_at,
+                        fromShareId: lastRecord?.share_id,
+                        limit: 5,
                     },
                 },
-                expect: "findNoteRemindersResponse",
+                expect: "findSharedNotesResponse",
             });
 
-            return response.records;
+            return records;
         },
         limit: 10,
         loaderInitialValue: true,
@@ -68,7 +68,7 @@ export default function RemindersList({
 
     useEffect(() => {
         loadMore();
-        search.setType("reminders");
+        search.setType("shared");
     }, []);
 
     return (
@@ -84,8 +84,8 @@ export default function RemindersList({
                     <>
                         {records.value.length === 0 && (
                             <NoItemMessage
-                                icon="alarm"
-                                message="No reminders currently set."
+                                icon="share-alt"
+                                message="No notes currently shared with you."
                             />
                         )}
                         <LoadMoreWrapper
@@ -95,8 +95,8 @@ export default function RemindersList({
                         >
                             <div>
                                 {records.value.map((record) => (
-                                    <ReminderItem
-                                        key={record.id}
+                                    <SharedNoteItem
+                                        key={record.share_id}
                                         record={record}
                                     />
                                 ))}

@@ -113,12 +113,13 @@ import * as $sidebar_LogoutButton from "./islands/sidebar/LogoutButton.tsx";
 import * as $sidebar_NoItemMessage from "./islands/sidebar/NoItemMessage.tsx";
 import * as $sidebar_SearchBar from "./islands/sidebar/SearchBar.tsx";
 import * as $sidebar_SearchView from "./islands/sidebar/SearchView.tsx";
-import * as $sidebar_SharedNotesList from "./islands/sidebar/SharedNotesList.tsx";
 import * as $sidebar_SideBarPanel from "./islands/sidebar/SideBarPanel.tsx";
 import * as $sidebar_reminders_ReminderItem from "./islands/sidebar/reminders/ReminderItem.tsx";
 import * as $sidebar_reminders_RemindersList from "./islands/sidebar/reminders/RemindersList.tsx";
 import * as $sidebar_search_AdvancedSearch from "./islands/sidebar/search/AdvancedSearch.tsx";
 import * as $sidebar_search_NoteItemView from "./islands/sidebar/search/NoteItemView.tsx";
+import * as $sidebar_shared_SharedNoteItem from "./islands/sidebar/shared/SharedNoteItem.tsx";
+import * as $sidebar_shared_SharedNotesList from "./islands/sidebar/shared/SharedNotesList.tsx";
 import * as $tags_EditTagForm from "./islands/tags/EditTagForm.tsx";
 import * as $tags_TagsList from "./islands/tags/TagsList.tsx";
 import * as $tree_DeleteGroupProgressDialog from "./islands/tree/DeleteGroupProgressDialog.tsx";
@@ -283,7 +284,6 @@ const manifest = {
         "./islands/sidebar/NoItemMessage.tsx": $sidebar_NoItemMessage,
         "./islands/sidebar/SearchBar.tsx": $sidebar_SearchBar,
         "./islands/sidebar/SearchView.tsx": $sidebar_SearchView,
-        "./islands/sidebar/SharedNotesList.tsx": $sidebar_SharedNotesList,
         "./islands/sidebar/SideBarPanel.tsx": $sidebar_SideBarPanel,
         "./islands/sidebar/reminders/ReminderItem.tsx":
             $sidebar_reminders_ReminderItem,
@@ -293,6 +293,10 @@ const manifest = {
             $sidebar_search_AdvancedSearch,
         "./islands/sidebar/search/NoteItemView.tsx":
             $sidebar_search_NoteItemView,
+        "./islands/sidebar/shared/SharedNoteItem.tsx":
+            $sidebar_shared_SharedNoteItem,
+        "./islands/sidebar/shared/SharedNotesList.tsx":
+            $sidebar_shared_SharedNotesList,
         "./islands/tags/EditTagForm.tsx": $tags_EditTagForm,
         "./islands/tags/TagsList.tsx": $tags_TagsList,
         "./islands/tree/DeleteGroupProgressDialog.tsx":
