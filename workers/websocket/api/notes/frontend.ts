@@ -373,7 +373,7 @@ const handleSetReminder: ListenerFn<SetReminderMessage> = async (
         reminderData,
     );
 
-    await setReminder({
+    const result = await setReminder({
         ...reminderData,
         user_id: sourceClient?.userId!,
     });
@@ -381,6 +381,7 @@ const handleSetReminder: ListenerFn<SetReminderMessage> = async (
     respond<SetReminderResponse>({
         type: "setReminderResponse",
         note_id: reminderData.note_id,
+        data: result,
     });
 };
 

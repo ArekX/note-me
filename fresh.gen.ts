@@ -46,6 +46,8 @@ import * as $ToastMessages from "./islands/ToastMessages.tsx";
 import * as $UserPicker from "./islands/UserPicker.tsx";
 import * as $dashboard_Dashboard from "./islands/dashboard/Dashboard.tsx";
 import * as $dashboard_RecentlyOpenedNotes from "./islands/dashboard/RecentlyOpenedNotes.tsx";
+import * as $dashboard_RecentlySharedWithMe from "./islands/dashboard/RecentlySharedWithMe.tsx";
+import * as $dashboard_RemindersEndingSoon from "./islands/dashboard/RemindersEndingSoon.tsx";
 import * as $encryption_EncryptionLockButton from "./islands/encryption/EncryptionLockButton.tsx";
 import * as $encryption_EncryptionLockWindow from "./islands/encryption/EncryptionLockWindow.tsx";
 import * as $encryption_LockedContentWrapper from "./islands/encryption/LockedContentWrapper.tsx";
@@ -122,6 +124,7 @@ import * as $tree_MoreMenu from "./islands/tree/MoreMenu.tsx";
 import * as $tree_RootGroupBar from "./islands/tree/RootGroupBar.tsx";
 import * as $tree_TreeItem from "./islands/tree/TreeItem.tsx";
 import * as $tree_TreeItemEditor from "./islands/tree/TreeItemEditor.tsx";
+import * as $tree_TreeItemIcon from "./islands/tree/TreeItemIcon.tsx";
 import * as $tree_TreeList from "./islands/tree/TreeList.tsx";
 import * as $tree_TreeWindow from "./islands/tree/TreeWindow.tsx";
 import * as $tree_hooks_record_container from "./islands/tree/hooks/record-container.ts";
@@ -183,6 +186,10 @@ const manifest = {
         "./islands/dashboard/Dashboard.tsx": $dashboard_Dashboard,
         "./islands/dashboard/RecentlyOpenedNotes.tsx":
             $dashboard_RecentlyOpenedNotes,
+        "./islands/dashboard/RecentlySharedWithMe.tsx":
+            $dashboard_RecentlySharedWithMe,
+        "./islands/dashboard/RemindersEndingSoon.tsx":
+            $dashboard_RemindersEndingSoon,
         "./islands/encryption/EncryptionLockButton.tsx":
             $encryption_EncryptionLockButton,
         "./islands/encryption/EncryptionLockWindow.tsx":
@@ -288,6 +295,7 @@ const manifest = {
         "./islands/tree/RootGroupBar.tsx": $tree_RootGroupBar,
         "./islands/tree/TreeItem.tsx": $tree_TreeItem,
         "./islands/tree/TreeItemEditor.tsx": $tree_TreeItemEditor,
+        "./islands/tree/TreeItemIcon.tsx": $tree_TreeItemIcon,
         "./islands/tree/TreeList.tsx": $tree_TreeList,
         "./islands/tree/TreeWindow.tsx": $tree_TreeWindow,
         "./islands/tree/hooks/record-container.ts":

@@ -3,6 +3,8 @@ import { redirectTo } from "$frontend/redirection-manager.ts";
 import { useUser } from "$frontend/hooks/use-user.ts";
 import RecentlyOpenedNotes from "$islands/dashboard/RecentlyOpenedNotes.tsx";
 import Button from "$components/Button.tsx";
+import RemindersEndingSoon from "$islands/dashboard/RemindersEndingSoon.tsx";
+import RecentlySharedWithMe from "$islands/dashboard/RecentlySharedWithMe.tsx";
 
 export default function Dashboard() {
     const user = useUser();
@@ -51,8 +53,14 @@ export default function Dashboard() {
             )}
 
             <div class="flex py-5">
-                <div class="w-1/4">
+                <div class="w-1/3">
                     <RecentlyOpenedNotes />
+                </div>
+                <div class="pl-5 w-1/3">
+                    <RemindersEndingSoon />
+                </div>
+                <div class="pl-5 w-1/3">
+                    <RecentlySharedWithMe />
                 </div>
             </div>
         </>

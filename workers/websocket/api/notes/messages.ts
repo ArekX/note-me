@@ -19,11 +19,12 @@ import {
     FindUserSharedNotesFilters,
     NoteShareData,
     PublicNoteShareRecord,
-    UserSharedNoteMeta,
+    PublicSharedNote,
 } from "$backend/repository/note-share-repository.ts";
 import {
     NoteReminderData,
     ReminderNoteRecord,
+    SetReminderResult,
     UserReminderNotesFilters,
 } from "$backend/repository/note-reminder-repository.ts";
 import {
@@ -169,7 +170,7 @@ export type FindSharedNotesMessage = NoteMessage<
 
 export type FindSharedNotesResponse = NoteMessage<
     "findSharedNotesResponse",
-    { records: Paged<UserSharedNoteMeta> }
+    { records: Paged<PublicSharedNote> }
 >;
 
 export type SetReminderMessage = NoteMessage<
@@ -179,7 +180,7 @@ export type SetReminderMessage = NoteMessage<
 
 export type SetReminderResponse = NoteMessage<
     "setReminderResponse",
-    { note_id: number }
+    { note_id: number; data: SetReminderResult }
 >;
 
 export type RemoveReminderMessage = NoteMessage<

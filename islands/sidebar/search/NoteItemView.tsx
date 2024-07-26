@@ -3,6 +3,8 @@ import { NoteSearchRecord } from "$backend/repository/note-search-repository.ts"
 import { findHighlightedLines } from "$frontend/text-highlight.ts";
 import { useMemo } from "preact/hooks";
 import { timeAgo } from "$lib/time/time-ago.ts";
+import TreeItemIcon from "$islands/tree/TreeItemIcon.tsx";
+import { fromTreeRecord } from "$islands/tree/hooks/record-container.ts";
 
 interface NoteItemViewProps {
     record: NoteSearchRecord;
@@ -29,8 +31,17 @@ export default function NoteItemView({
             class={`p-2 cursor-pointer hover:bg-gray-700 ${addClass}`}
             onClick={onNoteClick}
         >
-            <Icon name="note" /> <span class="text-lg">{record.title}</span>
-            {record.is_encrypted && (
+            <TreeItemIcon
+                container={fromTreeRecord({
+                    type: "note",
+                    is_encrypted: +record.is_encrypted,
+                    name: record.title,
+                    id: record.id,
+                    has_children: 0,
+                })}
+            />{" "}
+            <span class="text-lg">{record.title}</span>
+            {!!record.is_encrypted && (
                 <div class="text-xs py-2">(Protected contents)</div>
             )}
             {foundLines.length > 0 && (

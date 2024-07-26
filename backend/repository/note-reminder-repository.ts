@@ -1,6 +1,5 @@
 import { db } from "$backend/database.ts";
 import { sql } from "$lib/kysely-sqlite-dialect/deps.ts";
-import { applyFilters } from "$lib/kysely-sqlite-dialect/filters.ts";
 import { Paged, pageResults } from "$lib/kysely-sqlite-dialect/pagination.ts";
 import { NoteReminderTable } from "$types";
 import { getCurrentUnixTimestamp } from "$lib/time/unix.ts";
@@ -22,15 +21,17 @@ export interface SetReminderData {
     reminder: Reminder;
 }
 
+export type SetReminderResult = Pick<
+    NoteReminderTable,
+    "next_at" | "interval" | "repeat_count" | "unit_value"
+>;
+
 export const setReminder = async ({
     note_id,
     user_id,
     reminder,
-}: SetReminderData) => {
-    const data: Pick<
-        NoteReminderTable,
-        "next_at" | "interval" | "repeat_count" | "unit_value"
-    > = {
+}: SetReminderData): Promise<SetReminderResult> => {
+    const data: SetReminderResult = {
         next_at: reminder.type === "once"
             ? reminder.next_at
             : getCurrentUnixTimestamp() +
@@ -52,7 +53,7 @@ export const setReminder = async ({
             .where("id", "=", existingReminder.id)
             .execute();
 
-        return;
+        return data;
     }
 
     await db.insertInto("note_reminder")
@@ -63,6 +64,8 @@ export const setReminder = async ({
             ...data,
         })
         .execute();
+
+    return data;
 };
 
 export const removeReminder = async (note_id: number, user_id: number) => {
@@ -84,13 +87,14 @@ export interface ReminderNoteRecord extends
         | "next_at"
     > {
     title: string;
+    is_encrypted: number;
     author_id: number;
     author_name: string;
     type: "once" | "repeat";
 }
 
 export interface UserReminderNotesFilters {
-    search: string;
+    limit?: number;
 }
 
 export const findUserReminderNotes = async (
@@ -98,13 +102,14 @@ export const findUserReminderNotes = async (
     page: number,
     user_id: number,
 ): Promise<Paged<ReminderNoteRecord>> => {
-    let query = db.selectFrom("note_reminder")
+    const query = db.selectFrom("note_reminder")
         .innerJoin("note", "note.id", "note_reminder.note_id")
         .innerJoin("user", "user.id", "note.user_id")
         .select([
             "note_reminder.id",
             "note_reminder.note_id",
             "note.title",
+            "note.is_encrypted",
             sql<number>`note.user_id`.as("author_id"),
             sql<string>`user.name`.as("author_name"),
             sql<string>`(CASE WHEN note_reminder.interval IS NULL THEN 'once' ELSE 'repeat' END)`
@@ -115,13 +120,12 @@ export const findUserReminderNotes = async (
             "note_reminder.repeat_count",
             "note_reminder.next_at",
         ])
-        .where("note_reminder.user_id", "=", user_id);
+        .where("note_reminder.user_id", "=", user_id)
+        .orderBy("note_reminder.next_at", "asc");
 
-    query = applyFilters(query, [
-        { field: "note.title", type: "text", value: filters.search },
-    ]);
+    const limit = Math.min(filters.limit ?? 10, 10);
 
-    return await pageResults(query, page);
+    return await pageResults(query, page, limit);
 };
 
 export type NoteReminderData =

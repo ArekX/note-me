@@ -9,7 +9,7 @@ import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import { useFilters } from "$frontend/hooks/use-filters.ts";
 import {
     FindUserSharedNotesFilters,
-    UserSharedNoteMeta,
+    PublicSharedNote,
 } from "$backend/repository/note-share-repository.ts";
 import Loader from "$islands/Loader.tsx";
 import { useEffect } from "preact/hooks";
@@ -27,9 +27,7 @@ export default function SharedNotesList({
     const { sendMessage } = useWebsocketService();
 
     const { filters } = useFilters<FindUserSharedNotesFilters>({
-        initialFilters: () => ({
-            title: "",
-        }),
+        initialFilters: () => ({}),
         onFilterLoad: () => {
             resetPage();
             return loadSharedNotes();
@@ -41,7 +39,7 @@ export default function SharedNotesList({
         page,
         setPagedData,
         resetPage,
-    } = usePagedData<UserSharedNoteMeta>();
+    } = usePagedData<PublicSharedNote>();
 
     const loadSharedNotes = notesLoader.wrap(async () => {
         const { records } = await sendMessage<

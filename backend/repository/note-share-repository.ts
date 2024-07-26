@@ -5,7 +5,6 @@ import { PickUserRecord } from "$backend/repository/user-repository.ts";
 import { getNoteTagsSql } from "$backend/repository/note-repository.ts";
 import { sql } from "$lib/kysely-sqlite-dialect/deps.ts";
 import { Paged, pageResults } from "$lib/kysely-sqlite-dialect/pagination.ts";
-import { applyFilters } from "$lib/kysely-sqlite-dialect/filters.ts";
 
 export type PublicShareData = Pick<
     NoteShareLinkTable,
@@ -211,10 +210,11 @@ export interface UserSharedNoteMeta {
     id: number;
     title: string;
     user_name: string;
+    is_encrypted: number;
 }
 
 export interface FindUserSharedNotesFilters {
-    title?: string;
+    limit?: number;
 }
 
 export const findUserSharedNotes = async (
@@ -222,22 +222,21 @@ export const findUserSharedNotes = async (
     user_id: number,
     page: number,
 ): Promise<Paged<PublicSharedNote>> => {
-    let query = db.selectFrom("note_share_user")
+    const query = db.selectFrom("note_share_user")
         .innerJoin("note", "note.id", "note_share_user.note_id")
         .innerJoin("user", "user.id", "note.user_id")
         .select([
             "note.id",
             "note.title",
+            "note.is_encrypted",
             sql<string>`user.name`.as("user_name"),
         ])
         .where("note_share_user.user_id", "=", user_id)
         .orderBy("note_share_user.created_at", "desc");
 
-    query = applyFilters(query, [
-        { field: "note.title", type: "text", value: filters.title },
-    ]);
+    const limit = Math.min(filters.limit ?? 10, 10);
 
-    return await pageResults(query, page);
+    return await pageResults(query, page, limit);
 };
 
 export const removeExpiredPublicShares = async (): Promise<void> => {

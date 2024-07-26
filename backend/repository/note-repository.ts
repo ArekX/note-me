@@ -312,6 +312,7 @@ export interface RecentNoteRecord {
     group_name: string | null;
     updated_at: number;
     last_open_at: number | null;
+    is_encrypted: boolean;
 }
 
 export const findRecentlyOpenedNotes = async (
@@ -325,6 +326,7 @@ export const findRecentlyOpenedNotes = async (
             sql<string>`\`group\`.name`.as("group_name"),
             "note.updated_at",
             "note.last_open_at",
+            "note.is_encrypted",
         ])
         .where("note.user_id", "=", user_id)
         .where("note.is_deleted", "=", false)
@@ -337,6 +339,6 @@ export const findRecentlyOpenedNotes = async (
         )
         .leftJoin("group", "group_note.group_id", "group.id")
         .orderBy("last_open_at", "desc")
-        .limit(10)
+        .limit(5)
         .execute();
 };
