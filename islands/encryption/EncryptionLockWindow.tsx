@@ -29,7 +29,8 @@ export default function EncryptionLockWindow({
 
     const password = useSignal("");
 
-    const handleCancelLockWindow = () => lock.lock();
+    const handleCancelLockWindow = () =>
+        lock.rejectUnlockRequest("User cancelled password entry.");
 
     const handleConfirmUnlock = loader.wrap(async () => {
         const response = await sendMessage<

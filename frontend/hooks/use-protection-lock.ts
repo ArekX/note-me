@@ -123,7 +123,7 @@ export const initializeProtectionLock = () => {
 
 interface PendingRequest {
     resolve: (password: string) => void;
-    reject: () => void;
+    reject: (reason: string) => void;
 }
 
 export type ProtectionLockHook = ReturnType<typeof useProtectionLock>;
@@ -157,14 +157,18 @@ export const useProtectionLock = () => {
         storeState();
     };
 
+    const rejectUnlockRequest = (reason: string) => {
+        isUnlockRequested.value = false;
+        pendingRequests.value.forEach((request) => request.reject(reason));
+        pendingRequests.value = [];
+    };
+
     const lock = () => {
         userPassword.value = null;
         isUnlockRequested.value = false;
         lockAt.value = null;
         startAt.value = null;
-
-        pendingRequests.value.forEach((request) => request.reject());
-        pendingRequests.value = [];
+        storeState();
     };
 
     const isLocked = () => userPassword.value === null;
@@ -174,6 +178,7 @@ export const useProtectionLock = () => {
         isLocked,
         requestUnlock,
         resolveUnlockRequest,
+        rejectUnlockRequest,
         lock,
     };
 };

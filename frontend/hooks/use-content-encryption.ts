@@ -12,14 +12,6 @@ export const useContentEncryption = () => {
 
     const { sendMessage } = useWebsocketService();
 
-    const retrievePassword = async (): Promise<string | null> => {
-        try {
-            return await protectionLock.requestUnlock();
-        } catch {
-            return null;
-        }
-    };
-
     const decryptText = async (text: string): Promise<string> => {
         const response = await sendMessage<
             DecryptTextMessage,
@@ -27,7 +19,7 @@ export const useContentEncryption = () => {
         >("users", "decryptText", {
             data: {
                 encrypted: text,
-                password: await retrievePassword() ?? "",
+                password: await protectionLock.requestUnlock() ?? "",
             },
             expect: "decryptTextResponse",
         });
@@ -41,7 +33,7 @@ export const useContentEncryption = () => {
         >("users", "encryptText", {
             data: {
                 text,
-                password: await retrievePassword() ?? "",
+                password: await protectionLock.requestUnlock() ?? "",
             },
             expect: "encryptTextResponse",
         });

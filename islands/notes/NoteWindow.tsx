@@ -33,6 +33,7 @@ export type NoteWindowTypes =
 
 export interface NoteWindowComponentProps {
     onClose: () => void;
+    isExistingNoteProtected: boolean;
     record: NoteRecord;
     noteId: number;
 }
@@ -40,6 +41,7 @@ export interface NoteWindowComponentProps {
 interface NoteWindowProps {
     type: NoteWindowTypes | null;
     noteId: number;
+    isExistingNoteProtected?: boolean;
     existingNoteText?: string;
     onClose: () => void;
 }
@@ -53,6 +55,7 @@ export default function NoteWindow({
     type,
     noteId,
     existingNoteText,
+    isExistingNoteProtected,
     onClose,
 }: NoteWindowProps) {
     const inputDataLoader = useLoader();
@@ -111,6 +114,7 @@ export default function NoteWindow({
         <LockedContentWrapper
             inputRecords={[noteRecord.value]}
             protectedKeys={["text"]}
+            dialogMode={true}
             isLockedKey={"is_encrypted"}
             unlockRender={([record]) => {
                 return (
@@ -118,6 +122,10 @@ export default function NoteWindow({
                         selector={type}
                         propsGetter={() => ({
                             onClose,
+                            isExistingNoteProtected:
+                                isExistingNoteProtected !== undefined
+                                    ? isExistingNoteProtected
+                                    : record.is_encrypted,
                             noteId,
                             record,
                         })}

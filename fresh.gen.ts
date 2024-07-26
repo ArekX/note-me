@@ -49,7 +49,6 @@ import * as $dashboard_RecentlyOpenedNotes from "./islands/dashboard/RecentlyOpe
 import * as $encryption_EncryptionLockButton from "./islands/encryption/EncryptionLockButton.tsx";
 import * as $encryption_EncryptionLockWindow from "./islands/encryption/EncryptionLockWindow.tsx";
 import * as $encryption_LockedContentWrapper from "./islands/encryption/LockedContentWrapper.tsx";
-import * as $encryption_ProtectedAreaWrapper from "./islands/encryption/ProtectedAreaWrapper.tsx";
 import * as $files_FileDropWrapper from "./islands/files/FileDropWrapper.tsx";
 import * as $files_FileItem from "./islands/files/FileItem.tsx";
 import * as $files_FilePicker from "./islands/files/FilePicker.tsx";
@@ -190,8 +189,6 @@ const manifest = {
             $encryption_EncryptionLockWindow,
         "./islands/encryption/LockedContentWrapper.tsx":
             $encryption_LockedContentWrapper,
-        "./islands/encryption/ProtectedAreaWrapper.tsx":
-            $encryption_ProtectedAreaWrapper,
         "./islands/files/FileDropWrapper.tsx": $files_FileDropWrapper,
         "./islands/files/FileItem.tsx": $files_FileItem,
         "./islands/files/FilePicker.tsx": $files_FilePicker,

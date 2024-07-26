@@ -38,7 +38,6 @@ export default function ViewNote(
         recordData.value = {
             ...record,
         };
-        console.log(record);
     }, [record]);
 
     useNoteWebsocket({
@@ -145,6 +144,7 @@ export default function ViewNote(
                 <NoteWindow
                     onClose={() => windowMode.value = null}
                     type={windowMode.value}
+                    isExistingNoteProtected={recordData.value.is_encrypted}
                     existingNoteText={recordData.value.note}
                     noteId={recordData.value.id}
                 />

@@ -68,7 +68,6 @@ export default function NoteEditor({
             name.value = data.title ?? name.value;
 
             tags.value = data.tags ?? tags.value;
-            text.value = data.text ?? text.value;
 
             isProtected.value = !!(data.is_encrypted ?? isProtected.value);
 
@@ -353,6 +352,7 @@ export default function NoteEditor({
                     <NoteWindow
                         onClose={() => windowMode.value = null}
                         type={windowMode.value}
+                        isExistingNoteProtected={isProtected.value}
                         existingNoteText={text.value}
                         noteId={noteId.value}
                     />
