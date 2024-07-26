@@ -82,6 +82,12 @@ export const useTreeWebsocket = (options: TreeWebsocketOptions) => {
                         return;
                     }
 
+                    if (data.updated_data.is_encrypted !== undefined) {
+                        setContainer(container, {
+                            is_protected: !!data.updated_data.is_encrypted,
+                        });
+                    }
+
                     if ("title" in data.updated_data) {
                         setContainer(container, {
                             name: data.updated_data.title,
