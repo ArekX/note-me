@@ -18,7 +18,7 @@ export default function SwitcherContainer({
 }: SwitcherContainerProps) {
     return (
         <div class={`flex select-none ${addClass}`}>
-            <div class="flex-1">
+            <div class="flex-1 basis-24">
                 {switcherComponent}
             </div>
             <div class="flex-1 text-right opacity-30 hover:opacity-100 pr-1">
