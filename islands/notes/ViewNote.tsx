@@ -141,15 +141,11 @@ export default function ViewNote(
                     }}
                 />
             </div>
-            {recordData.value.id && (
+            {recordData.value.id && windowMode.value !== null && (
                 <NoteWindow
                     onClose={() => windowMode.value = null}
                     type={windowMode.value}
-                    existingNoteData={{
-                        text: recordData.value.note,
-                        is_encrypted: recordData.value.is_encrypted,
-                        is_resolved: true,
-                    }}
+                    existingNoteText={recordData.value.note}
                     noteId={recordData.value.id}
                 />
             )}

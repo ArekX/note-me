@@ -18,7 +18,7 @@ import Picker from "$components/Picker.tsx";
 import { NoteWindowComponentProps } from "$islands/notes/NoteWindow.tsx";
 
 export default function NoteDetails(
-    { noteId, onClose, noteText }: NoteWindowComponentProps,
+    { noteId, onClose, record }: NoteWindowComponentProps,
 ) {
     const noteData = useSignal<NoteDetailsRecord | null>(null);
 
@@ -52,7 +52,7 @@ export default function NoteDetails(
         });
 
         noteData.value = response.record;
-        noteData.value.note = (await noteText.getText())!;
+        noteData.value.note = record.text;
     });
 
     useEffect(() => {

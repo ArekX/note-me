@@ -52,6 +52,10 @@ export default function LockedContentWrapper<T>({
     });
 
     useEffect(() => {
+        if (inputRecords === records.value) {
+            return;
+        }
+
         if (inputRecords.some((r) => r[isLockedKey])) {
             unlockRecords(inputRecords);
         } else {

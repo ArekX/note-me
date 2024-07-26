@@ -348,16 +348,12 @@ export default function NoteEditor({
                 />
             )}
 
-            {noteId.value
+            {noteId.value && windowMode.value !== null
                 ? (
                     <NoteWindow
                         onClose={() => windowMode.value = null}
                         type={windowMode.value}
-                        existingNoteData={{
-                            text: text.value,
-                            is_encrypted: isProtected.value,
-                            is_resolved: true,
-                        }}
+                        existingNoteText={text.value}
                         noteId={noteId.value}
                     />
                 )

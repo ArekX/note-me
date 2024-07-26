@@ -28,7 +28,7 @@ import { timeAgo } from "$lib/time/time-ago.ts";
 import Icon from "$components/Icon.tsx";
 
 export default function NoteHistory(
-    { noteId, onClose, noteText }: NoteWindowComponentProps,
+    { noteId, onClose, record }: NoteWindowComponentProps,
 ) {
     const {
         sendMessage,
@@ -228,7 +228,7 @@ export default function NoteHistory(
 
                                             <HistoryDiff
                                                 id={selected.value.id}
-                                                noteText={noteText}
+                                                noteText={record.text}
                                                 showType={showType.value}
                                             />
                                         </div>

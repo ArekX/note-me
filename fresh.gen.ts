@@ -41,6 +41,7 @@ import * as $IslandInitializer from "./islands/IslandInitializer.tsx";
 import * as $LoadMoreWrapper from "./islands/LoadMoreWrapper.tsx";
 import * as $Loader from "./islands/Loader.tsx";
 import * as $Pagination from "./islands/Pagination.tsx";
+import * as $TextDiff from "./islands/TextDiff.tsx";
 import * as $ToastMessages from "./islands/ToastMessages.tsx";
 import * as $UserPicker from "./islands/UserPicker.tsx";
 import * as $dashboard_Dashboard from "./islands/dashboard/Dashboard.tsx";
@@ -76,7 +77,6 @@ import * as $notes_blocks_NoteLink from "./islands/notes/blocks/NoteLink.tsx";
 import * as $notes_blocks_NoteList from "./islands/notes/blocks/NoteList.tsx";
 import * as $notes_blocks_TableOfContents from "./islands/notes/blocks/TableOfContents.tsx";
 import * as $notes_helpers_markdown from "./islands/notes/helpers/markdown.ts";
-import * as $notes_hooks_use_note_text from "./islands/notes/hooks/use-note-text.ts";
 import * as $notes_hooks_use_note_websocket from "./islands/notes/hooks/use-note-websocket.ts";
 import * as $notes_insert_components_InsertFile from "./islands/notes/insert-components/InsertFile.tsx";
 import * as $notes_insert_components_InsertImage from "./islands/notes/insert-components/InsertImage.tsx";
@@ -178,6 +178,7 @@ const manifest = {
         "./islands/LoadMoreWrapper.tsx": $LoadMoreWrapper,
         "./islands/Loader.tsx": $Loader,
         "./islands/Pagination.tsx": $Pagination,
+        "./islands/TextDiff.tsx": $TextDiff,
         "./islands/ToastMessages.tsx": $ToastMessages,
         "./islands/UserPicker.tsx": $UserPicker,
         "./islands/dashboard/Dashboard.tsx": $dashboard_Dashboard,
@@ -220,7 +221,6 @@ const manifest = {
         "./islands/notes/blocks/TableOfContents.tsx":
             $notes_blocks_TableOfContents,
         "./islands/notes/helpers/markdown.ts": $notes_helpers_markdown,
-        "./islands/notes/hooks/use-note-text.ts": $notes_hooks_use_note_text,
         "./islands/notes/hooks/use-note-websocket.ts":
             $notes_hooks_use_note_websocket,
         "./islands/notes/insert-components/InsertFile.tsx":
