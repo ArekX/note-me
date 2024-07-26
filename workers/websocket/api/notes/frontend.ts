@@ -88,7 +88,13 @@ import {
     removeReminder,
     setReminder,
 } from "$backend/repository/note-reminder-repository.ts";
-import { searchNotes } from "$backend/repository/note-search-repository.ts";
+import {
+    NoteSearchResult,
+    searchDeletedNotes,
+    searchGeneral,
+    searchReminderNotes,
+    searchSharedNotes,
+} from "$backend/repository/note-search-repository.ts";
 import { restoreDeletedNote } from "$backend/repository/note-repository.ts";
 
 const handleCreateNote: ListenerFn<CreateNoteMessage> = async (
@@ -145,6 +151,7 @@ const handleDeleteNote: ListenerFn<DeleteNoteMessage> = async (
         throw new Error("Note does not exist.");
     }
 
+    await removeReminder(id, sourceClient!.userId);
     await deleteNote(id, sourceClient!.userId);
 
     respond<DeleteNoteResponse>({
@@ -432,11 +439,38 @@ const handleGetNoteReminderData: ListenerFn<GetNoteReminderDataMessage> =
 const handleSearchNote: ListenerFn<SearchNoteMessage> = async (
     { message: { filters }, sourceClient, respond },
 ) => {
-    const records = await searchNotes(filters, sourceClient!.userId);
+    let results: NoteSearchResult[] = [];
+
+    switch (filters.type) {
+        case "general":
+            results = await searchGeneral(
+                filters,
+                sourceClient!.userId,
+            );
+            break;
+        case "shared":
+            results = await searchSharedNotes(
+                filters,
+                sourceClient!.userId,
+            );
+            break;
+        case "reminders":
+            results = await searchReminderNotes(
+                filters,
+                sourceClient!.userId,
+            );
+            break;
+        case "recycleBin":
+            results = await searchDeletedNotes(
+                filters,
+                sourceClient!.userId,
+            );
+            break;
+    }
 
     respond<SearchNoteResponse>({
         type: "searchNoteResponse",
-        records,
+        results,
     });
 };
 

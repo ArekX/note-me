@@ -52,13 +52,16 @@ const Component = ({
             },
         );
 
-        results.value = [...results.value, ...response.records];
+        results.value = [
+            ...results.value,
+            ...response.results as NoteSearchRecord[],
+        ];
 
-        if (response.records.length < 10) {
+        if (response.results.length < 10) {
             hasMoreData.value = false;
         }
 
-        fromId.value = response.records[response.records.length - 1]?.id;
+        fromId.value = response.results[response.results.length - 1]?.id;
         loader.stop();
     });
 

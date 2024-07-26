@@ -49,11 +49,21 @@ export default function LockedContentWrapper<T>({
         return null;
     }
 
-    const loader = useLoader(inputRecords.some((r) => r[isLockedKey]));
+    const hasProtectedInputRecords = () => {
+        for (const record of inputRecords) {
+            if (record?.[isLockedKey]) {
+                return true;
+            }
+        }
+
+        return false;
+    };
+
+    const loader = useLoader(hasProtectedInputRecords());
     const contentEncryption = useContentEncryption();
     const protectionLock = useProtectionLock();
     const recordsUnlocked = useSignal<boolean>(
-        !inputRecords.some((r) => r[isLockedKey]),
+        !hasProtectedInputRecords(),
     );
     const failReason = useSignal<string | null>(null);
     const records = useSignal<T[]>([]);
@@ -100,7 +110,7 @@ export default function LockedContentWrapper<T>({
 
         failReason.value = null;
 
-        if (inputRecords.some((r) => r[isLockedKey])) {
+        if (hasProtectedInputRecords()) {
             recordsUnlocked.value = false;
             unlockRecords(inputRecords);
         } else {
@@ -111,7 +121,7 @@ export default function LockedContentWrapper<T>({
     }, [inputRecords]);
 
     useEffect(() => {
-        if (!inputRecords.some((r) => r[isLockedKey])) {
+        if (!hasProtectedInputRecords()) {
             return;
         }
 

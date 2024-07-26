@@ -1,13 +1,24 @@
 import { db } from "$backend/database.ts";
 import { sql } from "$lib/kysely-sqlite-dialect/deps.ts";
 import { applyFilters } from "$lib/kysely-sqlite-dialect/filters.ts";
+import { DeletedNoteRecord } from "$backend/repository/note-repository.ts";
+import { ReminderNoteRecord } from "$backend/repository/note-reminder-repository.ts";
+import { UserSharedNoteMeta } from "$backend/repository/note-share-repository.ts";
+
+export type SearchType = "general" | "shared" | "reminders" | "recycleBin";
+
+export type NoteSearchResult =
+    | NoteSearchRecord
+    | ReminderNoteRecord
+    | UserSharedNoteMeta
+    | DeletedNoteRecord;
 
 export interface SearchNoteFilters {
     from_id?: number;
     query: string;
     group_id?: number;
     tags?: string[];
-    type: "general" | "shared" | "reminders" | "recycleBin";
+    type: SearchType;
 }
 
 export interface NoteSearchRecord {
@@ -45,11 +56,11 @@ const findChildrenGroupIds = async (user_id: number, group_id: number) => {
     return groupIds;
 };
 
-export const searchNotes = async (
+export const searchGeneral = async (
     filters: SearchNoteFilters,
     user_id: number,
 ): Promise<NoteSearchRecord[]> => {
-    let query = db.selectFrom("note")
+    return await db.selectFrom("note")
         .select([
             "note.id",
             "title",
@@ -68,15 +79,144 @@ export const searchNotes = async (
         )
         .leftJoin("group", "group_note.group_id", "group.id")
         .innerJoin("user", "user.id", "note.user_id")
-        .orderBy("note.id", "asc");
+        .where(
+            "note.id",
+            "in",
+            getSearchNoteIdQuery(
+                await getInternalFilters(filters, user_id),
+                user_id,
+            ),
+        )
+        .orderBy("note.id", "asc")
+        .execute();
+};
+
+export const searchDeletedNotes = async (
+    filters: SearchNoteFilters,
+    user_id: number,
+): Promise<DeletedNoteRecord[]> => {
+    return await db.selectFrom("note")
+        .select([
+            "note.id",
+            "note.title",
+            "note.is_encrypted",
+            "note.deleted_at",
+        ])
+        .where(
+            "note.id",
+            "in",
+            getSearchNoteIdQuery(
+                await getInternalFilters(filters, user_id),
+                user_id,
+            ),
+        )
+        .orderBy("note.id", "asc")
+        .execute();
+};
+
+export const searchReminderNotes = async (
+    filters: SearchNoteFilters,
+    user_id: number,
+): Promise<ReminderNoteRecord[]> => {
+    return await db.selectFrom("note_reminder")
+        .innerJoin("note", "note.id", "note_reminder.note_id")
+        .innerJoin("user", "user.id", "note.user_id")
+        .select([
+            "note_reminder.id",
+            "note_reminder.note_id",
+            "note.title",
+            "note.is_encrypted",
+            sql<number>`note.user_id`.as("author_id"),
+            sql<string>`user.name`.as("author_name"),
+            sql<
+                "once" | "repeat"
+            >`(CASE WHEN note_reminder.interval IS NULL THEN 'once' ELSE 'repeat' END)`
+                .as("type"),
+            "note_reminder.done_count",
+            "note_reminder.interval",
+            "note_reminder.unit_value",
+            "note_reminder.repeat_count",
+            "note_reminder.next_at",
+        ])
+        .where(
+            "note.id",
+            "in",
+            getSearchNoteIdQuery(
+                await getInternalFilters(filters, user_id),
+                user_id,
+            ),
+        )
+        .orderBy("note.id", "asc")
+        .execute();
+};
+
+export const searchSharedNotes = async (
+    filters: SearchNoteFilters,
+    user_id: number,
+): Promise<UserSharedNoteMeta[]> => {
+    return await db.selectFrom("note_share_user")
+        .innerJoin("note", "note.id", "note_share_user.note_id")
+        .innerJoin("user", "user.id", "note.user_id")
+        .select([
+            "note.id",
+            sql<number>`note_share_user.id`.as("share_id"),
+            "note.title",
+            "note.is_encrypted",
+            sql<string>`user.name`.as("user_name"),
+            "note_share_user.created_at",
+        ])
+        .where(
+            "note.id",
+            "in",
+            getSearchNoteIdQuery(
+                await getInternalFilters(filters, user_id),
+                user_id,
+            ),
+        )
+        .execute();
+};
+
+const getInternalFilters = async (
+    filters: SearchNoteFilters,
+    user_id: number,
+): Promise<InternalFlters> => {
+    const resolved_group_ids = filters.group_id
+        ? await findChildrenGroupIds(user_id, filters.group_id)
+        : [];
+
+    return {
+        ...filters,
+        resolved_group_ids,
+    };
+};
+
+interface InternalFlters extends SearchNoteFilters {
+    resolved_group_ids: number[];
+}
+
+const getSearchNoteIdQuery = (
+    filters: InternalFlters,
+    user_id: number,
+) => {
+    let query = db.selectFrom("note")
+        .select([
+            "note.id",
+        ])
+        .leftJoin(
+            "group_note",
+            (join) =>
+                join
+                    .onRef("note.id", "=", "group_note.note_id")
+                    .on("group_note.user_id", "=", user_id),
+        )
+        .orderBy("note.id", "asc")
+        .limit(10);
 
     if (filters.type !== "recycleBin") {
         query = query.where("note.is_deleted", "=", false);
     }
 
-    const childGroupIds = filters.group_id
-        ? await findChildrenGroupIds(user_id, filters.group_id)
-        : [];
+    const childGroupIds = filters.group_id ? filters.resolved_group_ids : [];
 
     query = applyFilters(query, [
         {
@@ -178,5 +318,5 @@ export const searchNotes = async (
         },
     ]);
 
-    return await query.execute();
+    return query;
 };

@@ -31,7 +31,7 @@ import {
     UserReminderNotesFilters,
 } from "$backend/repository/note-reminder-repository.ts";
 import {
-    NoteSearchRecord,
+    NoteSearchResult,
     SearchNoteFilters,
 } from "$backend/repository/note-search-repository.ts";
 
@@ -223,7 +223,9 @@ export type SearchNoteMessage = NoteMessage<
 
 export type SearchNoteResponse = NoteMessage<
     "searchNoteResponse",
-    { records: NoteSearchRecord[] }
+    {
+        results: NoteSearchResult[];
+    }
 >;
 
 export type GetRecentlyOpenedNotesMessage = NoteMessage<

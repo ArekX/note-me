@@ -6,17 +6,27 @@ import {
 import { TreeRecord } from "$backend/repository/tree-list.repository.ts";
 import { useDebouncedCallback } from "$frontend/hooks/use-debounced-callback.ts";
 import {
+    NoteFrontendResponse,
     SearchNoteMessage,
     SearchNoteResponse,
 } from "$workers/websocket/api/notes/messages.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
+import { ReminderNoteRecord } from "$backend/repository/note-reminder-repository.ts";
+import { UserSharedNoteMeta } from "$backend/repository/note-share-repository.ts";
+import { DeletedNoteRecord } from "$backend/repository/note-repository.ts";
+
+type NoteSearchResult =
+    | NoteSearchRecord
+    | ReminderNoteRecord
+    | UserSharedNoteMeta
+    | DeletedNoteRecord;
 
 const type = signal<SearchNoteFilters["type"]>("general");
 const query = signal<string>("");
 const groupRecord = signal<TreeRecord | null>(null);
 const tags = signal<string[]>([]);
 const fromId = signal<number | undefined>(undefined);
-const results = signal<NoteSearchRecord[]>([]);
+const results = signal<NoteSearchResult[]>([]);
 const hasMoreData = signal<boolean>(true);
 const isRunning = signal<boolean>(false);
 const isActive = computed(() =>
@@ -25,7 +35,27 @@ const isActive = computed(() =>
 );
 
 export const useSearch = () => {
-    const { sendMessage } = useWebsocketService();
+    const { sendMessage } = useWebsocketService<NoteFrontendResponse>({
+        eventMap: {
+            notes: {
+                createNoteResponse: () => reload(),
+                updateNoteResponse: () => reload(),
+                deleteNoteResponse: () => reload(),
+                restoreDeletedNoteResponse: () => reload(),
+                setReminderResponse: () => reload(),
+                removeReminderResponse: () => reload(),
+                fullyDeleteNoteResponse: () => reload(),
+            },
+        },
+    });
+
+    const reload = () => {
+        if (isRunning.value) {
+            return;
+        }
+
+        runSearchFromStart();
+    };
 
     const performSearch = useDebouncedCallback(async () => {
         if (!hasMoreData.value) {
@@ -53,13 +83,12 @@ export const useSearch = () => {
             },
         );
 
-        results.value = [...results.value, ...response.records];
-
-        if (response.records.length < 10) {
+        if (response.results.length < 10) {
             hasMoreData.value = false;
         }
 
-        fromId.value = response.records[response.records.length - 1]?.id;
+        results.value = [...results.value, ...response.results];
+        fromId.value = response.results[response.results.length - 1]?.id;
         isRunning.value = false;
     });
 
@@ -104,7 +133,7 @@ export const useSearch = () => {
     };
 
     const loadMore = () => {
-        if (hasMoreData.value) {
+        if (!isRunning.value && hasMoreData.value) {
             performSearch();
         }
     };
@@ -123,6 +152,7 @@ export const useSearch = () => {
         setType,
         setGroup,
         setTags,
+        reload,
         loadMore,
     };
 };

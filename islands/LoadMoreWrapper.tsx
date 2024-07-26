@@ -1,5 +1,5 @@
 import { ComponentChildren, createRef } from "preact";
-import { useEffect } from "preact/hooks";
+import { useLayoutEffect } from "preact/hooks";
 import Loader from "$islands/Loader.tsx";
 
 interface LoadMoreWrapperProps {
@@ -23,14 +23,14 @@ export default function LoadMoreWrapper({
 }: LoadMoreWrapperProps) {
     const loadNextRef = createRef<HTMLDivElement>();
 
-    const handleObserver: IntersectionObserverCallback = (entries) => {
-        const target = entries[0];
-        if (target.isIntersecting && hasMore) {
-            onLoadMore();
-        }
-    };
+    useLayoutEffect(() => {
+        const handleObserver: IntersectionObserverCallback = (entries) => {
+            const target = entries[0];
+            if (target.isIntersecting && hasMore) {
+                onLoadMore();
+            }
+        };
 
-    useEffect(() => {
         const observer = new IntersectionObserver(handleObserver, option);
 
         if (loadNextRef.current) {
@@ -48,7 +48,7 @@ export default function LoadMoreWrapper({
         <div class={`overflow-auto ${addCss}`}>
             {children}
             {hasMore && (
-                <div ref={loadNextRef}>
+                <div ref={loadNextRef} class="text-center block h-3">
                     <Loader color="white" />
                 </div>
             )}

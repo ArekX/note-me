@@ -333,7 +333,7 @@ select.select-input {
 }
 
 .search-view-height {
-    height: calc(100vh - 9em);
+    height: calc(100vh - 10.1em);
 }
 
 .group-picker {
