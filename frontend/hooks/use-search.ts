@@ -49,15 +49,13 @@ export const useSearch = () => {
         },
     });
 
-    const reload = () => {
+    const performSearch = useDebouncedCallback(async () => {
         if (isRunning.value) {
             return;
         }
 
-        runSearchFromStart();
-    };
+        isRunning.value = true;
 
-    const performSearch = useDebouncedCallback(async () => {
         if (!hasMoreData.value) {
             isRunning.value = false;
             return;
@@ -101,11 +99,10 @@ export const useSearch = () => {
         results.value = [];
     };
 
-    const runSearchFromStart = () => {
+    const reload = () => {
         results.value = [];
         hasMoreData.value = true;
         fromId.value = undefined;
-        isRunning.value = true;
         performSearch();
     };
 
@@ -113,7 +110,7 @@ export const useSearch = () => {
         newQuery: string,
     ) => {
         query.value = newQuery;
-        runSearchFromStart();
+        reload();
     };
 
     const setType = (newType: SearchNoteFilters["type"]) => {
@@ -124,12 +121,12 @@ export const useSearch = () => {
 
     const setGroup = (newGroup: TreeRecord | null) => {
         groupRecord.value = newGroup;
-        runSearchFromStart();
+        reload();
     };
 
     const setTags = (newTags: string[]) => {
         tags.value = newTags;
-        runSearchFromStart();
+        reload();
     };
 
     const loadMore = () => {
