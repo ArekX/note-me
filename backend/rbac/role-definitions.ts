@@ -1,5 +1,6 @@
 import {
     AppPermissions,
+    CanManageBackups,
     CanManageFiles,
     CanManagePeriodicTasks,
     CanManageSettings,
@@ -23,6 +24,7 @@ export const roleDefinitions = {
             ...Object.values(CanManageTags),
             ...Object.values(CanManageFiles),
             ...Object.values(CanManagePeriodicTasks),
+            ...Object.values(CanManageBackups),
         ],
     },
     user: {

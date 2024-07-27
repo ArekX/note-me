@@ -15,6 +15,10 @@ export let db: Kysely<Tables> = createDatabaseClient(
     databaseLocation,
 );
 
+export const reloadDatabase = () => {
+    db = createDatabaseClient(databaseLocation);
+};
+
 const transactionSemaphore = new Semaphore(1);
 
 export interface Transaction {

@@ -11,6 +11,8 @@ import { removeExpiredShareLinks } from "$workers/periodic-task/tasks/remove-exp
 import { removeExpiredDeletedNotes } from "$workers/periodic-task/tasks/remove-expired-deleted-notes.ts";
 import { backupDatabase } from "$workers/periodic-task/tasks/backup-database.ts";
 import { loadEnvironment } from "$backend/env.ts";
+import { BackendMessage } from "$workers/websocket/websocket-backend.ts";
+import { reloadDatabase } from "$backend/database.ts";
 
 loadEnvironment();
 
@@ -32,7 +34,12 @@ if (import.meta.main) {
     periodicTaskService.registerPeriodicTask(removeExpiredDeletedNotes);
     periodicTaskService.registerPeriodicTask(backupDatabase);
 
-    connectWorkerToBus(self);
+    connectWorkerToBus(self, (message: BackendMessage) => {
+        if (message.type === "databaseRestored") {
+            logger.info("Database restored. Reloading database.");
+            reloadDatabase();
+        }
+    });
 
     periodicTaskService.start();
 }

@@ -1,5 +1,8 @@
 import { logger } from "$backend/logger.ts";
 import { services } from "./services/mod.ts";
+import { BackendMessage } from "$workers/websocket/websocket-backend.ts";
+import { listenServiceBroadcasts } from "$workers/services/worker-bus.ts";
+import { reloadDatabase } from "$backend/database.ts";
 
 const checkServiceDisabled = (serviceName: string): boolean => {
     const serviceDisabledEnvName = "DISABLE_SERVICE_" +
@@ -39,6 +42,14 @@ export const initializeWorkers = (): void => {
 
         logger.info(`Starting background service: ${serviceName}`);
         service.start();
+
+        listenServiceBroadcasts(service, (message: BackendMessage) => {
+            if (message.type === "databaseRestored") {
+                logger.info("Database restored. Reloading database.");
+                reloadDatabase();
+            }
+        });
+
         logger.debug("Background service started.");
     }
     logger.debug("All background services started");

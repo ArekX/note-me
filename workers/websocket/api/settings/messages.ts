@@ -1,5 +1,7 @@
 import { Message } from "$workers/websocket/types.ts";
 import { PeriodicTaskRecord } from "$backend/repository/periodic-task-repository.ts";
+import { Settings } from "$backend/repository/settings-repository.ts";
+import { SettingsKey } from "$schemas/settings.ts";
 
 type SettingsMessage<Type, Data = unknown> = Message<
     "settings",
@@ -16,6 +18,61 @@ export type GetPeriodicTasksResponse = SettingsMessage<
     { tasks: PeriodicTaskRecord[] }
 >;
 
-export type SettingsFrontendResponse = GetPeriodicTasksResponse;
+export type GetSettingsMessage = SettingsMessage<
+    "getSettings",
+    { keys?: SettingsKey[] }
+>;
 
-export type SettingsFrontendMessage = GetPeriodicTasksMessage;
+export type GetSettingsResponse = SettingsMessage<
+    "getSettingsResponse",
+    { settings: Partial<Settings> }
+>;
+
+export type UpdateSettingsMessage = SettingsMessage<
+    "updateSettings",
+    { settings: Partial<Settings> }
+>;
+
+export type UpdateSettingsResponse = SettingsMessage<
+    "updateSettingsResponse",
+    { updated_settings: Partial<Settings> }
+>;
+
+export type GetBackupsMessage = SettingsMessage<
+    "getBackups"
+>;
+
+export type GetBackupsResponse = SettingsMessage<
+    "getBackupsResponse",
+    { backups: string[] }
+>;
+
+export type RestoreBackupMessage = SettingsMessage<
+    "restoreBackup",
+    { backup: string }
+>;
+
+export type RestoreBackupResponse = SettingsMessage<
+    "restoreBackupResponse",
+    { restored_backup: string }
+>;
+
+export type DatabaseRestoredMessage = SettingsMessage<
+    "databaseRestored"
+>;
+
+export type SettingsFrontendResponse =
+    | GetPeriodicTasksResponse
+    | GetSettingsResponse
+    | UpdateSettingsResponse
+    | GetBackupsResponse
+    | RestoreBackupResponse;
+
+export type SettingsFrontendMessage =
+    | GetPeriodicTasksMessage
+    | GetSettingsMessage
+    | UpdateSettingsMessage
+    | GetBackupsMessage
+    | RestoreBackupMessage;
+
+export type SettingsBackendMessage = DatabaseRestoredMessage;

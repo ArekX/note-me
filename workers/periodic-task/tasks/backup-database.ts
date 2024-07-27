@@ -9,7 +9,7 @@ import {
 } from "$backend/repository/settings-repository.ts";
 
 const backupLocation = new URL(
-    `../../../${Deno.env.get("FILE_DATABASE_BACKUP_FOLDER")}`,
+    `../../../${Deno.env.get("FILE_DATABASE_BACKUP_FOLDER") ?? "backups"}`,
     import.meta.url,
 ).pathname;
 

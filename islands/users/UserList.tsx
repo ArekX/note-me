@@ -24,6 +24,7 @@ import { usePagedData } from "$frontend/hooks/use-paged-data.ts";
 import { useFilters } from "$frontend/hooks/use-filters.ts";
 import { useSelected } from "$frontend/hooks/use-selected.ts";
 import { useLoader } from "$frontend/hooks/use-loader.ts";
+
 export default function UserList() {
     const userToDelete = useSelected<EditableUser>();
     const userToEdit = useSelected<EditableUser>();

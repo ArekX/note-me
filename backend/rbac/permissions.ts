@@ -18,6 +18,10 @@ export enum CanManageSettings {
     Update = "canUpdateGeneralSettings",
 }
 
+export enum CanManageBackups {
+    Restore = "canRestoreBackups",
+}
+
 export enum CanManageFiles {
     AllFiles = "canManageAllFiles",
 }
@@ -31,4 +35,5 @@ export type AppPermissions =
     | CanManageTags
     | CanManageSettings
     | CanManageFiles
-    | CanManagePeriodicTasks;
+    | CanManagePeriodicTasks
+    | CanManageBackups;
