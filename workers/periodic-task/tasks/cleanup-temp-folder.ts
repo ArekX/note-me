@@ -5,7 +5,7 @@ import { PeriodicTask } from "../periodic-task-service.ts";
 
 // TODO: Test this
 export const cleanupTempFolder: PeriodicTask = {
-    name: "cleanup-temp",
+    name: "cleanup-temp-folder",
     getNextAt: startOfNextDay,
     async trigger(): Promise<void> {
         logger.info("Cleaning up old temporary files");

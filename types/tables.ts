@@ -134,6 +134,12 @@ export interface PeriodicTaskScheduleTable {
     last_fail_reason?: string | null;
 }
 
+export interface SettingsTable {
+    id: Generated<number>;
+    is_auto_backup_enabled: number;
+    max_backup_days: number;
+}
+
 export interface Tables {
     note: NoteTable;
     note_reminder: NoteReminderTable;
@@ -149,4 +155,5 @@ export interface Tables {
     group_note: GroupNoteTable;
     user: UserTable;
     periodic_task_schedule: PeriodicTaskScheduleTable;
+    settings: SettingsTable;
 }

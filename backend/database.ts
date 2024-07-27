@@ -8,8 +8,11 @@ const createDatabaseClient = (path: string): Kysely<Tables> =>
         dialect: new SqliteDialect(path),
     });
 
+export let databaseLocation = Deno.env.get("SQLITE_DATABASE_LOCATION") ??
+    ":memory:";
+
 export let db: Kysely<Tables> = createDatabaseClient(
-    Deno.env.get("SQLITE_DATABASE_LOCATION") ?? ":memory:",
+    databaseLocation,
 );
 
 const transactionSemaphore = new Semaphore(1);
@@ -63,5 +66,6 @@ export const createTransaction = async (): Promise<Transaction> => {
 };
 
 export const setupTestDatabase = () => {
+    databaseLocation = ":memory:";
     db = createDatabaseClient(":memory:");
 };

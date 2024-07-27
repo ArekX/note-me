@@ -1,3 +1,4 @@
+import { sql } from "$lib/kysely-sqlite-dialect/deps.ts";
 import { Kysely } from "../lib/migrator/deps.ts";
 
 export async function up(db: Kysely<unknown>): Promise<void> {
@@ -267,6 +268,26 @@ export async function up(db: Kysely<unknown>): Promise<void> {
         .addColumn("last_fail_reason", "text")
         .addColumn("last_fail_run_at", "int8")
         .execute();
+
+    await db.schema.createTable("settings")
+        .ifNotExists()
+        .addColumn("id", "integer", (col) => col.autoIncrement().primaryKey())
+        .addColumn(
+            "is_auto_backup_enabled",
+            "boolean",
+            (col) => col.notNull().defaultTo(false),
+        )
+        .addColumn(
+            "max_backup_days",
+            "int8",
+            (col) => col.notNull().defaultTo(5),
+        )
+        .execute();
+
+    await sql`INSERT INTO settings (is_auto_backup_enabled, max_backup_days) VALUES (0, 5)`
+        .execute(
+            db,
+        );
 }
 
 export async function down(db: Kysely<unknown>): Promise<void> {
@@ -284,4 +305,5 @@ export async function down(db: Kysely<unknown>): Promise<void> {
     await db.schema.dropTable("group_note").execute();
     await db.schema.dropTable("periodic_task_schedule").execute();
     await db.schema.dropTable("user").execute();
+    await db.schema.dropTable("settings").execute();
 }
