@@ -60,7 +60,8 @@ Requirements:
 2. Add DENO_DEPLOYMENT_ID environment variable. Should be
    `export DENO_DEPLOYMENT_ID=$(git rev-parse HEAD)`
 3. Run `deno task cache` to pre-install all dependencies.
-4. Run `deno task production`
+4. RUN `deno task build-assets` to build islands and other assets.
+5. Run `deno task production`
 
 # Build and run using Docker
 

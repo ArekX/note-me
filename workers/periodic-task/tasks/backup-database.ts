@@ -1,6 +1,6 @@
 import { logger } from "$backend/logger.ts";
 import { PeriodicTask } from "../periodic-task-service.ts";
-import { nextMinute } from "$workers/periodic-task/next-at.ts";
+import { startOfNextDay } from "$workers/periodic-task/next-at.ts";
 import { databaseLocation } from "$backend/database.ts";
 import { join } from "$std/path/mod.ts";
 import { formatDate } from "$backend/deps.ts";
@@ -30,7 +30,7 @@ const removeOldBackups = async (maxBackupDays: number) => {
 
 export const backupDatabase: PeriodicTask = {
     name: "backup-database",
-    getNextAt: nextMinute,
+    getNextAt: startOfNextDay,
     async trigger(): Promise<void> {
         const [isEnabled, maxBackupDays] = await getMultiSettingsValue([
             "is_auto_backup_enabled",
