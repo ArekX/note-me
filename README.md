@@ -70,7 +70,7 @@ Requirements:
 
 Steps:
 
-1. Tag a release with `git tag <VERSION>`.
+1. Tag a release with `git tag <VERSION>` or fetch tags via `git fetch --tags`
 2. Run `deno task build-docker`
 3. After docker image is built run
    `docker run -p 8000:8000 -p 8080:8080 --env-file ./.env arekxv/note-me:<VERSION>`,
@@ -88,6 +88,7 @@ Requirements:
 
 Steps:
 
-1. Run `deno task build-podman`
-2. After image is built run
+1. Tag a release with `git tag <VERSION>` or fetch tags via `git fetch --tags`
+2. Run `deno task build-podman`
+3. After image is built run
    `podman run -p 8000:8000 -p 8080:8080 --env-file ./.env localhost/arekxv/note-me`
