@@ -47,3 +47,21 @@ export const restoreBackup = async (backup: string): Promise<boolean> => {
         return false;
     }
 };
+
+export const removeOldBackups = async (maxBackupDays: number) => {
+    if (!(await exists(backupLocation))) {
+        return;
+    }
+    const files: string[] = [];
+    for await (const file of Deno.readDir(backupLocation)) {
+        files.push(file.name);
+        files.sort();
+        if (files.length >= maxBackupDays) {
+            const oldestFile = files.shift()!;
+            logger.info("Removing old backup file {file}", {
+                file: oldestFile,
+            });
+            await Deno.remove(joinPath(backupLocation, oldestFile));
+        }
+    }
+};
