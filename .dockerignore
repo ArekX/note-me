@@ -1,9 +1,14 @@
 .vscode
 .gitignore
 README.md
+backups
+temp
+_fresh
 database.sqlite
 database2.sqlite
 .env
 env.example
 Dockerfile
+.github
 .dvmrc
+setup-githooks.sh

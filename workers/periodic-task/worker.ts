@@ -2,7 +2,6 @@
 
 declare const self: DedicatedWorkerGlobalScope;
 
-import "$std/dotenv/load.ts";
 import { logger, setLoggerName } from "$backend/logger.ts";
 import { checkReminders } from "./tasks/check-reminders.ts";
 import { periodicTaskService } from "./periodic-task-service.ts";
@@ -11,6 +10,9 @@ import { connectWorkerToBus } from "$workers/services/worker-bus.ts";
 import { removeExpiredShareLinks } from "$workers/periodic-task/tasks/remove-expired-share-links.ts";
 import { removeExpiredDeletedNotes } from "$workers/periodic-task/tasks/remove-expired-deleted-notes.ts";
 import { backupDatabase } from "$workers/periodic-task/tasks/backup-database.ts";
+import { loadEnvironment } from "$backend/env.ts";
+
+loadEnvironment();
 
 setLoggerName("periodic-task");
 

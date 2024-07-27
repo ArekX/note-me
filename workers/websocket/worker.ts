@@ -2,13 +2,14 @@
 
 declare const self: DedicatedWorkerGlobalScope;
 
-import "$std/dotenv/load.ts";
 import { registerApiHandlers } from "$workers/websocket/api/mod.ts";
 import { logger, setLoggerName } from "$backend/logger.ts";
 import { websocketService } from "./websocket-service.ts";
 import { connectWorkerToBus } from "$workers/services/worker-bus.ts";
 import { Message } from "$workers/websocket/types.ts";
+import { loadEnvironment } from "$backend/env.ts";
 
+loadEnvironment();
 setLoggerName("websocket");
 
 self.onerror = (event) => {

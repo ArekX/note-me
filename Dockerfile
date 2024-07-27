@@ -1,4 +1,4 @@
-FROM denoland/deno:1.45.3
+FROM denoland/deno:1.45.4
 
 ARG GIT_REVISION
 ENV DENO_DEPLOYMENT_ID=${GIT_REVISION}
@@ -6,7 +6,7 @@ ENV DENO_DEPLOYMENT_ID=${GIT_REVISION}
 COPY . /app
 
 WORKDIR /app
-RUN deno task cache && deno task build-assets
+RUN export SKIP_ENV=1 && deno task cache && deno task build-assets
 
 STOPSIGNAL SIGINT
 

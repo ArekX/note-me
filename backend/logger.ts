@@ -1,5 +1,7 @@
-import "$std/dotenv/load.ts";
 import { log } from "$backend/deps.ts";
+import { loadEnvironment } from "$backend/env.ts";
+
+loadEnvironment();
 
 let loggerName: string = "default";
 
