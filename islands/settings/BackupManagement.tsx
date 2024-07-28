@@ -31,6 +31,7 @@ import FileSize from "$components/FileSize.tsx";
 import Icon from "$components/Icon.tsx";
 import ConfirmDialog from "$islands/ConfirmDialog.tsx";
 import Dialog from "$islands/Dialog.tsx";
+import { useSelected } from "$frontend/hooks/use-selected.ts";
 
 type BackupSettings = Pick<
     Settings,
@@ -47,7 +48,7 @@ export default function BackupManagement() {
     const saver = useLoader();
     const backupProcessing = useLoader();
 
-    const backupToDelete = useSignal<BackupRecord | null>(null);
+    const backupToDelete = useSelected<BackupRecord>();
 
     const { sendMessage, dispatchMessage } = useWebsocketService<
         SettingsFrontendResponse
@@ -146,7 +147,7 @@ export default function BackupManagement() {
     };
 
     const deleteBackup = async () => {
-        if (!backupToDelete.value) {
+        if (!backupToDelete.selected.value) {
             return;
         }
 
@@ -155,21 +156,22 @@ export default function BackupManagement() {
             "deleteBackup",
             {
                 data: {
-                    backup: backupToDelete.value.name,
+                    backup: backupToDelete.selected.value.name,
                 },
                 expect: "deleteBackupResponse",
             },
         );
         addMessage({
             type: "success",
-            text: `Backup '${backupToDelete.value.name}' deleted successfully.`,
+            text:
+                `Backup '${backupToDelete.selected.value.name}' deleted successfully.`,
         });
 
         backups.value = backups.value.filter((b) =>
-            b.name !== backupToDelete.value!.name
+            b.name !== backupToDelete.selected.value!.name
         );
 
-        backupToDelete.value = null;
+        backupToDelete.unselect();
     };
 
     const createNewBackup = () => {
@@ -286,7 +288,7 @@ export default function BackupManagement() {
                                         color="danger"
                                         title="Delete"
                                         onClick={() =>
-                                            backupToDelete.value = record}
+                                            backupToDelete.select(record)}
                                     >
                                         <Icon name="minus-circle" />
                                     </Button>
@@ -300,13 +302,13 @@ export default function BackupManagement() {
                     }}
                 />
             </div>
-            {backupToDelete.value && (
+            {backupToDelete.isSelected() && (
                 <ConfirmDialog
                     prompt="Are you sure you want to delete this backup?"
                     confirmText="Delete backup"
                     confirmColor="danger"
                     visible={true}
-                    onCancel={() => backupToDelete.value = null}
+                    onCancel={() => backupToDelete.unselect()}
                     onConfirm={deleteBackup}
                 />
             )}
