@@ -84,7 +84,6 @@ export default function EditUserForm(
         const {
             id: _1,
             username: _2,
-            role: _3,
             new_password: _4,
             ...userData
         } = user.value;

@@ -12,6 +12,7 @@ import {
     UpdateProfileResponse,
     UserFrontendResponse,
 } from "$workers/websocket/api/users/messages.ts";
+import { useProtectionLock } from "$frontend/hooks/use-protection-lock.ts";
 
 export type FrontendUserData =
     & Pick<
@@ -29,6 +30,8 @@ export const userData = signal<FrontendUserData | null>(null);
 export const setupUserData = (data: FrontendUserData) => userData.value = data;
 
 export const useUser = () => {
+    const protectionLock = useProtectionLock();
+
     const { dispatchMessage, sendMessage } = useWebsocketService<
         UserFrontendResponse
     >({
@@ -97,7 +100,10 @@ export const useUser = () => {
             return;
         }
 
-        await sendMessage<UpdateProfileMessage, UpdateProfileResponse>(
+        const response = await sendMessage<
+            UpdateProfileMessage,
+            UpdateProfileResponse
+        >(
             "users",
             "updateProfile",
             {
@@ -107,6 +113,10 @@ export const useUser = () => {
                 expect: "updateProfileResponse",
             },
         );
+
+        if (response.data.new_password) {
+            protectionLock.resolveUnlockRequest(response.data.new_password);
+        }
     };
 
     return {
