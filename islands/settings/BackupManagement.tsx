@@ -7,10 +7,14 @@ import { Settings } from "$backend/repository/settings-repository.ts";
 import Loader from "$islands/Loader.tsx";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import {
+    CreateBackupNowMessage,
+    DeleteBackupMessage,
+    DeleteBackupResponse,
     GetBackupsMessage,
     GetBackupsResponse,
     GetSettingsMessage,
     GetSettingsResponse,
+    SettingsFrontendResponse,
     UpdateSettingsMessage,
     UpdateSettingsResponse,
 } from "$workers/websocket/api/settings/messages.ts";
@@ -19,6 +23,14 @@ import { useValidation } from "$frontend/hooks/use-validation.ts";
 import { backupSettingsSchema } from "$schemas/settings.ts";
 import ErrorDisplay from "$components/ErrorDisplay.tsx";
 import Button from "$components/Button.tsx";
+import { BackupRecord } from "$backend/backups.ts";
+import { addMessage } from "$frontend/toast-message.ts";
+import Table from "$components/Table.tsx";
+import TimeAgo from "$components/TimeAgo.tsx";
+import FileSize from "$components/FileSize.tsx";
+import Icon from "$components/Icon.tsx";
+import ConfirmDialog from "$islands/ConfirmDialog.tsx";
+import Dialog from "$islands/Dialog.tsx";
 
 type BackupSettings = Pick<
     Settings,
@@ -26,15 +38,35 @@ type BackupSettings = Pick<
 >;
 
 export default function BackupManagement() {
-    const backups = useSignal<string[]>([]);
+    const backups = useSignal<BackupRecord[]>([]);
     const settings = useSignal<BackupSettings>({
         is_auto_backup_enabled: 0,
         max_backup_days: 0,
     });
     const loader = useLoader(true);
     const saver = useLoader();
+    const backupProcessing = useLoader();
 
-    const { sendMessage } = useWebsocketService();
+    const backupToDelete = useSignal<BackupRecord | null>(null);
+
+    const { sendMessage, dispatchMessage } = useWebsocketService<
+        SettingsFrontendResponse
+    >({
+        eventMap: {
+            settings: {
+                createBackupNowResponse: (message) => {
+                    backups.value = [...backups.value, message.backup];
+
+                    addMessage({
+                        type: "success",
+                        text: "Backup created successfully.",
+                    });
+
+                    backupProcessing.stop();
+                },
+            },
+        },
+    });
 
     const [settingsValidation, validateSettings] = useValidation({
         schema: backupSettingsSchema,
@@ -113,6 +145,46 @@ export default function BackupManagement() {
         saveSettings();
     };
 
+    const deleteBackup = async () => {
+        if (!backupToDelete.value) {
+            return;
+        }
+
+        await sendMessage<DeleteBackupMessage, DeleteBackupResponse>(
+            "settings",
+            "deleteBackup",
+            {
+                data: {
+                    backup: backupToDelete.value.name,
+                },
+                expect: "deleteBackupResponse",
+            },
+        );
+        addMessage({
+            type: "success",
+            text: `Backup '${backupToDelete.value.name}' deleted successfully.`,
+        });
+
+        backups.value = backups.value.filter((b) =>
+            b.name !== backupToDelete.value!.name
+        );
+
+        backupToDelete.value = null;
+    };
+
+    const createNewBackup = () => {
+        dispatchMessage<CreateBackupNowMessage>(
+            "settings",
+            "createBackupNow",
+        );
+
+        backupProcessing.start();
+    };
+
+    const downloadBackup = (backup: string) => {
+        open(`/app/settings/download-backup?name=${backup}`, "_blank");
+    };
+
     useEffect(() => {
         loadData();
     }, []);
@@ -140,7 +212,7 @@ export default function BackupManagement() {
                     <div class="w-1/5">
                         <Input
                             labelColor="black"
-                            label="Maximum amount of days to keep backups"
+                            label="Maximum days to keep automated backups"
                             min="1"
                             value={settings.value.max_backup_days.toString()}
                             onInput={handleMaxBackupDaysChange}
@@ -158,19 +230,94 @@ export default function BackupManagement() {
                 </div>
             </div>
             <div>
-                <h2 class="text-lg font-semibold">Available backups</h2>
+                <div>
+                    <Button onClick={createNewBackup}>Create New Backup</Button>
+                </div>
+                <h2 class="text-lg font-semibold mt-4">Available backups</h2>
 
-                {backups.value.length === 0 && <div>No backups available</div>}
+                <div class="py-4 w-3/4">
+                    <strong>Note:</strong>{" "}
+                    <p>
+                        To restore NoteMe from these backups, you need to copy
+                        the backup file to NoteMe application replacing the
+                        current database file and restart the server.
+                    </p>
 
-                {backups.value.map((backup) => (
-                    <div class="flex items-center justify-between">
-                        <div>{backup}</div>
-                        <div>
-                            <Button color="success">Restore</Button>
-                        </div>
-                    </div>
-                ))}
+                    <p>All notes and files are stored in the database file.</p>
+                </div>
+
+                <Table<BackupRecord>
+                    noRowsRow={
+                        <tr>
+                            <td colSpan={4} class="text-center">
+                                No users found.
+                            </td>
+                        </tr>
+                    }
+                    columns={[
+                        {
+                            name: "Name",
+                            key: "name",
+                        },
+                        {
+                            name: "Created At",
+                            render: (record) => (
+                                <TimeAgo time={record.created_at} />
+                            ),
+                        },
+                        {
+                            name: "Size",
+                            render: (record) => <FileSize size={record.size} />,
+                        },
+                        {
+                            name: "Actions",
+                            render: (record) => (
+                                <div>
+                                    <Button
+                                        color="primary"
+                                        addClass="mr-2"
+                                        title="Download"
+                                        onClick={() =>
+                                            downloadBackup(record.name)}
+                                    >
+                                        <Icon name="download" />
+                                    </Button>
+                                    <Button
+                                        color="danger"
+                                        title="Delete"
+                                        onClick={() =>
+                                            backupToDelete.value = record}
+                                    >
+                                        <Icon name="minus-circle" />
+                                    </Button>
+                                </div>
+                            ),
+                        },
+                    ]}
+                    rows={backups.value}
+                    headerRowProps={{
+                        class: "text-left",
+                    }}
+                />
             </div>
+            {backupToDelete.value && (
+                <ConfirmDialog
+                    prompt="Are you sure you want to delete this backup?"
+                    confirmText="Delete backup"
+                    confirmColor="danger"
+                    visible={true}
+                    onCancel={() => backupToDelete.value = null}
+                    onConfirm={deleteBackup}
+                />
+            )}
+            {backupProcessing.running && (
+                <Dialog
+                    visible={true}
+                    canCancel={false}
+                >
+                    <Loader color="white">Creating backup...</Loader>
+                </Dialog>
+            )}
         </div>
     );
 }

@@ -2,6 +2,7 @@ import { Message } from "$workers/websocket/types.ts";
 import { PeriodicTaskRecord } from "$backend/repository/periodic-task-repository.ts";
 import { Settings } from "$backend/repository/settings-repository.ts";
 import { SettingsKey } from "$schemas/settings.ts";
+import { BackupRecord } from "$backend/backups.ts";
 
 type SettingsMessage<Type, Data = unknown> = Message<
     "settings",
@@ -44,21 +45,30 @@ export type GetBackupsMessage = SettingsMessage<
 
 export type GetBackupsResponse = SettingsMessage<
     "getBackupsResponse",
-    { backups: string[] }
->;
-
-export type RestoreBackupMessage = SettingsMessage<
-    "restoreBackup",
-    { backup: string }
->;
-
-export type RestoreBackupResponse = SettingsMessage<
-    "restoreBackupResponse",
-    { restored_backup: string }
+    { backups: BackupRecord[] }
 >;
 
 export type DatabaseRestoredMessage = SettingsMessage<
     "databaseRestored"
+>;
+
+export type CreateBackupNowMessage = SettingsMessage<
+    "createBackupNow"
+>;
+
+export type CreateBackupNowResponse = SettingsMessage<
+    "createBackupNowResponse",
+    { backup: BackupRecord }
+>;
+
+export type DeleteBackupMessage = SettingsMessage<
+    "deleteBackup",
+    { backup: string }
+>;
+
+export type DeleteBackupResponse = SettingsMessage<
+    "deleteBackupResponse",
+    { deleted_backup: string }
 >;
 
 export type SettingsFrontendResponse =
@@ -66,13 +76,13 @@ export type SettingsFrontendResponse =
     | GetSettingsResponse
     | UpdateSettingsResponse
     | GetBackupsResponse
-    | RestoreBackupResponse;
+    | CreateBackupNowResponse
+    | DeleteBackupResponse;
 
 export type SettingsFrontendMessage =
     | GetPeriodicTasksMessage
     | GetSettingsMessage
     | UpdateSettingsMessage
     | GetBackupsMessage
-    | RestoreBackupMessage;
-
-export type SettingsBackendMessage = DatabaseRestoredMessage;
+    | CreateBackupNowMessage
+    | DeleteBackupMessage;

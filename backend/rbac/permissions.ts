@@ -19,7 +19,7 @@ export enum CanManageSettings {
 }
 
 export enum CanManageBackups {
-    Restore = "canRestoreBackups",
+    Update = "canManageBackups",
 }
 
 export enum CanManageFiles {

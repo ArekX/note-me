@@ -160,7 +160,20 @@ const start = async () => {
     }
 };
 
+const storeScheduledTasks = async () => {
+    logger.info("Storing current scheduled task times into database.");
+    for (const handler of handlers) {
+        await savePeriodicTaskRun(
+            handler.task.name,
+            handler.next_at,
+            true,
+            null,
+        );
+    }
+};
+
 export const periodicTaskService = {
     start,
     registerPeriodicTask,
+    storeScheduledTasks,
 };

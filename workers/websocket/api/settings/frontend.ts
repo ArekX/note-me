@@ -1,13 +1,14 @@
 import {
-    DatabaseRestoredMessage,
+    CreateBackupNowMessage,
+    CreateBackupNowResponse,
+    DeleteBackupMessage,
+    DeleteBackupResponse,
     GetBackupsMessage,
     GetBackupsResponse,
     GetPeriodicTasksMessage,
     GetPeriodicTasksResponse,
     GetSettingsMessage,
     GetSettingsResponse,
-    RestoreBackupMessage,
-    RestoreBackupResponse,
     SettingsFrontendMessage,
     UpdateSettingsMessage,
     UpdateSettingsResponse,
@@ -25,11 +26,9 @@ import {
     Settings,
     updateSettings,
 } from "$backend/repository/settings-repository.ts";
-import { getBackups, restoreBackup } from "$backend/backups.ts";
-import { workerSendMesage } from "$workers/services/worker-bus.ts";
-import { createBackendMessage } from "$workers/websocket/websocket-backend.ts";
+import { createNewBackup, deleteBackup, getBackups } from "$backend/backups.ts";
 import { requireValidSchema } from "$schemas/mod.ts";
-import { getSettingsSchema } from "$schemas/settings.ts";
+import { backupNameSchema, getSettingsSchema } from "$schemas/settings.ts";
 
 const handleGetPeriodicTasks: ListenerFn<GetPeriodicTasksMessage> = async (
     { respond, sourceClient },
@@ -73,7 +72,7 @@ const handleUpdateSettings: ListenerFn<UpdateSettingsMessage> = async (
 const handleGetBackups: ListenerFn<GetBackupsMessage> = async (
     { respond, sourceClient },
 ) => {
-    sourceClient!.auth.require(CanManageBackups.Restore);
+    sourceClient!.auth.require(CanManageBackups.Update);
 
     const backupFiles = await getBackups();
 
@@ -83,25 +82,31 @@ const handleGetBackups: ListenerFn<GetBackupsMessage> = async (
     });
 };
 
-const handleRestoreBackup: ListenerFn<RestoreBackupMessage> = async (
+const handleCreateBackupNow: ListenerFn<CreateBackupNowMessage> = async (
+    { respond, sourceClient },
+) => {
+    sourceClient!.auth.require(CanManageBackups.Update);
+
+    const backup = await createNewBackup("manual");
+
+    respond<CreateBackupNowResponse>({
+        type: "createBackupNowResponse",
+        backup,
+    });
+};
+
+const handleDeleteBackup: ListenerFn<DeleteBackupMessage> = async (
     { respond, sourceClient, message: { backup } },
 ) => {
-    sourceClient!.auth.require(CanManageBackups.Restore);
+    sourceClient!.auth.require(CanManageBackups.Update);
 
-    await restoreBackup(backup);
+    await requireValidSchema(backupNameSchema, { name: backup });
 
-    workerSendMesage(
-        "*",
-        createBackendMessage<DatabaseRestoredMessage>(
-            "settings",
-            "databaseRestored",
-            {},
-        ),
-    );
+    await deleteBackup(backup);
 
-    respond<RestoreBackupResponse>({
-        type: "restoreBackupResponse",
-        restored_backup: backup,
+    respond<DeleteBackupResponse>({
+        type: "deleteBackupResponse",
+        deleted_backup: backup,
     });
 };
 
@@ -110,5 +115,6 @@ export const frontendMap: RegisterListenerMap<SettingsFrontendMessage> = {
     getSettings: handleGetSettings,
     updateSettings: handleUpdateSettings,
     getBackups: handleGetBackups,
-    restoreBackup: handleRestoreBackup,
+    createBackupNow: handleCreateBackupNow,
+    deleteBackup: handleDeleteBackup,
 };

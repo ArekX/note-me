@@ -2,6 +2,7 @@ import { FileMetaRecord } from "$backend/repository/file-repository.ts";
 import Button from "$components/Button.tsx";
 import Icon from "$components/Icon.tsx";
 import { useTimeFormat } from "$frontend/hooks/use-time-format.ts";
+import FileSize from "$components/FileSize.tsx";
 
 export interface ExtendedFileMetaRecord extends FileMetaRecord {
     is_processing: boolean;
@@ -15,16 +16,6 @@ interface FileItemProps {
     onDelete: (file: ExtendedFileMetaRecord) => void;
     onToggleVisibility: (file: ExtendedFileMetaRecord) => void;
 }
-
-const renderClosestDisplaySize = (size: number) => {
-    if (size < 1024) {
-        return `${size} bytes`;
-    } else if (size < 1024 * 1024) {
-        return `${(size / 1024).toFixed(2)} KB`;
-    } else {
-        return `${(size / 1024 / 1024).toFixed(2)} MB`;
-    }
-};
 
 const ImageViewer = ({ file }: { file: FileMetaRecord }) => {
     return (
@@ -134,7 +125,7 @@ export default function FileItem({
                 Type: {file.mime_type.length > 0 ? file.mime_type : "unknown"}
                 {" "}
                 <br />
-                Size: {renderClosestDisplaySize(file.size)} <br />
+                Size: <FileSize size={file.size} /> <br />
                 Public: {file.is_public ? "Yes" : "No"} <br />
                 Uploaded at: {timeFormatter.formatDateTime(
                     file.created_at,

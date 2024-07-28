@@ -8,27 +8,78 @@ const backupLocation = new URL(
     import.meta.url,
 ).pathname;
 
+export type BackupType = "automatic" | "manual";
+
+export interface BackupRecord {
+    name: string;
+    created_at: number;
+    size: number;
+}
+
+const createBackupRecord = async (backupName: string) => {
+    const stat = await Deno.stat(joinPath(backupLocation, backupName));
+
+    return {
+        name: backupName,
+        created_at: Math.floor((stat.mtime?.getTime() ?? 0) / 1000),
+        size: stat.size ?? 0,
+    };
+};
+
 export const getBackups = async () => {
     if (!(await exists(backupLocation))) {
         return [];
     }
 
-    const files: string[] = [];
+    const files: BackupRecord[] = [];
     for await (const file of Deno.readDir(backupLocation)) {
-        files.push(file.name);
+        if (!file.isFile) {
+            continue;
+        }
+
+        files.push(await createBackupRecord(file.name));
     }
     return files;
 };
 
-export const storeBackup = async () => {
+export const getBackupFile = async (backup: string) => {
+    const backupPath = joinPath(backupLocation, backup);
+
+    if (!(await exists(backupPath))) {
+        return null;
+    }
+
+    const stat = await Deno.stat(backupPath);
+
+    return {
+        file: await Deno.open(backupPath, { read: true }),
+        size: stat.size,
+    };
+};
+
+export const deleteBackup = async (backup: string) => {
+    const backupPath = joinPath(backupLocation, backup);
+    if (await exists(backupPath)) {
+        await Deno.remove(backupPath);
+    }
+};
+
+export const createNewBackup = async (
+    type: BackupType,
+): Promise<BackupRecord> => {
     const backupDate = formatDate(new Date(), "yyyy-MM-dd-HH-mm-ss");
 
     await Deno.mkdir(backupLocation, { recursive: true });
 
+    const name = `${backupDate}-${type}.db`;
+    const fullBackupPath = joinPath(backupLocation, name);
+
     await Deno.copyFile(
         databaseLocation,
-        joinPath(backupLocation, `${backupDate}-backup.db`),
+        fullBackupPath,
     );
+
+    return await createBackupRecord(name);
 };
 
 export const restoreBackup = async (backup: string): Promise<boolean> => {
@@ -48,12 +99,19 @@ export const restoreBackup = async (backup: string): Promise<boolean> => {
     }
 };
 
-export const removeOldBackups = async (maxBackupDays: number) => {
+export const removeOldBackups = async (
+    type: BackupType,
+    maxBackupDays: number,
+) => {
     if (!(await exists(backupLocation))) {
         return;
     }
     const files: string[] = [];
     for await (const file of Deno.readDir(backupLocation)) {
+        if (!file.isFile || !file.name.endsWith(`-${type}.db`)) {
+            continue;
+        }
+
         files.push(file.name);
         files.sort();
         if (files.length >= maxBackupDays) {

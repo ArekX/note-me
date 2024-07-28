@@ -5,7 +5,7 @@ import { databaseLocation } from "$backend/database.ts";
 import {
     getMultiSettingsValue,
 } from "$backend/repository/settings-repository.ts";
-import { removeOldBackups, storeBackup } from "$backend/backups.ts";
+import { createNewBackup, removeOldBackups } from "$backend/backups.ts";
 
 export const backupDatabase: PeriodicTask = {
     name: "backup-database",
@@ -28,11 +28,11 @@ export const backupDatabase: PeriodicTask = {
             return;
         }
 
-        await removeOldBackups(maxBackupDays);
+        await removeOldBackups("automatic", maxBackupDays);
 
         logger.info("Backing up the current database");
 
-        await storeBackup();
+        await createNewBackup("automatic");
 
         logger.info("Database backup finished.");
     },

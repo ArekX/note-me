@@ -24,6 +24,7 @@ import * as $app_profile_layout from "./routes/app/profile/_layout.tsx";
 import * as $app_profile_files from "./routes/app/profile/files.tsx";
 import * as $app_profile_index from "./routes/app/profile/index.tsx";
 import * as $app_settings_layout from "./routes/app/settings/_layout.tsx";
+import * as $app_settings_download_backup from "./routes/app/settings/download-backup.tsx";
 import * as $app_settings_files from "./routes/app/settings/files.tsx";
 import * as $app_settings_index from "./routes/app/settings/index.tsx";
 import * as $app_settings_periodic_tasks from "./routes/app/settings/periodic-tasks.tsx";
@@ -167,6 +168,8 @@ const manifest = {
         "./routes/app/profile/files.tsx": $app_profile_files,
         "./routes/app/profile/index.tsx": $app_profile_index,
         "./routes/app/settings/_layout.tsx": $app_settings_layout,
+        "./routes/app/settings/download-backup.tsx":
+            $app_settings_download_backup,
         "./routes/app/settings/files.tsx": $app_settings_files,
         "./routes/app/settings/index.tsx": $app_settings_index,
         "./routes/app/settings/periodic-tasks.tsx":
