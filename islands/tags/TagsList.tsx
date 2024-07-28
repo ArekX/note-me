@@ -92,7 +92,7 @@ export default function TagsList() {
 
     return (
         <div class="p-4">
-            {user.can(CanManageTags.Create) && (
+            {user.can(CanManageTags.Update) && (
                 <div class="p-4 w-full text-right">
                     <Button
                         color="success"

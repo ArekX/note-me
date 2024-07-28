@@ -1,17 +1,10 @@
 export enum CanManageUsers {
-    List = "canListUsers",
-    Create = "canCreateUser",
-    Read = "canUpdateUser",
-    Update = "canUpdateUser",
-    Delete = "canDeleteUser",
+    Update = "canUpdateUsers",
 }
 
 export enum CanManageTags {
-    List = "canListTags",
-    Create = "canCreateTag",
-    Read = "canUpdateTag",
-    Update = "canUpdateTag",
-    Delete = "canDeleteTag",
+    Read = "canReadTags",
+    Update = "canUpdateTags",
 }
 
 export enum CanManageSettings {

@@ -52,7 +52,7 @@ const handleCreateUser: ListenerFn<CreateUserMessage> = async (
     { message: { data }, respond, sourceClient },
 ) => {
     await requireValidSchema(addUserSchema, data);
-    sourceClient!.auth.require(CanManageUsers.Create);
+    sourceClient!.auth.require(CanManageUsers.Update);
 
     const existingUser = await getUserByUsername(data.username);
 
@@ -96,7 +96,7 @@ const handleUpdateUser: ListenerFn<UpdateUserMessage> = async (
 const handleDeleteUser: ListenerFn<DeleteUserMessage> = async (
     { message: { id }, sourceClient, respond },
 ) => {
-    sourceClient!.auth.require(CanManageUsers.Delete);
+    sourceClient!.auth.require(CanManageUsers.Update);
     if (id === sourceClient?.userId) {
         throw new Deno.errors.InvalidData("You cannot delete your own user.");
     }
@@ -113,7 +113,7 @@ const handleDeleteUser: ListenerFn<DeleteUserMessage> = async (
 const handleFindUsers: ListenerFn<FindUsersMessage> = async (
     { message: { filters, page }, respond, sourceClient },
 ) => {
-    sourceClient!.auth.require(CanManageUsers.List);
+    sourceClient!.auth.require(CanManageUsers.Update);
 
     const records = await findUsers(filters, page);
 

@@ -29,14 +29,16 @@ export const roleDefinitions = {
     },
     user: {
         name: "User",
-        permissions: [],
+        permissions: [
+            CanManageTags.Read,
+        ],
     },
 } satisfies RoleDefinitionMap;
 
 const settingsPermissions: AppPermissions[] = [
-    CanManageUsers.List,
+    CanManageUsers.Update,
     CanManageSettings.Update,
-    CanManageTags.List,
+    CanManageTags.Read,
     CanManageFiles.AllFiles,
     CanManagePeriodicTasks.View,
 ];

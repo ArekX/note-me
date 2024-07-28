@@ -22,11 +22,11 @@ export default function Layout(
             name: "Tasks",
             link: "/app/settings/periodic-tasks",
         },
-        hasPermission(CanManageUsers.List, state) && {
+        hasPermission(CanManageUsers.Update, state) && {
             name: "Users",
             link: "/app/settings/users",
         },
-        hasPermission(CanManageTags.List, state) && {
+        hasPermission(CanManageTags.Read, state) && {
             name: "Tags",
             link: "/app/settings/tags",
         },

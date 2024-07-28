@@ -4,7 +4,9 @@ import { AppState } from "../types/app-state.ts";
 
 export const handler = (_req: Request, ctx: FreshContext<AppState>) => {
     if (ctx.error instanceof Deno.errors.PermissionDenied) {
-        return ctx.render({}, {
+        return ctx.render({
+            disableWallpaper: true,
+        }, {
             status: 403,
         });
     }

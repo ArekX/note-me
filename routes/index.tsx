@@ -11,6 +11,7 @@ import { getUserByLogin } from "$backend/repository/user-repository.ts";
 import Button from "$components/Button.tsx";
 import Input from "$components/Input.tsx";
 import InvalidateData from "$islands/InvalidateData.tsx";
+import { checkLoginAttempt } from "$backend/bruteforce-login-protector.ts";
 
 interface LoginResult {
     username: string;
@@ -29,6 +30,8 @@ export const handler: Handlers<LoginResult> = {
         return ctx.render({ username: "", message: "" });
     },
     async POST(req, ctx: FreshContext<AppState>) {
+        checkLoginAttempt(req, ctx);
+
         const form = await req.formData();
 
         const user = await getUserByLogin(

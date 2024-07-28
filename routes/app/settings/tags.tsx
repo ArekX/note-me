@@ -6,7 +6,7 @@ import { CanManageTags } from "$backend/rbac/permissions.ts";
 
 export const handler: Handlers<string> = {
     GET: guardHandler(
-        CanManageTags.List,
+        CanManageTags.Read,
         (_req, ctx: FreshContext<AppState>) => {
             return ctx.render({});
         },

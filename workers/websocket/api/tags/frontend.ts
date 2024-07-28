@@ -58,7 +58,7 @@ const handleDeleteTagRequest: ListenerFn<DeleteTagMessage> = async (
     { message: { id }, respond, sourceClient },
 ) => {
     await deleteTagRecord(id);
-    sourceClient!.auth.require(CanManageTags.Delete);
+    sourceClient!.auth.require(CanManageTags.Update);
 
     respond<DeleteTagResponse>({
         type: "deleteTagResponse",

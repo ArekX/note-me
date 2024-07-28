@@ -250,7 +250,7 @@ export default function BackupManagement() {
                     noRowsRow={
                         <tr>
                             <td colSpan={4} class="text-center">
-                                No users found.
+                                No backups found.
                             </td>
                         </tr>
                     }

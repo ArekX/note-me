@@ -115,7 +115,7 @@ export default function UserList() {
 
     return (
         <div class="p-4">
-            {user.can(CanManageUsers.Create) && (
+            {user.can(CanManageUsers.Update) && (
                 <div class="p-4 w-full text-right">
                     <Button
                         color="success"
@@ -166,21 +166,21 @@ export default function UserList() {
                         name: "Actions",
                         render: (value: EditableUser) => (
                             <div>
-                                {user.can(CanManageUsers.Delete) && (
-                                    <Button
-                                        color="success"
-                                        onClick={() => userToEdit.select(value)}
-                                    >
-                                        <Icon name="pencil" /> Edit
-                                    </Button>
-                                )} {user.can(CanManageUsers.Delete) &&
-                                    value.id !== user.getUserId() && (
+                                <Button
+                                    color="success"
+                                    title="Edit"
+                                    onClick={() => userToEdit.select(value)}
+                                >
+                                    <Icon name="pencil" />
+                                </Button>
+                                {value.id !== user.getUserId() && (
                                     <Button
                                         color="danger"
+                                        title="Delete"
                                         onClick={() =>
                                             userToDelete.select(value)}
                                     >
-                                        <Icon name="minus" /> Delete
+                                        <Icon name="minus" />
                                     </Button>
                                 )}
                             </div>

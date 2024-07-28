@@ -6,7 +6,7 @@ import { guardHandler } from "$backend/rbac/authorizer.ts";
 
 export const handler: Handlers<string> = {
     GET: guardHandler(
-        CanManageUsers.List,
+        CanManageUsers.Update,
         (_req, ctx: FreshContext<AppState>) => {
             return ctx.render({});
         },

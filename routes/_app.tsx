@@ -2,7 +2,10 @@ import { type PageProps } from "$fresh/server.ts";
 import { getCurrentMonthWallpaper } from "$frontend/wallpaper.ts";
 
 export default function App({ Component, route, data }: PageProps) {
-    const wallpaper = route === "/" ? getCurrentMonthWallpaper() : null;
+    const allowWallpaper = data?.disableWallpaper !== true;
+    const wallpaper = allowWallpaper && route === "/"
+        ? getCurrentMonthWallpaper()
+        : null;
 
     const allowScrolling = route.startsWith("/public");
     const subTitle = data?.pageTitle ? `- ${data.pageTitle}` : "";
