@@ -16,3 +16,10 @@ export const getSettingsSchema = zod.object({
 });
 
 export type GetSetttings = zod.infer<typeof getSettingsSchema>;
+
+export const backupSettingsSchema = zod.object({
+    is_auto_backup_enabled: settings.shape.is_auto_backup_enabled,
+    max_backup_days: settings.shape.max_backup_days,
+});
+
+export type BackupSettings = zod.infer<typeof backupSettingsSchema>;
