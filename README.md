@@ -11,12 +11,10 @@ Requirements:
 - [Deno](https://docs.deno.com/runtime/manual/getting_started/installation)
 
 1. Copy the environment example file: `cp env.example .env`
-2. Run migrations: `deno task cli migrate-up`
-3. Add a demo user: `deno task cli add-user "Demo user" demo demo`
-4. Install git hooks by running `setup-githooks.sh`
-5. Start the development server: `deno task dev`
+2. Install git hooks by running `setup-githooks.sh`
+3. Start the development server: `deno task dev`
 
-You should be log in with `demo` as username and password.
+First time login is with `admin` as both username and password.
 
 # Run
 
