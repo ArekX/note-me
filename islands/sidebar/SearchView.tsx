@@ -74,7 +74,8 @@ export default function SearchView() {
                 )
                 : (
                     <>
-                        {search.results.value.length === 0 && (
+                        {!search.hasMoreData.value &&
+                            search.results.value.length === 0 && (
                             <div class="p-2 text-center text-gray-400">
                                 No results found
                             </div>

@@ -145,7 +145,7 @@ export default function GroupPicker({
         <div class="border-solid border-gray-700 p-4 border-2 group-picker">
             {pickerLoader.running ? <Loader color="white" /> : (
                 <>
-                    {rootRecords.value.length === 0 && (
+                    {!allowRoot && rootRecords.value.length === 0 && (
                         <div class="text-center text-gray-400">
                             No groups found
                         </div>
