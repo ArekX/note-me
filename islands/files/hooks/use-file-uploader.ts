@@ -25,6 +25,7 @@ export interface FileUploaderHook {
     filesLeft: ReadonlySignal<number>;
     donePercentage: ReadonlySignal<string>;
     uploadFiles: (newFiles: File[]) => Promise<UploadedFile[]>;
+    cancelUpload: () => void;
 }
 
 export interface UploadedFile {
@@ -60,6 +61,10 @@ export const useFileUploader = (): FileUploaderHook => {
         const chunkSize = 32 * 1024;
         const totalChunks = Math.ceil(fileBuffer.byteLength / chunkSize);
         for (let i = 0; i < totalChunks; i++) {
+            if (filesToUpload.value.length === 0) {
+                return null;
+            }
+
             const start = i * chunkSize;
             const end = Math.min(start + chunkSize, fileBuffer.byteLength);
             const chunk = fileBuffer.slice(start, end);
@@ -143,6 +148,10 @@ export const useFileUploader = (): FileUploaderHook => {
         for (const file of newFiles) {
             const resultTargetId = await transferFile(file);
 
+            if (filesToUpload.value.length === 0) {
+                return results;
+            }
+
             if (resultTargetId) {
                 results.push({
                     file,
@@ -163,6 +172,12 @@ export const useFileUploader = (): FileUploaderHook => {
         return results;
     };
 
+    const cancelUpload = () => {
+        filesToUpload.value = [];
+        uploadedSize.value = 0;
+        totalSizeToUpload.value = 0;
+    };
+
     return {
         isUploading,
         totalSizeToUpload,
@@ -170,5 +185,6 @@ export const useFileUploader = (): FileUploaderHook => {
         filesLeft,
         donePercentage,
         uploadFiles,
+        cancelUpload,
     };
 };
