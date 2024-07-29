@@ -4,6 +4,7 @@ import {
     FileMetaRecord,
     FindFileFilters,
 } from "$backend/repository/file-repository.ts";
+import { UpdateMultipleFilesRequest } from "$schemas/file.ts";
 
 type FileMessage<Type, Data = unknown> = Message<
     "files",
@@ -77,13 +78,35 @@ export type UpdateFileResponse = FileMessage<
     { data: UpdateData }
 >;
 
+export type GetFileDetailsMessage = FileMessage<
+    "getFileDetails",
+    { identifiers: string[] }
+>;
+
+export type GetFileDetailsResponse = FileMessage<
+    "getFileDetailsResponse",
+    { records: FileMetaRecord[] }
+>;
+
+export type UpdateMultipleFilesMessage = FileMessage<
+    "updateMultipleFiles",
+    { data: UpdateMultipleFilesRequest }
+>;
+
+export type UpdateMultipleFilesResponse = FileMessage<
+    "updateMultipleFilesResponse",
+    { data: UpdateMultipleFilesRequest }
+>;
+
 export type FileFrontendResponse =
     | BeginFileResponse
     | SendFileDataResponse
     | EndFileResponse
     | FindFilesResponse
     | DeleteFileResponse
-    | UpdateFileResponse;
+    | UpdateFileResponse
+    | GetFileDetailsResponse
+    | UpdateMultipleFilesResponse;
 
 export type FileFrontendMessage =
     | BeginFileMessage
@@ -91,4 +114,6 @@ export type FileFrontendMessage =
     | EndFileMessage
     | FindFilesMessage
     | DeleteFileMessage
-    | UpdateFileMessage;
+    | UpdateFileMessage
+    | GetFileDetailsMessage
+    | UpdateMultipleFilesMessage;

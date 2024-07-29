@@ -54,7 +54,13 @@ type ExtensionToken = {
     params: string[];
 };
 
-type Tokens = ExtensionToken | Token;
+type ImageToken = {
+    type: "image";
+    title: string;
+    url: string;
+};
+
+type Tokens = ExtensionToken | Token | ImageToken;
 
 type TokenPipelineFn = (tokens: Tokens[]) => Tokens[];
 

@@ -19,6 +19,7 @@ export type MoreMenuItemAction =
     | "share"
     | "remind-me"
     | "search-group"
+    | "files"
     | "move"
     | "delete";
 
@@ -75,6 +76,12 @@ export default function MoreMenu(
             icon: "share-alt",
             types: ["note"],
             action: "share",
+        },
+        {
+            name: "Files",
+            icon: "file",
+            types: ["note"],
+            action: "files",
         },
         {
             name: "Remind me",

@@ -16,6 +16,7 @@ export type MenuItemActions =
     | "details"
     | "history"
     | "share"
+    | "files"
     | "remind"
     | "help"
     | "delete";
@@ -58,6 +59,12 @@ export default function MoreMenu(
             icon: "share-alt",
             modes: ["view", "edit-existing"],
             onClick: () => sendAction("share"),
+        },
+        {
+            name: "Files",
+            icon: "file",
+            modes: ["view", "edit-existing"],
+            onClick: () => sendAction("files"),
         },
         {
             name: "Remind me",

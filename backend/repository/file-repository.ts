@@ -160,3 +160,44 @@ export const updateFileRecord = async (
 
     return result.numUpdatedRows > 0;
 };
+
+export const getFileDetailsForUser = async (
+    identifiers: string[],
+    user_id: number,
+): Promise<FileMetaRecord[]> => {
+    return await db.selectFrom("file")
+        .select([
+            "identifier",
+            "file.name",
+            "mime_type",
+            "size",
+            "is_public",
+            "file.created_at",
+            sql<string>`user.name`.as("created_by"),
+        ])
+        .innerJoin("user", "file.user_id", "user.id")
+        .where("is_ready", "=", true)
+        .where("file.user_id", "=", user_id)
+        .where("file.identifier", "in", identifiers)
+        .execute();
+};
+
+export interface UpdateMultipleFilesData {
+    is_public?: boolean;
+}
+
+export const updateMultipleFiles = async (
+    user_id: number,
+    identifiers: string[],
+    data: UpdateMultipleFilesData,
+): Promise<void> => {
+    if (Object.keys(data).length === 0) {
+        return;
+    }
+
+    await db.updateTable("file")
+        .set(data)
+        .where("identifier", "in", identifiers)
+        .where("user_id", "=", user_id)
+        .executeTakeFirst();
+};

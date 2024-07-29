@@ -91,6 +91,7 @@ import * as $notes_pages_EditNotePage from "./islands/notes/pages/EditNotePage.t
 import * as $notes_pages_ViewNotePage from "./islands/notes/pages/ViewNotePage.tsx";
 import * as $notes_windows_NoteDelete from "./islands/notes/windows/NoteDelete.tsx";
 import * as $notes_windows_NoteDetails from "./islands/notes/windows/NoteDetails.tsx";
+import * as $notes_windows_NoteFiles from "./islands/notes/windows/NoteFiles.tsx";
 import * as $notes_windows_NoteHelp from "./islands/notes/windows/NoteHelp.tsx";
 import * as $notes_windows_NoteHistory from "./islands/notes/windows/NoteHistory.tsx";
 import * as $notes_windows_NoteReminder from "./islands/notes/windows/NoteReminder.tsx";
@@ -254,6 +255,7 @@ const manifest = {
         "./islands/notes/pages/ViewNotePage.tsx": $notes_pages_ViewNotePage,
         "./islands/notes/windows/NoteDelete.tsx": $notes_windows_NoteDelete,
         "./islands/notes/windows/NoteDetails.tsx": $notes_windows_NoteDetails,
+        "./islands/notes/windows/NoteFiles.tsx": $notes_windows_NoteFiles,
         "./islands/notes/windows/NoteHelp.tsx": $notes_windows_NoteHelp,
         "./islands/notes/windows/NoteHistory.tsx": $notes_windows_NoteHistory,
         "./islands/notes/windows/NoteReminder.tsx": $notes_windows_NoteReminder,

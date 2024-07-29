@@ -27,3 +27,14 @@ export const deleteFileRequestSchema = zod.object({
 }).strict();
 
 export type DeleteFileRequest = zod.infer<typeof deleteFileRequestSchema>;
+
+export const updateMultipleFilesSchema = zod.object({
+    identifiers: zod.array(fileSchema.shape.identifier),
+    data: zod.object({
+        is_public: zod.boolean().optional(),
+    }).strict(),
+}).strict();
+
+export type UpdateMultipleFilesRequest = zod.infer<
+    typeof updateMultipleFilesSchema
+>;

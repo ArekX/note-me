@@ -17,10 +17,14 @@ import {
     FileFrontendMessage,
     FindFilesMessage,
     FindFilesResponse,
+    GetFileDetailsMessage,
+    GetFileDetailsResponse,
     SendFileDataMessage,
     SendFileDataResponse,
     UpdateFileMessage,
     UpdateFileResponse,
+    UpdateMultipleFilesMessage,
+    UpdateMultipleFilesResponse,
 } from "./messages.ts";
 import {
     createFileRecord,
@@ -28,12 +32,17 @@ import {
     deleteFileRecord,
     fileExistsForUser,
     findFiles,
+    getFileDetailsForUser,
     getFileRecordSize,
     setFileRecordData,
     updateFileRecord,
+    updateMultipleFiles,
 } from "$backend/repository/file-repository.ts";
 import { requireValidSchema } from "$schemas/mod.ts";
-import { addFileRequestSchema } from "$schemas/file.ts";
+import {
+    addFileRequestSchema,
+    updateMultipleFilesSchema,
+} from "$schemas/file.ts";
 import { CanManageFiles } from "$backend/rbac/permissions.ts";
 
 const MAX_FILE_SIZE = +(Deno.env.get("MAX_FILE_SIZE") ?? "52428800");
@@ -185,6 +194,38 @@ const handleUpdateFile: ListenerFn<UpdateFileMessage> = async (
     });
 };
 
+const handleGetFileDetails: ListenerFn<GetFileDetailsMessage> = async (
+    { message: { identifiers }, respond, sourceClient },
+) => {
+    const records = await getFileDetailsForUser(
+        identifiers,
+        sourceClient!.userId,
+    );
+
+    respond<GetFileDetailsResponse>({
+        records,
+        type: "getFileDetailsResponse",
+    });
+};
+
+const handleUpdateMultipleFiles: ListenerFn<UpdateMultipleFilesMessage> =
+    async (
+        { message: { data }, respond, sourceClient },
+    ) => {
+        await requireValidSchema(updateMultipleFilesSchema, data);
+
+        await updateMultipleFiles(
+            sourceClient!.userId,
+            data.identifiers,
+            data.data,
+        );
+
+        respond<UpdateMultipleFilesResponse>({
+            data,
+            type: "updateMultipleFilesResponse",
+        });
+    };
+
 export const frontendMap: RegisterListenerMap<FileFrontendMessage> = {
     beginFile: handleBeginFile,
     endFile: handleEndFile,
@@ -192,4 +233,6 @@ export const frontendMap: RegisterListenerMap<FileFrontendMessage> = {
     findFiles: handleFindFiles,
     deleteFile: handleDeleteFile,
     updateFile: handleUpdateFile,
+    getFileDetails: handleGetFileDetails,
+    updateMultipleFiles: handleUpdateMultipleFiles,
 };

@@ -66,6 +66,11 @@ export default function InsertDialog({
         showDialog.value = false;
     };
 
+    const handleInsert = (text: string) => {
+        onInsert(text);
+        showDialog.value = false;
+    };
+
     useEffect(() => {
         const handleHotkeys = (e: KeyboardEvent) => {
             if (e.ctrlKey && e.key === "i") {
@@ -118,7 +123,7 @@ export default function InsertDialog({
                         propsGetter={() => ({
                             noteText,
                             onCancel: handleCancel,
-                            onInsert,
+                            onInsert: handleInsert,
                         })}
                         map={componentsMap}
                     />

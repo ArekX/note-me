@@ -21,6 +21,7 @@ import Dialog from "$islands/Dialog.tsx";
 import Loader from "$islands/Loader.tsx";
 import { useSignal } from "@preact/signals";
 import LockedContentWrapper from "$islands/encryption/LockedContentWrapper.tsx";
+import NoteFiles from "$islands/notes/windows/NoteFiles.tsx";
 
 export type NoteWindowTypes =
     | "details"
@@ -29,6 +30,7 @@ export type NoteWindowTypes =
     | "remind"
     | "help"
     | "move"
+    | "files"
     | "delete";
 
 export interface NoteWindowComponentProps {
@@ -141,6 +143,7 @@ export default function NoteWindow({
                                     recordType="note"
                                 />
                             ),
+                            files: (props) => <NoteFiles {...props} />,
                             help: (props) => <NoteHelp {...props} />,
                             delete: (props) => <NoteDelete {...props} />,
                         }}

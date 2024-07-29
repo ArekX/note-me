@@ -67,6 +67,7 @@ export default function ViewNote(
             case "share":
             case "remind":
             case "help":
+            case "files":
             case "delete":
                 windowMode.value = action;
                 break;

@@ -92,6 +92,19 @@ export default function FilePicker({
 
                     fileLoader.stop();
                 },
+                updateMultipleFilesResponse: (response) => {
+                    for (const identifier of response.data.identifiers) {
+                        const file = results.value.find(
+                            (file) => file.identifier === identifier,
+                        );
+
+                        if (file) {
+                            file.is_public = response.data.data.is_public;
+                        }
+                    }
+
+                    results.value = [...results.value];
+                },
             },
         },
     });
