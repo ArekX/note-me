@@ -54,9 +54,9 @@ export const getTempFileSize = async (
     return size!;
 };
 
-const maxOldFileAge = 1000 * 60 * 60;
-
-export const cleanupOldTempFiles = async (): Promise<void> => {
+export const cleanupOldTempFiles = async (
+    maxOldFileAge: number,
+): Promise<void> => {
     const now = Date.now();
     for await (const entry of Deno.readDir(tempLocation)) {
         if (!entry.isFile) {

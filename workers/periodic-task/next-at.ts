@@ -13,3 +13,11 @@ export const nextMinute = (currentTime: number) => {
     date.setSeconds(0);
     return dateToUnix(date);
 };
+
+export const nextHour = (currentTime: number) => {
+    const date = new Date(currentTime * 1000);
+    date.setHours(date.getHours() + 1);
+    date.setMinutes(0);
+    date.setSeconds(0);
+    return dateToUnix(date);
+};
