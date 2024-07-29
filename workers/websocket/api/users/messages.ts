@@ -121,6 +121,15 @@ export type DecryptTextResponse = UserMessage<
     { text: string }
 >;
 
+export type LogoutUserMessage = UserMessage<
+    "logoutUser",
+    { user_id: number }
+>;
+
+export type UserForceLogoutResponse = UserMessage<
+    "forceLogoutResponse"
+>;
+
 export type UserFrontendResponse =
     | CreateUserResponse
     | UpdateUserResponse
@@ -131,7 +140,8 @@ export type UserFrontendResponse =
     | UpdateOnboardingStateResponse
     | VerifyOwnPasswordResponse
     | EncryptTextResponse
-    | DecryptTextResponse;
+    | DecryptTextResponse
+    | UserForceLogoutResponse;
 
 export type UserFrontendMessage =
     | CreateUserMessage
@@ -144,3 +154,5 @@ export type UserFrontendMessage =
     | VerifyOwnPasswordMessage
     | EncryptTextMessage
     | DecryptTextMessage;
+
+export type UserBackendMessage = LogoutUserMessage;

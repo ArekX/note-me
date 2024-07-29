@@ -10,6 +10,7 @@ import {
     FindPickUsersResponse,
     FindUsersMessage,
     FindUsersResponse,
+    LogoutUserMessage,
     UpdateOnboardingStateMessage,
     UpdateOnboardingStateResponse,
     UpdateProfileMessage,
@@ -47,6 +48,8 @@ import { CanManageUsers } from "$backend/rbac/permissions.ts";
 import { decryptNote, encryptNote } from "$backend/encryption.ts";
 import { DecryptTextMessage } from "$workers/websocket/api/users/messages.ts";
 import { DecryptTextResponse } from "$workers/websocket/api/users/messages.ts";
+import { workerSendMesage } from "$workers/services/worker-bus.ts";
+import { createBackendMessage } from "$workers/websocket/websocket-backend.ts";
 
 const handleCreateUser: ListenerFn<CreateUserMessage> = async (
     { message: { data }, respond, sourceClient },
@@ -103,6 +106,13 @@ const handleDeleteUser: ListenerFn<DeleteUserMessage> = async (
 
     await deleteUserRecord(id);
     await destroySession(id);
+
+    workerSendMesage(
+        "websocket",
+        createBackendMessage<LogoutUserMessage>("users", "logoutUser", {
+            user_id: id,
+        }),
+    );
 
     respond<DeleteUserResponse>({
         type: "deleteUserResponse",
