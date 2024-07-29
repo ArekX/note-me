@@ -17,6 +17,8 @@ export type MenuItemActions =
     | "history"
     | "share"
     | "files"
+    | "download"
+    | "move"
     | "remind"
     | "help"
     | "delete";
@@ -49,6 +51,12 @@ export default function MoreMenu(
             onClick: () => sendAction("details"),
         },
         {
+            name: "Download",
+            icon: "download",
+            modes: ["view", "edit-existing", "view-readonly"],
+            onClick: () => sendAction("download"),
+        },
+        {
             name: "History",
             icon: "history",
             modes: ["view", "edit-existing"],
@@ -59,6 +67,12 @@ export default function MoreMenu(
             icon: "share-alt",
             modes: ["view", "edit-existing"],
             onClick: () => sendAction("share"),
+        },
+        {
+            name: "Move",
+            icon: "transfer-alt",
+            modes: ["view", "edit-existing"],
+            onClick: () => sendAction("move"),
         },
         {
             name: "Files",

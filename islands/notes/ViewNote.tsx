@@ -10,6 +10,7 @@ import { useEffect } from "preact/hooks";
 import DetailsLine from "$islands/notes/DetailsLine.tsx";
 import Viewer from "$islands/markdown/Viewer.tsx";
 import { useSearch } from "$frontend/hooks/use-search.ts";
+import { downloadTextAsMarkdown } from "$frontend/text-downloader.ts";
 
 export interface ViewNoteProps {
     readonly?: boolean;
@@ -67,9 +68,16 @@ export default function ViewNote(
             case "share":
             case "remind":
             case "help":
+            case "move":
             case "files":
             case "delete":
                 windowMode.value = action;
+                break;
+            case "download":
+                downloadTextAsMarkdown(
+                    recordData.value.title,
+                    recordData.value.note,
+                );
                 break;
         }
     };

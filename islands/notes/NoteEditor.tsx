@@ -29,6 +29,7 @@ import DetailsLine from "$islands/notes/DetailsLine.tsx";
 import { useValidation } from "$frontend/hooks/use-validation.ts";
 import Viewer from "$islands/markdown/Viewer.tsx";
 import { useContentEncryption } from "$frontend/hooks/use-content-encryption.ts";
+import { downloadTextAsMarkdown } from "$frontend/text-downloader.ts";
 
 interface NoteData extends Pick<NoteRecord, "title" | "note" | "is_encrypted"> {
     id?: number;
@@ -154,10 +155,18 @@ export default function NoteEditor({
             case "edit":
                 isPreviewMode.value = false;
                 break;
+            case "download":
+                downloadTextAsMarkdown(
+                    name.value,
+                    text.value,
+                );
+                break;
             case "details":
             case "history":
             case "share":
             case "remind":
+            case "move":
+            case "files":
             case "help":
             case "delete":
                 windowMode.value = action;

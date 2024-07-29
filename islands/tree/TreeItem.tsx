@@ -129,9 +129,6 @@ export default function TreeItem({
             case "rename":
                 treeManager.setDisplayMode(container, "edit");
                 break;
-            case "files":
-                treeWindowType.value = "files";
-                break;
             case "search-group":
                 if (container.type === "group") {
                     search.setGroup({
