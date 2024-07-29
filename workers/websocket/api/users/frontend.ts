@@ -6,6 +6,9 @@ import {
     DeleteUserResponse,
     EncryptTextMessage,
     EncryptTextResponse,
+    ExportOwnDataMessage,
+    ExportOwnDataPercentageUpdate,
+    ExportOwnDataResponse,
     FindPickUsersMessage,
     FindPickUsersResponse,
     FindUsersMessage,
@@ -50,6 +53,11 @@ import { DecryptTextMessage } from "$workers/websocket/api/users/messages.ts";
 import { DecryptTextResponse } from "$workers/websocket/api/users/messages.ts";
 import { workerSendMesage } from "$workers/services/worker-bus.ts";
 import { createBackendMessage } from "$workers/websocket/websocket-backend.ts";
+import {
+    createInitialExportFile,
+    generateExport,
+} from "$backend/export-generator.ts";
+import { ExportOwnDataFinished } from "$workers/websocket/api/users/messages.ts";
 
 const handleCreateUser: ListenerFn<CreateUserMessage> = async (
     { message: { data }, respond, sourceClient },
@@ -239,6 +247,36 @@ const handleDecryptText: ListenerFn<DecryptTextMessage> = async (
     });
 };
 
+const handleExportOwnData: ListenerFn<ExportOwnDataMessage> = async (
+    { message: { userPassword }, sourceClient, respond },
+) => {
+    const { exportId, fileLocation } = await createInitialExportFile(
+        sourceClient!.userId,
+    );
+
+    respond<ExportOwnDataResponse>({
+        type: "exportOwnDataResponse",
+        exportId,
+    });
+
+    await generateExport({
+        fileLocation,
+        userPassword,
+        onProgressUpdate: (percentage) => {
+            respond<ExportOwnDataPercentageUpdate>({
+                type: "exportOwnDataPercentage",
+                exportId,
+                percentage,
+            });
+        },
+    });
+
+    respond<ExportOwnDataFinished>({
+        type: "exportOwnDataFinished",
+        exportId,
+    });
+};
+
 export const frontendMap: RegisterListenerMap<UserFrontendMessage> = {
     createUser: handleCreateUser,
     updateUser: handleUpdateUser,
@@ -250,4 +288,5 @@ export const frontendMap: RegisterListenerMap<UserFrontendMessage> = {
     verifyOwnPassword: handleVerifyOwnPassword,
     encryptText: handleEncryptText,
     decryptText: handleDecryptText,
+    exportOwnData: handleExportOwnData,
 };

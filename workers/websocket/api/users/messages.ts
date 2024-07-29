@@ -126,6 +126,26 @@ export type LogoutUserMessage = UserMessage<
     { user_id: number }
 >;
 
+export type ExportOwnDataMessage = UserMessage<
+    "exportOwnData",
+    { userPassword: string }
+>;
+
+export type ExportOwnDataResponse = UserMessage<
+    "exportOwnDataResponse",
+    { exportId: string }
+>;
+
+export type ExportOwnDataPercentageUpdate = UserMessage<
+    "exportOwnDataPercentage",
+    { exportId: string; percentage: number }
+>;
+
+export type ExportOwnDataFinished = UserMessage<
+    "exportOwnDataFinished",
+    { exportId: string }
+>;
+
 export type UserForceLogoutResponse = UserMessage<
     "forceLogoutResponse"
 >;
@@ -141,7 +161,10 @@ export type UserFrontendResponse =
     | VerifyOwnPasswordResponse
     | EncryptTextResponse
     | DecryptTextResponse
-    | UserForceLogoutResponse;
+    | UserForceLogoutResponse
+    | ExportOwnDataResponse
+    | ExportOwnDataPercentageUpdate
+    | ExportOwnDataFinished;
 
 export type UserFrontendMessage =
     | CreateUserMessage
@@ -153,6 +176,7 @@ export type UserFrontendMessage =
     | UpdateOnboardingStateMessage
     | VerifyOwnPasswordMessage
     | EncryptTextMessage
-    | DecryptTextMessage;
+    | DecryptTextMessage
+    | ExportOwnDataMessage;
 
 export type UserBackendMessage = LogoutUserMessage;

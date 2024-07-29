@@ -3,7 +3,7 @@ const tempLocation = new URL(
     import.meta.url,
 ).pathname;
 
-const getFileLocation = (prefix: string, fileTarget: string): string =>
+export const getFileLocation = (prefix: string, fileTarget: string): string =>
     `${tempLocation}/${prefix}-${fileTarget}`;
 
 export const initTempLocation = async (): Promise<void> => {

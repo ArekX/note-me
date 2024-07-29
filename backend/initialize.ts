@@ -1,6 +1,6 @@
 import { migrator } from "$backend/migration-manager.ts";
 import { logger, setLoggerName } from "$backend/logger.ts";
-import { initTempLocation } from "$backend/file-upload.ts";
+import { initTempLocation } from "./temp.ts";
 import { createUserRecord } from "$backend/repository/user-repository.ts";
 
 const runMigrations = async () => {
