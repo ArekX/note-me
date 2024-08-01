@@ -14,6 +14,8 @@ import {
     FindPickUsersResponse,
     FindUsersMessage,
     FindUsersResponse,
+    GetPasskeyRegistrationMessage,
+    GetPasskeyRegistrationResponse,
     LogoutUserMessage,
     UpdateOnboardingStateMessage,
     UpdateOnboardingStateResponse,
@@ -24,6 +26,8 @@ import {
     UserFrontendMessage,
     VerifyOwnPasswordMessage,
     VerifyOwnPasswordResponse,
+    VerifyPasskeyRegistrationMessage,
+    VerifyPasskeyRegistrationResponse,
 } from "./messages.ts";
 import { CreateUserMessage } from "$workers/websocket/api/users/messages.ts";
 import {
@@ -59,6 +63,12 @@ import {
     sendProcessorRequest,
 } from "$workers/processor/processor-message.ts";
 import { createInitialExportFile } from "$backend/export-generator.ts";
+import {
+    generateRegistrationOptions,
+    PublicKeyCredentialCreationOptionsJSON,
+} from "$backend/deps.ts";
+import { AppSessionData } from "../../../../types/app-state.ts";
+import { verifyRegistrationResponse } from "https://deno.land/x/simplewebauthn@v10.0.1/packages/server/src/registration/verifyRegistrationResponse.ts";
 
 const handleCreateUser: ListenerFn<CreateUserMessage> = async (
     { message: { data }, respond, sourceClient },
@@ -277,6 +287,68 @@ const handleCancelExportOwnData: ListenerFn<CancelExportOwnDataMessage> = (
     });
 };
 
+const handleGetPasskeyRegistration: ListenerFn<GetPasskeyRegistrationMessage> =
+    async (
+        { respond, sourceClient },
+    ) => {
+        const options: PublicKeyCredentialCreationOptionsJSON =
+            await generateRegistrationOptions({
+                rpName: "NoteMe",
+                rpID: "localhost", // TODO: Fix
+                userName: "username",
+                attestationType: "none",
+                excludeCredentials: [],
+                authenticatorSelection: {
+                    residentKey: "preferred",
+                    userVerification: "preferred",
+                    // authenticatorAttachment: "platform",
+                },
+            });
+
+        const session = await loadSessionStateByUserId<AppSessionData>(
+            sourceClient?.userId!,
+        );
+
+        if (session) {
+            await session.patch({
+                registerPasskeyOptions: options,
+            });
+        }
+
+        respond<GetPasskeyRegistrationResponse>({
+            type: "getPasskeyRegistrationOptionsResponse",
+            options,
+        });
+    };
+
+const handleVerifyPasskeyRegistration: ListenerFn<
+    VerifyPasskeyRegistrationMessage
+> = async (
+    { message: { response }, sourceClient, respond },
+) => {
+    const session = await loadSessionStateByUserId<AppSessionData>(
+        sourceClient?.userId!,
+    );
+
+    if (!session?.data.registerPasskeyOptions) {
+        throw new Error("No registration options found.");
+    }
+
+    const options = session.data.registerPasskeyOptions!;
+
+    const verification = await verifyRegistrationResponse({
+        response,
+        expectedChallenge: options.challenge,
+        expectedOrigin: "http://localhost:8000",
+        expectedRPID: options.rp.id,
+    });
+
+    respond<VerifyPasskeyRegistrationResponse>({
+        type: "verifyPasskeyRegistrationResponse",
+        verified: verification.verified,
+    });
+};
+
 export const frontendMap: RegisterListenerMap<UserFrontendMessage> = {
     createUser: handleCreateUser,
     updateUser: handleUpdateUser,
@@ -290,4 +362,6 @@ export const frontendMap: RegisterListenerMap<UserFrontendMessage> = {
     decryptText: handleDecryptText,
     exportOwnData: handleExportOwnData,
     cancelExportOwnData: handleCancelExportOwnData,
+    getPasskeyRegistrationOptions: handleGetPasskeyRegistration,
+    verifyPasskeyRegistration: handleVerifyPasskeyRegistration,
 };

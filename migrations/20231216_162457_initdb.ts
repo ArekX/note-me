@@ -288,6 +288,31 @@ export async function up(db: Kysely<unknown>): Promise<void> {
         .execute(
             db,
         );
+
+    await db.schema.createTable("user_passkey")
+        .ifNotExists()
+        .addColumn("id", "integer", (col) => col.autoIncrement().primaryKey())
+        .addColumn(
+            "user_id",
+            "integer",
+            (col) => col.notNull().references("user.id"),
+        )
+        .addColumn("webauthn_user_identifier", "text", (col) => col.notNull())
+        .addColumn("credential_identifier", "text", (col) => col.notNull())
+        .addColumn("public_key", "blob", (col) => col.notNull())
+        .addColumn("counter", "int8", (col) => col.notNull())
+        .addColumn("is_backup_eligible", "boolean", (col) => col.notNull())
+        .addColumn("is_backed_up", "boolean", (col) => col.notNull())
+        .addColumn("transports", "text", (col) => col.notNull())
+        .addColumn("created_at", "int8", (col) => col.notNull())
+        .addColumn("last_used_at", "int8", (col) => col.notNull())
+        .execute();
+
+    await db.schema.createIndex("user_passkey_user_index")
+        .on("user_passkey")
+        .columns(["user_id", "webauthn_user_identifier"])
+        .unique()
+        .execute();
 }
 
 export async function down(db: Kysely<unknown>): Promise<void> {
@@ -304,6 +329,7 @@ export async function down(db: Kysely<unknown>): Promise<void> {
     await db.schema.dropTable("session").execute();
     await db.schema.dropTable("group_note").execute();
     await db.schema.dropTable("periodic_task_schedule").execute();
+    await db.schema.dropTable("user_passkey").execute();
     await db.schema.dropTable("user").execute();
     await db.schema.dropTable("settings").execute();
 }

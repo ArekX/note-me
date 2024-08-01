@@ -113,6 +113,7 @@ import * as $notifications_notification_message_text from "./islands/notificatio
 import * as $notifications_views_NotificationSharedView from "./islands/notifications/views/NotificationSharedView.tsx";
 import * as $notifications_views_ReminderView from "./islands/notifications/views/ReminderView.tsx";
 import * as $periodic_tasks_PeriodicTaskList from "./islands/periodic-tasks/PeriodicTaskList.tsx";
+import * as $profile_Passkeys from "./islands/profile/Passkeys.tsx";
 import * as $profile_UserProfile from "./islands/profile/UserProfile.tsx";
 import * as $settings_BackupManagement from "./islands/settings/BackupManagement.tsx";
 import * as $sidebar_ListSwitcher from "./islands/sidebar/ListSwitcher.tsx";
@@ -295,6 +296,7 @@ const manifest = {
             $notifications_views_ReminderView,
         "./islands/periodic-tasks/PeriodicTaskList.tsx":
             $periodic_tasks_PeriodicTaskList,
+        "./islands/profile/Passkeys.tsx": $profile_Passkeys,
         "./islands/profile/UserProfile.tsx": $profile_UserProfile,
         "./islands/settings/BackupManagement.tsx": $settings_BackupManagement,
         "./islands/sidebar/ListSwitcher.tsx": $sidebar_ListSwitcher,

@@ -140,6 +140,20 @@ export interface SettingsTable {
     max_backup_days: number;
 }
 
+export interface UserPasskeyTable {
+    id: Generated<number>;
+    user_id: number;
+    webauthn_user_identifier: string;
+    credential_identifier: string;
+    public_key: Uint8Array;
+    counter: number;
+    is_backup_eligible: boolean;
+    is_backed_up: boolean;
+    transports: string;
+    created_at: number;
+    last_used_at: number;
+}
+
 export interface Tables {
     note: NoteTable;
     note_reminder: NoteReminderTable;
@@ -154,6 +168,7 @@ export interface Tables {
     session: SessionTable;
     group_note: GroupNoteTable;
     user: UserTable;
+    user_passkey: UserPasskeyTable;
     periodic_task_schedule: PeriodicTaskScheduleTable;
     settings: SettingsTable;
 }

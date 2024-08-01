@@ -10,3 +10,11 @@ export {
     TextReader,
     ZipWriter,
 } from "https://deno.land/x/zipjs@v2.7.47/index.js";
+export {
+    generateRegistrationOptions,
+    verifyRegistrationResponse,
+} from "https://deno.land/x/simplewebauthn@v10.0.1/deno/server.ts";
+export type {
+    PublicKeyCredentialCreationOptionsJSON,
+    RegistrationResponseJSON,
+} from "https://deno.land/x/simplewebauthn@v10.0.1/deno/types.ts";

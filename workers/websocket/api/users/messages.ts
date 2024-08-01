@@ -10,6 +10,10 @@ import {
     UserProfileData,
     UserRecord,
 } from "$backend/repository/user-repository.ts";
+import {
+    PublicKeyCredentialCreationOptionsJSON,
+    RegistrationResponseJSON,
+} from "$backend/deps.ts";
 
 type UserMessage<Type, Data = unknown> = Message<
     "users",
@@ -160,6 +164,25 @@ export type UserForceLogoutResponse = UserMessage<
     "forceLogoutResponse"
 >;
 
+export type GetPasskeyRegistrationMessage = UserMessage<
+    "getPasskeyRegistrationOptions"
+>;
+
+export type GetPasskeyRegistrationResponse = UserMessage<
+    "getPasskeyRegistrationOptionsResponse",
+    { options: PublicKeyCredentialCreationOptionsJSON }
+>;
+
+export type VerifyPasskeyRegistrationMessage = UserMessage<
+    "verifyPasskeyRegistration",
+    { response: RegistrationResponseJSON }
+>;
+
+export type VerifyPasskeyRegistrationResponse = UserMessage<
+    "verifyPasskeyRegistrationResponse",
+    { verified: boolean }
+>;
+
 export type UserFrontendResponse =
     | CreateUserResponse
     | UpdateUserResponse
@@ -176,7 +199,9 @@ export type UserFrontendResponse =
     | ExportOwnDataPercentageUpdate
     | ExportOwnDataFinished
     | ExportOwnDataFailed
-    | CancelExportOwnDataResponse;
+    | CancelExportOwnDataResponse
+    | GetPasskeyRegistrationResponse
+    | VerifyPasskeyRegistrationResponse;
 
 export type UserFrontendMessage =
     | CreateUserMessage
@@ -190,7 +215,9 @@ export type UserFrontendMessage =
     | EncryptTextMessage
     | DecryptTextMessage
     | ExportOwnDataMessage
-    | CancelExportOwnDataMessage;
+    | CancelExportOwnDataMessage
+    | GetPasskeyRegistrationMessage
+    | VerifyPasskeyRegistrationMessage;
 
 export type LogoutUserMessage = UserMessage<
     "logoutUser",
