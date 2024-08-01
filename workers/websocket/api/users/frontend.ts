@@ -1,13 +1,14 @@
 import { ListenerFn, RegisterListenerMap } from "$workers/websocket/types.ts";
 
 import {
+    CancelExportOwnDataMessage,
+    CancelExportOwnDataResponse,
     CreateUserResponse,
     DeleteUserMessage,
     DeleteUserResponse,
     EncryptTextMessage,
     EncryptTextResponse,
     ExportOwnDataMessage,
-    ExportOwnDataPercentageUpdate,
     ExportOwnDataResponse,
     FindPickUsersMessage,
     FindPickUsersResponse,
@@ -54,10 +55,10 @@ import { DecryptTextResponse } from "$workers/websocket/api/users/messages.ts";
 import { workerSendMesage } from "$workers/services/worker-bus.ts";
 import { createBackendMessage } from "$workers/websocket/websocket-backend.ts";
 import {
-    createInitialExportFile,
-    generateExport,
-} from "$backend/export-generator.ts";
-import { ExportOwnDataFinished } from "$workers/websocket/api/users/messages.ts";
+    sendAbortRequest,
+    sendProcessorRequest,
+} from "$workers/processor/processor-message.ts";
+import { createInitialExportFile } from "$backend/export-generator.ts";
 
 const handleCreateUser: ListenerFn<CreateUserMessage> = async (
     { message: { data }, respond, sourceClient },
@@ -248,32 +249,31 @@ const handleDecryptText: ListenerFn<DecryptTextMessage> = async (
 };
 
 const handleExportOwnData: ListenerFn<ExportOwnDataMessage> = async (
-    { message: { userPassword }, sourceClient, respond },
+    { message: { user_password }, sourceClient, respond },
 ) => {
-    const { exportId, fileLocation } = await createInitialExportFile(
-        sourceClient!.userId,
-    );
+    const result = await createInitialExportFile(sourceClient!.userId);
+
+    const jobId = sendProcessorRequest("create-data-export", {
+        user_id: sourceClient!.userId,
+        user_password: user_password,
+        export_id: result.exportId,
+    });
 
     respond<ExportOwnDataResponse>({
         type: "exportOwnDataResponse",
-        exportId,
+        export_id: result.exportId,
+        job_id: jobId,
     });
+};
 
-    await generateExport({
-        fileLocation,
-        userPassword,
-        onProgressUpdate: (percentage) => {
-            respond<ExportOwnDataPercentageUpdate>({
-                type: "exportOwnDataPercentage",
-                exportId,
-                percentage,
-            });
-        },
-    });
+const handleCancelExportOwnData: ListenerFn<CancelExportOwnDataMessage> = (
+    { message: { job_id }, respond },
+) => {
+    sendAbortRequest(job_id);
 
-    respond<ExportOwnDataFinished>({
-        type: "exportOwnDataFinished",
-        exportId,
+    respond<CancelExportOwnDataResponse>({
+        type: "cancelExportOwnDataResponse",
+        job_id,
     });
 };
 
@@ -289,4 +289,5 @@ export const frontendMap: RegisterListenerMap<UserFrontendMessage> = {
     encryptText: handleEncryptText,
     decryptText: handleDecryptText,
     exportOwnData: handleExportOwnData,
+    cancelExportOwnData: handleCancelExportOwnData,
 };

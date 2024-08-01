@@ -4,7 +4,7 @@ import {
 } from "$backend/repository/note-reminder-repository.ts";
 import { createNotification } from "$backend/repository/notification-repository.ts";
 import { PeriodicTask } from "../periodic-task-service.ts";
-import { sendMessageToWebsocket } from "$workers/periodic-task/worker-message.ts";
+import { sendMessageToWebsocket } from "$workers/websocket/websocket-worker-message.ts";
 import { createTransaction } from "$backend/database.ts";
 import { logger } from "$backend/logger.ts";
 import { getNoteInfo } from "$backend/repository/note-repository.ts";

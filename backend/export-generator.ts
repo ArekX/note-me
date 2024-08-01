@@ -21,7 +21,7 @@ export const generateExport = async ({
 };
 
 export const createInitialExportFile = async (userId: number) => {
-    const prefix = "notes-export-" + userId;
+    const prefix = "data-export-" + userId;
     const exportId = await createTempFile(prefix);
 
     return {
@@ -31,6 +31,6 @@ export const createInitialExportFile = async (userId: number) => {
 };
 
 export const getExportLocation = (exportId: string, userId: number) => {
-    const prefix = "notes-export-" + userId;
+    const prefix = "data-export-" + userId;
     return getFileLocation(prefix, exportId);
 };

@@ -121,29 +121,39 @@ export type DecryptTextResponse = UserMessage<
     { text: string }
 >;
 
-export type LogoutUserMessage = UserMessage<
-    "logoutUser",
-    { user_id: number }
->;
-
 export type ExportOwnDataMessage = UserMessage<
     "exportOwnData",
-    { userPassword: string }
+    { user_password: string }
 >;
 
 export type ExportOwnDataResponse = UserMessage<
     "exportOwnDataResponse",
-    { exportId: string }
+    { export_id: string; job_id: string }
 >;
 
 export type ExportOwnDataPercentageUpdate = UserMessage<
     "exportOwnDataPercentage",
-    { exportId: string; percentage: number }
+    { export_id: string; percentage: number }
 >;
 
 export type ExportOwnDataFinished = UserMessage<
     "exportOwnDataFinished",
-    { exportId: string }
+    { export_id: string }
+>;
+
+export type ExportOwnDataFailed = UserMessage<
+    "exportOwnDataFailed",
+    { export_id: string; message: string }
+>;
+
+export type CancelExportOwnDataMessage = UserMessage<
+    "cancelExportOwnData",
+    { job_id: string }
+>;
+
+export type CancelExportOwnDataResponse = UserMessage<
+    "cancelExportOwnDataResponse",
+    { job_id: string }
 >;
 
 export type UserForceLogoutResponse = UserMessage<
@@ -164,7 +174,9 @@ export type UserFrontendResponse =
     | UserForceLogoutResponse
     | ExportOwnDataResponse
     | ExportOwnDataPercentageUpdate
-    | ExportOwnDataFinished;
+    | ExportOwnDataFinished
+    | ExportOwnDataFailed
+    | CancelExportOwnDataResponse;
 
 export type UserFrontendMessage =
     | CreateUserMessage
@@ -177,6 +189,31 @@ export type UserFrontendMessage =
     | VerifyOwnPasswordMessage
     | EncryptTextMessage
     | DecryptTextMessage
-    | ExportOwnDataMessage;
+    | ExportOwnDataMessage
+    | CancelExportOwnDataMessage;
 
-export type UserBackendMessage = LogoutUserMessage;
+export type LogoutUserMessage = UserMessage<
+    "logoutUser",
+    { user_id: number }
+>;
+
+export type NotifyUserExportUpdatedMessage = UserMessage<
+    "notifyUserExportUpdated",
+    { export_id: string; user_id: number; percentage: number }
+>;
+
+export type NotifyUserExportFinishedMessage = UserMessage<
+    "notifyUserExportFinished",
+    { export_id: string; user_id: number }
+>;
+
+export type NotifyUserExportFailedMessage = UserMessage<
+    "notifyUserExportFailed",
+    { export_id: string; message: string; user_id: number }
+>;
+
+export type UserBackendMessage =
+    | LogoutUserMessage
+    | NotifyUserExportUpdatedMessage
+    | NotifyUserExportFinishedMessage
+    | NotifyUserExportFailedMessage;

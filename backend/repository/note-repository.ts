@@ -451,3 +451,15 @@ export const restoreDeletedNote = async (
 
     return result.numUpdatedRows > 0;
 };
+
+export const getUserNoteCount = async (
+    user_id: number,
+): Promise<number> => {
+    const result = await db.selectFrom("note")
+        .select(sql<number>`COUNT(*)`.as("count"))
+        .where("user_id", "=", user_id)
+        .where("is_deleted", "=", false)
+        .executeTakeFirst();
+
+    return result?.count ?? 0;
+};

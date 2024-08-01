@@ -14,6 +14,10 @@ export default function Layout(
             "name": "Files",
             "link": "/app/profile/files",
         },
+        {
+            "name": "Data",
+            "link": "/app/profile/data",
+        },
     ];
 
     return (

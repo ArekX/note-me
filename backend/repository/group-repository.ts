@@ -30,7 +30,7 @@ const getGroupQuery = () =>
         .where("is_deleted", "=", false);
 
 export const getUserGroups = async (
-    parent_id: string | null,
+    parent_id: number | string | null,
     user_id: number,
 ): Promise<GroupRecord[]> => {
     let query = getGroupQuery()

@@ -56,22 +56,27 @@ export const listenServiceBroadcasts = <T>(
     );
 };
 
+export const serviceBusSendMessage = <T>(
+    message: WorkerMessage<T>,
+) => {
+    if (message.to === "*") {
+        for (const destinationService of Object.values(services)) {
+            destinationService.send(message);
+        }
+
+        return;
+    }
+
+    const destinationService = services[message.to ?? ""];
+
+    if (destinationService) {
+        destinationService.send(message);
+    }
+};
+
 export const connectServiceToBus = (service: BackgroundService) => {
     service.onMessage(
-        ((message: WorkerMessage) => {
-            if (message.to === "*") {
-                for (const destinationService of Object.values(services)) {
-                    destinationService.send(message);
-                }
-
-                return;
-            }
-
-            const destinationService = services[message.to ?? ""];
-
-            if (destinationService) {
-                destinationService.send(message);
-            }
-        }) as OnMessageHandler,
+        ((message: WorkerMessage) =>
+            serviceBusSendMessage(message)) as OnMessageHandler,
     );
 };

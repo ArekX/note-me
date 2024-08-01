@@ -201,3 +201,12 @@ export const updateMultipleFiles = async (
         .where("user_id", "=", user_id)
         .executeTakeFirst();
 };
+
+export const getUserFileCount = async (
+    user_id: number,
+): Promise<number> => {
+    return (await db.selectFrom("file")
+        .select(sql<number>`COUNT(*)`.as("count"))
+        .where("user_id", "=", user_id)
+        .executeTakeFirst())?.count ?? 0;
+};

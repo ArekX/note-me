@@ -123,6 +123,7 @@ const startServer = (hostname: string, port: number) => {
     Deno.serve({
         port,
         hostname,
+
         handler: handleConnectionRequest,
         onListen({ port }) {
             logger.info(

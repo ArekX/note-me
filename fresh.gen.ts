@@ -21,6 +21,8 @@ import * as $app_note_partial_view_id_ from "./routes/app/note/partial/view-[id]
 import * as $app_note_shared_id_ from "./routes/app/note/shared-[id].tsx";
 import * as $app_note_view_id_ from "./routes/app/note/view-[id].tsx";
 import * as $app_profile_layout from "./routes/app/profile/_layout.tsx";
+import * as $app_profile_data from "./routes/app/profile/data.tsx";
+import * as $app_profile_download_export_identifier_ from "./routes/app/profile/download-export-[identifier].tsx";
 import * as $app_profile_files from "./routes/app/profile/files.tsx";
 import * as $app_profile_index from "./routes/app/profile/index.tsx";
 import * as $app_settings_layout from "./routes/app/settings/_layout.tsx";
@@ -49,6 +51,8 @@ import * as $dashboard_CurrentReminders from "./islands/dashboard/CurrentReminde
 import * as $dashboard_Dashboard from "./islands/dashboard/Dashboard.tsx";
 import * as $dashboard_RecentlyOpenedNotes from "./islands/dashboard/RecentlyOpenedNotes.tsx";
 import * as $dashboard_RecentlySharedWithMe from "./islands/dashboard/RecentlySharedWithMe.tsx";
+import * as $data_DataPage from "./islands/data/DataPage.tsx";
+import * as $data_ExportMyData from "./islands/data/ExportMyData.tsx";
 import * as $encryption_EncryptionLockButton from "./islands/encryption/EncryptionLockButton.tsx";
 import * as $encryption_EncryptionLockWindow from "./islands/encryption/EncryptionLockWindow.tsx";
 import * as $encryption_LockedContentWrapper from "./islands/encryption/LockedContentWrapper.tsx";
@@ -166,6 +170,9 @@ const manifest = {
         "./routes/app/note/shared-[id].tsx": $app_note_shared_id_,
         "./routes/app/note/view-[id].tsx": $app_note_view_id_,
         "./routes/app/profile/_layout.tsx": $app_profile_layout,
+        "./routes/app/profile/data.tsx": $app_profile_data,
+        "./routes/app/profile/download-export-[identifier].tsx":
+            $app_profile_download_export_identifier_,
         "./routes/app/profile/files.tsx": $app_profile_files,
         "./routes/app/profile/index.tsx": $app_profile_index,
         "./routes/app/settings/_layout.tsx": $app_settings_layout,
@@ -200,6 +207,8 @@ const manifest = {
             $dashboard_RecentlyOpenedNotes,
         "./islands/dashboard/RecentlySharedWithMe.tsx":
             $dashboard_RecentlySharedWithMe,
+        "./islands/data/DataPage.tsx": $data_DataPage,
+        "./islands/data/ExportMyData.tsx": $data_ExportMyData,
         "./islands/encryption/EncryptionLockButton.tsx":
             $encryption_EncryptionLockButton,
         "./islands/encryption/EncryptionLockWindow.tsx":
