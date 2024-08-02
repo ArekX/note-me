@@ -11,10 +11,17 @@ export {
     ZipWriter,
 } from "https://deno.land/x/zipjs@v2.7.47/index.js";
 export {
+    generateAuthenticationOptions,
     generateRegistrationOptions,
+    type VerifiedAuthenticationResponse,
+    type VerifiedRegistrationResponse,
+    verifyAuthenticationResponse,
     verifyRegistrationResponse,
 } from "https://deno.land/x/simplewebauthn@v10.0.1/deno/server.ts";
 export type {
+    AuthenticationResponseJSON,
+    AuthenticatorTransportFuture,
     PublicKeyCredentialCreationOptionsJSON,
+    PublicKeyCredentialRequestOptionsJSON,
     RegistrationResponseJSON,
 } from "https://deno.land/x/simplewebauthn@v10.0.1/deno/types.ts";

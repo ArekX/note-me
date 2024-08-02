@@ -4,6 +4,8 @@ import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import {
     GetPasskeyRegistrationMessage,
     GetPasskeyRegistrationResponse,
+    VerifyPasskeyRegistrationMessage,
+    VerifyPasskeyRegistrationResponse,
 } from "$workers/websocket/api/users/messages.ts";
 
 export default function Passkeys() {
@@ -18,7 +20,15 @@ export default function Passkeys() {
 
         const credential = await startRegistration(options.options);
 
-        console.log(credential);
+        await sendMessage<
+            VerifyPasskeyRegistrationMessage,
+            VerifyPasskeyRegistrationResponse
+        >("users", "verifyPasskeyRegistration", {
+            data: {
+                response: credential,
+            },
+            expect: "verifyPasskeyRegistrationResponse",
+        });
     };
     return (
         <div>

@@ -63,13 +63,21 @@ const notifyUserExportFailed = (
 const toFilesystemName = (name: string, extension: string = "") =>
     name.replace(/[^a-zA-Z0-9]/g, "-") + extension;
 
-const resolveNoteContent = async (
-    note_id: number,
-    user_id: number,
-    decryption_key: string,
-    user_password: string,
-    file_map: Map<string, string>,
-) => {
+interface ResolveNoteContentOptions {
+    note_id: number;
+    user_id: number;
+    decryption_key: string;
+    user_password: string;
+    file_map: Map<string, string>;
+}
+
+const resolveNoteContent = async ({
+    note_id,
+    user_id,
+    decryption_key,
+    user_password,
+    file_map,
+}: ResolveNoteContentOptions) => {
     const details = await getNoteDetails(note_id, user_id, {
         include_note: true,
     });
@@ -118,13 +126,13 @@ const processGroup = async (options: ProcessGroupOptions) => {
             return;
         }
 
-        const content = await resolveNoteContent(
-            note.id,
-            options.user_id,
-            options.decryption_key,
-            options.user_password,
-            options.file_map,
-        );
+        const content = await resolveNoteContent({
+            note_id: note.id,
+            user_id: options.user_id,
+            decryption_key: options.decryption_key,
+            user_password: options.user_password,
+            file_map: options.file_map,
+        });
 
         await options.zip.addTextFile(
             `${options.prefix}/${toFilesystemName(note.name)}.md`,

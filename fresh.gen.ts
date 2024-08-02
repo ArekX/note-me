@@ -44,6 +44,7 @@ import * as $IslandInitializer from "./islands/IslandInitializer.tsx";
 import * as $LoadMoreWrapper from "./islands/LoadMoreWrapper.tsx";
 import * as $Loader from "./islands/Loader.tsx";
 import * as $Pagination from "./islands/Pagination.tsx";
+import * as $PasskeySignIn from "./islands/PasskeySignIn.tsx";
 import * as $TextDiff from "./islands/TextDiff.tsx";
 import * as $ToastMessages from "./islands/ToastMessages.tsx";
 import * as $UserPicker from "./islands/UserPicker.tsx";
@@ -199,6 +200,7 @@ const manifest = {
         "./islands/LoadMoreWrapper.tsx": $LoadMoreWrapper,
         "./islands/Loader.tsx": $Loader,
         "./islands/Pagination.tsx": $Pagination,
+        "./islands/PasskeySignIn.tsx": $PasskeySignIn,
         "./islands/TextDiff.tsx": $TextDiff,
         "./islands/ToastMessages.tsx": $ToastMessages,
         "./islands/UserPicker.tsx": $UserPicker,

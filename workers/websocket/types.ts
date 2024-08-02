@@ -5,6 +5,7 @@ import { AppPermissions } from "$backend/rbac/permissions.ts";
 export interface SocketClient {
     id: string;
     userId: number;
+    username: string;
     socket: WebSocket;
     send<T>(data: T): void;
     role: Roles;

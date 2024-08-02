@@ -9,4 +9,16 @@ export const loadEnvironment = () => {
         export: true,
         allowEmptyValues: true,
     });
+
+    appUrl = new URL(Deno.env.get("APP_URL")!);
+};
+
+let appUrl: URL | null = null;
+
+export const getRelyingPartyId = () => {
+    return appUrl!.hostname;
+};
+
+export const getRelyingPartyOrigin = () => {
+    return appUrl!.origin;
 };

@@ -65,6 +65,7 @@ const handleConnectionRequest = async (request: Request): Promise<Response> => {
             id,
             socket,
             userId,
+            username: session.data.user!.username,
             send: <T>(data: T) => {
                 if (socket.readyState === WebSocket.OPEN) {
                     socket.send(JSON.stringify(data));

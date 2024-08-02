@@ -64,11 +64,18 @@ import {
 } from "$workers/processor/processor-message.ts";
 import { createInitialExportFile } from "$backend/export-generator.ts";
 import {
+    AuthenticatorTransportFuture,
     generateRegistrationOptions,
     PublicKeyCredentialCreationOptionsJSON,
+    verifyRegistrationResponse,
 } from "$backend/deps.ts";
 import { AppSessionData } from "../../../../types/app-state.ts";
-import { verifyRegistrationResponse } from "https://deno.land/x/simplewebauthn@v10.0.1/packages/server/src/registration/verifyRegistrationResponse.ts";
+import { getRelyingPartyId, getRelyingPartyOrigin } from "$backend/env.ts";
+import { logger } from "$backend/logger.ts";
+import {
+    getRegisteredUserPasskeys,
+    registerPassKey,
+} from "$backend/repository/passkey-repository.ts";
 
 const handleCreateUser: ListenerFn<CreateUserMessage> = async (
     { message: { data }, respond, sourceClient },
@@ -291,17 +298,26 @@ const handleGetPasskeyRegistration: ListenerFn<GetPasskeyRegistrationMessage> =
     async (
         { respond, sourceClient },
     ) => {
+        const registeredPasskeys = await getRegisteredUserPasskeys(
+            sourceClient!.userId,
+        );
+
         const options: PublicKeyCredentialCreationOptionsJSON =
             await generateRegistrationOptions({
                 rpName: "NoteMe",
-                rpID: "localhost", // TODO: Fix
-                userName: "username",
+                rpID: getRelyingPartyId(),
+                userName: sourceClient!.username,
                 attestationType: "none",
-                excludeCredentials: [],
+                excludeCredentials: registeredPasskeys.map((passkey) => ({
+                    id: passkey.credential_identifier,
+                    transports: passkey
+                        .transports.split(
+                            ",",
+                        ) as unknown as AuthenticatorTransportFuture[],
+                })),
                 authenticatorSelection: {
                     residentKey: "preferred",
                     userVerification: "preferred",
-                    // authenticatorAttachment: "platform",
                 },
             });
 
@@ -336,17 +352,48 @@ const handleVerifyPasskeyRegistration: ListenerFn<
 
     const options = session.data.registerPasskeyOptions!;
 
-    const verification = await verifyRegistrationResponse({
-        response,
-        expectedChallenge: options.challenge,
-        expectedOrigin: "http://localhost:8000",
-        expectedRPID: options.rp.id,
-    });
+    try {
+        const verification = await verifyRegistrationResponse({
+            response,
+            expectedChallenge: options.challenge,
+            expectedOrigin: getRelyingPartyOrigin(),
+            expectedRPID: options.rp.id,
+        });
 
-    respond<VerifyPasskeyRegistrationResponse>({
-        type: "verifyPasskeyRegistrationResponse",
-        verified: verification.verified,
-    });
+        if (!verification.verified) {
+            throw new Error("Verification failed.");
+        }
+
+        await registerPassKey({
+            noteme_user_id: sourceClient!.userId!,
+            webauthn_user: options.user,
+            registration_info: verification.registrationInfo!,
+            transports: response.response.transports!,
+        });
+
+        respond<VerifyPasskeyRegistrationResponse>({
+            type: "verifyPasskeyRegistrationResponse",
+            verified: true,
+        });
+    } catch (e) {
+        logger.debug("Error verifying registration response. Error: {e}", {
+            e: e.message ?? "Unknown error",
+        });
+        respond<VerifyPasskeyRegistrationResponse>({
+            type: "verifyPasskeyRegistrationResponse",
+            verified: false,
+        });
+    } finally {
+        const session = await loadSessionStateByUserId<AppSessionData>(
+            sourceClient?.userId!,
+        );
+
+        if (session) {
+            await session.patch({
+                registerPasskeyOptions: undefined,
+            });
+        }
+    }
 };
 
 export const frontendMap: RegisterListenerMap<UserFrontendMessage> = {
