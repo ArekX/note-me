@@ -20,7 +20,7 @@ env:
   RUN_MIGRATIONS_ON_STARTUP: 0
   SOCKET_HOSTNAME: ws://localhost:8080
   FILE_DATABASE_BACKUP_FOLDER: backups
-
+  APP_URL: http://localhost:8000
 
 jobs:
     run-check:
