@@ -16,28 +16,34 @@ import Button from "$components/Button.tsx";
 import Input from "$components/Input.tsx";
 import InvalidateData from "$islands/InvalidateData.tsx";
 import { checkLoginAttempt } from "$backend/bruteforce-login-protector.ts";
-import {
-    AuthenticationResponseJSON,
-    AuthenticatorTransportFuture,
-    generateAuthenticationOptions,
-    PublicKeyCredentialRequestOptionsJSON,
-    verifyAuthenticationResponse,
-} from "$backend/deps.ts";
-import { getRelyingPartyId, getRelyingPartyOrigin } from "$backend/env.ts";
+import { AuthenticationResponseJSON } from "$backend/deps.ts";
 import PasskeySignIn from "$islands/PasskeySignIn.tsx";
-import { getPasskeyById } from "$backend/repository/passkey-repository.ts";
+import {
+    finalizePasskeyAuthentication,
+    initializePasskeyAuthentication,
+    PasskeyAuthenticationRequestData,
+} from "$backend/passkeys.ts";
 
 interface LoginResult {
     username: string;
     message: string;
-    passkey_request_id: string;
-    options: PublicKeyCredentialRequestOptionsJSON;
+    passkey_request: PasskeyAuthenticationRequestData;
 }
 
-const requests = new Map<string, PublicKeyCredentialRequestOptionsJSON>();
+const renderSignIn = async (
+    ctx: FreshContext<AppState, LoginResult>,
+    message: string = "",
+    username: string = "",
+) => {
+    return ctx.render({
+        username,
+        message,
+        passkey_request: await initializePasskeyAuthentication(),
+    });
+};
 
 export const handler: Handlers<LoginResult> = {
-    async GET(_req, ctx: FreshContext<AppState>) {
+    async GET(_req, ctx: FreshContext<AppState, LoginResult>) {
         if (ctx.state.session?.data) {
             return new Response("", {
                 status: 302,
@@ -45,23 +51,9 @@ export const handler: Handlers<LoginResult> = {
             });
         }
 
-        const options: PublicKeyCredentialRequestOptionsJSON =
-            await generateAuthenticationOptions({
-                rpID: getRelyingPartyId(),
-            });
-
-        const passkeyRequestId = crypto.randomUUID();
-
-        requests.set(passkeyRequestId, options);
-
-        return ctx.render({
-            username: "",
-            message: "",
-            options,
-            passkey_request_id: passkeyRequestId,
-        });
+        return await renderSignIn(ctx);
     },
-    async POST(req, ctx: FreshContext<AppState>) {
+    async POST(req, ctx: FreshContext<AppState, LoginResult>) {
         checkLoginAttempt(req, ctx);
 
         const form = await req.formData();
@@ -72,59 +64,26 @@ export const handler: Handlers<LoginResult> = {
             const passkeyRequestId = form.get("passkey_request_id")?.toString();
 
             if (!passkeyRequestId) {
-                return new Response("Invalid passkey request id", {
-                    status: 400,
-                });
+                return await renderSignIn(ctx, "Invalid passkey request.");
             }
-
-            const options = requests.get(passkeyRequestId);
-
-            if (!options) {
-                return new Response("Invalid passkey request id", {
-                    status: 400,
-                });
-            }
-
-            requests.delete(passkeyRequestId);
 
             const authenticationData: AuthenticationResponseJSON = JSON.parse(
                 form.get("passkey_authentication_data")?.toString() ?? "{}",
             );
 
-            const passkey = await getPasskeyById(authenticationData.id);
-
-            if (!passkey) {
-                return ctx.render({
-                    message:
-                        "No passkey stored for this device or invalid passkey.",
-                    username: "",
-                });
-            }
-
-            const result = await verifyAuthenticationResponse({
-                response: authenticationData,
-                expectedChallenge: options.challenge,
-                expectedOrigin: getRelyingPartyOrigin(),
-                expectedRPID: getRelyingPartyId(),
-                authenticator: {
-                    credentialID: passkey.credential_identifier,
-                    credentialPublicKey: passkey.public_key,
-                    counter: passkey.counter,
-                    transports: passkey.transports.split(
-                        ",",
-                    ) as unknown as AuthenticatorTransportFuture[],
-                },
-            });
+            const result = await finalizePasskeyAuthentication(
+                passkeyRequestId,
+                authenticationData,
+            );
 
             if (!result.verified) {
-                return ctx.render({
-                    message:
-                        "No passkey stored for this device or invalid passkey.",
-                    username: "",
-                });
+                return await renderSignIn(
+                    ctx,
+                    "Could not verify your passkey, make sure it is registered to your account.",
+                );
             }
 
-            user = await getUserById(passkey.user_id);
+            user = await getUserById(result.user_id!);
         } else {
             user = await getUserByLogin(
                 form.get("username")?.toString() ?? "",
@@ -133,10 +92,11 @@ export const handler: Handlers<LoginResult> = {
         }
 
         if (!user) {
-            return ctx.render({
-                message: "Invalid username or password",
-                username: form.get("username")?.toString() ?? "",
-            });
+            return await renderSignIn(
+                ctx,
+                "Invalid username or password.",
+                form.get("username")?.toString() ?? "",
+            );
         }
 
         const response = new Response("", {
@@ -196,8 +156,8 @@ export default function Page(props: PageProps<LoginResult>) {
                         </Button>
                     </div>
                     <PasskeySignIn
-                        request_id={props.data.passkey_request_id}
-                        options={props.data.options}
+                        request_id={props.data.passkey_request.request_id}
+                        options={props.data.passkey_request.options}
                     />
                 </form>
                 <InvalidateData />

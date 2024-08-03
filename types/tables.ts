@@ -142,12 +142,12 @@ export interface SettingsTable {
 
 export interface UserPasskeyTable {
     id: Generated<number>;
+    name: string;
     user_id: number;
     webauthn_user_identifier: string;
     credential_identifier: string;
     public_key: Uint8Array;
     counter: number;
-    is_backup_eligible: boolean;
     is_backed_up: boolean;
     transports: string;
     created_at: number;

@@ -4,6 +4,8 @@ import {
     CancelExportOwnDataMessage,
     CancelExportOwnDataResponse,
     CreateUserResponse,
+    DeleteOwnPasskeyMessage,
+    DeleteOwnPasskeyResponse,
     DeleteUserMessage,
     DeleteUserResponse,
     EncryptTextMessage,
@@ -14,11 +16,15 @@ import {
     FindPickUsersResponse,
     FindUsersMessage,
     FindUsersResponse,
+    GetOwnPasskeysMessage,
+    GetOwnPasskeysResponse,
     GetPasskeyRegistrationMessage,
     GetPasskeyRegistrationResponse,
     LogoutUserMessage,
     UpdateOnboardingStateMessage,
     UpdateOnboardingStateResponse,
+    UpdateOwnPasskeyMessage,
+    UpdateOwnPasskeyResponse,
     UpdateProfileMessage,
     UpdateProfileResponse,
     UpdateUserMessage,
@@ -64,17 +70,13 @@ import {
 } from "$workers/processor/processor-message.ts";
 import { createInitialExportFile } from "$backend/export-generator.ts";
 import {
-    AuthenticatorTransportFuture,
-    generateRegistrationOptions,
-    PublicKeyCredentialCreationOptionsJSON,
-    verifyRegistrationResponse,
-} from "$backend/deps.ts";
-import { AppSessionData } from "../../../../types/app-state.ts";
-import { getRelyingPartyId, getRelyingPartyOrigin } from "$backend/env.ts";
-import { logger } from "$backend/logger.ts";
+    finalizePasskeyRegistration,
+    initializePasskeyRegistration,
+} from "$backend/passkeys.ts";
 import {
-    getRegisteredUserPasskeys,
-    registerPassKey,
+    deletePasskey,
+    findUserPasskeys,
+    updatePasskey,
 } from "$backend/repository/passkey-repository.ts";
 
 const handleCreateUser: ListenerFn<CreateUserMessage> = async (
@@ -298,38 +300,9 @@ const handleGetPasskeyRegistration: ListenerFn<GetPasskeyRegistrationMessage> =
     async (
         { respond, sourceClient },
     ) => {
-        const registeredPasskeys = await getRegisteredUserPasskeys(
+        const options = await initializePasskeyRegistration(
             sourceClient!.userId,
         );
-
-        const options: PublicKeyCredentialCreationOptionsJSON =
-            await generateRegistrationOptions({
-                rpName: "NoteMe",
-                rpID: getRelyingPartyId(),
-                userName: sourceClient!.username,
-                attestationType: "none",
-                excludeCredentials: registeredPasskeys.map((passkey) => ({
-                    id: passkey.credential_identifier,
-                    transports: passkey
-                        .transports.split(
-                            ",",
-                        ) as unknown as AuthenticatorTransportFuture[],
-                })),
-                authenticatorSelection: {
-                    residentKey: "preferred",
-                    userVerification: "preferred",
-                },
-            });
-
-        const session = await loadSessionStateByUserId<AppSessionData>(
-            sourceClient?.userId!,
-        );
-
-        if (session) {
-            await session.patch({
-                registerPasskeyOptions: options,
-            });
-        }
 
         respond<GetPasskeyRegistrationResponse>({
             type: "getPasskeyRegistrationOptionsResponse",
@@ -342,58 +315,49 @@ const handleVerifyPasskeyRegistration: ListenerFn<
 > = async (
     { message: { response }, sourceClient, respond },
 ) => {
-    const session = await loadSessionStateByUserId<AppSessionData>(
-        sourceClient?.userId!,
+    const result = await finalizePasskeyRegistration(
+        sourceClient!.userId,
+        response,
     );
 
-    if (!session?.data.registerPasskeyOptions) {
-        throw new Error("No registration options found.");
-    }
+    respond<VerifyPasskeyRegistrationResponse>({
+        type: "verifyPasskeyRegistrationResponse",
+        ...result,
+    });
+};
 
-    const options = session.data.registerPasskeyOptions!;
+const handleGetOwnPasskeys: ListenerFn<GetOwnPasskeysMessage> = async (
+    { message: { page }, respond, sourceClient },
+) => {
+    const passkeys = await findUserPasskeys(sourceClient!.userId, page);
 
-    try {
-        const verification = await verifyRegistrationResponse({
-            response,
-            expectedChallenge: options.challenge,
-            expectedOrigin: getRelyingPartyOrigin(),
-            expectedRPID: options.rp.id,
-        });
+    respond<GetOwnPasskeysResponse>({
+        type: "getOwnPasskeysResponse",
+        records: passkeys,
+    });
+};
 
-        if (!verification.verified) {
-            throw new Error("Verification failed.");
-        }
+const handleDeleteOwnPasskey: ListenerFn<DeleteOwnPasskeyMessage> = async (
+    { message: { id }, respond, sourceClient },
+) => {
+    await deletePasskey(sourceClient!.userId, id);
 
-        await registerPassKey({
-            noteme_user_id: sourceClient!.userId!,
-            webauthn_user: options.user,
-            registration_info: verification.registrationInfo!,
-            transports: response.response.transports!,
-        });
+    respond<DeleteOwnPasskeyResponse>({
+        type: "deleteOwnPasskeyResponse",
+        id,
+    });
+};
 
-        respond<VerifyPasskeyRegistrationResponse>({
-            type: "verifyPasskeyRegistrationResponse",
-            verified: true,
-        });
-    } catch (e) {
-        logger.debug("Error verifying registration response. Error: {e}", {
-            e: e.message ?? "Unknown error",
-        });
-        respond<VerifyPasskeyRegistrationResponse>({
-            type: "verifyPasskeyRegistrationResponse",
-            verified: false,
-        });
-    } finally {
-        const session = await loadSessionStateByUserId<AppSessionData>(
-            sourceClient?.userId!,
-        );
+const handleUpdateOwnPasskey: ListenerFn<UpdateOwnPasskeyMessage> = async (
+    { message, respond, sourceClient },
+) => {
+    await updatePasskey(message.id, sourceClient!.userId, message.name);
 
-        if (session) {
-            await session.patch({
-                registerPasskeyOptions: undefined,
-            });
-        }
-    }
+    respond<UpdateOwnPasskeyResponse>({
+        type: "updateOwnPasskeyResponse",
+        id: message.id,
+        name: message.name,
+    });
 };
 
 export const frontendMap: RegisterListenerMap<UserFrontendMessage> = {
@@ -411,4 +375,7 @@ export const frontendMap: RegisterListenerMap<UserFrontendMessage> = {
     cancelExportOwnData: handleCancelExportOwnData,
     getPasskeyRegistrationOptions: handleGetPasskeyRegistration,
     verifyPasskeyRegistration: handleVerifyPasskeyRegistration,
+    getOwnPasskeys: handleGetOwnPasskeys,
+    deleteOwnPasskey: handleDeleteOwnPasskey,
+    updateOwnPasskey: handleUpdateOwnPasskey,
 };

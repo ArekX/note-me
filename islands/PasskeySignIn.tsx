@@ -2,8 +2,16 @@ import {
     AuthenticationResponseJSON,
     PublicKeyCredentialRequestOptionsJSON,
 } from "$backend/deps.ts";
-import { startAuthentication } from "$frontend/deps.ts";
+import {
+    browserSupportsWebAuthn,
+    startAuthentication,
+} from "$frontend/deps.ts";
 import { useSignal } from "@preact/signals";
+import Button from "$components/Button.tsx";
+import Icon from "$components/Icon.tsx";
+import { IS_BROWSER } from "$fresh/runtime.ts";
+import { useLoader } from "$frontend/hooks/use-loader.ts";
+import Loader from "$islands/Loader.tsx";
 
 interface PasskeySignInProps {
     request_id: string;
@@ -15,16 +23,31 @@ export default function PasskeySignIn({
     request_id,
 }: PasskeySignInProps) {
     const passkeyResult = useSignal<AuthenticationResponseJSON | null>(null);
+    const passkeyLoader = useLoader();
 
-    const handleSignIn = async () => {
-        passkeyResult.value = await startAuthentication(options);
-    };
+    const handleSignIn = passkeyLoader.wrap(async () => {
+        try {
+            passkeyResult.value = await startAuthentication(options);
+        } catch {
+            passkeyResult.value = null;
+        }
+    });
+
+    if (IS_BROWSER && !browserSupportsWebAuthn()) {
+        return null;
+    }
 
     return (
         <div class="text-center py-2">
-            <span class="underline cursor-pointer" onClick={handleSignIn}>
-                or sign in with passkey
-            </span>
+            <Button onClick={handleSignIn}>
+                {passkeyLoader.running
+                    ? <Loader color="white">Waiting...</Loader>
+                    : (
+                        <>
+                            <Icon name="user" />Sign in with passkey
+                        </>
+                    )}
+            </Button>
             {passkeyResult.value && (
                 <form
                     ref={(ref) => {

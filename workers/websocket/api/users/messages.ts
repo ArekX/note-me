@@ -14,6 +14,8 @@ import {
     PublicKeyCredentialCreationOptionsJSON,
     RegistrationResponseJSON,
 } from "$backend/deps.ts";
+import { UserPasskeyRecord } from "$backend/repository/passkey-repository.ts";
+import { RegistrationResult } from "$backend/passkeys.ts";
 
 type UserMessage<Type, Data = unknown> = Message<
     "users",
@@ -180,7 +182,37 @@ export type VerifyPasskeyRegistrationMessage = UserMessage<
 
 export type VerifyPasskeyRegistrationResponse = UserMessage<
     "verifyPasskeyRegistrationResponse",
-    { verified: boolean }
+    RegistrationResult
+>;
+
+export type GetOwnPasskeysMessage = UserMessage<
+    "getOwnPasskeys",
+    { page: number }
+>;
+
+export type GetOwnPasskeysResponse = UserMessage<
+    "getOwnPasskeysResponse",
+    { records: Paged<UserPasskeyRecord> }
+>;
+
+export type DeleteOwnPasskeyMessage = UserMessage<
+    "deleteOwnPasskey",
+    { id: number }
+>;
+
+export type DeleteOwnPasskeyResponse = UserMessage<
+    "deleteOwnPasskeyResponse",
+    { id: number }
+>;
+
+export type UpdateOwnPasskeyMessage = UserMessage<
+    "updateOwnPasskey",
+    { id: number; name: string }
+>;
+
+export type UpdateOwnPasskeyResponse = UserMessage<
+    "updateOwnPasskeyResponse",
+    { id: number; name: string }
 >;
 
 export type UserFrontendResponse =
@@ -201,7 +233,10 @@ export type UserFrontendResponse =
     | ExportOwnDataFailed
     | CancelExportOwnDataResponse
     | GetPasskeyRegistrationResponse
-    | VerifyPasskeyRegistrationResponse;
+    | VerifyPasskeyRegistrationResponse
+    | GetOwnPasskeysResponse
+    | DeleteOwnPasskeyResponse
+    | UpdateOwnPasskeyResponse;
 
 export type UserFrontendMessage =
     | CreateUserMessage
@@ -217,7 +252,10 @@ export type UserFrontendMessage =
     | ExportOwnDataMessage
     | CancelExportOwnDataMessage
     | GetPasskeyRegistrationMessage
-    | VerifyPasskeyRegistrationMessage;
+    | VerifyPasskeyRegistrationMessage
+    | GetOwnPasskeysMessage
+    | DeleteOwnPasskeyMessage
+    | UpdateOwnPasskeyMessage;
 
 export type LogoutUserMessage = UserMessage<
     "logoutUser",

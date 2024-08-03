@@ -8,6 +8,7 @@ export { insertTextIntoField } from "npm:text-field-edit@4.1.1";
 export { diff } from "jsr:@opentf/obj-diff";
 export { decodeBase64, encodeBase64 } from "$std/encoding/base64.ts";
 export {
+    browserSupportsWebAuthn,
     startAuthentication,
     startRegistration,
 } from "npm:@simplewebauthn/browser@10.0.0";

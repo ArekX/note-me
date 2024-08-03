@@ -33,7 +33,7 @@ jobs:
 
             - uses: denoland/setup-deno@v1
               with:
-                deno-version: v1.45.2
+                deno-version: v1.45.5
 
             - name: Cache Deno dependencies 
               uses: actions/cache@v3

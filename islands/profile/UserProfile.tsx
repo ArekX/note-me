@@ -63,6 +63,7 @@ export default function UserProfile() {
 
     return (
         <div class="text-black">
+            <h1 class="text-xl py-4">My Profile</h1>
             <form onSubmit={handleSubmit}>
                 <Input
                     label="Name"
