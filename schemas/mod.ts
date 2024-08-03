@@ -15,9 +15,9 @@ export const requireValidSchema = async <
     }
 };
 
-export const validateSchema = async <V>(
-    schema: zod.ZodTypeAny,
-    object: V,
+export const validateSchema = async <V extends zod.ZodTypeAny>(
+    schema: V,
+    object: zod.infer<V>,
 ) => {
     try {
         await schema.parseAsync(object);

@@ -25,6 +25,7 @@ import * as $app_profile_data from "./routes/app/profile/data.tsx";
 import * as $app_profile_download_export_identifier_ from "./routes/app/profile/download-export-[identifier].tsx";
 import * as $app_profile_files from "./routes/app/profile/files.tsx";
 import * as $app_profile_index from "./routes/app/profile/index.tsx";
+import * as $app_reset_password from "./routes/app/reset-password.tsx";
 import * as $app_settings_layout from "./routes/app/settings/_layout.tsx";
 import * as $app_settings_download_backup from "./routes/app/settings/download-backup.tsx";
 import * as $app_settings_files from "./routes/app/settings/files.tsx";
@@ -114,6 +115,7 @@ import * as $notifications_notification_message_text from "./islands/notificatio
 import * as $notifications_views_NotificationSharedView from "./islands/notifications/views/NotificationSharedView.tsx";
 import * as $notifications_views_ReminderView from "./islands/notifications/views/ReminderView.tsx";
 import * as $periodic_tasks_PeriodicTaskList from "./islands/periodic-tasks/PeriodicTaskList.tsx";
+import * as $profile_ResetUserPassword from "./islands/profile/ResetUserPassword.tsx";
 import * as $profile_UserPasskeys from "./islands/profile/UserPasskeys.tsx";
 import * as $profile_UserProfile from "./islands/profile/UserProfile.tsx";
 import * as $settings_BackupManagement from "./islands/settings/BackupManagement.tsx";
@@ -177,6 +179,7 @@ const manifest = {
             $app_profile_download_export_identifier_,
         "./routes/app/profile/files.tsx": $app_profile_files,
         "./routes/app/profile/index.tsx": $app_profile_index,
+        "./routes/app/reset-password.tsx": $app_reset_password,
         "./routes/app/settings/_layout.tsx": $app_settings_layout,
         "./routes/app/settings/download-backup.tsx":
             $app_settings_download_backup,
@@ -298,6 +301,7 @@ const manifest = {
             $notifications_views_ReminderView,
         "./islands/periodic-tasks/PeriodicTaskList.tsx":
             $periodic_tasks_PeriodicTaskList,
+        "./islands/profile/ResetUserPassword.tsx": $profile_ResetUserPassword,
         "./islands/profile/UserPasskeys.tsx": $profile_UserPasskeys,
         "./islands/profile/UserProfile.tsx": $profile_UserProfile,
         "./islands/settings/BackupManagement.tsx": $settings_BackupManagement,

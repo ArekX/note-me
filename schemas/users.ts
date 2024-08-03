@@ -10,38 +10,46 @@ const userSchema = zod.object({
     timezone: zod.enum(supportedTimezones as [string, ...string[]]),
 });
 
-export const userProfileSchema = zod.object({
-    name: userSchema.shape.name,
-    timezone: userSchema.shape.timezone,
-    old_password: zod.string().min(1).optional(),
-    new_password: userSchema.shape.password.optional(),
-    confirm_password: userSchema.shape.password.optional(),
-}).strict().refine(
-    (data) => {
-        const {
-            old_password = "",
-            new_password = "",
-            confirm_password = "",
-        } = data;
+const addPasswordRefinement = <V extends zod.AnyZodObject>(schema: V) => {
+    schema.refine(
+        (data) => {
+            const {
+                old_password = "",
+                new_password = "",
+                confirm_password = "",
+            } = data;
 
-        if (!old_password) {
-            return true;
-        }
+            if (!old_password) {
+                return true;
+            }
 
-        if (
-            (new_password.length < 8) ||
-            (confirm_password.length < 8)
-        ) {
-            return false;
-        }
+            if (
+                (new_password.length < 8) ||
+                (confirm_password.length < 8)
+            ) {
+                return false;
+            }
 
-        return new_password === confirm_password;
-    },
-    {
-        message:
-            "New password and confirm password must match and must be at least 8 characters.",
-        path: ["confirm_password", "new_password"],
-    },
+            return new_password === confirm_password;
+        },
+        {
+            message:
+                "New password and confirm password must match and must be at least 8 characters.",
+            path: ["confirm_password", "new_password"],
+        },
+    );
+
+    return schema;
+};
+
+export const userProfileSchema = addPasswordRefinement(
+    zod.object({
+        name: userSchema.shape.name,
+        timezone: userSchema.shape.timezone,
+        old_password: zod.string().min(1).optional(),
+        new_password: userSchema.shape.password.optional(),
+        confirm_password: userSchema.shape.password.optional(),
+    }).strict(),
 );
 
 export type EditUserProfile = zod.infer<typeof userProfileSchema>;
@@ -64,3 +72,13 @@ export const updateUserSchema = zod.object({
 }).strict();
 
 export type UpdateUserRequest = zod.infer<typeof updateUserSchema>;
+
+export const changeUserPasswordSchema = addPasswordRefinement(
+    zod.object({
+        old_password: userProfileSchema.shape.old_password,
+        new_password: userSchema.shape.password,
+        confirm_new_password: userSchema.shape.password,
+    }).strict(),
+);
+
+export type ResetPasswordRequest = zod.infer<typeof changeUserPasswordSchema>;

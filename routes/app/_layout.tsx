@@ -19,12 +19,16 @@ export default async function Layout(
     const socketHost = Deno.env.get("SOCKET_HOSTNAME") ?? "ws://localhost:8080";
     const initialNotifications = await getUserNotifications(id!);
 
+    const isSidebarAllowed = ctx.route !== "/app/reset-password";
+
     return (
         <div id="clientNav" className="flex h-screen" f-client-nav>
-            <Sidebar
-                initialNotifications={initialNotifications}
-                showSettings={canAccessSettings(role)}
-            />
+            {isSidebarAllowed && (
+                <Sidebar
+                    initialNotifications={initialNotifications}
+                    showSettings={canAccessSettings(role)}
+                />
+            )}
             <div className="w-4/5 bg-gray-900 overflow-auto">
                 <IslandInitializer
                     socketHost={socketHost}

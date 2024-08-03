@@ -1,15 +1,15 @@
 import { ValidationState } from "$frontend/hooks/use-validation.ts";
 
-interface ErrorDisplayProps<T> {
+interface ErrorDisplayProps {
     path: string;
     state: ValidationState;
 }
 
-export default function ErrorDisplay<T>(
+export default function ErrorDisplay(
     {
         path,
         state,
-    }: ErrorDisplayProps<T>,
+    }: ErrorDisplayProps,
 ) {
     return !state.valid.value
         ? (

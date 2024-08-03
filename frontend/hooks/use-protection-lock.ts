@@ -4,7 +4,7 @@ import { restore, store } from "$frontend/session-storage.ts";
 import { IS_BROWSER } from "$fresh/runtime.ts";
 import { addMessage } from "$frontend/toast-message.ts";
 
-const ADD_LOCK_TIMEOUT = 1000 * 10; // * 5;
+const ADD_LOCK_TIMEOUT = 1000 * 60 * 5;
 
 const userPassword = signal<string | null>(null);
 const lockAt = signal<number | null>(null);

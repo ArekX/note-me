@@ -20,7 +20,14 @@ export interface UserOnboardingState {
 export type UserRecord =
     & Pick<
         UserTable,
-        "name" | "username" | "password" | "timezone" | "role"
+        | "name"
+        | "username"
+        | "password"
+        | "timezone"
+        | "role"
+        | "is_password_reset_required"
+        | "created_at"
+        | "updated_at"
     >
     & UserId;
 
@@ -63,6 +70,9 @@ export const getUserByLogin = async (
             "timezone",
             "role",
             "onboarding_state",
+            "is_password_reset_required",
+            "created_at",
+            "updated_at",
         ])
         .where("username", "=", username)
         .where("is_deleted", "=", false)
@@ -104,6 +114,9 @@ export const getUserById = async (
             "timezone",
             "role",
             "onboarding_state",
+            "is_password_reset_required",
+            "created_at",
+            "updated_at",
         ])
         .where("id", "=", id)
         .where("is_deleted", "=", false)
@@ -127,15 +140,17 @@ export type CreateUserData = Pick<
 export const createUserRecord = async (
     user: CreateUserData,
 ): Promise<UserId> => {
+    const now = getCurrentUnixTimestamp();
     const userRecord = {
         name: user.name,
         username: user.username,
         role: user.role,
         timezone: user.timezone,
+        is_password_reset_required: true,
         password: bcrypt.hashSync(user.password),
         encryption_key: await generateNoteEncryptionKey(user.password),
-        created_at: getCurrentUnixTimestamp(),
-        updated_at: getCurrentUnixTimestamp(),
+        created_at: now,
+        updated_at: now,
     };
     const result = await db.insertInto("user")
         .values(userRecord)
@@ -172,6 +187,7 @@ export const updateUserRecord = async (
             | "updated_at"
             | "encryption_key"
             | "is_deleted"
+            | "is_password_reset_required"
         >
     > = {
         name: user.name,
@@ -186,6 +202,7 @@ export const updateUserRecord = async (
         userRecord.encryption_key = await generateNoteEncryptionKey(
             user.new_password,
         );
+        userRecord.is_password_reset_required = true;
     }
 
     const result = await db.updateTable("user")
@@ -276,7 +293,7 @@ export interface UserProfileData extends Pick<UserTable, "name" | "timezone"> {
 
 export const updateUserProfile = async (
     profile_user_id: number,
-    data: UserProfileData,
+    data: Partial<UserProfileData>,
 ): Promise<boolean> => {
     const toUpdate: Partial<
         Pick<
@@ -286,12 +303,19 @@ export const updateUserProfile = async (
             | "updated_at"
             | "password"
             | "encryption_key"
+            | "is_password_reset_required"
         >
     > = {
-        name: data.name,
-        timezone: data.timezone,
         updated_at: getCurrentUnixTimestamp(),
     };
+
+    if (data.name) {
+        toUpdate.name = data.name;
+    }
+
+    if (data.timezone) {
+        toUpdate.timezone = data.timezone;
+    }
 
     if (data.old_password && data.new_password) {
         if (!await validateUserPassword(profile_user_id, data.old_password)) {
@@ -308,6 +332,8 @@ export const updateUserProfile = async (
             data.new_password,
             noteEnvryptionKey,
         );
+
+        toUpdate.is_password_reset_required = false;
     }
 
     const result = await db.updateTable("user")

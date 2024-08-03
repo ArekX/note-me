@@ -27,6 +27,10 @@ export async function up(db: Kysely<unknown>): Promise<void> {
             "text",
             (col) => col.notNull(),
         )
+        .addColumn(
+            "is_password_reset_required",
+            "boolean",
+        )
         .execute();
 
     await db.schema.createTable("note")

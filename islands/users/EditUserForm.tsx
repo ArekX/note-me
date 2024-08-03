@@ -23,7 +23,8 @@ import { useValidation } from "$frontend/hooks/use-validation.ts";
 import ErrorDisplay from "$components/ErrorDisplay.tsx";
 import { useUser } from "$frontend/hooks/use-user.ts";
 
-export interface EditableUser extends Omit<UserRecord, "id" | "password"> {
+export interface EditableUser
+    extends Omit<UserRecord, "id" | "password" | "created_at" | "updated_at"> {
     id: number | null;
     new_password?: string | null;
 }
@@ -245,14 +246,16 @@ export default function EditUserForm(
                                 state={userValidation}
                                 path="password"
                             />
-                            <div class="py-2">
-                                <strong>Important:</strong>{" "}
-                                If the user has any password protected
-                                notes,<br />
-                                they will no longer be accessible if you
-                                change<br />
-                                the password.
-                            </div>
+                            {user.value.id !== null && (
+                                <div class="py-2">
+                                    <strong>Important:</strong>{" "}
+                                    If the user has any password protected
+                                    notes,<br />
+                                    they will no longer be accessible if you
+                                    change<br />
+                                    the password.
+                                </div>
+                            )}
                         </div>
                     )}
                 <Button type="submit" color="success">Save</Button>{" "}

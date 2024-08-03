@@ -6,6 +6,7 @@ interface ButtonProps {
     children?: ComponentChildren;
     size?: ButtonSize;
     title?: string;
+    name?: string;
     color?: ButtonColors;
     type?: "button" | "submit";
     addClass?: string;
@@ -37,6 +38,7 @@ export default function Button(
         disabled = false,
         setAsDefault,
         children,
+        name,
         title = "",
         size = "md",
         color = "primary",
@@ -52,6 +54,7 @@ export default function Button(
             title={title}
             default={setAsDefault}
             disabled={disabled}
+            name={name}
             tabIndex={tabIndex}
             onClick={(e) => !disabled && onClick?.(e)}
             class={`${sizeTypes[size]} ${

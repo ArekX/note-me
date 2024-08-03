@@ -13,6 +13,7 @@ export interface UserTable {
     created_at: number;
     updated_at: number;
     is_deleted?: boolean;
+    is_password_reset_required?: boolean;
 }
 
 export interface NoteTable {

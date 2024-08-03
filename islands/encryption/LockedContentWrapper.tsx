@@ -92,9 +92,8 @@ export default function LockedContentWrapper<T>({
                 results.push(record);
             }
         } catch (e) {
-            failReason.value = typeof e === "string"
-                ? e
-                : (e.message ?? "Unknown error");
+            failReason.value = typeof e === "string" ? e : (e.message ??
+                "Unknown error or data could not be decrypted.");
             return;
         }
 
@@ -160,15 +159,18 @@ export default function LockedContentWrapper<T>({
                                 </p>
 
                                 <p class="text-lg my-2">
-                                    Lock reason: {failReason.value}
+                                    Could not unlock due to: {failReason.value}
                                 </p>
 
-                                <Button
-                                    color="success"
-                                    onClick={() => unlockRecords(inputRecords)}
-                                >
-                                    Unlock
-                                </Button>
+                                {protectionLock.isLocked() && (
+                                    <Button
+                                        color="success"
+                                        onClick={() =>
+                                            unlockRecords(inputRecords)}
+                                    >
+                                        Unlock
+                                    </Button>
+                                )}
                             </div>
                         )}
                     </div>

@@ -100,7 +100,9 @@ export default function NoteWindow({
                 is_encrypted: false,
             };
         } else {
-            loadInputData();
+            if (type !== "delete") {
+                loadInputData();
+            }
         }
     }, [existingNoteText, noteId]);
 
