@@ -16,18 +16,21 @@ export default function ToastMessages() {
                 <div
                     class={`${
                         typeColorMap[message.type]
-                    } p-5 pr-12 text-white shadow-inner rounded-xl mt-5 relative`}
+                    } p-5 flex items-center text-white shadow-inner rounded-xl mt-5`}
                 >
-                    {message.text}
+                    <div class="flex-grow">
+                        {message.text}
+                    </div>
 
-                    <Button
-                        color="danger"
-                        size="xs"
-                        onClick={() => removeMessage(message)}
-                        addClass="absolute top-3 right-3"
-                    >
-                        <Icon name="minus-circle" size="lg" />
-                    </Button>
+                    <div class="pl-2">
+                        <Button
+                            color="danger"
+                            size="xs"
+                            onClick={() => removeMessage(message)}
+                        >
+                            <Icon name="minus-circle" size="lg" />
+                        </Button>
+                    </div>
                 </div>
             ))}
         </div>

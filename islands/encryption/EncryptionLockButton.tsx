@@ -1,17 +1,27 @@
 import Icon from "$components/Icon.tsx";
 import EncryptionLockWindow from "$islands/encryption/EncryptionLockWindow.tsx";
 import { useProtectionLock } from "../../frontend/hooks/use-protection-lock.ts";
+import { addMessage } from "$frontend/toast-message.ts";
 
 export default function EncryptionLockButton() {
     const lock = useProtectionLock();
 
     const handleUnlock = () => {
         if (lock.isLocked()) {
-            lock.requestUnlock();
+            lock.requestUnlock().then(() => {
+                addMessage({
+                    type: "success",
+                    text: "Protected notes are now unlocked.",
+                });
+            });
             return;
         }
 
         lock.lock();
+        addMessage({
+            type: "info",
+            text: "Protected notes are now locked.",
+        });
     };
 
     return (

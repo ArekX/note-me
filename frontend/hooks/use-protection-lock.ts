@@ -2,8 +2,9 @@ import { signal } from "@preact/signals";
 import { decodeBase64, encodeBase64 } from "$frontend/deps.ts";
 import { restore, store } from "$frontend/session-storage.ts";
 import { IS_BROWSER } from "$fresh/runtime.ts";
+import { addMessage } from "$frontend/toast-message.ts";
 
-const ADD_LOCK_TIMEOUT = 1000 * 60 * 5;
+const ADD_LOCK_TIMEOUT = 1000 * 10; // * 5;
 
 const userPassword = signal<string | null>(null);
 const lockAt = signal<number | null>(null);
@@ -105,6 +106,11 @@ export const initializeProtectionLock = () => {
             lockAt.value = null;
             startAt.value = null;
             storeState();
+
+            addMessage({
+                type: "info",
+                text: "Protected notes have been locked due to inactivity.",
+            });
         }
     }, 1000);
 

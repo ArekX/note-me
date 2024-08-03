@@ -245,10 +245,12 @@ export default function EditUserForm(
                                 state={userValidation}
                                 path="password"
                             />
-                            <div>
-                                <strong>Important:</strong>
-                                If the user has any password protected notes,
-                                they will no longer be accessible if you change
+                            <div class="py-2">
+                                <strong>Important:</strong>{" "}
+                                If the user has any password protected
+                                notes,<br />
+                                they will no longer be accessible if you
+                                change<br />
                                 the password.
                             </div>
                         </div>
