@@ -3,7 +3,6 @@ import { logger } from "$backend/logger.ts";
 import { PeriodicTask } from "../periodic-task-service.ts";
 import { startOfNextDay } from "$workers/periodic-task/next-at.ts";
 
-// TODO: Test this
 export const removeExpiredShareLinks: PeriodicTask = {
     name: "remove-expired-share-links",
     getNextAt: startOfNextDay,

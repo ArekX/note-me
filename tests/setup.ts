@@ -46,7 +46,6 @@ const runBeforeTest = async () => {
     setupTestDatabase();
     setupTestMigrator();
     await migrator.migrateUp();
-    // TODO: seed data?
 };
 
 const runAfterTest = async () => {
