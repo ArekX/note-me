@@ -1,5 +1,4 @@
-import { sql } from "$lib/kysely-sqlite-dialect/deps.ts";
-import { Kysely } from "../lib/migrator/deps.ts";
+import { Kysely } from "$lib/migrator/deps.ts";
 
 export async function up(db: Kysely<unknown>): Promise<void> {
     await db.schema.createTable("user")
@@ -273,25 +272,15 @@ export async function up(db: Kysely<unknown>): Promise<void> {
         .addColumn("last_fail_run_at", "int8")
         .execute();
 
-    await db.schema.createTable("settings")
+    await db.schema.createTable("backup_target")
         .ifNotExists()
         .addColumn("id", "integer", (col) => col.autoIncrement().primaryKey())
-        .addColumn(
-            "is_auto_backup_enabled",
-            "boolean",
-            (col) => col.notNull().defaultTo(false),
-        )
-        .addColumn(
-            "max_backup_days",
-            "int8",
-            (col) => col.notNull().defaultTo(5),
-        )
+        .addColumn("name", "varchar(255)", (col) => col.notNull())
+        .addColumn("type", "varchar(255)", (col) => col.notNull())
+        .addColumn("settings", "text", (col) => col.notNull())
+        .addColumn("created_at", "int8", (col) => col.notNull())
+        .addColumn("updated_at", "int8", (col) => col.notNull())
         .execute();
-
-    await sql`INSERT INTO settings (is_auto_backup_enabled, max_backup_days) VALUES (0, 5)`
-        .execute(
-            db,
-        );
 
     await db.schema.createTable("user_passkey")
         .ifNotExists()
@@ -313,6 +302,7 @@ export async function up(db: Kysely<unknown>): Promise<void> {
         .execute();
 
     await db.schema.createIndex("user_passkey_user_index")
+        .ifNotExists()
         .on("user_passkey")
         .columns(["user_id", "webauthn_user_identifier"])
         .unique()
@@ -335,5 +325,5 @@ export async function down(db: Kysely<unknown>): Promise<void> {
     await db.schema.dropTable("periodic_task_schedule").execute();
     await db.schema.dropTable("user_passkey").execute();
     await db.schema.dropTable("user").execute();
-    await db.schema.dropTable("settings").execute();
+    await db.schema.dropTable("backup_target").execute();
 }

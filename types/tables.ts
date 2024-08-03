@@ -155,6 +155,15 @@ export interface UserPasskeyTable {
     last_used_at: number;
 }
 
+export interface BackupTargetTable {
+    id: Generated<number>;
+    name: string;
+    type: string;
+    settings: string;
+    created_at: number;
+    updated_at: number;
+}
+
 export interface Tables {
     note: NoteTable;
     note_reminder: NoteReminderTable;
@@ -171,5 +180,5 @@ export interface Tables {
     user: UserTable;
     user_passkey: UserPasskeyTable;
     periodic_task_schedule: PeriodicTaskScheduleTable;
-    settings: SettingsTable;
+    backup_target: BackupTargetTable;
 }
