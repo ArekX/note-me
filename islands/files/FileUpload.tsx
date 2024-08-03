@@ -1,15 +1,12 @@
 import Button from "$components/Button.tsx";
 import Icon from "$components/Icon.tsx";
-import { FileUploaderHook } from "$islands/files/hooks/use-file-uploader.ts";
 
 interface FileUploadProps {
-    fileUploader: FileUploaderHook;
-    onFileUploadDone?: () => void;
+    onFilesSelected?: (files: File[]) => Promise<void>;
 }
 
 export default function FileUpload({
-    fileUploader,
-    onFileUploadDone,
+    onFilesSelected,
 }: FileUploadProps) {
     const handleFileChange = async (event: Event) => {
         event.preventDefault();
@@ -23,8 +20,7 @@ export default function FileUpload({
         const files = Array.from(target.files);
 
         if (files.length > 0) {
-            await fileUploader.uploadFiles(files);
-            onFileUploadDone?.();
+            await onFilesSelected?.(files);
         }
 
         target.value = "";

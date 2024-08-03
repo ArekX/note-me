@@ -181,6 +181,11 @@ export default function FilePicker({
         await loadFiles();
     };
 
+    const handleFilesUpload = async (files: File[]) => {
+        await fileUploader.uploadFiles(files);
+        await loadFiles();
+    };
+
     useEffect(() => {
         loadFiles();
     }, []);
@@ -203,8 +208,7 @@ export default function FilePicker({
                 </div>
                 <div>
                     <FileUpload
-                        onFileUploadDone={() => loadFiles()}
-                        fileUploader={fileUploader}
+                        onFilesSelected={handleFilesUpload}
                     />
                 </div>
                 <UploadProgressDialog uploader={fileUploader} />

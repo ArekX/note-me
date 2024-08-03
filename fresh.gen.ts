@@ -55,6 +55,7 @@ import * as $dashboard_RecentlyOpenedNotes from "./islands/dashboard/RecentlyOpe
 import * as $dashboard_RecentlySharedWithMe from "./islands/dashboard/RecentlySharedWithMe.tsx";
 import * as $data_DataPage from "./islands/data/DataPage.tsx";
 import * as $data_ExportMyData from "./islands/data/ExportMyData.tsx";
+import * as $data_ImportNotes from "./islands/data/ImportNotes.tsx";
 import * as $encryption_EncryptionLockButton from "./islands/encryption/EncryptionLockButton.tsx";
 import * as $encryption_EncryptionLockWindow from "./islands/encryption/EncryptionLockWindow.tsx";
 import * as $encryption_LockedContentWrapper from "./islands/encryption/LockedContentWrapper.tsx";
@@ -215,6 +216,7 @@ const manifest = {
             $dashboard_RecentlySharedWithMe,
         "./islands/data/DataPage.tsx": $data_DataPage,
         "./islands/data/ExportMyData.tsx": $data_ExportMyData,
+        "./islands/data/ImportNotes.tsx": $data_ImportNotes,
         "./islands/encryption/EncryptionLockButton.tsx":
             $encryption_EncryptionLockButton,
         "./islands/encryption/EncryptionLockWindow.tsx":
