@@ -121,7 +121,11 @@ export default function UserProfile() {
                     path="confirm_password"
                 />
                 <br />
-                <Button type="submit" color="primary">Submit</Button>
+                <div class="text-right">
+                    <Button type="submit" color="primary">
+                        Update profile
+                    </Button>
+                </div>
             </form>
         </div>
     );

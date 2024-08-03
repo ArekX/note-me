@@ -177,10 +177,11 @@ export default function UserList() {
                                     <Button
                                         color="danger"
                                         title="Delete"
+                                        addClass="ml-2"
                                         onClick={() =>
                                             userToDelete.select(value)}
                                     >
-                                        <Icon name="minus" />
+                                        <Icon name="minus-circle" />
                                     </Button>
                                 )}
                             </div>
