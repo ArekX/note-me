@@ -1,19 +1,26 @@
-import {
-    LocalBackupTargetHandler,
-    localHandler,
-} from "$lib/backup-handler/targets/local.ts";
-import {
-    S3BackupTargetHandler,
-    s3Handler,
-} from "$lib/backup-handler/targets/s3.ts";
+import { localBackupTarget } from "$lib/backup-handler/targets/local.ts";
+import { s3BackupTarget } from "$lib/backup-handler/targets/s3.ts";
 
-export type BackupHandler = LocalBackupTargetHandler | S3BackupTargetHandler;
+export type BackupTarget =
+    | typeof localBackupTarget
+    | typeof s3BackupTarget;
 
-export type HandlerMap = {
-    [K in BackupHandler["name"]]: Extract<BackupHandler, { name: K }>;
+export type TargetMap = {
+    [K in BackupTarget["type"]]: Extract<
+        BackupTarget,
+        { type: K }
+    >;
 };
 
-export const handlers: HandlerMap = {
-    local: localHandler,
-    s3: s3Handler,
+export type SettingsMap = {
+    [K in TargetType]: Parameters<TargetMap[K]["create"]>[0];
+};
+
+export type TargetType = keyof TargetMap;
+
+export type TargetSettings = Parameters<BackupTarget["create"]>[0];
+
+export const handlers: TargetMap = {
+    local: localBackupTarget,
+    s3: s3BackupTarget,
 };

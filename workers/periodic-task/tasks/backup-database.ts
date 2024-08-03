@@ -23,7 +23,6 @@ export const backupDatabase: PeriodicTask = {
         }
 
         for (const target of targets) {
-            
         }
 
         // await removeOldBackups("automatic", maxBackupDays);

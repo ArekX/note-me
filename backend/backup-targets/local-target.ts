@@ -1,1 +1,1 @@
-export const localTarget = {}
+export const localTarget = {};
