@@ -3,7 +3,6 @@ import {
     CanManageBackups,
     CanManageFiles,
     CanManagePeriodicTasks,
-    CanManageSettings,
     CanManageTags,
     CanManageUsers,
 } from "./permissions.ts";
@@ -20,7 +19,6 @@ export const roleDefinitions = {
         name: "Admin",
         permissions: [
             ...Object.values(CanManageUsers),
-            ...Object.values(CanManageSettings),
             ...Object.values(CanManageTags),
             ...Object.values(CanManageFiles),
             ...Object.values(CanManagePeriodicTasks),
@@ -37,7 +35,7 @@ export const roleDefinitions = {
 
 const settingsPermissions: AppPermissions[] = [
     CanManageUsers.Update,
-    CanManageSettings.Update,
+    CanManageBackups.Update,
     CanManageTags.Read,
     CanManageFiles.AllFiles,
     CanManagePeriodicTasks.View,

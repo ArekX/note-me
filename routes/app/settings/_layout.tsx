@@ -2,9 +2,9 @@ import { PageProps } from "$fresh/server.ts";
 import TabPanel, { TabLink } from "$components/TabPanel.tsx";
 import { AppState } from "$types";
 import {
+    CanManageBackups,
     CanManageFiles,
     CanManagePeriodicTasks,
-    CanManageSettings,
 } from "$backend/rbac/permissions.ts";
 import { hasPermission } from "$backend/rbac/authorizer.ts";
 import { CanManageUsers } from "$backend/rbac/permissions.ts";
@@ -14,7 +14,7 @@ export default function Layout(
     { Component, route, state }: PageProps<never, AppState>,
 ) {
     const settings = [
-        hasPermission(CanManageSettings.Update, state) && {
+        hasPermission(CanManageBackups.Update, state) && {
             name: "Backups",
             link: "/app/settings",
         },

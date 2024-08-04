@@ -7,10 +7,6 @@ export enum CanManageTags {
     Update = "canUpdateTags",
 }
 
-export enum CanManageSettings {
-    Update = "canUpdateGeneralSettings",
-}
-
 export enum CanManageBackups {
     Update = "canManageBackups",
 }
@@ -26,7 +22,6 @@ export enum CanManagePeriodicTasks {
 export type AppPermissions =
     | CanManageUsers
     | CanManageTags
-    | CanManageSettings
     | CanManageFiles
     | CanManagePeriodicTasks
     | CanManageBackups;
