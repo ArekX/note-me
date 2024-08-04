@@ -87,4 +87,4 @@ for await (const entry of Deno.readDir(".")) {
 
 await Promise.all(topPromises);
 
-console.log("All checks passed!\n\n");
+console.log("All checks passed!\n");
