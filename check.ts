@@ -35,14 +35,14 @@ for await (const entry of Deno.readDir(".")) {
             const command = new Deno.Command("sh", {
                 args: ["-c", `deno check ${entry.name}${variation}`],
                 stdin: "inherit",
-                stdout: "inherit",
+                stdout: "piped",
                 stderr: "piped",
             });
 
             const removeLine =
                 `Module not found "${checkUrl}/${entry.name}${variation}"`;
 
-            const { stderr } = await command.output();
+            const { stdout, stderr } = await command.output();
             if (stderr.byteLength > 0) {
                 const text = new TextDecoder().decode(stderr)
                     .replace(/\r/g, "")
@@ -67,6 +67,10 @@ for await (const entry of Deno.readDir(".")) {
                     console.log("Error found, stopping further processing.");
                     Deno.exit(1);
                 }
+            }
+
+            if (stdout.byteLength > 0) {
+                console.log(new TextDecoder().decode(stdout));
             }
         })());
     }
