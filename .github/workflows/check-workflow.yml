@@ -44,5 +44,6 @@ jobs:
             - name: Run checks and tests
               run: |
                 set -e
+                deno task cache-ci
                 deno task check
                 deno task test
