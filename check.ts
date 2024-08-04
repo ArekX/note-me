@@ -21,6 +21,8 @@ const variations: string[] = [
 
 const checkUrl = dirname(import.meta.url);
 
+const topPromises = [];
+
 for await (const entry of Deno.readDir(".")) {
     if (!entry.isDirectory || ignore.includes(entry.name)) {
         continue;
@@ -28,54 +30,61 @@ for await (const entry of Deno.readDir(".")) {
 
     console.log(`deno check ${entry.name}/**/*/{ts, tsx}...`);
 
-    const promises = [];
+    topPromises.push((async () => {
+        const promises = [];
 
-    for (const variation of variations) {
-        promises.push((async () => {
-            const command = new Deno.Command("sh", {
-                args: ["-c", `deno check ${entry.name}${variation}`],
-                stdin: "inherit",
-                stdout: "piped",
-                stderr: "piped",
-            });
+        for (const variation of variations) {
+            promises.push((async () => {
+                const command = new Deno.Command("sh", {
+                    args: ["-c", `deno check ${entry.name}${variation}`],
+                    stdin: "inherit",
+                    stdout: "piped",
+                    stderr: "piped",
+                });
 
-            const removeLine =
-                `Module not found "${checkUrl}/${entry.name}${variation}"`;
+                const removeLine =
+                    `Module not found "${checkUrl}/${entry.name}${variation}"`;
 
-            const { stdout, stderr } = await command.output();
-            if (stderr.byteLength > 0) {
-                const text = new TextDecoder().decode(stderr)
-                    .replace(/\r/g, "")
-                    .split("\n")
-                    .filter((line) => {
-                        if (line.trim().length === 0) {
-                            return false;
-                        }
+                const { stdout, stderr } = await command.output();
 
-                        if (
-                            line.includes(
-                                removeLine,
-                            )
-                        ) {
-                            return false;
-                        }
-                        return true;
-                    });
-
-                if (text.length > 0) {
-                    console.log(text.join("\n"));
-                    console.log("Error found, stopping further processing.");
-                    Deno.exit(1);
+                if (stdout.byteLength > 0) {
+                    console.log(new TextDecoder().decode(stdout));
                 }
-            }
 
-            if (stdout.byteLength > 0) {
-                console.log(new TextDecoder().decode(stdout));
-            }
-        })());
-    }
+                if (stderr.byteLength > 0) {
+                    const text = new TextDecoder().decode(stderr)
+                        .replace(/\r/g, "")
+                        .split("\n")
+                        .filter((line) => {
+                            if (line.trim().length === 0) {
+                                return false;
+                            }
 
-    await Promise.all(promises);
+                            if (
+                                line.includes(
+                                    removeLine,
+                                )
+                            ) {
+                                return false;
+                            }
+                            return true;
+                        });
+
+                    if (text.length > 0) {
+                        console.log(text.join("\n"));
+                        console.log(
+                            "Error found, stopping further processing.",
+                        );
+                        Deno.exit(1);
+                    }
+                }
+            })());
+        }
+
+        await Promise.all(promises);
+    })());
 }
 
-console.log("Done!");
+await Promise.all(topPromises);
+
+console.log("All checks passed!\n\n");
