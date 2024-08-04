@@ -64,6 +64,7 @@ for await (const entry of Deno.readDir(".")) {
 
                 if (text.length > 0) {
                     console.log(text.join("\n"));
+                    console.log("Error found, stopping further processing.");
                     Deno.exit(1);
                 }
             }

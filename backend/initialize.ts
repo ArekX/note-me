@@ -2,6 +2,7 @@ import { migrator } from "$backend/migration-manager.ts";
 import { logger, setLoggerName } from "$backend/logger.ts";
 import { initTempLocation } from "./temp.ts";
 import { createUserRecord } from "$backend/repository/user-repository.ts";
+import { clearAllBackupInProgress } from "$backend/repository/backup-target-repository.ts";
 
 const runMigrations = async () => {
     const isFirstRun = await migrator.isFirstRun();
@@ -34,6 +35,9 @@ export const initializeBackend = async () => {
     if ((Deno.env.get("RUN_MIGRATIONS_ON_STARTUP") ?? "1") == "1") {
         await runMigrations();
     }
+
+    logger.info("Clearing stale locks for backup...");
+    await clearAllBackupInProgress();
 
     logger.info("Backend initialized.");
 };

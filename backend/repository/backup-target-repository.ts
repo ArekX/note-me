@@ -158,3 +158,9 @@ export const updateBackupInProgress = async (
         .where("id", "=", id)
         .execute();
 };
+
+export const clearAllBackupInProgress = async () => {
+    await db.updateTable("backup_target")
+        .set({ is_backup_in_progess: false })
+        .execute();
+};
