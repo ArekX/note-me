@@ -47,8 +47,11 @@ for await (const entry of Deno.readDir(".")) {
 
                 const { stdout, stderr } = await command.output();
 
+                let anyErrorsFound = false;
+
                 if (stdout.byteLength > 0) {
-                    console.log(new TextDecoder().decode(stdout));
+                    const text = new TextDecoder().decode(stdout);
+                    console.log(text);
                 }
 
                 if (stderr.byteLength > 0) {
@@ -71,12 +74,24 @@ for await (const entry of Deno.readDir(".")) {
                         });
 
                     if (text.length > 0) {
+                        console.log({ text });
+                        if (
+                            text.some((line) =>
+                                line.includes("error:") ||
+                                line.includes(`error\x1b[0m:`)
+                            )
+                        ) {
+                            anyErrorsFound = true;
+                        }
                         console.log(text.join("\n"));
-                        console.log(
-                            "Error found, stopping further processing.",
-                        );
-                        Deno.exit(1);
                     }
+                }
+
+                if (anyErrorsFound) {
+                    console.log(
+                        "Error found, stopping further processing.",
+                    );
+                    Deno.exit(1);
                 }
             })());
         }
