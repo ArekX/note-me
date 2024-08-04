@@ -74,6 +74,7 @@ export default function NoteFiles(
         const identifiers = findFileIdentifiers(record.text);
 
         if (identifiers.length === 0) {
+            dataLoader.stop();
             return;
         }
 
@@ -135,30 +136,33 @@ export default function NoteFiles(
                                         </li>
                                     ))}
                                 </ul>
+
+                                <div>
+                                    {isShared.value && hasPrivateFiles() && (
+                                        <p class="pt-4 text-sm">
+                                            This note is shared with other
+                                            users. Files are not automatically
+                                            shared due to privacy concerns as
+                                            they can be in multiple notes.
+                                        </p>
+                                    )}
+
+                                    <div class="mt-2 text-right">
+                                        <Button
+                                            color="success"
+                                            onClick={handleToggleFilesVisibility}
+                                            addClass="mr-2"
+                                        >
+                                            Make all files in this note{" "}
+                                            {hasPrivateFiles()
+                                                ? "public"
+                                                : "private"}
+                                        </Button>
+                                    </div>
+                                </div>
                             </>
                         )
                         : <p>No uploaded files could be found in this note.</p>}
-
-                    <div>
-                        {isShared.value && hasPrivateFiles() && (
-                            <p class="pt-4 text-sm">
-                                This note is shared with other users. Files are
-                                not automatically shared due to privacy concerns
-                                as they can be in multiple notes.
-                            </p>
-                        )}
-
-                        <div class="mt-2 text-right">
-                            <Button
-                                color="success"
-                                onClick={handleToggleFilesVisibility}
-                                addClass="mr-2"
-                            >
-                                Make all files in this note{" "}
-                                {hasPrivateFiles() ? "public" : "private"}
-                            </Button>
-                        </div>
-                    </div>
                 </>
             )}
 
