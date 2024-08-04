@@ -19,6 +19,10 @@ const variations: string[] = [
     "/*.tsx",
 ];
 
+const excludedStdErrStrings = [
+    "\x1b[0m\x1b[32mCheck\x1b[0m",
+];
+
 const checkUrl = dirname(import.meta.url);
 
 const topPromises = [];
@@ -42,12 +46,12 @@ for await (const entry of Deno.readDir(".")) {
                     stderr: "piped",
                 });
 
-                const removeLine =
-                    `Module not found "${checkUrl}/${entry.name}${variation}"`;
+                const removeLines = [
+                    ...excludedStdErrStrings,
+                    `Module not found "${checkUrl}/${entry.name}${variation}"`,
+                ];
 
                 const { stdout, stderr } = await command.output();
-
-                let anyErrorsFound = false;
 
                 if (stdout.byteLength > 0) {
                     const text = new TextDecoder().decode(stdout);
@@ -63,35 +67,18 @@ for await (const entry of Deno.readDir(".")) {
                                 return false;
                             }
 
-                            if (
-                                line.includes(
-                                    removeLine,
-                                )
-                            ) {
-                                return false;
-                            }
-                            return true;
+                            return !removeLines.some((checkLine) =>
+                                line.includes(checkLine)
+                            );
                         });
 
                     if (text.length > 0) {
-                        console.log({ text });
-                        if (
-                            text.some((line) =>
-                                line.includes("error:") ||
-                                line.includes(`error\x1b[0m:`)
-                            )
-                        ) {
-                            anyErrorsFound = true;
-                        }
                         console.log(text.join("\n"));
+                        console.log(
+                            "Error found, stopping further processing.",
+                        );
+                        Deno.exit(1);
                     }
-                }
-
-                if (anyErrorsFound) {
-                    console.log(
-                        "Error found, stopping further processing.",
-                    );
-                    Deno.exit(1);
                 }
             })());
         }
