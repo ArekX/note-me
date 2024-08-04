@@ -344,3 +344,7 @@ select.select-input {
 .note-link-result-view {
     max-height: 200px;
 }
+
+.passkey-sign-in {
+    max-width: 21em;
+}

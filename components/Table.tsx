@@ -1,5 +1,5 @@
 import { ComponentChildren } from "preact";
-import Loader from "$islands/Loader.tsx";
+import Loader, { LoaderProps } from "$islands/Loader.tsx";
 
 type RowCallback<RowType, OutputType> = (
     row: RowType,
@@ -29,6 +29,7 @@ interface TableProps<T extends object> {
     rows: T[];
     noRowsRow?: RowContents;
     isLoading?: boolean;
+    loaderProps?: LoaderProps;
     headerRowProps?: object;
     bodyProps?: object;
     headerProps?: object;
@@ -43,6 +44,7 @@ export default function Table<T extends object>(
         noRowsRow,
         headerRowProps,
         bodyRowProps,
+        loaderProps,
         isLoading = false,
         bodyProps,
         headerProps,
@@ -88,7 +90,7 @@ export default function Table<T extends object>(
                 {isLoading && (
                     <tr>
                         <td colSpan={columns.length} class="text-center p-2">
-                            <Loader />
+                            <Loader {...loaderProps} />
                         </td>
                     </tr>
                 )}

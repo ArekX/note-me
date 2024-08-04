@@ -14,13 +14,14 @@ export default function ErrorDisplay(
     return !state.valid.value
         ? (
             <div class="text-red-600">
-                {state.errors.value.filter((e) => e.path.includes(path)).map((
-                    error,
-                ) => (
-                    <div>
-                        {error.message}
-                    </div>
-                ))}
+                {state.errors.value.filter((e) => e.path.join(".") === path)
+                    .map((
+                        error,
+                    ) => (
+                        <div>
+                            {error.message}
+                        </div>
+                    ))}
             </div>
         )
         : null;

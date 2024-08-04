@@ -1,17 +1,22 @@
 import {
-    BackupTarget,
     handlers,
     SettingsMap,
     TargetSettings,
 } from "$lib/backup-handler/handlers.ts";
 import { TargetType } from "$lib/backup-handler/handlers.ts";
-import { TargetMap } from "$lib/backup-handler/handlers.ts";
+
+export type BackupIdentifier = string;
 
 export interface BackupItem {
-    identifier: string;
+    identifier: BackupIdentifier;
     name: string;
     created_at: number;
     size: number;
+}
+
+export interface BackupInputRecord {
+    identifier: BackupIdentifier;
+    inputLocation: string;
 }
 
 export interface CreateBackupTarget<
@@ -19,16 +24,23 @@ export interface CreateBackupTarget<
     Settings extends object,
 > {
     type: Type;
-    create: (settings: Settings) => BackupTargetHandler<Type>;
+    create: (
+        settings: Settings,
+    ) => BackupTargetHandler<Type>;
+}
+
+export interface BackupStream {
+    identifier: BackupIdentifier;
+    size: number;
+    stream: ReadableStream;
 }
 
 export interface BackupTargetHandler<Name extends string> {
     name: Name;
     setup(): Promise<void>;
-    initialize(): Promise<void>;
-    createBackup(): Promise<BackupItem>;
-    deleteBackup(identifier: BackupItem["identifier"]): Promise<void>;
-    getDownloadLink(identifier: BackupItem["identifier"]): Promise<string>;
+    saveBackup(record: BackupInputRecord): Promise<BackupItem>;
+    deleteBackup(identifier: BackupIdentifier): Promise<void>;
+    getBackupStream(identifier: BackupIdentifier): Promise<BackupStream>;
     listBackups(): Promise<BackupItem[]>;
 }
 

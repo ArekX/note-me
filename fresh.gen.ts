@@ -49,6 +49,12 @@ import * as $PasskeySignIn from "./islands/PasskeySignIn.tsx";
 import * as $TextDiff from "./islands/TextDiff.tsx";
 import * as $ToastMessages from "./islands/ToastMessages.tsx";
 import * as $UserPicker from "./islands/UserPicker.tsx";
+import * as $backups_BackupManagement from "./islands/backups/BackupManagement.tsx";
+import * as $backups_BackupTargetForm from "./islands/backups/BackupTargetForm.tsx";
+import * as $backups_BackupTargetList from "./islands/backups/BackupTargetList.tsx";
+import * as $backups_ManageBackupTargetDialog from "./islands/backups/ManageBackupTargetDialog.tsx";
+import * as $backups_settings_LocalSettings from "./islands/backups/settings/LocalSettings.tsx";
+import * as $backups_settings_S3Settings from "./islands/backups/settings/S3Settings.tsx";
 import * as $dashboard_CurrentReminders from "./islands/dashboard/CurrentReminders.tsx";
 import * as $dashboard_Dashboard from "./islands/dashboard/Dashboard.tsx";
 import * as $dashboard_RecentlyOpenedNotes from "./islands/dashboard/RecentlyOpenedNotes.tsx";
@@ -119,7 +125,6 @@ import * as $periodic_tasks_PeriodicTaskList from "./islands/periodic-tasks/Peri
 import * as $profile_ResetUserPassword from "./islands/profile/ResetUserPassword.tsx";
 import * as $profile_UserPasskeys from "./islands/profile/UserPasskeys.tsx";
 import * as $profile_UserProfile from "./islands/profile/UserProfile.tsx";
-import * as $settings_BackupManagement from "./islands/settings/BackupManagement.tsx";
 import * as $sidebar_ListSwitcher from "./islands/sidebar/ListSwitcher.tsx";
 import * as $sidebar_LogoutButton from "./islands/sidebar/LogoutButton.tsx";
 import * as $sidebar_NoItemMessage from "./islands/sidebar/NoItemMessage.tsx";
@@ -208,6 +213,15 @@ const manifest = {
         "./islands/TextDiff.tsx": $TextDiff,
         "./islands/ToastMessages.tsx": $ToastMessages,
         "./islands/UserPicker.tsx": $UserPicker,
+        "./islands/backups/BackupManagement.tsx": $backups_BackupManagement,
+        "./islands/backups/BackupTargetForm.tsx": $backups_BackupTargetForm,
+        "./islands/backups/BackupTargetList.tsx": $backups_BackupTargetList,
+        "./islands/backups/ManageBackupTargetDialog.tsx":
+            $backups_ManageBackupTargetDialog,
+        "./islands/backups/settings/LocalSettings.tsx":
+            $backups_settings_LocalSettings,
+        "./islands/backups/settings/S3Settings.tsx":
+            $backups_settings_S3Settings,
         "./islands/dashboard/CurrentReminders.tsx": $dashboard_CurrentReminders,
         "./islands/dashboard/Dashboard.tsx": $dashboard_Dashboard,
         "./islands/dashboard/RecentlyOpenedNotes.tsx":
@@ -306,7 +320,6 @@ const manifest = {
         "./islands/profile/ResetUserPassword.tsx": $profile_ResetUserPassword,
         "./islands/profile/UserPasskeys.tsx": $profile_UserPasskeys,
         "./islands/profile/UserProfile.tsx": $profile_UserProfile,
-        "./islands/settings/BackupManagement.tsx": $settings_BackupManagement,
         "./islands/sidebar/ListSwitcher.tsx": $sidebar_ListSwitcher,
         "./islands/sidebar/LogoutButton.tsx": $sidebar_LogoutButton,
         "./islands/sidebar/NoItemMessage.tsx": $sidebar_NoItemMessage,

@@ -15,7 +15,7 @@ export default function Layout(
 ) {
     const settings = [
         hasPermission(CanManageSettings.Update, state) && {
-            name: "General",
+            name: "Backups",
             link: "/app/settings",
         },
         hasPermission(CanManagePeriodicTasks.View, state) && {

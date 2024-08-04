@@ -278,8 +278,14 @@ export async function up(db: Kysely<unknown>): Promise<void> {
         .addColumn("name", "varchar(255)", (col) => col.notNull())
         .addColumn("type", "varchar(255)", (col) => col.notNull())
         .addColumn("settings", "text", (col) => col.notNull())
+        .addColumn("last_backup_at", "int8")
         .addColumn("created_at", "int8", (col) => col.notNull())
         .addColumn("updated_at", "int8", (col) => col.notNull())
+        .addColumn(
+            "is_backup_in_progess",
+            "boolean",
+            (col) => col.notNull().defaultTo(0),
+        )
         .execute();
 
     await db.schema.createTable("user_passkey")

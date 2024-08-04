@@ -160,8 +160,10 @@ export interface BackupTargetTable {
     name: string;
     type: string;
     settings: string;
+    last_backup_at: number | null;
     created_at: number;
     updated_at: number;
+    is_backup_in_progess?: boolean;
 }
 
 export interface Tables {

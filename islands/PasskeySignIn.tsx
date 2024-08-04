@@ -12,6 +12,7 @@ import Icon from "$components/Icon.tsx";
 import { IS_BROWSER } from "$fresh/runtime.ts";
 import { useLoader } from "$frontend/hooks/use-loader.ts";
 import Loader from "$islands/Loader.tsx";
+import ToastMessages from "$islands/ToastMessages.tsx";
 
 interface PasskeySignInProps {
     request_id: string;
@@ -24,12 +25,17 @@ export default function PasskeySignIn({
 }: PasskeySignInProps) {
     const passkeyResult = useSignal<AuthenticationResponseJSON | null>(null);
     const passkeyLoader = useLoader();
+    const passkeyFailReason = useSignal<string | null>(null);
 
     const handleSignIn = passkeyLoader.wrap(async () => {
         try {
+            passkeyFailReason.value = null;
             passkeyResult.value = await startAuthentication(options);
-        } catch {
+        } catch (e) {
             passkeyResult.value = null;
+            passkeyFailReason.value = `Could not sign in with passkey: ${
+                e.message ?? "Unknown error"
+            }`;
         }
     });
 
@@ -38,7 +44,7 @@ export default function PasskeySignIn({
     }
 
     return (
-        <div class="text-center py-2">
+        <div class="text-center py-2 passkey-sign-in">
             <Button onClick={handleSignIn}>
                 {passkeyLoader.running
                     ? <Loader color="white">Waiting...</Loader>
@@ -48,6 +54,11 @@ export default function PasskeySignIn({
                         </>
                     )}
             </Button>
+            {passkeyFailReason.value && (
+                <div class="text-red-600 py-2 text-sm">
+                    {passkeyFailReason.value}
+                </div>
+            )}
             {passkeyResult.value && (
                 <form
                     ref={(ref) => {
@@ -70,6 +81,7 @@ export default function PasskeySignIn({
                     />
                 </form>
             )}
+            <ToastMessages />
         </div>
     );
 }

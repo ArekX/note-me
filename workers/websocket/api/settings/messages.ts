@@ -1,6 +1,10 @@
 import { Message } from "$workers/websocket/types.ts";
 import { PeriodicTaskRecord } from "$backend/repository/periodic-task-repository.ts";
-import { BackupRecord } from "$backend/backups.ts";
+import { BackupIdentifier, BackupItem } from "$lib/backup-handler/mod.ts";
+import {
+    BackupTargetRecord,
+} from "$backend/repository/backup-target-repository.ts";
+import { BackupTargetRequest } from "$schemas/settings.ts";
 
 type SettingsMessage<Type, Data = unknown> = Message<
     "settings",
@@ -17,46 +21,96 @@ export type GetPeriodicTasksResponse = SettingsMessage<
     { tasks: PeriodicTaskRecord[] }
 >;
 
+export type GetBackupTargetsMessage = SettingsMessage<
+    "getBackupTargets"
+>;
+
+export type GetBackupTargetsResponse = SettingsMessage<
+    "getBackupTargetsResponse",
+    { targets: BackupTargetRecord[] }
+>;
+
+export type CreateBackupTargetMessage = SettingsMessage<
+    "createBackupTarget",
+    { target: BackupTargetRequest }
+>;
+
+export type CreateBackupTargetResponse = SettingsMessage<
+    "createBackupTargetResponse",
+    { record: BackupTargetRecord }
+>;
+
+export type UpdateBackupTargetMessage = SettingsMessage<
+    "updateBackupTarget",
+    { target_id: number; data: BackupTargetRequest }
+>;
+
+export type UpdateBackupTargetResponse = SettingsMessage<
+    "updateBackupTargetResponse",
+    { target_id: number; data: BackupTargetRequest }
+>;
+
+export type DeleteBackupTargetMessage = SettingsMessage<
+    "deleteBackupTarget",
+    { target_id: number }
+>;
+
+export type DeleteBackupTargetResponse = SettingsMessage<
+    "deleteBackupTargetResponse",
+    { target_id: number }
+>;
+
 export type GetBackupsMessage = SettingsMessage<
-    "getBackups"
+    "getBackups",
+    { target_id: number }
 >;
 
 export type GetBackupsResponse = SettingsMessage<
     "getBackupsResponse",
-    { backups: BackupRecord[] }
->;
-
-export type DatabaseRestoredMessage = SettingsMessage<
-    "databaseRestored"
+    { backups: BackupItem[] }
 >;
 
 export type CreateBackupNowMessage = SettingsMessage<
-    "createBackupNow"
+    "createBackupNow",
+    { target_id: number }
 >;
 
 export type CreateBackupNowResponse = SettingsMessage<
     "createBackupNowResponse",
-    { backup: BackupRecord }
+    {
+        result: { success: true; target_id: number; backup: BackupItem } | {
+            success: false;
+            message: string;
+        };
+    }
 >;
 
 export type DeleteBackupMessage = SettingsMessage<
     "deleteBackup",
-    { backup: string }
+    { target_id: number; identifier: BackupIdentifier }
 >;
 
 export type DeleteBackupResponse = SettingsMessage<
     "deleteBackupResponse",
-    { deleted_backup: string }
+    { target_id: number; identifier: BackupIdentifier }
 >;
 
 export type SettingsFrontendResponse =
     | GetPeriodicTasksResponse
     | GetBackupsResponse
     | CreateBackupNowResponse
-    | DeleteBackupResponse;
+    | DeleteBackupResponse
+    | GetBackupTargetsResponse
+    | CreateBackupTargetResponse
+    | UpdateBackupTargetResponse
+    | DeleteBackupTargetResponse;
 
 export type SettingsFrontendMessage =
     | GetPeriodicTasksMessage
     | GetBackupsMessage
     | CreateBackupNowMessage
-    | DeleteBackupMessage;
+    | DeleteBackupMessage
+    | GetBackupTargetsMessage
+    | CreateBackupTargetMessage
+    | UpdateBackupTargetMessage
+    | DeleteBackupTargetMessage;

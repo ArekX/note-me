@@ -1,6 +1,7 @@
 import { ComponentChildren } from "preact";
 import Button, { ButtonColors } from "$components/Button.tsx";
 import Dialog from "$islands/Dialog.tsx";
+import Loader from "$islands/Loader.tsx";
 
 interface ConfirmDialogProps {
     visible: boolean;
@@ -33,22 +34,24 @@ export default function ConfirmDialog({
             props={{ "class": "select-none" }}
         >
             <div class="p-2">{prompt}</div>
-            {!isProcessing && (
-                <div class="text-center p-2">
-                    <span class="pr-4">
-                        <Button
-                            color={confirmColor}
-                            setAsDefault={true}
-                            onClick={onConfirm}
-                        >
-                            {confirmText}
+            {isProcessing
+                ? <Loader color="white">Processing...</Loader>
+                : (
+                    <div class="text-center p-2">
+                        <span class="pr-4">
+                            <Button
+                                color={confirmColor}
+                                setAsDefault={true}
+                                onClick={onConfirm}
+                            >
+                                {confirmText}
+                            </Button>
+                        </span>
+                        <Button color={cancelColor} onClick={onCancel}>
+                            {cancelText}
                         </Button>
-                    </span>
-                    <Button color={cancelColor} onClick={onCancel}>
-                        {cancelText}
-                    </Button>
-                </div>
-            )}
+                    </div>
+                )}
         </Dialog>
     );
 }

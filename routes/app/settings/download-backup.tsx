@@ -2,31 +2,41 @@ import { FreshContext } from "$fresh/server.ts";
 import { AppState } from "$types";
 import { requirePemission } from "$backend/rbac/authorizer.ts";
 import { CanManageBackups } from "$backend/rbac/permissions.ts";
-import { getBackupFile } from "$backend/backups.ts";
 import { parseQueryParams } from "$backend/parse-query-params.ts";
 import { requireValidSchema } from "$schemas/mod.ts";
 import { backupNameSchema } from "$schemas/settings.ts";
+import { getBackupTarget } from "$backend/repository/backup-target-repository.ts";
+import { createBackupHandler } from "$lib/backup-handler/mod.ts";
 
 export const handler = async (req: Request, ctx: FreshContext<AppState>) => {
     requirePemission(CanManageBackups.Update, ctx.state);
 
-    const params = parseQueryParams<{ name: string }>(req.url, {
-        name: { type: "string" },
-    });
+    const params = parseQueryParams<{ identifier: string; target_id: number }>(
+        req.url,
+        {
+            identifier: { type: "string" },
+            target_id: { type: "number" },
+        },
+    );
 
-    await requireValidSchema(backupNameSchema, params);
+    await requireValidSchema(backupNameSchema, { name: params.identifier });
 
-    const backupFile = await getBackupFile(params.name);
+    const target = await getBackupTarget(params.target_id);
 
-    if (!backupFile) {
-        throw new Deno.errors.NotFound("Requested backup not found.");
+    if (!target) {
+        throw new Error("Backup target not found");
     }
 
-    return new Response(backupFile.file.readable, {
+    const handler = createBackupHandler(target.type, target.settings);
+
+    const streamData = await handler.getBackupStream(params.identifier);
+
+    return new Response(streamData.stream, {
         headers: {
             "Content-Type": "application/octet-stream",
-            "Content-Disposition": `attachment; filename="${params.name}"`,
-            "Content-Length": backupFile.size.toString(),
+            "Content-Disposition":
+                `attachment; filename="${params.identifier}"`,
+            "Content-Length": streamData.size.toString(),
             "Cache-Control": "no-cache",
         },
     });

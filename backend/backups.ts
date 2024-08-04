@@ -2,6 +2,7 @@ import { databaseLocation } from "$backend/database.ts";
 import { formatDate, joinPath } from "$backend/deps.ts";
 import { exists } from "$std/fs/exists.ts";
 import { logger } from "$backend/logger.ts";
+import { BackupInputRecord } from "$lib/backup-handler/mod.ts";
 
 const backupLocation = new URL(
     `../${Deno.env.get("FILE_DATABASE_BACKUP_FOLDER") ?? "backups"}`,
@@ -122,4 +123,17 @@ export const removeOldBackups = async (
             await Deno.remove(joinPath(backupLocation, oldestFile));
         }
     }
+};
+
+export const createBackupInputRecord = (
+    type: "automatic" | "manual",
+): BackupInputRecord => {
+    const identifier = `${type}-${
+        formatDate(new Date(), "yyyy-MM-dd-HH-mm-ss")
+    }.db`;
+
+    return {
+        identifier,
+        inputLocation: databaseLocation,
+    };
 };
