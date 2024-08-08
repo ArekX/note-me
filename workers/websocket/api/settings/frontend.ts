@@ -88,7 +88,7 @@ const handleCreateBackupNow: ListenerFn<CreateBackupNowMessage> = async (
 
     try {
         const item = await handler.saveBackup(
-            await createBackupInputRecord("manual"),
+            createBackupInputRecord("manual"),
         );
 
         await updateLastBackupAt(target.id);
