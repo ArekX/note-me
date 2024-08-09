@@ -348,3 +348,7 @@ select.select-input {
 .passkey-sign-in {
     max-width: 21em;
 }
+
+.sidebar-container {
+    height: 100vh;
+}

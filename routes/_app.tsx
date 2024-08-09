@@ -31,13 +31,11 @@ export default function App({ Component, route, data }: PageProps) {
                 <link rel="icon" href="/logo-white.svg"></link>
             </head>
             <body
-                class={`bg-gray-900 ${allowScrolling ? "allow-scrolling" : ""}`}
+                class={`bg-gray-900 ${
+                    allowScrolling ? "allow-scrolling" : ""
+                } bg-cover bg-center`}
                 style={wallpaper
-                    ? {
-                        "background-image": `url(${wallpaper})`,
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                    }
+                    ? { "background-image": `url(${wallpaper})` }
                     : {}}
             >
                 <Component />
