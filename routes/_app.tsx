@@ -1,5 +1,6 @@
 import { type PageProps } from "$fresh/server.ts";
 import { getCurrentMonthWallpaper } from "$frontend/wallpaper.ts";
+import ToastMessages from "$islands/ToastMessages.tsx";
 
 export default function App({ Component, route, data }: PageProps) {
     const allowWallpaper = data?.disableWallpaper !== true;
@@ -39,6 +40,7 @@ export default function App({ Component, route, data }: PageProps) {
                     : {}}
             >
                 <Component />
+                <ToastMessages />
                 <div id="icon-menu"></div>
             </body>
         </html>

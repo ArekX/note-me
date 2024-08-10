@@ -43,7 +43,7 @@ export default function Input(
         <div class={`${icon ? "relative" : ""} text-white`}>
             {label && (
                 <label
-                    class={`bloc text-sm font-bold mb-2 text-${labelColor}`}
+                    class={`bloc text-sm mb-2 text-${labelColor}-400`}
                     for={name}
                 >
                     {label}
@@ -63,7 +63,7 @@ export default function Input(
                 min={min}
                 class={`outline-none border-1 ${
                     icon ? "pl-9" : ""
-                } border-gray-900 bg-gray-700 p-2 w-full rounded-md`}
+                } border-gray-600/50 bg-gray-700/60 hover:bg-gray-700 border p-2 w-full rounded-md`}
                 placeholder={placeholder}
                 onInput={IS_BROWSER
                     ? (e) =>

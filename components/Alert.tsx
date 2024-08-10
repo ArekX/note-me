@@ -9,7 +9,7 @@ export default function Alert(
 ) {
     return props.message
         ? (
-            <div class="p-5 bg-red-300 border-s-red-50 rounded-lg mb-5">
+            <div class="p-5 bg-red-600/50 border-red-600/50 border shadow-md rounded-lg mb-5">
                 {props.message}
             </div>
         )

@@ -37,7 +37,7 @@ export default function DropdownList<T>(
         <div class="text-white">
             {label && (
                 <label
-                    class={`bloc text-sm font-bold mb-2 text-${labelColor}`}
+                    class={`bloc text-sm mb-2 text-${labelColor}`}
                     for={name}
                 >
                     {label}
@@ -48,7 +48,7 @@ export default function DropdownList<T>(
                 tabIndex={tabIndex}
                 value={items.findIndex((item) => item.value === value)}
                 disabled={disabled}
-                class="outline-none border-1 border-gray-900 bg-gray-700 select-input w-full rounded-md"
+                class="outline-none border-gray-600/50 bg-gray-700/60 hover:bg-gray-700 border select-input w-full rounded-md"
                 onInput={IS_BROWSER ? (e) => handleInputValue(e) : undefined}
             >
                 {items.map((item, index) => (

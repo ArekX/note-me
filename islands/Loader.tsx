@@ -10,7 +10,7 @@ export type LoaderProps = {
     children?: ComponentChildren;
     displayType?: "inline" | "center-block";
     visible?: boolean;
-    size?: "sm" | "smButton" | "md" | "lg";
+    size?: "sm" | "smButton" | "md" | "mdButton" | "lg";
 };
 
 const sizeMap = {
@@ -27,6 +27,11 @@ const sizeMap = {
     md: {
         width: "28",
         height: "28",
+        text: "text-md",
+    },
+    mdButton: {
+        width: "32",
+        height: "32",
         text: "text-md",
     },
     lg: {

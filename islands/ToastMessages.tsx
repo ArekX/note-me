@@ -3,10 +3,10 @@ import Icon from "$components/Icon.tsx";
 import Button from "$components/Button.tsx";
 
 const typeColorMap = {
-    warning: "bg-yellow-700",
-    success: "bg-green-700",
-    info: "bg-blue-700",
-    error: "bg-red-700",
+    warning: "bg-yellow-800/90 border-yellow-600/50",
+    success: "bg-green-800/90 border-green-600/50",
+    info: "bg-blue-800/90 border-blue-600/50",
+    error: "bg-red-800/90 border-red-600/50",
 };
 
 export default function ToastMessages() {
@@ -16,7 +16,7 @@ export default function ToastMessages() {
                 <div
                     class={`${
                         typeColorMap[message.type]
-                    } p-5 flex items-center text-white shadow-inner rounded-xl mt-5`}
+                    } border p-5 flex items-center text-white rounded-xl mt-5 shadow-gray-900 shadow-md`}
                 >
                     <div class="flex-grow">
                         {message.text}

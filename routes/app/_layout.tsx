@@ -5,7 +5,6 @@ import { getUserNotifications } from "$backend/repository/notification-repositor
 import Sidebar from "$components/Sidebar.tsx";
 import { canAccessSettings } from "$backend/rbac/role-definitions.ts";
 import { Partial } from "$fresh/runtime.ts";
-import ToastMessages from "$islands/ToastMessages.tsx";
 
 export default async function Layout(
     _req: Request,
@@ -49,7 +48,6 @@ export default async function Layout(
                     <ctx.Component />
                 </Partial>
             </div>
-            <ToastMessages />
         </div>
     );
 }

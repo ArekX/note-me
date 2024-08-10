@@ -6,13 +6,11 @@ import {
 } from "$backend/session/mod.ts";
 import { AppSessionData, AppState } from "$types";
 import Alert from "$components/Alert.tsx";
-import Icon from "$components/Icon.tsx";
 import {
     getUserById,
     getUserByLogin,
     UserLoginRecord,
 } from "$backend/repository/user-repository.ts";
-import Button from "$components/Button.tsx";
 import Input from "$components/Input.tsx";
 import InvalidateData from "$islands/InvalidateData.tsx";
 import { checkLoginAttempt } from "$backend/bruteforce-login-protector.ts";
@@ -119,14 +117,20 @@ export const handler: Handlers<LoginResult> = {
 
 export default function Page(props: PageProps<LoginResult>) {
     return (
-        <div class="flex items-center xl:justify-end justify-center h-screen">
-            <div class="bg-gray-800 text-white drop-shadow-lg rounded-xl px-10 pt-6 pb-8 mb-4 xl:mr-20 bg-opacity-95">
+        <div class="flex items-center xl:justify-end justify-center h-screen text-white">
+            <div class="bg-gray-900/90 h-full px-10 pt-10 w-1/3 backdrop-blur-xl">
                 <div class="text-center mb-5">
-                    <Logo white={true} />
+                    <Logo white={true} width={96} height={96} />
                 </div>
                 <form method="POST" action="/">
                     <h1 class="mb-5 text-lg text-center">
-                        Welcome to <strong>NoteMe</strong>! Please login.
+                        <span class="text-2xl">
+                            Welcome to <strong>NoteMe</strong>
+                        </span>
+                        <br />
+                        <span class="text-gray-400 text-sm">
+                            Please sign in to continue
+                        </span>
                     </h1>
                     <Alert message={props.data?.message} />
                     <div class="mb-5">
@@ -147,18 +151,12 @@ export default function Page(props: PageProps<LoginResult>) {
                             name="password"
                         />
                     </div>
-                    <div class="flex items-center justify-center mt-8s\">
-                        <Button type="submit" color="success">
-                            <span class="pr-2">
-                                <Icon name="log-in" />
-                            </span>{" "}
-                            Log Me In
-                        </Button>
+                    <div class="flex items-center justify-center mt-8">
+                        <PasskeySignIn
+                            request_id={props.data.passkey_request.request_id}
+                            options={props.data.passkey_request.options}
+                        />
                     </div>
-                    <PasskeySignIn
-                        request_id={props.data.passkey_request.request_id}
-                        options={props.data.passkey_request.options}
-                    />
                 </form>
                 <InvalidateData />
             </div>
