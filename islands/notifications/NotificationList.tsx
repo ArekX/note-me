@@ -136,11 +136,11 @@ export default function Notifications(props: NotificationsProps) {
             {isOpen && (
                 <div
                     ref={menuRef}
-                    class="absolute top-full left-0 w-96 bg-gray-800 pt-2 z-50 shadow-gray-900 shadow-md text-white text-left"
+                    class="absolute top-full left-0 w-96 bg-gray-800 pt-2 z-50 shadow-gray-900 shadow-md text-white text-left rounded-lg border border-gray-700/50"
                 >
                     <div class="pr-2 pb-1">
                         <div className="flex">
-                            <div class="text-lg w-2/4 pl-4 pt-2">
+                            <div class="text-md font-semibold w-2/4 pl-4 pt-2">
                                 {notifications.value.length > 0
                                     ? "Notifications "
                                     : ""}

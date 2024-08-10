@@ -9,18 +9,21 @@ interface ButtonProps {
     name?: string;
     color?: ButtonColors;
     type?: "button" | "submit";
+    borderClass?: string;
+    rounded?: boolean;
     addClass?: string;
     tabIndex?: number;
     onClick?: (event: Event) => void;
 }
 
 const buttonColors = {
-    primary: "bg-gray-500 hover:bg-gray-600 text-white",
-    warning: "bg-yellow-700 hover:bg-yellow-600 text-white",
-    success: "bg-sky-900 hover:bg-sky-600 text-white",
-    successDisabled: "bg-sky-600 text-white",
-    danger: "bg-red-500 hover:bg-red-600 text-white",
-    transparent: "bg-transparent hover:bg-gray-700/25",
+    primary: "bg-gray-600 hover:bg-gray-500 border-gray-500/50 text-white",
+    warning:
+        "bg-yellow-700 hover:bg-yellow-600 border-yellow-600/50 text-white",
+    success: "bg-sky-900 hover:bg-sky-600 border-sky-600/50 text-white",
+    successDisabled: "bg-sky-600 border-sky-600/50 text-white",
+    danger: "bg-red-500 hover:bg-red-600 border-red-600/50 text-white",
+    transparent: "bg-transparent border-gray-700/50 hover:bg-gray-700/25",
 };
 
 const sizeTypes = {
@@ -43,11 +46,18 @@ export default function Button(
         size = "md",
         color = "primary",
         type = "button",
+        rounded = true,
+        borderClass,
         tabIndex,
         addClass,
         onClick,
     }: ButtonProps,
 ) {
+    if (!borderClass) {
+        borderClass = color === "transparent" ? "border-b" : "border";
+    }
+
+    const roundedClass = rounded ? "rounded-md" : "";
     return (
         <button
             type={type}
@@ -57,9 +67,11 @@ export default function Button(
             name={name}
             tabIndex={tabIndex}
             onClick={(e) => !disabled && onClick?.(e)}
-            class={`${sizeTypes[size]} ${
-                buttonColors[color]
-            } transition-colors rounded-md ${addClass ?? ""}`}
+            class={`${borderClass} bg-opacity-50 hover:bg-opacity-100 border-solid ${
+                sizeTypes[size]
+            } ${buttonColors[color]} ${roundedClass} transition-colors ${
+                addClass ?? ""
+            }`}
         >
             {children}
         </button>

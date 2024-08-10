@@ -108,9 +108,12 @@ export default function NoteFiles(
     }, []);
 
     return (
-        <Dialog visible={true} canCancel={true} onCancel={onClose}>
-            <h1 class="text-2xl pb-4">Note Files</h1>
-
+        <Dialog
+            visible={true}
+            canCancel={true}
+            onCancel={onClose}
+            title="Files"
+        >
             {dataLoader.running ? <Loader color="white" /> : (
                 <>
                     {files.value.length > 0

@@ -7,10 +7,18 @@ import { TreeRecord } from "$backend/repository/tree-list.repository.ts";
 import Input from "$components/Input.tsx";
 import TagInput from "$islands/notes/TagInput.tsx";
 import { useSearch } from "$frontend/hooks/use-search.ts";
+import { SearchType } from "$backend/repository/note-search-repository.ts";
 
 interface AdvancedSearchProps {
     onClose: () => void;
 }
+
+const typeDisplayMap: { [K in SearchType]: string } = {
+    general: "Notes",
+    shared: "Shared notes",
+    reminders: "Reminders",
+    recycleBin: "Recycle Bin",
+};
 
 export default function AdvancedSearch(
     { onClose }: AdvancedSearchProps,
@@ -38,10 +46,11 @@ export default function AdvancedSearch(
             visible={true}
             canCancel={true}
             onCancel={onClose}
+            title={`Advanced Search - ${
+                typeDisplayMap[search.type.value] ?? ""
+            }`}
         >
             <div>
-                <h1 class="text-xl">Advanced search</h1>
-
                 <div>
                     <Input
                         label="Search"

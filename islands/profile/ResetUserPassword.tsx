@@ -12,6 +12,7 @@ import { redirectTo } from "$frontend/redirection-manager.ts";
 import ErrorDisplay from "$components/ErrorDisplay.tsx";
 import { SystemErrorMessage } from "$frontend/hooks/use-websocket-service.ts";
 import { addSystemErrorMessage } from "$frontend/toast-message.ts";
+import Logo from "$components/Logo.tsx";
 
 interface ResetUserPasswordProps {
     isNewUser: boolean;
@@ -71,16 +72,23 @@ export default function ResetUserPassword({
 
     return (
         <div class="text-white w-1/2 m-auto p-5">
-            <h1 class="text-3xl">
-                Please {isNewUser ? "set" : "change"} your password
+            <h1 class="text-3xl font-semibold">
+                <Logo white={true} height={40} width={40} /> Welcome to NoteMe,
+                {" "}
+                {user.getName()}!
             </h1>
+
+            <h2 class="text-xl py-5 font-semibold">
+                Please {isNewUser ? "set" : "change"} your password
+            </h2>
 
             {isNewUser
                 ? (
                     <>
                         <p class="py-4">
-                            Welcome to NoteMe. For security reasons, first time
-                            users are required to set change their password.
+                            For security reasons, first time users are required
+                            to change their password so that only you have
+                            access to your account.
                         </p>
                     </>
                 )
@@ -98,7 +106,7 @@ export default function ResetUserPassword({
                     </>
                 )}
 
-            <div class="w-1/2">
+            <div class="w-1/2 py-5">
                 <div class="py-2">
                     <Input
                         label="Current Password"

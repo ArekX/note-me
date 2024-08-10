@@ -62,12 +62,11 @@ export default function UserProfile() {
         };
 
     return (
-        <div class="text-black">
-            <h1 class="text-xl py-4">My Profile</h1>
+        <div>
+            <h1 class="text-xl py-4 font-semibold">My Profile</h1>
             <form onSubmit={handleSubmit}>
                 <Input
                     label="Name"
-                    labelColor="black"
                     type="text"
                     value={userData.value.name}
                     onInput={handlePropertyChange("name")}
@@ -79,7 +78,6 @@ export default function UserProfile() {
                 <br />
                 <DropdownList
                     label="Timezone"
-                    labelColor="black"
                     items={supportedTimezoneList}
                     value={userData.value.timezone}
                     onInput={handlePropertyChange("timezone")}
@@ -88,7 +86,6 @@ export default function UserProfile() {
                 <Input
                     label="Old Password"
                     type="password"
-                    labelColor="black"
                     value={userData.value.old_password}
                     onInput={handlePropertyChange("old_password")}
                 />
@@ -100,7 +97,6 @@ export default function UserProfile() {
                 <Input
                     label="New Password"
                     type="password"
-                    labelColor="black"
                     value={userData.value.new_password}
                     onInput={handlePropertyChange("new_password")}
                 />
@@ -112,7 +108,6 @@ export default function UserProfile() {
                 <Input
                     label="Confirm Password"
                     type="password"
-                    labelColor="black"
                     value={userData.value.confirm_password}
                     onInput={handlePropertyChange("confirm_password")}
                 />
@@ -122,7 +117,7 @@ export default function UserProfile() {
                 />
                 <br />
                 <div class="text-right">
-                    <Button type="submit" color="primary">
+                    <Button color="success">
                         Update profile
                     </Button>
                 </div>

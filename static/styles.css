@@ -26,6 +26,13 @@ body.allow-scrolling {
     line-height: 1.2rem;
 }
 
+.main-with-sidebar {
+    border-left: 1px solid;
+    @apply border-gray-800;
+}
+
+
+
 .notification-menu .notifcation-list {
     overflow: auto;
     max-height: calc(100vh - 8rem);
@@ -91,10 +98,8 @@ dialog {
   pointer-events: none;
   opacity: 0;
   display: block;
-  @apply rounded-xl;
   padding: 2em;
-  @apply bg-gray-800;
-  @apply text-white;
+  @apply rounded-lg bg-gray-800 text-white border-gray-700 border shadow-gray-900 shadow-md;
 }
 dialog[open] {
   opacity: 1;

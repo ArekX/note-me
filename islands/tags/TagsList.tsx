@@ -18,11 +18,12 @@ import { useFilters } from "$frontend/hooks/use-filters.ts";
 import { usePagedData } from "$frontend/hooks/use-paged-data.ts";
 import { useSelected } from "$frontend/hooks/use-selected.ts";
 import { useLoader } from "$frontend/hooks/use-loader.ts";
+import Loader from "$islands/Loader.tsx";
 
 export default function TagsList() {
     const tagToDelete = useSelected<EditableTag>();
     const tagToEdit = useSelected<EditableTag>();
-    const tagsLoader = useLoader();
+    const tagsLoader = useLoader(true);
 
     const { results, page, perPage, total, setPagedData, resetPage } =
         usePagedData<
@@ -91,7 +92,7 @@ export default function TagsList() {
     const user = useUser();
 
     return (
-        <div class="p-4">
+        <div class="p-4 text-white">
             {user.can(CanManageTags.Update) && (
                 <div class="p-4 w-full text-right">
                     <Button
@@ -109,42 +110,49 @@ export default function TagsList() {
             )}
             <Input
                 label="Tag name"
-                labelColor="black"
+                labelColor="white"
                 value={filters.value.name}
                 onInput={(value) => setFilter("name", value)}
             />
-            {results.value.map((tag) => (
-                <div
-                    key={tag.id}
-                    class="inline-block  mr-4 mt-4"
-                >
-                    <span
-                        class="rounded-l-lg bg-gray-900 text-white p-4 cursor-pointer hover:bg-gray-700"
-                        onClick={() => tagToEdit.select(tag)}
+            <div class="py-5">
+                {tagsLoader.running && (
+                    <div class="text-center">
+                        <Loader />
+                    </div>
+                )}
+                {results.value.map((tag) => (
+                    <div
+                        key={tag.id}
+                        class="inline-block  mr-4 mt-4"
                     >
-                        {tag.name}
-                    </span>
-                    <span
-                        class="rounded-r-lg bg-red-900 text-white p-4 cursor-pointer hover:bg-red-700"
-                        onClick={() => tagToDelete.select(tag)}
-                    >
-                        <Icon name="minus-circle" size="2xl" />
-                    </span>
-                </div>
-            ))}
-            {!tagsLoader.running && results.value.length === 0 && (
-                <div class="text-center text-black p-4">
-                    No tags available
-                </div>
-            )}
-            {!tagsLoader.running && (
-                <Pagination
-                    total={total.value}
-                    perPage={perPage.value}
-                    currentPage={page.value}
-                    onChange={handlePageChanged}
-                />
-            )}
+                        <span
+                            class="rounded-l-lg bg-gray-900 text-white p-4 cursor-pointer hover:bg-gray-700 border-gray-700 border border-r-0"
+                            onClick={() => tagToEdit.select(tag)}
+                        >
+                            {tag.name}
+                        </span>
+                        <span
+                            class="rounded-r-lg bg-red-900/50 text-white p-4 cursor-pointer hover:bg-red-700 border border-red-700/50 border-l-0"
+                            onClick={() => tagToDelete.select(tag)}
+                        >
+                            <Icon name="minus-circle" size="xl" />
+                        </span>
+                    </div>
+                ))}
+                {!tagsLoader.running && results.value.length === 0 && (
+                    <div class="text-center p-4">
+                        No tags available
+                    </div>
+                )}
+                {!tagsLoader.running && (
+                    <Pagination
+                        total={total.value}
+                        perPage={perPage.value}
+                        currentPage={page.value}
+                        onChange={handlePageChanged}
+                    />
+                )}
+            </div>
             <ConfirmDialog
                 visible={tagToDelete.selected.value !== null}
                 prompt="Are you sure you want to delete this tag? This action cannot be undone."

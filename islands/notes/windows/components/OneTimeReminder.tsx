@@ -69,20 +69,27 @@ export function OneTimeReminder({
 
     return (
         <>
-            <p>Remind me at:</p>
-            <Input
-                type="date"
-                label="Date"
-                value={date.value}
-                min={dateToYmd(new Date())}
-                onInput={(v) => handleInput("date", v)}
-            />
-            <Input
-                type="time"
-                label="Time"
-                value={time.value}
-                onInput={(v) => handleInput("time", v)}
-            />
+            <p class="py-2">When should we remind you?</p>
+            <div class="flex">
+                <div class="w-1/3">
+                    <Input
+                        type="date"
+                        label="At Date"
+                        value={date.value}
+                        min={dateToYmd(new Date())}
+                        onInput={(v) => handleInput("date", v)}
+                    />
+                </div>
+                <div class="w-1/3 pl-2">
+                    <Input
+                        type="time"
+                        label="At Time"
+                        value={time.value}
+                        onInput={(v) => handleInput("time", v)}
+                    />
+                </div>
+            </div>
+
             {errors.value.length > 0 && (
                 <div class="text-sm text-red-400">
                     {errors.value.map((e) => <div>{e}</div>)}

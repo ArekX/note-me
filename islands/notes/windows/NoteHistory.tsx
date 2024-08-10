@@ -123,10 +123,10 @@ export default function NoteHistory(
                 props={{
                     class: "w-3/4",
                 }}
+                title="History"
             >
                 {listLoader.running ? <Loader color="white" /> : (
                     <div>
-                        <h1 class="text-2xl pb-4">Note History</h1>
                         {total.value === 0 && (
                             <div class="text-center">
                                 No history records available for this note.
@@ -246,7 +246,7 @@ export default function NoteHistory(
                     </div>
                 )}
                 <div class="mt-2 text-right">
-                    <Button color="danger" onClick={onClose}>Close</Button>
+                    <Button color="primary" onClick={onClose}>Close</Button>
                 </div>
             </Dialog>
             <ConfirmDialog

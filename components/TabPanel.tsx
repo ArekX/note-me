@@ -1,4 +1,5 @@
 import { ComponentChildren } from "preact";
+import Panel from "$components/Panel.tsx";
 
 export interface TabLink {
     name: string;
@@ -15,7 +16,7 @@ export default function TabPanel(
     { links, children, activeLink }: TabPanelProps,
 ) {
     return (
-        <div class="flex flex-col">
+        <div class="flex flex-col text-white">
             <div class="flex">
                 <ul class="flex space-x-4 m-5">
                     {links.map((link) => (
@@ -24,11 +25,11 @@ export default function TabPanel(
                         >
                             <a
                                 href={link.link}
-                                class={`${
+                                class={`border ${
                                     link.link == activeLink
-                                        ? "bg-gray-700 text-white"
-                                        : "bg-gray-200 hover:bg-gray-600 hover:text-white"
-                                } p-3 rounded-lg`}
+                                        ? "bg-sky-800 border-sky-700"
+                                        : "bg-gray-800 border-gray-700"
+                                } p-3 rounded-lg shadow-md`}
                             >
                                 {link.name}
                             </a>
@@ -36,8 +37,10 @@ export default function TabPanel(
                     ))}
                 </ul>
             </div>
-            <div class="flex-grow rounded-lg bg-gray-200 shadow-md mr-5 ml-5 mb-5 p-5">
-                {children}
+            <div class="flex-grow">
+                <Panel>
+                    {children}
+                </Panel>
             </div>
         </div>
     );

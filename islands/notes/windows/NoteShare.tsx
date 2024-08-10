@@ -103,9 +103,8 @@ export default function NoteShare({
             onCancel={onClose}
             canCancel={true}
             props={{ "class": "w-2/4" }}
+            title="Share"
         >
-            <h1 class="text-2xl pb-4">Share Note</h1>
-
             {!!isExistingNoteProtected && (
                 <div class="my-4 border-2 border-red-700 p-4 bg-red-950">
                     <strong>Important:</strong>{" "}

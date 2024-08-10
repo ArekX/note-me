@@ -85,14 +85,14 @@ export function RepeatReminder({
     };
     return (
         <>
-            <p>
-                Starting from now, remind me every:
+            <p class="py-2">
+                How often should we remind you?
             </p>
             <div class="flex">
                 <div class="w-1/6">
                     <Input
                         type="number"
-                        label="Interval"
+                        label="Every"
                         min="1"
                         value={interval.value.toString()}
                         onInput={(v) => handleInput("interval", parseFloat(v))}
@@ -100,16 +100,16 @@ export function RepeatReminder({
                 </div>
                 <div class="w-1/5 pl-2">
                     <DropdownList<number>
-                        label="Unit"
+                        label="Of"
                         items={unitList}
                         value={unit.value}
                         onInput={(v) => handleInput("unit", v)}
                     />
                 </div>
-                <div class="w-1/6 pl-2">
+                <div class="w-1/4 pl-5">
                     <Input
                         type="number"
-                        label="Repeat"
+                        label="How many times?"
                         min="1"
                         value={repeat.value.toString()}
                         onInput={(v) => handleInput("repeat", parseFloat(v))}

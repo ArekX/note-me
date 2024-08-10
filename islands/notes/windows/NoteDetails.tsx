@@ -63,59 +63,66 @@ export default function NoteDetails(
         noteData.value ??
             {};
     return (
-        <Dialog visible={true} canCancel={true} onCancel={onClose}>
+        <Dialog
+            visible={true}
+            canCancel={true}
+            onCancel={onClose}
+            title="Details"
+        >
             {isNoteLoading.running
                 ? <Loader color="white">Loading note details...</Loader>
                 : noteData.value && (
                     <div>
-                        <h1 class="text-2xl pb-4">Note Details</h1>
-
                         <ButtonGroup
                             activeItem={selected.value}
                             items={items}
                             onSelect={selectItem}
                         />
 
-                        <Picker<keyof typeof items>
-                            selector={selected.value}
-                            map={{
-                                general: () => (
-                                    <p class="pt-2 pb-2">
-                                        <strong>Note ID:</strong> {noteId}{" "}
-                                        <br />
-                                        <strong>Title:</strong> {title} <br />
-                                        {group_name && (
-                                            <>
-                                                <strong>Group:</strong>{" "}
-                                                {group_name}
-                                                <br />
-                                            </>
-                                        )}
+                        <div class="py-5">
+                            <Picker<keyof typeof items>
+                                selector={selected.value}
+                                map={{
+                                    general: () => (
+                                        <>
+                                            <strong>Note ID:</strong> {noteId}
+                                            {" "}
+                                            <br />
+                                            <strong>Title:</strong> {title}{" "}
+                                            <br />
+                                            {group_name && (
+                                                <>
+                                                    <strong>Group:</strong>{" "}
+                                                    {group_name}
+                                                    <br />
+                                                </>
+                                            )}
 
-                                        <strong>Created at:</strong>{" "}
-                                        {timeFormatter.formatDateTime(
-                                            created_at ?? 0,
-                                        )} <br />
-                                        <strong>Last update at:</strong>{" "}
-                                        {timeFormatter.formatDateTime(
-                                            updated_at ?? 0,
-                                        )} <br />
-                                        <strong>Created by:</strong> {user_name}
-                                    </p>
-                                ),
-                                toc: () => (
-                                    <p class="pt-2 pb-2">
+                                            <strong>Created at:</strong>{" "}
+                                            {timeFormatter.formatDateTime(
+                                                created_at ?? 0,
+                                            )} <br />
+                                            <strong>Last update at:</strong>
+                                            {" "}
+                                            {timeFormatter.formatDateTime(
+                                                updated_at ?? 0,
+                                            )} <br />
+                                            <strong>Created by:</strong>{" "}
+                                            {user_name}
+                                        </>
+                                    ),
+                                    toc: () => (
                                         <TableOfContents
                                             text={noteData.value!.note}
                                             disableLinks={true}
                                         />
-                                    </p>
-                                ),
-                            }}
-                        />
+                                    ),
+                                }}
+                            />
+                        </div>
 
                         <div class="pt-4">
-                            <Button onClick={onClose} color="success">
+                            <Button onClick={onClose} color="primary">
                                 Close
                             </Button>
                         </div>

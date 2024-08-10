@@ -32,7 +32,7 @@ interface ExtendedFileMetaRecord extends FileMetaRecord {
 }
 
 export default function FilePicker({
-    color = "black",
+    color = "white",
     onFilePicked,
     selectedFileId,
     adminMode = false,
@@ -195,7 +195,7 @@ export default function FilePicker({
             wrapperClass="file-picker w-full"
             onFilesDropped={handleFilesDropped}
         >
-            <div class="w-full flex mb-2 items-end">
+            <div class="w-full flex mb-2 items-end pb-4">
                 <div class="mr-2 flex-grow">
                     <Input
                         icon="search"

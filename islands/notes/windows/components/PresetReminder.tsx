@@ -10,15 +10,15 @@ type PresetMap = {
 
 const presets: PresetMap = {
     in1Hour: {
-        title: "1 hour from now",
+        title: "In 1 hour",
         getNextAtFromNow: () => getCurrentUnixTimestamp() + 3600,
     },
     in3Hours: {
-        title: "3 hours from now",
+        title: "In 3 hours",
         getNextAtFromNow: () => getCurrentUnixTimestamp() + 10800,
     },
     in1Day: {
-        title: "1 day from now",
+        title: "Tomorrow",
         getNextAtFromNow: () => getCurrentUnixTimestamp() + 86400,
     },
     in3Days: {
@@ -26,11 +26,11 @@ const presets: PresetMap = {
         getNextAtFromNow: () => getCurrentUnixTimestamp() + 259200,
     },
     in1Week: {
-        title: "1 week from now",
+        title: "In a week",
         getNextAtFromNow: () => getCurrentUnixTimestamp() + 604800,
     },
     in1Month: {
-        title: "1 month from now",
+        title: "In a month",
         getNextAtFromNow: () => getCurrentUnixTimestamp() + 2592000,
     },
     nextMonday: {

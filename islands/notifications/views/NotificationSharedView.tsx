@@ -4,6 +4,7 @@ import {
 } from "$islands/notifications/NotificationItem.tsx";
 import { redirectTo } from "$frontend/redirection-manager.ts";
 import Button from "$components/Button.tsx";
+import { closeAllPopovers } from "$frontend/hooks/use-single-popover.ts";
 
 export default function NotificationSharedView({
     data,
@@ -12,6 +13,7 @@ export default function NotificationSharedView({
         redirectTo.viewSharedNote({
             noteId: data.id,
         });
+        closeAllPopovers();
     };
 
     return (

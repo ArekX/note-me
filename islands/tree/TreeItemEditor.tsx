@@ -81,7 +81,7 @@ export default function TreeItemEditor(
                     name.value = (e.target as HTMLInputElement).value}
             />
             {errorMessages.value.length > 0 && (
-                <div class="text-red-900 right-0 absolute bottom-10 left-0 z-50 border-1 border-solid bg-red-400">
+                <div class="text-red-900 right-0 absolute bottom-10 left-0 z-40 border-1 border-solid bg-red-400">
                     {errorMessages.value}
                 </div>
             )}

@@ -165,7 +165,7 @@ export default function TreeItem({
             onClick={handleClick}
         >
             <div
-                class={`relative group-item hover:bg-gray-600`}
+                class={`relative group-item hover:bg-gray-600 hover:bg-opacity-50`}
                 title={container.name}
             >
                 {container.display_mode !== "edit" &&

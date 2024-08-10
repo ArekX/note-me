@@ -18,9 +18,10 @@ type MenuShowDirection = "right" | "bottom";
 type DisplayType = "portal" | "inline";
 type InlineDirection = "left" | "right";
 
-interface MoreMenuProps {
+interface DropdownMenuProps {
     popoverId: PopoverId;
     label?: string | JSX.Element;
+    roundedButton?: boolean;
     icon?: string;
     iconSize?: IconSize;
     buttonSize?: ButtonSize;
@@ -49,7 +50,7 @@ const MenuItems = (
             displayType == "inline" && inlineDirection !== "left"
                 ? "right-0"
                 : ""
-        } text-md mt-1 z-50 drop-shadow-lg bg-gray-800 rounded-lg shadow-lg p-2 whitespace-nowrap break-keep`}
+        } text-md mt-1 z-50 drop-shadow-lg bg-gray-800 border-gray-700 border rounded-lg shadow-gray-900 shadow-md p-2 whitespace-nowrap break-keep`}
     >
         {items.map((item, index) => (
             <div
@@ -69,6 +70,7 @@ export default function DropdownMenu(
         popoverId,
         icon = "chevron-down",
         iconOnly = false,
+        roundedButton = true,
         iconSize = "md",
         buttonSize = "md",
         displayType = "inline",
@@ -76,7 +78,7 @@ export default function DropdownMenu(
         buttonColor = "primary",
         label = "",
         showDirection = "bottom",
-    }: MoreMenuProps,
+    }: DropdownMenuProps,
 ) {
     if (items.length === 0) {
         return null;
@@ -155,6 +157,7 @@ export default function DropdownMenu(
                             color={buttonColor}
                             onClick={handleOpenMenu}
                             size={buttonSize}
+                            rounded={roundedButton}
                         >
                             {label} <Icon name={icon} size={iconSize} />
                         </Button>

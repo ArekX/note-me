@@ -4,6 +4,7 @@ import {
 } from "$islands/notifications/NotificationItem.tsx";
 import Button from "$components/Button.tsx";
 import { redirectTo } from "$frontend/redirection-manager.ts";
+import { closeAllPopovers } from "$frontend/hooks/use-single-popover.ts";
 
 export default function ReminderView({
     data,
@@ -16,6 +17,7 @@ export default function ReminderView({
                 noteId: data.id,
             });
         }
+        closeAllPopovers();
     };
     return (
         <div className=" p-4 rounded-md">

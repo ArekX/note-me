@@ -237,10 +237,14 @@ export default function UserPasskeys() {
             </div>
             {registerPasskeyLoader.running
                 ? <Loader>Waiting...</Loader>
-                : <Button onClick={registerDevice}>Register device</Button>}
+                : (
+                    <Button onClick={registerDevice} addClass="my-2">
+                        Register device
+                    </Button>
+                )}
 
             <div class="py-2">
-                <h2 class="text-lg py>4">Registered Passkeys</h2>
+                <h2 class="text-lg py-4 font-semibold">Registered Passkeys</h2>
 
                 <Table<UserPasskeyRecord>
                     isLoading={passkeyDataLoader.running}
@@ -279,7 +283,7 @@ export default function UserPasskeys() {
                                             passkeyToRename.select(record)}
                                         addClass="mr-2"
                                     >
-                                        <Icon name="pencil" />
+                                        <Icon name="pencil" size="md" />
                                     </Button>
                                     <Button
                                         color="danger"
@@ -287,7 +291,7 @@ export default function UserPasskeys() {
                                         onClick={() =>
                                             passkeyToDelete.select(record)}
                                     >
-                                        <Icon name="minus-circle" />
+                                        <Icon name="minus-circle" size="md" />
                                     </Button>
                                 </>
                             ),

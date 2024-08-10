@@ -29,7 +29,11 @@ export default async function Layout(
                     showSettings={canAccessSettings(role)}
                 />
             )}
-            <div className="w-4/5 bg-gray-900 overflow-auto">
+            <div
+                class={`w-4/5 bg-gray-900 overflow-auto ${
+                    isSidebarAllowed ? "main-with-sidebar" : ""
+                }`}
+            >
                 <IslandInitializer
                     socketHost={socketHost}
                     userData={{

@@ -23,8 +23,12 @@ export default function ButtonGroup<T extends ListMap>(
                 .map(([id, name]) => (
                     <Button
                         color={activeItem === id ? "success" : "primary"}
-                        onClick={() => onSelect?.(id)}
-                        addClass="mr-2"
+                        onClick={() =>
+                            activeItem !== id ? onSelect?.(id) : null}
+                        rounded={false}
+                        borderClass={`border-b ${
+                            id === activeItem ? "pointer-events-none" : ""
+                        }`}
                     >
                         {name}
                     </Button>

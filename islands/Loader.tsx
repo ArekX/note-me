@@ -10,7 +10,7 @@ export type LoaderProps = {
     children?: ComponentChildren;
     displayType?: "inline" | "center-block";
     visible?: boolean;
-    size?: "sm" | "md" | "lg";
+    size?: "sm" | "smButton" | "md" | "lg";
 };
 
 const sizeMap = {
@@ -18,6 +18,11 @@ const sizeMap = {
         width: "16",
         height: "16",
         text: "text-xs",
+    },
+    smButton: {
+        width: "24",
+        height: "24",
+        text: "text-sm",
     },
     md: {
         width: "28",
@@ -33,7 +38,7 @@ const sizeMap = {
 
 export default function Loader(
     {
-        color = "black",
+        color = "white",
         children = "Loading...",
         displayType = "inline",
         visible = true,

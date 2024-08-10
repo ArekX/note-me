@@ -1,12 +1,14 @@
 import { useEffect } from "preact/hooks";
 import { ComponentChildren, createRef } from "preact";
 import { closeAllPopovers } from "$frontend/hooks/use-single-popover.ts";
+import { ComponentChild } from "preact";
 
 interface DialogProps {
     visible?: boolean;
     canCancel?: boolean;
     props?: Record<string, unknown>;
     children: ComponentChildren;
+    title?: string | ComponentChild;
     onCancel?: () => void;
 }
 
@@ -15,6 +17,7 @@ export default function Dialog({
     children,
     canCancel = false,
     onCancel,
+    title,
     props,
 }: DialogProps) {
     const dialogRef = createRef<HTMLDialogElement>();
@@ -44,6 +47,7 @@ export default function Dialog({
             }}
             {...props}
         >
+            {title && <h1 class="text-xl font-semibold mb-5">{title}</h1>}
             {children}
         </dialog>
     );

@@ -1,7 +1,6 @@
 import { NoteWindowComponentProps } from "$islands/notes/NoteWindow.tsx";
 import Button from "$components/Button.tsx";
 import Dialog from "$islands/Dialog.tsx";
-import Checkbox from "$islands/Checkbox.tsx";
 import { useSignal } from "@preact/signals";
 import { dateToUnix, getCurrentUnixTimestamp } from "$lib/time/unix.ts";
 import { useLoader } from "$frontend/hooks/use-loader.ts";
@@ -29,6 +28,7 @@ import PresetReminder from "$islands/notes/windows/components/PresetReminder.tsx
 import { useTimeFormat } from "$frontend/hooks/use-time-format.ts";
 import { validateSchema } from "$schemas/mod.ts";
 import { setReminderSchema } from "$schemas/notes.ts";
+import NoItemMessage from "$islands/sidebar/NoItemMessage.tsx";
 
 type ReminderType = "once" | "repeat";
 
@@ -36,7 +36,8 @@ export default function NoteReminder({
     noteId,
     onClose,
 }: NoteWindowComponentProps) {
-    const shouldAddReminder = useSignal(false);
+    const isReminderAdded = useSignal(false);
+    const isDataLoaded = useSignal(false);
     const reminderLoader = useLoader();
     const reminderType = useSignal<ReminderType>("once");
     const remindMeDate = useSignal("");
@@ -53,9 +54,9 @@ export default function NoteReminder({
         selected,
     } = useListState(
         {
-            preset: "Preset",
-            once: "One Time",
-            repeat: "Repeat",
+            preset: "Quick Pick",
+            once: "Remind me once",
+            repeat: "Remind me repeatedly",
         },
         "preset",
         (key) => {
@@ -75,7 +76,7 @@ export default function NoteReminder({
         interval.value = 1;
         unit.value = 60;
         repeat.value = 1;
-        shouldAddReminder.value = false;
+        isReminderAdded.value = false;
     };
 
     const loadReminderData = reminderLoader.wrap(async () => {
@@ -95,7 +96,8 @@ export default function NoteReminder({
             return;
         }
 
-        shouldAddReminder.value = true;
+        isReminderAdded.value = true;
+        isDataLoaded.value = true;
         selectItem(response.data.interval ? "repeat" : "once");
 
         if (response.data.interval === null) {
@@ -116,7 +118,7 @@ export default function NoteReminder({
     const handleSaveReminder = async () => {
         let reminder: SetReminderMessage["reminder"];
         try {
-            if (!shouldAddReminder.value) {
+            if (!isReminderAdded.value) {
                 await sendMessage<
                     RemoveReminderMessage,
                     RemoveReminderResponse
@@ -195,6 +197,13 @@ export default function NoteReminder({
         handleSaveReminder();
     };
 
+    const handleRemoveReminder = async () => {
+        isReminderAdded.value = false;
+        if (isDataLoaded.value) {
+            await handleSaveReminder();
+        }
+    };
+
     useEffect(() => {
         loadReminderData();
     }, []);
@@ -203,83 +212,110 @@ export default function NoteReminder({
         <Dialog
             canCancel={true}
             onCancel={onClose}
+            title="Note Reminder"
+            props={{ class: "w-2/6" }}
         >
-            <h1 class="text-2xl pb-4">Set Reminder</h1>
-
             {reminderLoader.running ? <Loader color="white" /> : (
                 <div>
-                    <div class="mb-4">
-                        <Checkbox
-                            label="Remind me about this note"
-                            checked={shouldAddReminder.value}
-                            onChange={(value) =>
-                                shouldAddReminder.value = value}
-                        />
-                    </div>
-                    {shouldAddReminder.value && (
-                        <>
-                            <div class="mb-2">
-                                <ButtonGroup
-                                    activeItem={selected.value}
-                                    items={items}
-                                    onSelect={selectItem}
-                                />
+                    {!isReminderAdded.value
+                        ? (
+                            <div class="mb-4">
+                                <div class="py-5">
+                                    <NoItemMessage
+                                        icon="alarm"
+                                        message="No reminder set."
+                                    />
+                                </div>
                             </div>
-                            <div class="mb-2">
-                                <Picker<keyof typeof items>
-                                    selector={selected.value}
-                                    map={{
-                                        preset: () => (
-                                            <PresetReminder
-                                                onPresetSelected={handlePresetSelected}
-                                            />
-                                        ),
-                                        repeat: () => (
-                                            <RepeatReminder
-                                                value={{
-                                                    interval: interval.value,
-                                                    unit: unit.value,
-                                                    repeat: repeat.value,
-                                                }}
-                                                onInput={(v) => {
-                                                    interval.value = v.interval;
-                                                    unit.value = v.unit;
-                                                    repeat.value = v.repeat;
-                                                }}
-                                            />
-                                        ),
-                                        once: () => (
-                                            <OneTimeReminder
-                                                value={{
-                                                    date: remindMeDate.value,
-                                                    time: remindMeTime.value,
-                                                }}
-                                                onInput={(v) => {
-                                                    remindMeDate.value = v.date;
-                                                    remindMeTime.value = v.time;
-                                                }}
-                                            />
-                                        ),
-                                    }}
-                                />
-                            </div>
-                        </>
-                    )}
+                        )
+                        : (
+                            <>
+                                <div class="mb-2">
+                                    <ButtonGroup
+                                        activeItem={selected.value}
+                                        items={items}
+                                        onSelect={selectItem}
+                                    />
+                                </div>
+                                <div class="mb-2 py-5">
+                                    <Picker<keyof typeof items>
+                                        selector={selected.value}
+                                        map={{
+                                            preset: () => (
+                                                <PresetReminder
+                                                    onPresetSelected={handlePresetSelected}
+                                                />
+                                            ),
+                                            repeat: () => (
+                                                <RepeatReminder
+                                                    value={{
+                                                        interval:
+                                                            interval.value,
+                                                        unit: unit.value,
+                                                        repeat: repeat.value,
+                                                    }}
+                                                    onInput={(v) => {
+                                                        interval.value =
+                                                            v.interval;
+                                                        unit.value = v.unit;
+                                                        repeat.value = v.repeat;
+                                                    }}
+                                                />
+                                            ),
+                                            once: () => (
+                                                <OneTimeReminder
+                                                    value={{
+                                                        date:
+                                                            remindMeDate.value,
+                                                        time:
+                                                            remindMeTime.value,
+                                                    }}
+                                                    onInput={(v) => {
+                                                        remindMeDate.value =
+                                                            v.date;
+                                                        remindMeTime.value =
+                                                            v.time;
+                                                    }}
+                                                />
+                                            ),
+                                        }}
+                                    />
+                                </div>
+                            </>
+                        )}
                 </div>
             )}
 
-            <div class="flex justify-end">
+            <div class="flex justify-end pt-5">
                 {selected.value !== "preset" && (
                     <Button
                         onClick={handleSaveReminder}
-                        color="primary"
+                        color="success"
                     >
                         Save
                     </Button>
                 )}
+                {isReminderAdded.value
+                    ? (
+                        <Button
+                            onClick={handleRemoveReminder}
+                            color="danger"
+                            addClass="ml-2"
+                        >
+                            Remove Reminder
+                        </Button>
+                    )
+                    : (
+                        <Button
+                            color="success"
+                            onClick={() => isReminderAdded.value = true}
+                        >
+                            Add reminder
+                        </Button>
+                    )}
                 <Button
                     onClick={onClose}
-                    color="danger"
+                    color="primary"
                     addClass="ml-2"
                 >
                     Close

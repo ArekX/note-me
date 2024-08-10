@@ -7,7 +7,7 @@ interface HelpProps {
 
 export default function NoteHelp({ onClose }: HelpProps) {
     return (
-        <Dialog visible={true} canCancel={true} onCancel={onClose}>
+        <Dialog visible={true} canCancel={true} onCancel={onClose} title="Help">
             <div class="p-2">
                 TODO: Will be done last.
             </div>
