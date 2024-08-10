@@ -21,6 +21,7 @@ const variations: string[] = [
 
 const excludedStdErrStrings = [
     "\x1b[0m\x1b[32mCheck\x1b[0m",
+    "waiting for file lock on node_modules directory",
 ];
 
 const checkUrl = dirname(import.meta.url);
