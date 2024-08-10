@@ -19,7 +19,7 @@ defineTest("Home page", async (addStep, client) => {
             assertTextContent(
                 result,
                 "h1",
-                "Welcome to NoteMe! Please login.",
+                "Welcome to NoteMePlease sign in to continue",
             );
         },
     );
