@@ -59,7 +59,7 @@ export default function PeriodicTaskList() {
                 isLoading={tasksLoader.running}
                 noRowsRow={
                     <tr>
-                        <td colSpan={3}>No periodic tasks found</td>
+                        <td colSpan={6}>No periodic tasks found</td>
                     </tr>
                 }
                 headerRowProps={{

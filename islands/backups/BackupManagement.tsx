@@ -163,7 +163,7 @@ export default function BackupManagement({
                 isLoading={backupTargetLoader.running}
                 noRowsRow={
                     <tr>
-                        <td colSpan={4} class="text-center">
+                        <td colSpan={6} class="text-center">
                             No backup targets specified.
                         </td>
                     </tr>
