@@ -18,7 +18,7 @@ export default function Sidebar(
     const wallpaper = getCurrentMonthWallpaper();
     return (
         <div
-            class="w-1/5 bg-gray-800 text-white bg-opacity-90 bg-blend-multiply bg-cover bg-center"
+            class="w-1/5 bg-gray-800 text-white bg-opacity-90 bg-blend-multiply bg-cover bg-center z-10"
             style={{
                 "background-image": `url(${wallpaper})`,
             }}

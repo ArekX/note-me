@@ -112,6 +112,9 @@ export default function NoteFiles(
             visible={true}
             canCancel={true}
             onCancel={onClose}
+            props={{
+                class: "w-1/2",
+            }}
             title="Files"
         >
             {dataLoader.running ? <Loader color="white" /> : (
@@ -120,8 +123,12 @@ export default function NoteFiles(
                         ? (
                             <>
                                 <div class="py-4">
-                                    Following uploaded files have been found in
-                                    this note:
+                                    Files are detected in this note. If a file
+                                    is public it can be viewed by anyone with
+                                    the link otherwise it is only visible to
+                                    you.
+
+                                    <p class="pt-2">Files:</p>
                                 </div>
                                 <ul class="list-disc ml-4">
                                     {files.value.map((file) => (
@@ -150,22 +157,27 @@ export default function NoteFiles(
                                         </p>
                                     )}
 
-                                    <div class="mt-2 text-right">
+                                    <div class="py-4 text-center">
                                         <Button
                                             color="success"
                                             onClick={handleToggleFilesVisibility}
                                             addClass="mr-2"
                                         >
-                                            Make all files in this note{" "}
+                                            Make files in this note{" "}
                                             {hasPrivateFiles()
-                                                ? "public"
-                                                : "private"}
+                                                ? "visible to others"
+                                                : "only visible to you"}
                                         </Button>
                                     </div>
                                 </div>
                             </>
                         )
-                        : <p>No uploaded files could be found in this note.</p>}
+                        : (
+                            <p>
+                                No uploaded file links could be found in this
+                                note.
+                            </p>
+                        )}
                 </>
             )}
 

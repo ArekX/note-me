@@ -81,6 +81,7 @@ export default function MoveGroupDialog({
         <Dialog
             canCancel={true}
             onCancel={onClose}
+            title="Move to new group"
         >
             {loader.running
                 ? (
@@ -94,7 +95,7 @@ export default function MoveGroupDialog({
                             Please select a for this {recordType}{" "}
                             to be moved to:
                         </div>
-                        <div class="pt-2 pb-2">
+                        <div class="py-5">
                             <GroupPicker
                                 allowRoot={true}
                                 onPick={(group) => selectedGroup.value = group}
@@ -103,24 +104,38 @@ export default function MoveGroupDialog({
                         </div>
 
                         {selectedGroup.value !== null && (
-                            <div class="pb-2">
-                                {recordType[0].toUpperCase() +
-                                    recordType.slice(1)}{" "}
-                                will be moved to new group:{" "}
-                                {selectedGroup.value.name}
-                            </div>
+                            <>
+                                {recordType === "group" &&
+                                        selectedGroup.value.id !== recordId
+                                    ? (
+                                        <div class="pb-5">
+                                            {recordType[0].toUpperCase() +
+                                                recordType.slice(1)}{" "}
+                                            will be moved to group &rarr;{"  "}
+                                            {selectedGroup.value.name}
+                                        </div>
+                                    )
+                                    : (
+                                        <div class="pb-5 text-red-600">
+                                            Cannot move a group into itself.
+                                        </div>
+                                    )}
+                                {recordType === "group" &&
+                                    selectedGroup.value.id !== recordId && (
+                                    <Button
+                                        onClick={handleMove}
+                                        color={selectedGroup.value !== null
+                                            ? "success"
+                                            : "successDisabled"}
+                                        disabled={selectedGroup.value === null}
+                                        addClass="mr-2"
+                                    >
+                                        Move
+                                    </Button>
+                                )}
+                            </>
                         )}
 
-                        <Button
-                            onClick={handleMove}
-                            color={selectedGroup.value !== null
-                                ? "success"
-                                : "successDisabled"}
-                            disabled={selectedGroup.value === null}
-                            addClass="mr-2"
-                        >
-                            Move
-                        </Button>
                         <Button onClick={onClose} color="danger">Cancel</Button>
                     </div>
                 )}

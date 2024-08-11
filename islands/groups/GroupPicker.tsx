@@ -142,7 +142,7 @@ export default function GroupPicker({
     }, []);
 
     return (
-        <div class="border-solid border-gray-700 p-4 border-2 group-picker">
+        <div class="border-solid border-gray-700 p-4 border rounded-lg group-picker">
             {pickerLoader.running ? <Loader color="white" /> : (
                 <>
                     {!allowRoot && rootRecords.value.length === 0 && (

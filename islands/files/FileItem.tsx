@@ -21,7 +21,7 @@ const ImageViewer = ({ file }: { file: FileMetaRecord }) => {
     return (
         <img
             src={`/file/${file.identifier}`}
-            class="h-40 inline-block"
+            class="h-40 inline-block rounded-tl-lg rounded-tr-lg"
             alt={file.name}
         />
     );
@@ -32,7 +32,7 @@ const VideoViewer = ({ file }: { file: FileMetaRecord }) => {
         <video
             controls
             src={`/file/${file.identifier}`}
-            class="h-40 inline-block"
+            class="h-40 inline-block rounded-tl-lg rounded-tr-lg"
         />
     );
 };
@@ -46,7 +46,7 @@ const AudioViewer = ({ file }: { file: FileMetaRecord }) => {
             <audio
                 controls
                 src={`/file/${file.identifier}`}
-                class="h-8 block w-full"
+                class="h-8 block w-full rounded-tl-lg rounded-tr-lg"
             />
         </>
     );
@@ -54,7 +54,7 @@ const AudioViewer = ({ file }: { file: FileMetaRecord }) => {
 
 const FileViewer = () => {
     return (
-        <div class="h-40 flex items-center justify-center text-white">
+        <div class="h-40 flex items-center justify-center text-white rounded-tl-lg rounded-tr-lg">
             <Icon name="file" size="5xl" />
         </div>
     );
@@ -98,7 +98,7 @@ export default function FileItem({
     return (
         <div
             key={file.identifier}
-            class={`group rounded border-2 border-solid  cursor-pointer  relative ${
+            class={`group rounded-lg border border-solid  cursor-pointer  relative ${
                 isSelected
                     ? "border-blue-500"
                     : "border-gray-300 hover:border-gray-500"
@@ -110,7 +110,7 @@ export default function FileItem({
                 onSelect(file);
             }}
         >
-            <div class="block text-center bg-slate-400">
+            <div class="block text-center bg-slate-400 rounded-tl-lg rounded-tr-lg">
                 <Viewer file={file} />
             </div>
 

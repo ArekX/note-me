@@ -19,6 +19,7 @@ import { useFilters } from "$frontend/hooks/use-filters.ts";
 import { useLoader } from "$frontend/hooks/use-loader.ts";
 import { UploadProgressDialog } from "$islands/files/UploadProgressDialog.tsx";
 import { FileDropWrapper } from "$islands/files/FileDropWrapper.tsx";
+import { addMessage } from "$frontend/toast-message.ts";
 
 interface FilePickerProps {
     adminMode?: boolean;
@@ -173,6 +174,12 @@ export default function FilePicker({
                 is_public: !file.is_public,
             },
             expect: "updateFileResponse",
+        });
+        addMessage({
+            type: "info",
+            text: `File '${file.name}' can now ${
+                file.is_public ? "only be seen by you" : "be seen by everyone"
+            }.`,
         });
     };
 

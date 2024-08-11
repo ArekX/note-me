@@ -213,7 +213,7 @@ export default function NoteReminder({
             canCancel={true}
             onCancel={onClose}
             title="Note Reminder"
-            props={{ class: "w-2/6" }}
+            props={{ class: "w-3/6" }}
         >
             {reminderLoader.running ? <Loader color="white" /> : (
                 <div>

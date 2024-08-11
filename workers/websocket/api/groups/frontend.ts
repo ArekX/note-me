@@ -49,6 +49,10 @@ const handleUpdateGroupRequest: ListenerFn<UpdateGroupMessage> = async (
 ) => {
     await requireValidSchema(updateGroupRequestSchema, data);
 
+    if (data.parent_id === id) {
+        throw new Error("Group cannot be its own parent");
+    }
+
     await updateGroup(sourceClient!.userId, {
         ...data,
         id,
