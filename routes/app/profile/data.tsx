@@ -1,5 +1,5 @@
-import AccountPage from "../../../islands/data/DataPage.tsx";
+import DataPage from "$islands/data/DataPage.tsx";
 
 export default function Page() {
-    return <AccountPage />;
+    return <DataPage />;
 }

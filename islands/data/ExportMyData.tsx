@@ -155,7 +155,7 @@ export default function ExportMyData() {
     return (
         <>
             <div>
-                <h1 class="text-xl">Data export</h1>
+                <h1 class="text-xl font-semibold">Data export</h1>
                 <p class="py-4">
                     You create an export of all of your notes and files by by
                     clicking the button below. The export will be a ZIP file

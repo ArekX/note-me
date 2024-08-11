@@ -139,7 +139,7 @@ export default function Notifications(props: NotificationsProps) {
                     class="absolute top-full left-0 w-96 bg-gray-800 pt-2 z-50 shadow-black/80 shadow-sm text-white text-left rounded-lg border border-b-0 border-gray-600/50"
                 >
                     <div class="pr-2 pb-1">
-                        <div className="flex">
+                        <div class="flex">
                             <div class="text-md font-semibold w-2/4 pl-4 pt-2">
                                 {notifications.value.length > 0
                                     ? "Notifications "
