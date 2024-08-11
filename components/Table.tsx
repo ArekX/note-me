@@ -72,7 +72,7 @@ export default function Table<T extends object>(
                 {hasAnyFilters && (
                     <tr>
                         {columns.map((column, index) => (
-                            <th
+                            <td
                                 key={index}
                                 {...(
                                     typeof column.filterProps === "function"
@@ -81,7 +81,7 @@ export default function Table<T extends object>(
                                 )}
                             >
                                 {column.filter}
-                            </th>
+                            </td>
                         ))}
                     </tr>
                 )}

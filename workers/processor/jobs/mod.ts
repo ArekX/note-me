@@ -1,7 +1,4 @@
 import { createDataExportJobHandler } from "$workers/processor/jobs/create-data-export.ts";
-import {
-    createPdfBookHandler,
-} from "$workers/processor/jobs/create-pdf-book.ts";
 
 export type JobHandler<T extends ProcessorJob> = (
     job: T,
@@ -16,7 +13,6 @@ export interface RunningJob<T extends ProcessorJob = ProcessorJob> {
 
 export const jobDefinitions = {
     "create-data-export": createDataExportJobHandler,
-    "create-pdf-book": createPdfBookHandler,
 } as const;
 
 export type JobDefinition = typeof jobDefinitions;

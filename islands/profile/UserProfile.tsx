@@ -45,7 +45,6 @@ export default function UserProfile() {
             });
         } catch (e) {
             const error = e as SystemErrorMessage;
-            console.log(error);
             addMessage({
                 type: "error",
                 text: `Failed to update profile: ${error.data.message}`,
@@ -64,62 +63,66 @@ export default function UserProfile() {
     return (
         <div>
             <h1 class="text-xl py-4 font-semibold">My Profile</h1>
-            <form onSubmit={handleSubmit}>
-                <Input
-                    label="Name"
-                    type="text"
-                    value={userData.value.name}
-                    onInput={handlePropertyChange("name")}
-                />
-                <ErrorDisplay
-                    state={validation}
-                    path="name"
-                />
-                <br />
-                <DropdownList
-                    label="Timezone"
-                    items={supportedTimezoneList}
-                    value={userData.value.timezone}
-                    onInput={handlePropertyChange("timezone")}
-                />
-                <br />
-                <Input
-                    label="Old Password"
-                    type="password"
-                    value={userData.value.old_password}
-                    onInput={handlePropertyChange("old_password")}
-                />
-                <ErrorDisplay
-                    state={validation}
-                    path="old_password"
-                />
-                <br />
-                <Input
-                    label="New Password"
-                    type="password"
-                    value={userData.value.new_password}
-                    onInput={handlePropertyChange("new_password")}
-                />
-                <ErrorDisplay
-                    state={validation}
-                    path="new_password"
-                />
-                <br />
-                <Input
-                    label="Confirm Password"
-                    type="password"
-                    value={userData.value.confirm_password}
-                    onInput={handlePropertyChange("confirm_password")}
-                />
-                <ErrorDisplay
-                    state={validation}
-                    path="confirm_password"
-                />
-                <br />
-                <div class="text-right">
-                    <Button color="success">
-                        Update profile
-                    </Button>
+            <form onSubmit={handleSubmit} class="flex flex-wrap">
+                <div class="basis-1/4">
+                    <Input
+                        label="Name"
+                        type="text"
+                        value={userData.value.name}
+                        onInput={handlePropertyChange("name")}
+                    />
+                    <ErrorDisplay
+                        state={validation}
+                        path="name"
+                    />
+                    <br />
+                    <DropdownList
+                        label="Timezone"
+                        items={supportedTimezoneList}
+                        value={userData.value.timezone}
+                        onInput={handlePropertyChange("timezone")}
+                    />
+                </div>
+                <div class="basis-1/4 pl-2">
+                    <Input
+                        label="Old Password"
+                        type="password"
+                        value={userData.value.old_password}
+                        onInput={handlePropertyChange("old_password")}
+                    />
+                    <ErrorDisplay
+                        state={validation}
+                        path="old_password"
+                    />
+                    <br />
+                    <Input
+                        label="New Password"
+                        type="password"
+                        value={userData.value.new_password}
+                        onInput={handlePropertyChange("new_password")}
+                    />
+                    <ErrorDisplay
+                        state={validation}
+                        path="new_password"
+                    />
+                    <br />
+                    <Input
+                        label="Confirm Password"
+                        type="password"
+                        value={userData.value.confirm_password}
+                        onInput={handlePropertyChange("confirm_password")}
+                    />
+                    <ErrorDisplay
+                        state={validation}
+                        path="confirm_password"
+                    />
+                </div>
+                <div class="basis-full">
+                    <div class="py-4">
+                        <Button color="success" type="submit">
+                            Update profile
+                        </Button>
+                    </div>
                 </div>
             </form>
         </div>

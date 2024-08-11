@@ -238,7 +238,11 @@ export default function UserPasskeys() {
             {registerPasskeyLoader.running
                 ? <Loader>Waiting...</Loader>
                 : (
-                    <Button onClick={registerDevice} addClass="my-2">
+                    <Button
+                        onClick={registerDevice}
+                        addClass="my-2"
+                        color="success"
+                    >
                         Register device
                     </Button>
                 )}
@@ -274,6 +278,9 @@ export default function UserPasskeys() {
                         },
                         {
                             name: "Actions",
+                            headerCellProps: {
+                                class: "w-1/6",
+                            },
                             render: (record) => (
                                 <>
                                     <Button

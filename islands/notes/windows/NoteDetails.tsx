@@ -4,7 +4,6 @@ import { useLoader } from "$frontend/hooks/use-loader.ts";
 import Loader from "$islands/Loader.tsx";
 import { NoteDetailsRecord } from "$backend/repository/note-repository.ts";
 import Button from "$components/Button.tsx";
-import { useTimeFormat } from "$frontend/hooks/use-time-format.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import {
     GetNoteDetailsMessage,
@@ -16,6 +15,7 @@ import ButtonGroup from "$components/ButtonGroup.tsx";
 import { useListState } from "$frontend/hooks/use-list-state.ts";
 import Picker from "$components/Picker.tsx";
 import { NoteWindowComponentProps } from "$islands/notes/NoteWindow.tsx";
+import TimeAgo from "$components/TimeAgo.tsx";
 
 export default function NoteDetails(
     { noteId, onClose, record }: NoteWindowComponentProps,
@@ -23,8 +23,6 @@ export default function NoteDetails(
     const noteData = useSignal<NoteDetailsRecord | null>(null);
 
     const isNoteLoading = useLoader(true);
-
-    const timeFormatter = useTimeFormat();
 
     const { sendMessage } = useWebsocketService();
 
@@ -98,15 +96,11 @@ export default function NoteDetails(
                                                 </>
                                             )}
 
-                                            <strong>Created at:</strong>{" "}
-                                            {timeFormatter.formatDateTime(
-                                                created_at ?? 0,
-                                            )} <br />
-                                            <strong>Last update at:</strong>
-                                            {" "}
-                                            {timeFormatter.formatDateTime(
-                                                updated_at ?? 0,
-                                            )} <br />
+                                            <strong>Created:</strong>{" "}
+                                            <TimeAgo time={created_at} />
+                                            <br />
+                                            <strong>Last update:</strong>{" "}
+                                            <TimeAgo time={updated_at} /> <br />
                                             <strong>Created by:</strong>{" "}
                                             {user_name}
                                         </>

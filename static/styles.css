@@ -99,7 +99,7 @@ dialog {
   opacity: 0;
   display: block;
   padding: 2em;
-  @apply rounded-lg bg-gray-800 text-white border-gray-700 border border-b-0 shadow-md;
+  @apply rounded-lg bg-gray-800 text-white border-gray-700 border border-b-0 shadow-black/80 shadow-sm;
 }
 dialog[open] {
   opacity: 1;
@@ -109,6 +109,48 @@ dialog[open] {
 dialog::backdrop {
   @apply bg-gray-950;
   @apply opacity-50;
+}
+
+table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+table th {
+    @apply bg-gray-700/50 text-gray-300;
+}   
+
+
+table td, table th {
+    @apply border-gray-700 border p-2 border-r-0 border-b-0;
+}
+
+table :not(thead)  tr:last-child td {
+    @apply border-gray-700 border-b;
+}
+
+table tr td:last-child {
+     @apply border-gray-700 border-r;
+}
+
+table th:first-child {
+    @apply rounded-tl-lg;
+}
+
+table th:last-child {
+    @apply rounded-tr-lg;
+}
+
+table :not(thead) tr:last-child td:first-child {
+    @apply rounded-bl-lg;
+}
+
+table :not(thead) tr:last-child td:last-child {
+    @apply rounded-br-lg;
+}
+
+table :not(thead) tr:hover {
+    @apply bg-gray-700/40;
 }
 
 .icon-menu .icon-menu-items {
@@ -357,3 +399,4 @@ select.select-input {
 .sidebar-container {
     height: 100vh;
 }
+

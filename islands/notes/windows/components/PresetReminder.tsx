@@ -9,6 +9,14 @@ type PresetMap = {
 };
 
 const presets: PresetMap = {
+    in5Minutes: {
+        title: "In 5 minutes",
+        getNextAtFromNow: () => getCurrentUnixTimestamp() + 300,
+    },
+    in30Minutes: {
+        title: "In 30 minutes",
+        getNextAtFromNow: () => getCurrentUnixTimestamp() + 1800,
+    },
     in1Hour: {
         title: "In 1 hour",
         getNextAtFromNow: () => getCurrentUnixTimestamp() + 3600,
@@ -104,18 +112,23 @@ export default function PresetReminder({
     onPresetSelected,
 }: PresetReminderProps) {
     return (
-        <div class="grid grid-cols-3 gap-2">
-            {Object.entries(presets).map((
-                [key, { title, getNextAtFromNow }],
-            ) => (
-                <Button
-                    key={key}
-                    color="success"
-                    onClick={() => onPresetSelected(getNextAtFromNow())}
-                >
-                    {title}
-                </Button>
-            ))}
-        </div>
+        <>
+            <div class="py-2">
+                When should we remind you?
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+                {Object.entries(presets).map((
+                    [key, { title, getNextAtFromNow }],
+                ) => (
+                    <Button
+                        key={key}
+                        color="success"
+                        onClick={() => onPresetSelected(getNextAtFromNow())}
+                    >
+                        {title}
+                    </Button>
+                ))}
+            </div>
+        </>
     );
 }

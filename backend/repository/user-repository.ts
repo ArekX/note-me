@@ -240,7 +240,7 @@ export const findUsers = async (
     query = applyFilters(query, [
         { field: "name", type: "text", value: filters.name },
         { field: "username", type: "text", value: filters.username },
-        { field: "role", value: filters.role },
+        { field: "role", type: "value", value: filters.role },
     ]);
 
     return await pageResults(query, page);

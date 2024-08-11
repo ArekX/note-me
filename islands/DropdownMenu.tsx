@@ -51,7 +51,7 @@ const MenuItems = (
             displayType == "inline" && inlineDirection !== "left"
                 ? "right-0"
                 : ""
-        } text-md mt-1 z-50 drop-shadow-lg bg-gray-800 border-gray-700 border border-b-0 rounded-lg shadow-gray-900 shadow-md p-2 whitespace-nowrap break-keep`}
+        } text-md mt-1 z-50 drop-shadow-lg bg-gray-800 border-gray-700 border border-b-0 rounded-lg shadow-black/80 shadow-sm p-2 whitespace-nowrap break-keep`}
     >
         {items.map((item, index) => (
             <div

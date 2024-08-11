@@ -295,7 +295,7 @@ export default function NoteReminder({
                         Save
                     </Button>
                 )}
-                {isReminderAdded.value
+                {isDataLoaded.value && isReminderAdded.value
                     ? (
                         <Button
                             onClick={handleRemoveReminder}
@@ -305,12 +305,12 @@ export default function NoteReminder({
                             Remove Reminder
                         </Button>
                     )
-                    : (
+                    : isReminderAdded.value === false && (
                         <Button
                             color="success"
                             onClick={() => isReminderAdded.value = true}
                         >
-                            Add reminder
+                            Set reminder
                         </Button>
                     )}
                 <Button

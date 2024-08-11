@@ -29,7 +29,7 @@ export default function UserList() {
     const userToDelete = useSelected<EditableUser>();
     const userToEdit = useSelected<EditableUser>();
 
-    const userLoader = useLoader();
+    const userLoader = useLoader(true);
 
     const {
         page,

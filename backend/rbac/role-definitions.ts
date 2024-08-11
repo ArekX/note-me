@@ -36,7 +36,7 @@ export const roleDefinitions = {
 const settingsPermissions: AppPermissions[] = [
     CanManageUsers.Update,
     CanManageBackups.Update,
-    CanManageTags.Read,
+    CanManageTags.Update,
     CanManageFiles.AllFiles,
     CanManagePeriodicTasks.View,
 ];

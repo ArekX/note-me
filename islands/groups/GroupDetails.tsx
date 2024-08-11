@@ -3,7 +3,6 @@ import { useSignal } from "@preact/signals";
 import { useLoader } from "$frontend/hooks/use-loader.ts";
 import Loader from "$islands/Loader.tsx";
 import Button from "$components/Button.tsx";
-import { useTimeFormat } from "$frontend/hooks/use-time-format.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import { useEffect } from "preact/hooks";
 import {
@@ -11,6 +10,7 @@ import {
     GetSingleGroupResponse,
 } from "$workers/websocket/api/groups/messages.ts";
 import { GroupRecord } from "$backend/repository/group-repository.ts";
+import TimeAgo from "$components/TimeAgo.tsx";
 
 interface GroupDetailsProps {
     groupId: number;
@@ -23,8 +23,6 @@ export default function GroupDetails(
     const groupData = useSignal<GroupRecord | null>(null);
 
     const groupLoader = useLoader(true);
-
-    const timeFormatter = useTimeFormat();
 
     const { sendMessage } = useWebsocketService();
 
@@ -59,10 +57,8 @@ export default function GroupDetails(
                         <p class="pt-2 pb-2">
                             <strong>Group ID:</strong> {groupId} <br />
                             <strong>Name:</strong> {name} <br />
-                            <strong>Created at:</strong>{" "}
-                            {timeFormatter.formatDateTime(
-                                created_at ?? 0,
-                            )} <br />
+                            <strong>Created:</strong>{"  "}
+                            <TimeAgo time={created_at} /> <br />
                             <strong>Has groups inside:</strong>{" "}
                             {has_subgroups ? "Yes" : "No"} <br />
                             <strong>Has notes inside:</strong>{" "}

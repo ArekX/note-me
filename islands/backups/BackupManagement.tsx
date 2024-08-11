@@ -205,6 +205,9 @@ export default function BackupManagement({
 
                     {
                         name: "Actions",
+                        headerCellProps: {
+                            class: "w-1/6",
+                        },
                         render: (record) => (
                             <div>
                                 <Button

@@ -34,7 +34,11 @@ export default function ButtonGroup<T extends ListMap>(
                                 : ""
                         } border-t ${
                             id === activeItem ? "pointer-events-none" : ""
-                        } ${id === activeItem ? "border-l border-r" : ""}`}
+                        } border-l border-r ${
+                            id === activeItem
+                                ? ""
+                                : "border-l-transparent border-r-transparent"
+                        }`}
                     >
                         {name}
                     </Button>

@@ -87,7 +87,7 @@ export default function ListSwitcher({
                 </>
             }
             buttonColor="transparent"
-            buttonBorderClass="border-r"
+            buttonBorderClass="border-b"
             buttonSize="sm"
             popoverId="listSwitcher-0"
             displayType="inline"
