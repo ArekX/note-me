@@ -99,7 +99,7 @@ dialog {
   opacity: 0;
   display: block;
   padding: 2em;
-  @apply rounded-lg bg-gray-800 text-white border-gray-700 border shadow-gray-900 shadow-md;
+  @apply rounded-lg bg-gray-800 text-white border-gray-700 border border-b-0 shadow-md;
 }
 dialog[open] {
   opacity: 1;

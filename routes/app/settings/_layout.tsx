@@ -1,5 +1,5 @@
 import { PageProps } from "$fresh/server.ts";
-import TabPanel, { TabLink } from "$components/TabPanel.tsx";
+import TabPanel, { TabLink } from "../../../islands/TabPanel.tsx";
 import { AppState } from "$types";
 import {
     CanManageBackups,

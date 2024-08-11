@@ -48,7 +48,7 @@ export default function DropdownList<T>(
                 tabIndex={tabIndex}
                 value={items.findIndex((item) => item.value === value)}
                 disabled={disabled}
-                class="outline-none border-gray-600/50 bg-gray-700/60 hover:bg-gray-700 border select-input w-full rounded-md"
+                class="outline-none border-gray-600/50 bg-gray-700/60 hover:bg-gray-700 border border-b-0 select-input w-full rounded-md"
                 onInput={IS_BROWSER ? (e) => handleInputValue(e) : undefined}
             >
                 {items.map((item, index) => (

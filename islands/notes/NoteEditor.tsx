@@ -302,13 +302,13 @@ export default function NoteEditor({
                         ? (
                             <>
                                 <Button
-                                    color="primary"
+                                    color="danger"
                                     disabled={isSaving.running}
-                                    title="Cancel changes"
+                                    title="Close"
                                     onClick={handleCancelChanges}
                                 >
                                     <Icon
-                                        name="tag-x"
+                                        name="minus-circle"
                                         size="lg"
                                         type="solid"
                                     />

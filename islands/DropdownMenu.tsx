@@ -22,6 +22,7 @@ interface DropdownMenuProps {
     popoverId: PopoverId;
     label?: string | JSX.Element;
     roundedButton?: boolean;
+    buttonBorderClass?: string;
     icon?: string;
     iconSize?: IconSize;
     buttonSize?: ButtonSize;
@@ -50,7 +51,7 @@ const MenuItems = (
             displayType == "inline" && inlineDirection !== "left"
                 ? "right-0"
                 : ""
-        } text-md mt-1 z-50 drop-shadow-lg bg-gray-800 border-gray-700 border rounded-lg shadow-gray-900 shadow-md p-2 whitespace-nowrap break-keep`}
+        } text-md mt-1 z-50 drop-shadow-lg bg-gray-800 border-gray-700 border border-b-0 rounded-lg shadow-gray-900 shadow-md p-2 whitespace-nowrap break-keep`}
     >
         {items.map((item, index) => (
             <div
@@ -71,6 +72,7 @@ export default function DropdownMenu(
         icon = "chevron-down",
         iconOnly = false,
         roundedButton = true,
+        buttonBorderClass = "",
         iconSize = "md",
         buttonSize = "md",
         displayType = "inline",
@@ -158,6 +160,7 @@ export default function DropdownMenu(
                             onClick={handleOpenMenu}
                             size={buttonSize}
                             rounded={roundedButton}
+                            borderClass={buttonBorderClass}
                         >
                             {label} <Icon name={icon} size={iconSize} />
                         </Button>

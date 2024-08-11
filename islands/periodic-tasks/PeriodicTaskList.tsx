@@ -50,6 +50,11 @@ export default function PeriodicTaskList() {
                     <Icon name="refresh" /> Refresh
                 </Button>
             </div>
+            <div class="py-4">
+                This screen allows you to see the status of all background
+                periodic tasks running in the application along with their last
+                reported status.
+            </div>
             <Table<PeriodicTaskRecord>
                 isLoading={tasksLoader.running}
                 noRowsRow={

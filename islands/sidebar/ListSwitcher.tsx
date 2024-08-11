@@ -86,8 +86,8 @@ export default function ListSwitcher({
                     {selectedItem.label}
                 </>
             }
-            roundedButton={false}
             buttonColor="transparent"
+            buttonBorderClass="border-r"
             buttonSize="sm"
             popoverId="listSwitcher-0"
             displayType="inline"

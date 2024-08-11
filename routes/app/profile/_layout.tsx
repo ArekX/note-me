@@ -1,5 +1,5 @@
 import { PageProps } from "$fresh/server.ts";
-import TabPanel from "$components/TabPanel.tsx";
+import TabPanel from "../../../islands/TabPanel.tsx";
 import { AppState } from "$types";
 
 export default function Layout(

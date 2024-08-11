@@ -13,7 +13,7 @@ export default function Panel(
 ) {
     return (
         <div
-            class={`rounded-lg text-white border bg-gray-800 border-gray-700 shadow-gray-900 shadow-md mr-5 ml-5 mb-5 p-5 ${addClass}`}
+            class={`rounded-lg text-white border border-b-0 bg-gray-800 border-gray-700 shadow-gray-900 shadow-md mr-5 ml-5 mb-5 p-5 ${addClass}`}
         >
             {children}
         </div>

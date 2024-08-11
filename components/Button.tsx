@@ -56,7 +56,9 @@ export default function Button(
     }: ButtonProps,
 ) {
     if (!borderClass) {
-        borderClass = color === "transparent" ? "border-b" : "border";
+        borderClass = color === "transparent"
+            ? "border-b"
+            : "border border-b-0";
     }
 
     const roundedClass = rounded ? "rounded-md" : "";

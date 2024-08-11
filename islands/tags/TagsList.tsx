@@ -108,9 +108,17 @@ export default function TagsList() {
                     </Button>
                 </div>
             )}
+
+            <div class="py-4">
+                This screen allows you to make changes to tags. Click on the tag
+                name to edit it, or click on the minus icon to delete it.
+                Deleted tags will be removed from all notes.
+            </div>
+
             <Input
                 label="Tag name"
                 labelColor="white"
+                placeholder="Search tags"
                 value={filters.value.name}
                 onInput={(value) => setFilter("name", value)}
             />
@@ -123,16 +131,16 @@ export default function TagsList() {
                 {results.value.map((tag) => (
                     <div
                         key={tag.id}
-                        class="inline-block  mr-4 mt-4"
+                        class="inline-block mr-4 mt-8"
                     >
                         <span
-                            class="rounded-l-lg bg-gray-900 text-white p-4 cursor-pointer hover:bg-gray-700 border-gray-700 border border-r-0"
+                            class="rounded-l-lg bg-gray-900 text-white p-4 border-b-0 cursor-pointer hover:bg-gray-700 border-gray-700 border border-r-0"
                             onClick={() => tagToEdit.select(tag)}
                         >
                             {tag.name}
                         </span>
                         <span
-                            class="rounded-r-lg bg-red-900/50 text-white p-4 cursor-pointer hover:bg-red-700 border border-red-700/50 border-l-0"
+                            class="rounded-r-lg bg-red-900/90 text-white p-4 border-b-0 cursor-pointer hover:bg-red-700 border border-red-700/40 border-l-0"
                             onClick={() => tagToDelete.select(tag)}
                         >
                             <Icon name="minus-circle" size="xl" />
