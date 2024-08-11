@@ -20,14 +20,24 @@ export default function ButtonGroup<T extends ListMap>(
                     }
                     return visibleItems.includes(item[0]);
                 })
-                .map(([id, name]) => (
+                .map(([id, name], index, total) => (
                     <Button
                         color={activeItem === id ? "success" : "primary"}
                         onClick={() =>
                             activeItem !== id ? onSelect?.(id) : null}
                         rounded={false}
-                        borderClass={`border-b ${
-                            id === activeItem ? "pointer-events-none" : ""
+                        borderClass={`${
+                            index === 0 ? "border-l rounded-l-lg" : ""
+                        } ${
+                            index === total.length - 1
+                                ? "border-r rounded-r-lg"
+                                : ""
+                        } ${
+                            id === activeItem
+                                ? "pointer-events-none"
+                                : ""
+                        } border-b border-t ${
+                            id === activeItem ? "border-l border-r" : ""
                         }`}
                     >
                         {name}

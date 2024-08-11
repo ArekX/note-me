@@ -27,8 +27,8 @@ export default function TabPanel(
                                 href={link.link}
                                 class={`border ${
                                     link.link == activeLink
-                                        ? "bg-sky-800 border-sky-700"
-                                        : "bg-gray-800 border-gray-700"
+                                        ? "bg-sky-900 border-sky-600/50"
+                                        : "bg-gray-800 border-gray-700/50"
                                 } p-3 rounded-lg shadow-md`}
                             >
                                 {link.name}

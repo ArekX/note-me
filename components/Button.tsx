@@ -10,6 +10,7 @@ interface ButtonProps {
     color?: ButtonColors;
     type?: "button" | "submit";
     borderClass?: string;
+    addPadding?: boolean;
     rounded?: boolean;
     addClass?: string;
     tabIndex?: number;
@@ -48,6 +49,7 @@ export default function Button(
         type = "button",
         rounded = true,
         borderClass,
+        addPadding = true,
         tabIndex,
         addClass,
         onClick,
@@ -68,7 +70,7 @@ export default function Button(
             tabIndex={tabIndex}
             onClick={(e) => !disabled && onClick?.(e)}
             class={`${borderClass} bg-opacity-50 hover:bg-opacity-100 border-solid ${
-                sizeTypes[size]
+                addPadding ? sizeTypes[size] : ""
             } ${buttonColors[color]} ${roundedClass} transition-colors ${
                 addClass ?? ""
             }`}

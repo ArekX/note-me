@@ -118,7 +118,7 @@ export const handler: Handlers<LoginResult> = {
 export default function Page(props: PageProps<LoginResult>) {
     return (
         <div class="flex items-center xl:justify-end justify-center h-screen text-white">
-            <div class="bg-gray-900/90 h-full px-10 pt-10 w-1/3 backdrop-blur-xl">
+            <div class="bg-gray-900/90 h-full px-10 pt-10 w-1/3 backdrop-blur-xl max-w-lg">
                 <div class="text-center mb-5">
                     <Logo white={true} width={96} height={96} />
                 </div>
@@ -133,23 +133,25 @@ export default function Page(props: PageProps<LoginResult>) {
                         </span>
                     </h1>
                     <Alert message={props.data?.message} />
-                    <div class="mb-5">
-                        <Input
-                            label="Username"
-                            icon="user"
-                            placeholder="Username"
-                            name="username"
-                            value={props.data?.username}
-                        />
-                    </div>
-                    <div class="mb-5">
-                        <Input
-                            label="Password"
-                            icon="key"
-                            placeholder="Password"
-                            type="password"
-                            name="password"
-                        />
+                    <div class="w-2/3 m-auto">
+                        <div class="mb-5">
+                            <Input
+                                label="Username"
+                                icon="user"
+                                placeholder="Username"
+                                name="username"
+                                value={props.data?.username}
+                            />
+                        </div>
+                        <div class="mb-5">
+                            <Input
+                                label="Password"
+                                icon="key"
+                                placeholder="Password"
+                                type="password"
+                                name="password"
+                            />
+                        </div>
                     </div>
                     <div class="flex items-center justify-center mt-8">
                         <PasskeySignIn
