@@ -10,7 +10,14 @@ import { getLinkMarkdown } from "$islands/notes/helpers/markdown.ts";
 const Component = (
     props: InsertComponentProps<LinkFormInsertData>,
 ) => {
-    return <LinkForm {...props} />;
+    return (
+        <>
+            <div class="py-2">
+                Insert a link by providing the URL and the name.
+            </div>
+            <LinkForm {...props} />
+        </>
+    );
 };
 
 export const InsertLinkDef: InsertComponent<

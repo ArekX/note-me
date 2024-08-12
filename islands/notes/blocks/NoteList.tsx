@@ -61,7 +61,9 @@ export default function NoteList({
             {noteListLoader.running ? <Loader color="white" /> : (
                 <>
                     {notes.value.length === 0 && (
-                        <div>No notes found in this group.</div>
+                        <div class="text-gray-400">
+                            No notes found in this group.
+                        </div>
                     )}
                     <ul class="list-disc ml-4">
                         {notes.value.map((record) => (

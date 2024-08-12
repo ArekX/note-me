@@ -85,7 +85,11 @@ const Component = ({
     }, []);
 
     return (
-        <div class="w-2/3">
+        <div>
+            <div class="py-2">
+                Please select a note from which the link will be inserted, this
+                link will dynamically show the latest title of the note.
+            </div>
             <div>
                 <Input
                     label="Find notes"

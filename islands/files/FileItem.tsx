@@ -124,7 +124,7 @@ export default function FileItem({
                 {" "}
                 <br />
                 Size: <FileSize size={file.size} /> <br />
-                Public: {file.is_public ? "Yes" : "No"} <br />
+                Only visible to you: {file.is_public ? "No" : "Yes"} <br />
                 Uploaded: <TimeAgo time={file.created_at} /> <br />
                 {adminMode && (
                     <>

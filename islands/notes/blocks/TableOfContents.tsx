@@ -22,9 +22,9 @@ const getTitleLink = (text: string) => {
 const List = ({ item, disableLinks }: ListProps) => (
     <>
         {item.text.length > 0 && (
-            disableLinks ? <span>{item.text}</span> : (
+            (
                 <a
-                    href={getTitleLink(item.text)}
+                    href={disableLinks ? "#" : getTitleLink(item.text)}
                     class="text-blue-600 hover:underline"
                 >
                     {item.text}
@@ -64,7 +64,7 @@ export default function TableOfContents(
             </div>
         )
         : (
-            <div class="text-center p-4">
+            <div class="text-center p-4 text-gray-400">
                 {noTocMessage}
             </div>
         );

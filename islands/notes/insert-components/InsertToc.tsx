@@ -18,11 +18,24 @@ const Component = ({
     }, []);
 
     return (
-        <TableOfContents
-            text={noteText}
-            disableLinks={true}
-            noTocMessage="No headings found in this note to create table of contents, pleaase add headings to see the ToC here."
-        />
+        <>
+            <div class="py-2">
+                Table of contents is generated from the note's content.
+                Specifically from the markdown headings. This table of contents
+                will be dynamically updated as headings are added or removed in
+                the note text.
+            </div>
+            <div class="font-semibold">
+                Preview
+            </div>
+            <div class="markdown-viewer">
+                <TableOfContents
+                    text={noteText}
+                    disableLinks={true}
+                    noTocMessage="No headings found in this note to create table of contents, pleaase add headings to see the ToC here."
+                />
+            </div>
+        </>
     );
 };
 

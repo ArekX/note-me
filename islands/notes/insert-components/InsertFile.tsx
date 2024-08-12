@@ -31,11 +31,16 @@ const Component = ({
 
     return (
         <div class="w-full">
+            <div class="py-2">
+                Please select a file to insert. You can upload a new file or
+                select an existing one. File can be inserted as an image, view
+                or a download link.
+            </div>
             <div>
                 <div class="flex-grow">
                     {selectedFile.isSelected() && (
                         <div>
-                            Selected:{" "}
+                            To be inserted:{" "}
                             <a
                                 title={`Download ${
                                     selectedFile.selected.value!.name
@@ -44,9 +49,12 @@ const Component = ({
                                     selectedFile.selected.value!.identifier,
                                 )}
                                 target="_blank"
-                                class="underline"
+                                class="underline font-semibold"
                             >
-                                {selectedFile.selected.value!.name}
+                                {selectedFile.selected.value!.name}{" "}
+                                ({selectedFile.selected.value!.is_public
+                                    ? "Public"
+                                    : "Private"})
                             </a>
                         </div>
                     )}

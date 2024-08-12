@@ -10,7 +10,15 @@ import { getImageMarkdown } from "$islands/notes/helpers/markdown.ts";
 const Component = (
     props: InsertComponentProps<LinkFormInsertData>,
 ) => {
-    return <LinkForm {...props} />;
+    return (
+        <>
+            <div class="py-2">
+                Insert an image by providing the URL of the image and the
+                description if the link is not available.
+            </div>
+            <LinkForm {...props} />
+        </>
+    );
 };
 
 export const InsertImageDef: InsertComponent<
