@@ -76,7 +76,7 @@ export default function ImportNotes() {
 
     return (
         <div>
-            <h1 class="text-xl  font-semibold">Import notes</h1>
+            <h1 class="text-xl font-semibold">Import notes</h1>
             <p class="py-4">
                 You can import notes notes from by uploading one or more files.
                 Files must be in markdown or text format. The contents of the

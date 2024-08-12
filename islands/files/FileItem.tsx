@@ -1,8 +1,8 @@
 import { FileMetaRecord } from "$backend/repository/file-repository.ts";
 import Button from "$components/Button.tsx";
 import Icon from "$components/Icon.tsx";
-import { useTimeFormat } from "$frontend/hooks/use-time-format.ts";
 import FileSize from "$components/FileSize.tsx";
+import TimeAgo from "$components/TimeAgo.tsx";
 
 export interface ExtendedFileMetaRecord extends FileMetaRecord {
     is_processing: boolean;
@@ -93,8 +93,6 @@ export default function FileItem({
 }: FileItemProps) {
     const Viewer = viewers[getViewerName(file)];
 
-    const timeFormatter = useTimeFormat();
-
     return (
         <div
             key={file.identifier}
@@ -127,9 +125,7 @@ export default function FileItem({
                 <br />
                 Size: <FileSize size={file.size} /> <br />
                 Public: {file.is_public ? "Yes" : "No"} <br />
-                Uploaded at: {timeFormatter.formatDateTime(
-                    file.created_at,
-                )}
+                Uploaded: <TimeAgo time={file.created_at} /> <br />
                 {adminMode && (
                     <>
                         <br />Created by: {file.created_by}
@@ -138,10 +134,11 @@ export default function FileItem({
             </div>
 
             {!file.is_processing && (
-                <div class="absolute top-0 right-0 pr-2 pt-2 opacity-0 group-hover:opacity-30 group-hover:hover:opacity-100 ">
+                <div class="absolute top-0 right-0 pr-2 pt-2 opacity-0 group-hover:opacity-70 group-hover:hover:opacity-100 ">
                     <Button
                         color="danger"
                         size="xs"
+                        title="Delete this file"
                         onClick={(e: Event) => {
                             onDelete(file);
                             e.stopPropagation();
@@ -155,8 +152,8 @@ export default function FileItem({
                             color="primary"
                             size="xs"
                             title={file.is_public
-                                ? "Set as private"
-                                : "Set as public"}
+                                ? "Make this file visible only to you"
+                                : "Make this file visible to everyone"}
                             onClick={(e: Event) => {
                                 onToggleVisibility(file);
                                 e.stopPropagation();

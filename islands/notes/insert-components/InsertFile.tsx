@@ -3,127 +3,50 @@ import {
     InsertComponentProps,
 } from "$islands/notes/InsertDialog.tsx";
 import FilePicker from "$islands/files/FilePicker.tsx";
-import Icon from "$components/Icon.tsx";
-import Button from "$components/Button.tsx";
-import { useSignal } from "@preact/signals";
 import { FileMetaRecord } from "$backend/repository/file-repository.ts";
-import DropdownMenu from "$islands/DropdownMenu.tsx";
 import {
     getFileDownloadUrl,
     getFileViewUrl,
     getImageMarkdown,
     getLinkMarkdown,
 } from "$islands/notes/helpers/markdown.ts";
+import { useSelected } from "$frontend/hooks/use-selected.ts";
+
+type InsertKeys =
+    | "image"
+    | "view-link"
+    | "download-link"
+    | "view-link-text"
+    | "download-link-text";
 
 const Component = ({
-    onInsert,
-    onCancel,
+    onInsertDataChange,
 }: InsertComponentProps) => {
-    const selectedFile = useSignal<FileMetaRecord | null>(null);
+    const selectedFile = useSelected<FileMetaRecord>();
+
+    const handlePickFile = (file: FileMetaRecord | null) => {
+        selectedFile.selected.value = file;
+        onInsertDataChange(file);
+    };
 
     return (
         <div class="w-full">
-            <div class="mb-2">
-                {selectedFile.value && (
-                    <>
-                        <DropdownMenu
-                            popoverId="insertFile-0"
-                            label="Insert"
-                            iconSize="lg"
-                            inlineDirection="left"
-                            items={[
-                                {
-                                    name: "Image",
-                                    icon: "image",
-                                    onClick: () =>
-                                        onInsert(
-                                            getImageMarkdown(
-                                                getFileViewUrl(
-                                                    selectedFile.value!
-                                                        .identifier,
-                                                ),
-                                                selectedFile.value!.name,
-                                            ),
-                                        ),
-                                },
-                                {
-                                    name: "View Link",
-                                    icon: "link",
-                                    onClick: () =>
-                                        onInsert(
-                                            getLinkMarkdown(
-                                                getFileViewUrl(
-                                                    selectedFile.value!
-                                                        .identifier,
-                                                ),
-                                                selectedFile.value!.name,
-                                            ),
-                                        ),
-                                },
-                                {
-                                    name: "Download Link",
-                                    icon: "down-arrow-alt",
-                                    onClick: () =>
-                                        onInsert(
-                                            getLinkMarkdown(
-                                                getFileDownloadUrl(
-                                                    selectedFile.value!
-                                                        .identifier,
-                                                ),
-                                                selectedFile.value!.name,
-                                            ),
-                                        ),
-                                },
-                                {
-                                    name: "View Link as Text",
-                                    icon: "text",
-                                    onClick: () =>
-                                        onInsert(
-                                            getFileViewUrl(
-                                                selectedFile.value!
-                                                    .identifier,
-                                            ),
-                                        ),
-                                },
-                                {
-                                    name: "Download Link as Text",
-                                    icon: "text",
-                                    onClick: () =>
-                                        onInsert(
-                                            getFileDownloadUrl(
-                                                selectedFile.value!
-                                                    .identifier,
-                                            ),
-                                        ),
-                                },
-                            ]}
-                        />
-                        {" "}
-                    </>
-                )}
-
-                <Button
-                    color="danger"
-                    onClick={onCancel}
-                    size="md"
-                >
-                    <Icon name="minus-circle" size="lg" /> Cancel
-                </Button>
-            </div>
             <div>
                 <div class="flex-grow">
-                    {selectedFile.value && (
+                    {selectedFile.isSelected() && (
                         <div>
                             Selected:{" "}
                             <a
-                                title={`Download ${selectedFile.value.name}`}
+                                title={`Download ${
+                                    selectedFile.selected.value!.name
+                                }`}
                                 href={getFileDownloadUrl(
-                                    selectedFile.value.identifier,
+                                    selectedFile.selected.value!.identifier,
                                 )}
                                 target="_blank"
                                 class="underline"
                             >
-                                {selectedFile.value.name}
+                                {selectedFile.selected.value!.name}
                             </a>
                         </div>
                     )}
@@ -131,15 +54,52 @@ const Component = ({
             </div>
             <FilePicker
                 color="white"
-                onFilePicked={(f) => selectedFile.value = f}
-                selectedFileId={selectedFile.value?.identifier}
+                size="threeColumns"
+                onFilePicked={handlePickFile}
+                selectedFileId={selectedFile.selected.value?.identifier}
             />
         </div>
     );
 };
 
-export const InsertFileDef: InsertComponent<"file"> = {
+export const InsertFileDef: InsertComponent<
+    "file",
+    InsertKeys,
+    FileMetaRecord
+> = {
     id: "file",
     name: "File",
     component: Component,
+    icon: "file",
+    description: "Upload or select a file to insert",
+    insertButtons: {
+        image: {
+            name: "File as Image",
+            icon: "image",
+            formatData: (data) =>
+                getImageMarkdown(getFileViewUrl(data.identifier), data.name),
+        },
+        "view-link": {
+            name: "View Link",
+            icon: "link",
+            formatData: (data) =>
+                getLinkMarkdown(getFileViewUrl(data.identifier), data.name),
+        },
+        "download-link": {
+            name: "Download Link",
+            icon: "link",
+            formatData: (data) =>
+                getLinkMarkdown(getFileDownloadUrl(data.identifier), data.name),
+        },
+        "view-link-text": {
+            name: "View Link Text",
+            icon: "link",
+            formatData: (data) => getFileViewUrl(data.identifier),
+        },
+        "download-link-text": {
+            name: "Download Link Text",
+            icon: "link",
+            formatData: (data) => getFileDownloadUrl(data.identifier),
+        },
+    },
 };

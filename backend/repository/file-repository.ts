@@ -3,6 +3,7 @@ import { db } from "$backend/database.ts";
 import { applyFilters } from "$lib/kysely-sqlite-dialect/filters.ts";
 import { Paged, pageResults } from "$lib/kysely-sqlite-dialect/pagination.ts";
 import { sql } from "$lib/kysely-sqlite-dialect/deps.ts";
+import { getCurrentUnixTimestamp } from "$lib/time/unix.ts";
 
 export type NewFileRecord = Pick<
     FileTable,
@@ -13,7 +14,7 @@ export const createFileRecord = async (data: NewFileRecord): Promise<void> => {
     await db.insertInto("file")
         .values({
             ...data,
-            created_at: Date.now(),
+            created_at: getCurrentUnixTimestamp(),
         })
         .execute();
 };

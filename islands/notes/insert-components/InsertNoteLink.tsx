@@ -10,8 +10,6 @@ import {
 } from "$workers/websocket/api/notes/messages.ts";
 import { useSignal } from "@preact/signals";
 import Input from "$components/Input.tsx";
-import Button from "$components/Button.tsx";
-import Icon from "$components/Icon.tsx";
 import { useDebouncedCallback } from "$frontend/hooks/use-debounced-callback.ts";
 import { NoteSearchRecord } from "$backend/repository/note-search-repository.ts";
 import LoadMoreWrapper from "$islands/LoadMoreWrapper.tsx";
@@ -19,10 +17,13 @@ import Loader from "$islands/Loader.tsx";
 import { useEffect } from "preact/hooks";
 import NoteItemView from "../../sidebar/search/NoteItemView.tsx";
 
+interface InsertNoteLinkData {
+    noteId: number;
+}
+
 const Component = ({
-    onCancel,
-    onInsert,
-}: InsertComponentProps) => {
+    onInsertDataChange,
+}: InsertComponentProps<InsertNoteLinkData>) => {
     const { sendMessage } = useWebsocketService();
 
     const selectedNoteId = useSignal<number | null>(null);
@@ -65,11 +66,6 @@ const Component = ({
         loader.stop();
     });
 
-    const handleInsert = () => {
-        onInsert(`{:note-link|${selectedNoteId.value}}`);
-        onCancel();
-    };
-
     const handleSearch = (value: string) => {
         query.value = value;
         loader.start();
@@ -77,6 +73,11 @@ const Component = ({
         fromId.value = undefined;
         hasMoreData.value = true;
         findNotes();
+    };
+
+    const handleSelectNote = (noteId: number) => {
+        selectedNoteId.value = noteId;
+        onInsertDataChange({ noteId });
     };
 
     useEffect(() => {
@@ -114,43 +115,31 @@ const Component = ({
                                     ? "bg-gray-600"
                                     : ""}
                                 searchQuery={query.value}
-                                onNoteClick={() => selectedNoteId.value = i.id}
+                                onNoteClick={() => handleSelectNote(i.id)}
                             />
                         ))}
                     </LoadMoreWrapper>
                 )}
             </div>
-
-            <div class="mt-2 flex items-center">
-                <div class="mr-2">
-                    <Button
-                        color={selectedNoteId.value === null
-                            ? "successDisabled"
-                            : "success"}
-                        disabled={selectedNoteId.value === null}
-                        size="md"
-                        onClick={handleInsert}
-                    >
-                        <Icon name="link" size="lg" /> Insert
-                    </Button>
-                </div>
-
-                <div>
-                    <Button
-                        color="danger"
-                        onClick={onCancel}
-                        size="md"
-                    >
-                        <Icon name="minus-circle" size="lg" /> Cancel
-                    </Button>
-                </div>
-            </div>
         </div>
     );
 };
 
-export const InsertNoteLinkDef: InsertComponent<"note-link"> = {
+export const InsertNoteLinkDef: InsertComponent<
+    "note-link",
+    "link",
+    InsertNoteLinkData
+> = {
     id: "note-link",
     name: "Note Link",
     component: Component,
+    icon: "link",
+    description: "Insert a dynamic link to a note from list",
+    insertButtons: {
+        link: {
+            name: "Insert Link",
+            icon: "link",
+            formatData: (data) => `{:note-link|${data.noteId}}`,
+        },
+    },
 };

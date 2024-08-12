@@ -2,6 +2,7 @@ import { parseTableOfContents, TocItem } from "$frontend/table-of-contents.ts";
 
 interface TableOfContentsProps {
     text: string;
+    noTocMessage?: string;
     disableLinks?: boolean;
 }
 
@@ -43,7 +44,11 @@ const List = ({ item, disableLinks }: ListProps) => (
 );
 
 export default function TableOfContents(
-    { text, disableLinks = false }: TableOfContentsProps,
+    {
+        text,
+        disableLinks = false,
+        noTocMessage = "No table of contents available.",
+    }: TableOfContentsProps,
 ) {
     const items = parseTableOfContents(text);
     return items.length > 0
@@ -60,7 +65,7 @@ export default function TableOfContents(
         )
         : (
             <div class="text-center p-4">
-                No table of contents available.
+                {noTocMessage}
             </div>
         );
 }

@@ -9,7 +9,6 @@ import { InsertFileDef } from "$islands/notes/insert-components/InsertFile.tsx";
 import { InsertNoteListDef } from "./insert-components/InsertNoteList.tsx";
 import { InsertNoteLinkDef } from "$islands/notes/insert-components/InsertNoteLink.tsx";
 import { useEffect } from "preact/hooks";
-import DropdownList from "$components/DropdownList.tsx";
 import { InsertTocDef } from "$islands/notes/insert-components/InsertToc.tsx";
 import Picker, { PickerMap } from "$components/Picker.tsx";
 
@@ -18,15 +17,27 @@ interface InsertDialogProps {
     onInsert: (text: string) => void;
 }
 
-export interface InsertComponentProps {
+export interface InsertComponentProps<T = object> {
     noteText: string;
-    onCancel: () => void;
-    onInsert: (text: string) => void;
+    onInsertDataChange: (data: T | null) => void;
 }
 
-export interface InsertComponent<T> {
+export interface InsertButton<T = object> {
+    name: string;
+    icon: string;
+    formatData: (data: T) => string;
+}
+
+export interface InsertComponent<
+    T,
+    InsertKeys extends string,
+    InsertData = object,
+> {
     id: T;
     name: string;
+    icon: string;
+    description: string;
+    insertButtons: { [K in InsertKeys]: InsertButton<InsertData> };
     component: (props: InsertComponentProps) => JSX.Element;
 }
 
@@ -41,6 +52,12 @@ const insertComponents = [
     InsertTocDef,
 ];
 
+const getComponentDef = (
+    id: InsertComponentIds,
+): (typeof insertComponents)[number] => {
+    return insertComponents.find((c) => c.id === id)!;
+};
+
 type InsertComponentIds =
     | ComponentId<typeof InsertLinkDef>
     | ComponentId<typeof InsertImageDef>
@@ -51,7 +68,10 @@ type InsertComponentIds =
 
 const componentsMap: PickerMap<InsertComponentIds, InsertComponentProps> =
     insertComponents.reduce((map, def) => {
-        map[def.id] = def.component;
+        const Component = def.component as (
+            props: InsertComponentProps,
+        ) => JSX.Element;
+        map[def.id] = (props) => <Component {...props} />;
         return map;
     }, {} as PickerMap<InsertComponentIds, InsertComponentProps>);
 
@@ -59,22 +79,40 @@ export default function InsertDialog({
     noteText,
     onInsert,
 }: InsertDialogProps) {
-    const selectedComponent = useSignal<InsertComponentIds>("image");
+    const selectedComponent = useSignal<InsertComponentIds>("link");
+    const insertData = useSignal<object | null>(null);
     const showDialog = useSignal(false);
+
+    const componentDef = getComponentDef(selectedComponent.value);
+
+    const handleSelectComponent = (id: InsertComponentIds) => {
+        insertData.value = null;
+        selectedComponent.value = id;
+    };
 
     const handleCancel = () => {
         showDialog.value = false;
     };
 
-    const handleInsert = (text: string) => {
-        onInsert(text);
+    const handleInsert = (
+        action: keyof (typeof componentDef)["insertButtons"],
+    ) => {
+        const button = componentDef.insertButtons[action] as InsertButton;
+
+        onInsert(button.formatData(insertData.value!));
         showDialog.value = false;
+    };
+
+    const handleOpenInsertDialog = () => {
+        showDialog.value = true;
+        insertData.value = null;
+        selectedComponent.value = "link";
     };
 
     useEffect(() => {
         const handleHotkeys = (e: KeyboardEvent) => {
             if (e.ctrlKey && e.key === "i") {
-                showDialog.value = true;
+                handleOpenInsertDialog();
                 e.preventDefault();
             }
         };
@@ -91,7 +129,7 @@ export default function InsertDialog({
             <Button
                 color="success"
                 title="Insert item"
-                onClick={() => showDialog.value = true}
+                onClick={handleOpenInsertDialog}
             >
                 <Icon name="plus" />
             </Button>
@@ -101,32 +139,79 @@ export default function InsertDialog({
                     canCancel={true}
                     onCancel={handleCancel}
                     props={{
-                        class: "w-3/4",
+                        class: "w-4/5",
                     }}
+                    title="Insert"
                 >
-                    <div class="w-96 mb-2">
-                        <DropdownList
-                            label="Insert:"
-                            items={insertComponents.map((component) => ({
-                                label: component.name,
-                                value: component.id,
-                            }))}
-                            value={selectedComponent.value.toString()}
-                            onInput={(value) =>
-                                selectedComponent.value =
-                                    value as InsertComponentIds}
-                        />
-                    </div>
+                    <div
+                        class="relative"
+                        style={{
+                            height: "calc(100vh - 190px)",
+                        }}
+                    >
+                        <div class="absolute top-0 left-0 bottom-14 right-3/4 border-r border-gray-700/50 py-4 overflow-auto">
+                            {insertComponents.map((component) => (
+                                <div
+                                    class={`w-full mb-2 last:mb-0 p-2 rounded-tl-lg rounded-bl-lg hover:bg-gray-700/50 
+                                        hover:border-gray-600/50 border-t border-l cursor-pointer ${
+                                        component.id === selectedComponent.value
+                                            ? "bg-sky-900 border-sky-600/50 pointer-events-none"
+                                            : "border-transparent"
+                                    }`}
+                                    onClick={() =>
+                                        handleSelectComponent(component.id)}
+                                >
+                                    <h1 class="text-lg font-semibold">
+                                        <Icon name={component.icon} />{" "}
+                                        {component.name}
+                                    </h1>
+                                    <span class="block text-sm text-gray-400">
+                                        {component.description}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                        <div class="left-1/4 right-0 top-0 bottom-14 absolute pl-5 max-h-screen overflow-auto">
+                            <Picker<InsertComponentIds, InsertComponentProps>
+                                selector={selectedComponent.value}
+                                propsGetter={() => ({
+                                    noteText,
+                                    onInsertDataChange: (data) =>
+                                        insertData.value = data,
+                                })}
+                                map={componentsMap}
+                            />
+                        </div>
+                        <div class="absolute bottom-0 right-0">
+                            {insertData.value && (
+                                <>
+                                    {Object.entries(componentDef.insertButtons)
+                                        .map(([key, button]) => (
+                                            <Button
+                                                color="success"
+                                                onClick={() =>
+                                                    handleInsert(
+                                                        key as keyof (typeof componentDef)[
+                                                            "insertButtons"
+                                                        ],
+                                                    )}
+                                            >
+                                                <Icon name={button.icon} />{" "}
+                                                {button.name}
+                                            </Button>
+                                        ))}
+                                </>
+                            )}
 
-                    <Picker<InsertComponentIds, InsertComponentProps>
-                        selector={selectedComponent.value}
-                        propsGetter={() => ({
-                            noteText,
-                            onCancel: handleCancel,
-                            onInsert: handleInsert,
-                        })}
-                        map={componentsMap}
-                    />
+                            <Button
+                                addClass="ml-2"
+                                color="danger"
+                                onClick={handleCancel}
+                            >
+                                <Icon name="minus-circle" /> Cancel
+                            </Button>
+                        </div>
+                    </div>
                 </Dialog>
             )}
         </div>

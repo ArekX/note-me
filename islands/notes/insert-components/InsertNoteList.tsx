@@ -3,24 +3,22 @@ import {
     InsertComponentProps,
 } from "$islands/notes/InsertDialog.tsx";
 import GroupPicker from "../../groups/GroupPicker.tsx";
-import Button from "$components/Button.tsx";
-import Icon from "$components/Icon.tsx";
 import { TreeRecord } from "$backend/repository/tree-list.repository.ts";
 import { useSignal } from "@preact/signals";
 import NoteList from "$islands/notes/blocks/NoteList.tsx";
 
+interface InsertNoteListData {
+    groupId: number;
+}
+
 const Component = ({
-    onCancel,
-    onInsert,
-}: InsertComponentProps) => {
+    onInsertDataChange,
+}: InsertComponentProps<InsertNoteListData>) => {
     const selectedGroup = useSignal<TreeRecord | null>(null);
 
-    const handleInsert = () => {
-        if (selectedGroup.value === null) {
-            return;
-        }
-        onInsert(`{:note-list|${selectedGroup.value?.id}}`);
-        onCancel();
+    const handleSelectGroup = (group: TreeRecord) => {
+        selectedGroup.value = group;
+        onInsertDataChange({ groupId: group.id });
     };
 
     return (
@@ -31,7 +29,7 @@ const Component = ({
                     <GroupPicker
                         allowRoot={true}
                         selectedId={selectedGroup.value?.id}
-                        onPick={(group) => selectedGroup.value = group}
+                        onPick={handleSelectGroup}
                     />
                 </div>
                 <div class="w-3/4 pl-2 pr-2">
@@ -46,29 +44,25 @@ const Component = ({
                         : <div>Select a group to see the note list.</div>}
                 </div>
             </div>
-            <div class="mt-2 flex items-center">
-                <div class="mr-2">
-                    <Button color="primary" size="md" onClick={handleInsert}>
-                        <Icon name="list-ul" size="lg" /> Insert
-                    </Button>
-                </div>
-
-                <div>
-                    <Button
-                        color="danger"
-                        onClick={onCancel}
-                        size="md"
-                    >
-                        <Icon name="minus-circle" size="lg" /> Cancel
-                    </Button>
-                </div>
-            </div>
         </>
     );
 };
 
-export const InsertNoteListDef: InsertComponent<"note-list"> = {
+export const InsertNoteListDef: InsertComponent<
+    "note-list",
+    "list",
+    InsertNoteListData
+> = {
     id: "note-list",
     name: "Note List",
     component: Component,
+    icon: "list-ul",
+    description: "Insert list of notes from a group",
+    insertButtons: {
+        list: {
+            name: "List",
+            icon: "list-ul",
+            formatData: (data) => `{:note-list|${data.groupId}}`,
+        },
+    },
 };

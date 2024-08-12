@@ -2,45 +2,41 @@ import {
     InsertComponent,
     InsertComponentProps,
 } from "$islands/notes/InsertDialog.tsx";
-import Button from "$components/Button.tsx";
-import Icon from "$components/Icon.tsx";
 import TableOfContents from "$islands/notes/blocks/TableOfContents.tsx";
+import { useEffect } from "preact/hooks";
+
+interface InsertTocData {
+    insertToc: boolean;
+}
 
 const Component = ({
-    onCancel,
-    onInsert,
+    onInsertDataChange,
     noteText,
-}: InsertComponentProps) => {
-    const handleInsert = () => {
-        onInsert("{:table-of-contents}");
-    };
+}: InsertComponentProps<InsertTocData>) => {
+    useEffect(() => {
+        onInsertDataChange({ insertToc: true });
+    }, []);
 
     return (
-        <div>
-            <TableOfContents text={noteText} disableLinks={true} />
-            <div class="mt-2 flex items-center">
-                <div class="mr-2">
-                    <Button color="primary" size="md" onClick={handleInsert}>
-                        <Icon name="list-ul" size="lg" /> Insert
-                    </Button>
-                </div>
-
-                <div>
-                    <Button
-                        color="danger"
-                        onClick={onCancel}
-                        size="md"
-                    >
-                        <Icon name="minus-circle" size="lg" /> Cancel
-                    </Button>
-                </div>
-            </div>
-        </div>
+        <TableOfContents
+            text={noteText}
+            disableLinks={true}
+            noTocMessage="No headings found in this note to create table of contents, pleaase add headings to see the ToC here."
+        />
     );
 };
 
-export const InsertTocDef: InsertComponent<"toc"> = {
+export const InsertTocDef: InsertComponent<"toc", "toc", InsertTocData> = {
     id: "toc",
     name: "Table of Contents",
     component: Component,
+    icon: "list-ul",
+    description: "Insert a dynamic ToC generated from headings",
+    insertButtons: {
+        toc: {
+            name: "Insert",
+            icon: "list-ul",
+            formatData: () => "{:table-of-contents}",
+        },
+    },
 };

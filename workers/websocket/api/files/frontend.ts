@@ -5,7 +5,7 @@ import {
     getTempFileSize,
     readTempFile,
     removeTempFile,
-} from "../../../../backend/temp.ts";
+} from "$backend/temp.ts";
 
 import {
     BeginFileMessage,

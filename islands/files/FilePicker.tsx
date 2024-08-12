@@ -24,6 +24,7 @@ import { addMessage } from "$frontend/toast-message.ts";
 interface FilePickerProps {
     adminMode?: boolean;
     selectedFileId?: string;
+    size?: keyof typeof gridSizes;
     onFilePicked?: (file: FileMetaRecord | null) => void;
     color?: "black" | "white";
 }
@@ -32,10 +33,16 @@ interface ExtendedFileMetaRecord extends FileMetaRecord {
     is_processing: boolean;
 }
 
+const gridSizes = {
+    threeColumns: "grid-cols-3 gap-2",
+    fiveColumns: "grid-cols-5 gap-4",
+} as const;
+
 export default function FilePicker({
     color = "white",
     onFilePicked,
     selectedFileId,
+    size = "fiveColumns",
     adminMode = false,
 }: FilePickerProps) {
     const { sendMessage } = useWebsocketService<
@@ -229,7 +236,7 @@ export default function FilePicker({
                 )
                 : (
                     <>
-                        <div class="grid grid-cols-5 gap-4">
+                        <div class={`grid ${gridSizes[size]}`}>
                             {results.value.map((file) => (
                                 <FileItem
                                     key={file.identifier}

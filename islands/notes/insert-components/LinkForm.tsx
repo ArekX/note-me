@@ -1,23 +1,26 @@
 import Input from "$components/Input.tsx";
 import { useSignal } from "@preact/signals";
-import Button from "$components/Button.tsx";
-import Icon from "$components/Icon.tsx";
+import { InsertComponentProps } from "$islands/notes/InsertDialog.tsx";
 
-interface LinkFormProps {
-    iconName: string;
-    onInsert: (name: string, url: string) => void;
-    onCancel: () => void;
+export interface LinkFormInsertData {
+    name: string;
+    url: string;
 }
 
 export default function LinkForm({
-    iconName,
-    onCancel,
-    onInsert,
-}: LinkFormProps) {
+    onInsertDataChange,
+}: InsertComponentProps<LinkFormInsertData>) {
     const link = useSignal<string>("");
     const linkName = useSignal<string>("");
 
-    const handleInsert = () => onInsert(linkName.value, link.value);
+    const handleSet = (data: Partial<LinkFormInsertData>) => {
+        link.value = data.url ?? link.value;
+        linkName.value = data.name ?? linkName.value;
+        onInsertDataChange({
+            name: linkName.value,
+            url: link.value,
+        });
+    };
 
     return (
         <div class="w-1/2">
@@ -25,33 +28,15 @@ export default function LinkForm({
                 label="Link"
                 labelColor="white"
                 value={link.value}
-                onInput={(v) => link.value = v}
+                onInput={(v) => handleSet({ url: v })}
             />
 
             <Input
                 label="Name"
                 labelColor="white"
                 value={linkName.value}
-                onInput={(v) => linkName.value = v}
+                onInput={(v) => handleSet({ name: v })}
             />
-
-            <div class="mt-2 flex items-center">
-                <div class="mr-2">
-                    <Button color="primary" size="md" onClick={handleInsert}>
-                        <Icon name={iconName} size="lg" /> Insert
-                    </Button>
-                </div>
-
-                <div>
-                    <Button
-                        color="danger"
-                        onClick={onCancel}
-                        size="md"
-                    >
-                        <Icon name="minus-circle" size="lg" /> Cancel
-                    </Button>
-                </div>
-            </div>
         </div>
     );
 }
