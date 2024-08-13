@@ -18,6 +18,7 @@ import {
 import { addMessage } from "$frontend/toast-message.ts";
 import { getNotificationMessageText } from "$islands/notifications/notification-message-text.ts";
 import { useEffect } from "preact/hooks";
+import NoItemMessage from "$islands/sidebar/NoItemMessage.tsx";
 
 interface NotificationsProps {
     initialNotifications: NotificationRecord[];
@@ -188,11 +189,12 @@ export default function Notifications(props: NotificationsProps) {
                         </div>
                     )}
                     {notifications.value.length === 0 && (
-                        <div class="pr-4 pl-4 pb-4 text-center">
-                            <div>
-                                <Icon name="smile" size="5xl" />
-                            </div>
-                            No notifications. All clear!
+                        <div class="pb-4">
+                            <NoItemMessage
+                                icon="smile"
+                                removePadding={true}
+                                message="No notifications. All clear!"
+                            />
                         </div>
                     )}
                 </div>

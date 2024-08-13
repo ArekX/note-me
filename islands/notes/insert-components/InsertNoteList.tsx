@@ -61,7 +61,7 @@ export const InsertNoteListDef: InsertComponent<
     name: "Note List",
     component: Component,
     icon: "list-ul",
-    description: "Insert list of notes from a group",
+    description: "Insert a dynamic note list from a group",
     insertButtons: {
         list: {
             name: "List",

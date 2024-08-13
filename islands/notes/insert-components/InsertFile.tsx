@@ -82,32 +82,32 @@ export const InsertFileDef: InsertComponent<
     description: "Upload or select a file to insert",
     insertButtons: {
         image: {
-            name: "File as Image",
+            name: "Image",
             icon: "image",
             formatData: (data) =>
                 getImageMarkdown(getFileViewUrl(data.identifier), data.name),
         },
-        "view-link": {
-            name: "View Link",
-            icon: "link",
-            formatData: (data) =>
-                getLinkMarkdown(getFileViewUrl(data.identifier), data.name),
-        },
         "download-link": {
-            name: "Download Link",
+            name: "Download link",
             icon: "link",
             formatData: (data) =>
                 getLinkMarkdown(getFileDownloadUrl(data.identifier), data.name),
         },
-        "view-link-text": {
-            name: "View Link Text",
+        "view-link": {
+            name: "In-browser link",
             icon: "link",
-            formatData: (data) => getFileViewUrl(data.identifier),
+            formatData: (data) =>
+                getLinkMarkdown(getFileViewUrl(data.identifier), data.name),
         },
         "download-link-text": {
             name: "Download Link Text",
-            icon: "link",
+            icon: "text",
             formatData: (data) => getFileDownloadUrl(data.identifier),
+        },
+        "view-link-text": {
+            name: "In-browser Link Text",
+            icon: "text",
+            formatData: (data) => getFileViewUrl(data.identifier),
         },
     },
 };

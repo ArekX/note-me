@@ -1,5 +1,5 @@
 import DropdownMenu from "$islands/DropdownMenu.tsx";
-import { MoreMenuItem } from "$islands/DropdownMenu.tsx";
+import { DropdownMenuItem } from "$islands/DropdownMenu.tsx";
 import Icon from "$components/Icon.tsx";
 
 export interface ListSwitcherItem {
@@ -54,7 +54,7 @@ export default function ListSwitcher({
         });
     };
 
-    const items: MoreMenuItem[] = [
+    const items: DropdownMenuItem[] = [
         {
             name: "Notes",
             icon: "note",

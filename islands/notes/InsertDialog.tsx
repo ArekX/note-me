@@ -11,6 +11,7 @@ import { InsertNoteLinkDef } from "$islands/notes/insert-components/InsertNoteLi
 import { useEffect } from "preact/hooks";
 import { InsertTocDef } from "$islands/notes/insert-components/InsertToc.tsx";
 import Picker, { PickerMap } from "$components/Picker.tsx";
+import DropdownMenu from "$islands/DropdownMenu.tsx";
 
 interface InsertDialogProps {
     noteText: string;
@@ -58,6 +59,7 @@ const getComponentDef = (
     return insertComponents.find((c) => c.id === id)!;
 };
 
+type ReturnedComponent = ReturnType<typeof getComponentDef>;
 type InsertComponentIds =
     | ComponentId<typeof InsertLinkDef>
     | ComponentId<typeof InsertImageDef>
@@ -74,6 +76,50 @@ const componentsMap: PickerMap<InsertComponentIds, InsertComponentProps> =
         map[def.id] = (props) => <Component {...props} />;
         return map;
     }, {} as PickerMap<InsertComponentIds, InsertComponentProps>);
+
+const InsertButton = (
+    props: {
+        component: ReturnedComponent;
+        onInsert: (key: keyof ReturnedComponent["insertButtons"]) => void;
+    },
+) => {
+    const insertButtonList = Object.entries(
+        props.component.insertButtons,
+    ) as [keyof ReturnedComponent["insertButtons"], ReturnedComponent][];
+
+    if (insertButtonList.length === 1) {
+        const [firstButtonKey, firstButton] = insertButtonList[0];
+
+        return (
+            <Button
+                color="success"
+                onClick={() =>
+                    props.onInsert(
+                        firstButtonKey,
+                    )}
+            >
+                <Icon name={firstButton.icon} /> {firstButton.name}
+            </Button>
+        );
+    }
+
+    return (
+        <DropdownMenu
+            items={insertButtonList.map(([key, button]) => ({
+                name: button.name,
+                icon: button.icon,
+                onClick: () => props.onInsert(key),
+            }))}
+            label={
+                <>
+                    <Icon name="list-ul" /> Insert As
+                </>
+            }
+            inlineDirection="top"
+            popoverId="insertDialog-0"
+        />
+    );
+};
 
 export default function InsertDialog({
     noteText,
@@ -184,23 +230,10 @@ export default function InsertDialog({
                         </div>
                         <div class="absolute bottom-0 right-0">
                             {insertData.value && (
-                                <>
-                                    {Object.entries(componentDef.insertButtons)
-                                        .map(([key, button]) => (
-                                            <Button
-                                                color="success"
-                                                onClick={() =>
-                                                    handleInsert(
-                                                        key as keyof (typeof componentDef)[
-                                                            "insertButtons"
-                                                        ],
-                                                    )}
-                                            >
-                                                <Icon name={button.icon} />{" "}
-                                                {button.name}
-                                            </Button>
-                                        ))}
-                                </>
+                                <InsertButton
+                                    onInsert={handleInsert}
+                                    component={componentDef}
+                                />
                             )}
 
                             <Button

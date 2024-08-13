@@ -58,7 +58,7 @@ export default function RecycleBinItem({ record }: RecycleBinItemProps) {
     });
 
     return (
-        <div class="p-2 hover:bg-gray-700 cursor-pointer flex group">
+        <div class="p-2 hover:bg-gray-700/50 cursor-pointer flex group">
             <div class="w-4/6">
                 <TreeItemIcon
                     container={fromTreeRecord({

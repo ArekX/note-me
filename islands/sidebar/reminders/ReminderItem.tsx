@@ -9,6 +9,7 @@ import Icon from "$components/Icon.tsx";
 import { useSignal } from "@preact/signals";
 import NoteWindow from "$islands/notes/NoteWindow.tsx";
 import TimeAgo from "$components/TimeAgo.tsx";
+import { activeNoteId } from "$frontend/hooks/use-active-note.ts";
 
 interface ReminderItemProps {
     record: ReminderNoteRecord;
@@ -37,10 +38,14 @@ export default function ReminderItem({ record }: ReminderItemProps) {
         isReminderWindowOpen.value = true;
     };
 
+    const itemClass = activeNoteId.value === record.id
+        ? "bg-sky-700/50"
+        : "hover:bg-gray-700/50";
+
     return (
         <div
             key={record.id}
-            class="p-2 hover:bg-gray-700 cursor-pointer flex group"
+            class={`p-2 ${itemClass} cursor-pointer flex group`}
             onClick={handleOpenNote}
         >
             <div class="w-5/6">

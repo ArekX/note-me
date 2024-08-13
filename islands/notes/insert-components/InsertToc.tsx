@@ -44,7 +44,7 @@ export const InsertTocDef: InsertComponent<"toc", "toc", InsertTocData> = {
     name: "Table of Contents",
     component: Component,
     icon: "list-ul",
-    description: "Insert a dynamic ToC generated from headings",
+    description: "Insert a dynamic Table of Contents",
     insertButtons: {
         toc: {
             name: "Insert",

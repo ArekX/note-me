@@ -5,6 +5,7 @@ import { useMemo } from "preact/hooks";
 import TreeItemIcon from "$islands/tree/TreeItemIcon.tsx";
 import { fromTreeRecord } from "$islands/tree/hooks/record-container.ts";
 import TimeAgo from "$components/TimeAgo.tsx";
+import { activeNoteId } from "$frontend/hooks/use-active-note.ts";
 
 interface NoteItemViewProps {
     record: NoteSearchRecord;
@@ -26,9 +27,13 @@ export default function NoteItemView({
             100,
         ), [record, searchQuery]);
 
+    const itemClass = activeNoteId.value === record.id
+        ? "bg-sky-700/50"
+        : "hover:bg-gray-700/50";
+
     return (
         <div
-            class={`p-2 cursor-pointer hover:bg-gray-700 ${addClass}`}
+            class={`p-2 cursor-pointer ${itemClass} rounded-lg ${addClass}`}
             onClick={onNoteClick}
         >
             <TreeItemIcon

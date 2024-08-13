@@ -8,7 +8,7 @@ import {
 } from "$frontend/hooks/use-single-popover.ts";
 import { useWindowResize } from "$frontend/hooks/use-window-resize.ts";
 
-export interface MoreMenuItem {
+export interface DropdownMenuItem {
     name: string;
     icon: string;
     onClick: () => void;
@@ -16,7 +16,7 @@ export interface MoreMenuItem {
 
 type MenuShowDirection = "right" | "bottom";
 type DisplayType = "portal" | "inline";
-type InlineDirection = "left" | "right";
+type InlineDirection = "left" | "right" | "top";
 
 interface DropdownMenuProps {
     popoverId: PopoverId;
@@ -31,39 +31,49 @@ interface DropdownMenuProps {
     inlineDirection?: InlineDirection;
     showDirection?: MenuShowDirection;
     displayType?: DisplayType;
-    items: MoreMenuItem[];
+    items: DropdownMenuItem[];
 }
 
 interface MenuItemProps {
-    items: MoreMenuItem[];
+    items: DropdownMenuItem[];
     menuRef: Ref<HTMLDivElement>;
     displayType: DisplayType;
     inlineDirection: InlineDirection;
-    onClick: (item: MoreMenuItem) => void;
+    onClick: (item: DropdownMenuItem) => void;
 }
 
 const MenuItems = (
     { items, menuRef, displayType, inlineDirection, onClick }: MenuItemProps,
-) => (
-    <div
-        ref={menuRef}
-        class={`text-white absolute top-full ${
-            displayType == "inline" && inlineDirection !== "left"
-                ? "right-0"
-                : ""
-        } text-md mt-1 z-50 drop-shadow-lg bg-gray-800 border-gray-700 border border-b-0 rounded-lg shadow-black/80 shadow-sm p-2 whitespace-nowrap break-keep`}
-    >
-        {items.map((item, index) => (
-            <div
-                key={index}
-                class="hover:bg-gray-700 cursor-pointer p-1 pl-2 pr-2"
-                onClick={() => onClick(item)}
-            >
-                <Icon name={item.icon} /> {item.name}
-            </div>
-        ))}
-    </div>
-);
+) => {
+    let inlineDirectionClass = "top-full";
+
+    if (displayType === "inline") {
+        if (inlineDirection === "right") {
+            inlineDirectionClass = "top-full right-0";
+        } else if (inlineDirection === "top") {
+            inlineDirectionClass = "bottom-full mb-2 right-0";
+        }
+    }
+
+    return (
+        <div
+            ref={menuRef}
+            class={`text-white absolute ${inlineDirectionClass} text-md mt-1 z-50 drop-shadow-lg 
+                    bg-gray-800 border-gray-700 border border-b-0 rounded-lg shadow-black/80 shadow-sm p-2 
+                    whitespace-nowrap break-keep`}
+        >
+            {items.map((item, index) => (
+                <div
+                    key={index}
+                    class="hover:bg-gray-700 cursor-pointer p-1 pl-2 pr-2"
+                    onClick={() => onClick(item)}
+                >
+                    <Icon name={item.icon} /> {item.name}
+                </div>
+            ))}
+        </div>
+    );
+};
 
 export default function DropdownMenu(
     {
@@ -124,7 +134,7 @@ export default function DropdownMenu(
         open();
     };
 
-    const handleItemClick = (item: MoreMenuItem) => {
+    const handleItemClick = (item: DropdownMenuItem) => {
         item.onClick();
         close();
     };

@@ -11,6 +11,7 @@ import DetailsLine from "$islands/notes/DetailsLine.tsx";
 import Viewer from "$islands/markdown/Viewer.tsx";
 import { useSearch } from "$frontend/hooks/use-search.ts";
 import { downloadTextAsMarkdown } from "$frontend/text-downloader.ts";
+import { useActiveNoteEffect } from "$frontend/hooks/use-active-note.ts";
 
 export interface ViewNoteProps {
     readonly?: boolean;
@@ -34,6 +35,8 @@ export default function ViewNote(
         ...record,
     });
     const search = disableTagLinks ? null : useSearch();
+
+    useActiveNoteEffect(recordData.value.id);
 
     useEffect(() => {
         recordData.value = {

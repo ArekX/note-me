@@ -30,6 +30,7 @@ import { useValidation } from "$frontend/hooks/use-validation.ts";
 import Viewer from "$islands/markdown/Viewer.tsx";
 import { useContentEncryption } from "$frontend/hooks/use-content-encryption.ts";
 import { downloadTextAsMarkdown } from "$frontend/text-downloader.ts";
+import { useActiveNoteEffect } from "$frontend/hooks/use-active-note.ts";
 
 interface NoteData extends Pick<NoteRecord, "title" | "note" | "is_encrypted"> {
     id?: number;
@@ -80,6 +81,8 @@ export default function NoteEditor({
                 : groupName.value;
         },
     });
+
+    useActiveNoteEffect(noteId.value);
 
     useEffect(() => {
         name.value = note.title;

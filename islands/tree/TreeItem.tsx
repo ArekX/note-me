@@ -11,6 +11,7 @@ import { useSearch } from "$frontend/hooks/use-search.ts";
 import TreeWindow, { TreeWindowAction } from "$islands/tree/TreeWindow.tsx";
 import TreeItemEditor from "$islands/tree/TreeItemEditor.tsx";
 import TreeItemIcon from "$islands/tree/TreeItemIcon.tsx";
+import { activeNoteId } from "$frontend/hooks/use-active-note.ts";
 
 export interface TreeItemProps {
     dragManager: DragManagerHook<RecordContainer>;
@@ -152,6 +153,11 @@ export default function TreeItem({
         }
     };
 
+    const activeNoteClass =
+        container.type === "note" && activeNoteId.value === container.id
+            ? "bg-sky-700/50"
+            : "hover:bg-gray-600/50";
+
     return (
         <div
             class={`group-item-container select-none ${
@@ -165,7 +171,7 @@ export default function TreeItem({
             onClick={handleClick}
         >
             <div
-                class={`relative group-item hover:bg-gray-600 hover:bg-opacity-50`}
+                class={`relative group-item ${activeNoteClass}`}
                 title={container.name}
             >
                 {container.display_mode !== "edit" &&
