@@ -214,8 +214,11 @@ export default function TreeItem({
                         />
                     )
                     : (
-                        <span class="group-item-name pl-2 pr-2">
-                            <TreeItemIcon container={container} />{" "}
+                        <span class="group-item-name px-2">
+                            <TreeItemIcon
+                                addClass="pt-0.5"
+                                container={container}
+                            />{" "}
                             <span class="name-text">
                                 {container.name}
                             </span>

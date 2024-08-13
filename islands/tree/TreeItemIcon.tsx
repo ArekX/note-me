@@ -2,12 +2,15 @@ import { RecordContainer } from "$islands/tree/hooks/record-container.ts";
 import Icon from "$components/Icon.tsx";
 
 interface TreeItemIconProps {
+    addClass?: string;
     container: RecordContainer;
 }
 
-export default function TreeItemIcon({ container }: TreeItemIconProps) {
+export default function TreeItemIcon(
+    { container, addClass }: TreeItemIconProps,
+) {
     return (
-        <div class="relative inline-block">
+        <div class={`relative inline-block ${addClass}`}>
             {container.is_protected && (
                 <div class="absolute -bottom-1 right-0">
                     <Icon
