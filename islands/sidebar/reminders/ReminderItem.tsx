@@ -48,7 +48,7 @@ export default function ReminderItem({ record }: ReminderItemProps) {
             class={`p-2 ${itemClass} cursor-pointer flex group`}
             onClick={handleOpenNote}
         >
-            <div class="w-5/6">
+            <div class="w-full">
                 <TreeItemIcon
                     container={fromTreeRecord({
                         type: "note",

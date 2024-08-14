@@ -92,7 +92,7 @@ export default function RecentlyOpenedNotes() {
                         {results.value.map((note) => (
                             <div
                                 key={note.id}
-                                class="p-2 hover:bg-gray-700 cursor-pointer"
+                                class="p-2 hover:bg-gray-700 rounded-lg cursor-pointer"
                                 onClick={() => handleOpenNote(note.id)}
                             >
                                 <TreeItemIcon
