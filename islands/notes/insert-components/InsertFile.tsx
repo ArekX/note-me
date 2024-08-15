@@ -10,7 +10,7 @@ import {
     getImageMarkdown,
     getLinkMarkdown,
 } from "$islands/notes/helpers/markdown.ts";
-import { useSelected } from "$frontend/hooks/use-selected.ts";
+import { useSignal } from "@preact/signals";
 
 type InsertKeys =
     | "image"
@@ -22,11 +22,11 @@ type InsertKeys =
 const Component = ({
     onInsertDataChange,
 }: InsertComponentProps) => {
-    const selectedFile = useSelected<FileMetaRecord>();
+    const selectedFiles = useSignal<FileMetaRecord[]>([]);
 
-    const handlePickFile = (file: FileMetaRecord | null) => {
-        selectedFile.selected.value = file;
-        onInsertDataChange(file);
+    const handlePickFile = (files: FileMetaRecord[]) => {
+        selectedFiles.value = files;
+        onInsertDataChange(files);
     };
 
     return (
@@ -38,24 +38,27 @@ const Component = ({
             </div>
             <div>
                 <div class="flex-grow">
-                    {selectedFile.isSelected() && (
+                    {selectedFiles.value.length > 0 && (
                         <div>
                             To be inserted:{" "}
-                            <a
-                                title={`Download ${
-                                    selectedFile.selected.value!.name
-                                }`}
-                                href={getFileDownloadUrl(
-                                    selectedFile.selected.value!.identifier,
-                                )}
-                                target="_blank"
-                                class="underline font-semibold"
-                            >
-                                {selectedFile.selected.value!.name}{" "}
-                                ({selectedFile.selected.value!.is_public
-                                    ? "Public"
-                                    : "Private"})
-                            </a>
+                            <ul class="list-disc ml-4 block list-inside">
+                                {selectedFiles.value.map((file) => (
+                                    <li>
+                                        <a
+                                            title={`Download ${file.name}`}
+                                            href={getFileDownloadUrl(
+                                                file.identifier,
+                                            )}
+                                            target="_blank"
+                                            class="underline font-semibold"
+                                        >
+                                            {file.name} ({file.is_public
+                                                ? "Public"
+                                                : "Private"})
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
                     )}
                 </div>
@@ -63,8 +66,10 @@ const Component = ({
             <FilePicker
                 color="white"
                 size="threeColumns"
-                onFilePicked={handlePickFile}
-                selectedFileId={selectedFile.selected.value?.identifier}
+                onFilesPicked={handlePickFile}
+                selectedFileIds={selectedFiles.value.map((file) =>
+                    file.identifier
+                )}
             />
         </div>
     );
@@ -73,7 +78,7 @@ const Component = ({
 export const InsertFileDef: InsertComponent<
     "file",
     InsertKeys,
-    FileMetaRecord
+    FileMetaRecord[]
 > = {
     id: "file",
     name: "File",
@@ -84,30 +89,43 @@ export const InsertFileDef: InsertComponent<
         image: {
             name: "Image",
             icon: "image",
-            formatData: (data) =>
-                getImageMarkdown(getFileViewUrl(data.identifier), data.name),
+            formatData: (files) =>
+                files.map((file) =>
+                    getImageMarkdown(getFileViewUrl(file.identifier), file.name)
+                ).join("\n"),
         },
         "download-link": {
             name: "Download link",
             icon: "link",
-            formatData: (data) =>
-                getLinkMarkdown(getFileDownloadUrl(data.identifier), data.name),
+            formatData: (files) =>
+                files.map((file) =>
+                    getLinkMarkdown(
+                        getFileDownloadUrl(file.identifier),
+                        file.name,
+                    )
+                ).join("\n"),
         },
         "view-link": {
             name: "In-browser link",
             icon: "link",
-            formatData: (data) =>
-                getLinkMarkdown(getFileViewUrl(data.identifier), data.name),
+            formatData: (files) =>
+                files.map((file) =>
+                    getLinkMarkdown(getFileViewUrl(file.identifier), file.name)
+                ).join("\n"),
         },
         "download-link-text": {
             name: "Download Link Text",
             icon: "text",
-            formatData: (data) => getFileDownloadUrl(data.identifier),
+            formatData: (files) =>
+                files.map((file) => getFileDownloadUrl(file.identifier)).join(
+                    "\n",
+                ),
         },
         "view-link-text": {
             name: "In-browser Link Text",
             icon: "text",
-            formatData: (data) => getFileViewUrl(data.identifier),
+            formatData: (files) =>
+                files.map((file) => getFileViewUrl(file.identifier)).join("\n"),
         },
     },
 };

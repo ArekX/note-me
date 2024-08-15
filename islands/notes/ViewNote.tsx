@@ -127,7 +127,7 @@ export default function ViewNote(
             <div>
                 {recordData.value.tags.map((tag) => (
                     <span
-                        class={`tag ${
+                        class={`inline-block tag ${
                             disableTagLinks
                                 ? "cursor-default pointer-events-none"
                                 : "cursor-pointer"

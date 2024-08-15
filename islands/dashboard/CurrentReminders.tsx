@@ -77,12 +77,16 @@ export default function CurrentReminders() {
                 {loader.running ? <Loader color="white" /> : (
                     <>
                         {results.value.length === 0 && (
-                            <div class=" text-gray-500">
+                            <div class=" text-gray-400">
                                 No reminders set.
                             </div>
                         )}
                         {results.value.map((note) => (
-                            <ReminderItem key={note.id} record={note} />
+                            <ReminderItem
+                                addClass="rounded-lg"
+                                key={note.id}
+                                record={note}
+                            />
                         ))}
                     </>
                 )}

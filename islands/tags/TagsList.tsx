@@ -153,12 +153,14 @@ export default function TagsList() {
                     </div>
                 )}
                 {!tagsLoader.running && (
-                    <Pagination
-                        total={total.value}
-                        perPage={perPage.value}
-                        currentPage={page.value}
-                        onChange={handlePageChanged}
-                    />
+                    <div class="pt-5">
+                        <Pagination
+                            total={total.value}
+                            perPage={perPage.value}
+                            currentPage={page.value}
+                            onChange={handlePageChanged}
+                        />
+                    </div>
                 )}
             </div>
             <ConfirmDialog

@@ -52,7 +52,26 @@ export default function NoteTextArea({
         if (e.key === "Tab") {
             insertTextIntoField(textAreaRef.current, "    ");
             e.preventDefault();
-            onChange(text.value);
+        }
+
+        if (e.ctrlKey) {
+            const selectionStart = textAreaRef.current.selectionStart;
+            const selectionEnd = textAreaRef.current.selectionEnd;
+            const selectedText = text.value.slice(selectionStart, selectionEnd);
+
+            if (e.key === "b") {
+                insertTextIntoField(textAreaRef.current, `**${selectedText}**`);
+                textAreaRef.current.selectionStart -= 2;
+                textAreaRef.current.selectionEnd -= 2;
+                e.preventDefault();
+            }
+
+            if (e.key === "u") {
+                insertTextIntoField(textAreaRef.current, `_${selectedText}_`);
+                textAreaRef.current.selectionStart -= 1;
+                textAreaRef.current.selectionEnd -= 1;
+                e.preventDefault();
+            }
         }
     };
 

@@ -20,12 +20,13 @@ import { useLoader } from "$frontend/hooks/use-loader.ts";
 import { UploadProgressDialog } from "$islands/files/UploadProgressDialog.tsx";
 import { FileDropWrapper } from "$islands/files/FileDropWrapper.tsx";
 import { addMessage } from "$frontend/toast-message.ts";
+import { useSignal } from "@preact/signals";
 
 interface FilePickerProps {
     adminMode?: boolean;
-    selectedFileId?: string;
+    selectedFileIds?: string[];
     size?: keyof typeof gridSizes;
-    onFilePicked?: (file: FileMetaRecord | null) => void;
+    onFilesPicked?: (file: FileMetaRecord[]) => void;
     color?: "black" | "white";
 }
 
@@ -40,8 +41,8 @@ const gridSizes = {
 
 export default function FilePicker({
     color = "white",
-    onFilePicked,
-    selectedFileId,
+    onFilesPicked,
+    selectedFileIds,
     size = "fiveColumns",
     adminMode = false,
 }: FilePickerProps) {
@@ -76,9 +77,14 @@ export default function FilePicker({
                     });
 
                     if (
-                        selectedFileId === response.identifier
+                        pickedFiles.value.find((p) =>
+                            p.identifier === response.identifier
+                        )
                     ) {
-                        onFilePicked?.(null);
+                        pickedFiles.value = pickedFiles.value.filter((p) =>
+                            p.identifier !== response.identifier
+                        );
+                        onFilesPicked?.(pickedFiles.value);
                     }
 
                     if (results.value.length === 0 && page.value > 1) {
@@ -122,6 +128,7 @@ export default function FilePicker({
             ExtendedFileMetaRecord
         >();
 
+    const pickedFiles = useSignal<FileMetaRecord[]>([]);
     const fileToDelete = useSelected<ExtendedFileMetaRecord>();
     const fileLoader = useLoader(true);
     const { filters, setFilter } = useFilters({
@@ -200,6 +207,30 @@ export default function FilePicker({
         await loadFiles();
     };
 
+    const handleSingleSelect = (file: ExtendedFileMetaRecord) => {
+        if (!onFilesPicked) {
+            return;
+        }
+        pickedFiles.value = [file];
+        onFilesPicked(pickedFiles.value);
+    };
+
+    const handleMultiSelect = (file: ExtendedFileMetaRecord) => {
+        if (!onFilesPicked) {
+            return;
+        }
+
+        if (pickedFiles.value.find((f) => f.identifier === file.identifier)) {
+            pickedFiles.value = pickedFiles.value.filter(
+                (f) => f.identifier !== file.identifier,
+            );
+        } else {
+            pickedFiles.value = [...pickedFiles.value, file];
+        }
+
+        onFilesPicked(pickedFiles.value);
+    };
+
     useEffect(() => {
         loadFiles();
     }, []);
@@ -242,9 +273,11 @@ export default function FilePicker({
                                     key={file.identifier}
                                     file={file}
                                     adminMode={adminMode}
-                                    isSelected={selectedFileId ===
-                                        file.identifier}
-                                    onSelect={(f) => onFilePicked?.(f)}
+                                    isSelected={selectedFileIds?.includes(
+                                        file.identifier,
+                                    ) ?? false}
+                                    onSelect={handleSingleSelect}
+                                    onSelectMultiple={handleMultiSelect}
                                     onDelete={(f) => fileToDelete.select(f)}
                                     onToggleVisibility={handleToggleFileVisibility}
                                 />

@@ -69,7 +69,7 @@ export default function NoteList({
                         {notes.value.map((record) => (
                             <li key={record.id}>
                                 <a
-                                    class="cursor-pointer text-gray-500 hover:underline"
+                                    class="cursor-pointer text-gray-400 hover:underline"
                                     href={allowLinks
                                         ? `/app/note/view-${record.id}`
                                         : "#"}

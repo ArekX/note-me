@@ -85,7 +85,7 @@ export default function RecentlyOpenedNotes() {
                 {loader.running ? <Loader color="white" /> : (
                     <>
                         {results.value.length === 0 && (
-                            <div class=" text-gray-500">
+                            <div class=" text-gray-400">
                                 No notes found.
                             </div>
                         )}
@@ -105,7 +105,7 @@ export default function RecentlyOpenedNotes() {
                                     })}
                                 />{" "}
                                 {note.title}
-                                <div class="text-sm text-gray-500">
+                                <div class="text-sm text-gray-400">
                                     <span
                                         title={note.last_open_at
                                             ? timeFormatter.formatDateTime(

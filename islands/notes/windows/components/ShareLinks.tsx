@@ -113,7 +113,7 @@ export default function ShareLinks({
                 ))}
 
                 {linkList.value.length === 0 && (
-                    <div class="text-gray-500">
+                    <div class="text-gray-400">
                         No public links created.
                     </div>
                 )}

@@ -55,12 +55,16 @@ export default function RecentlySharedWithMe() {
                 {loader.running ? <Loader color="white" /> : (
                     <>
                         {results.value.length === 0 && (
-                            <div class=" text-gray-500">
+                            <div class=" text-gray-400">
                                 No shared notes yet.
                             </div>
                         )}
                         {results.value.map((note) => (
-                            <SharedNoteItem key={note.share_id} record={note} />
+                            <SharedNoteItem
+                                addClass="rounded-lg"
+                                key={note.share_id}
+                                record={note}
+                            />
                         ))}
                     </>
                 )}

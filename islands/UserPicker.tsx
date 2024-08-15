@@ -161,13 +161,13 @@ export default function UserPicker({
                                     ))}
                                 {results.value.length > 0 &&
                                     addableUsers.length === 0 && (
-                                    <div class="text-gray-500">
+                                    <div class="text-gray-400">
                                         No more users to add.
                                     </div>
                                 )}
 
                                 {total.value === 0 && (
-                                    <div class="text-gray-500">
+                                    <div class="text-gray-400">
                                         No users found
                                     </div>
                                 )}
@@ -203,7 +203,7 @@ export default function UserPicker({
                         />
                     ))}
                     {selected.length === 0 && (
-                        <div class="text-gray-500">{noSelectedUsersText}</div>
+                        <div class="text-gray-400">{noSelectedUsersText}</div>
                     )}
                 </div>
             </div>

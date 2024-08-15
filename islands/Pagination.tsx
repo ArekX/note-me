@@ -1,4 +1,5 @@
 import Icon from "$components/Icon.tsx";
+import Button from "$components/Button.tsx";
 
 interface PaginationProps {
     total: number;
@@ -37,53 +38,54 @@ export default function Pagination({
         <>
             {total > perPage && (
                 <div className="flex justify-center">
-                    <button
-                        className="p-2"
+                    <Button
                         disabled={currentPage === 1}
                         onClick={() => onChange(currentPage - 1)}
+                        size="md"
                     >
                         <Icon name="chevron-left" />
-                    </button>
-                    <button
-                        className="p-2"
+                    </Button>
+                    <Button
+                        addClass="ml-2"
                         disabled={currentPage === 1}
                         onClick={() => onChange(1)}
+                        size="md"
                     >
                         <Icon name="chevrons-left" />
-                    </button>
+                    </Button>
 
                     {Array.from(
                         { length: endPage - startPage + 1 },
                         (_, index) => startPage + index,
                     ).map((page) => (
-                        <button
-                            key={page}
-                            className={`pt-2 pb-2 pr-5 pl-5 rounded-md ${
-                                currentPage === page
-                                    ? "bg-blue-500 text-white"
-                                    : ""
-                            }`}
+                        <Button
+                            addClass="ml-2"
+                            color={currentPage === page ? "success" : "primary"}
+                            disabled={currentPage === page}
                             onClick={() => onChange(page)}
+                            size="md"
                         >
                             {page.toString().padStart(amountOfZeroes, "0")}
-                        </button>
+                        </Button>
                     ))}
 
-                    <button
-                        className="p-2"
+                    <Button
+                        addClass="ml-2"
                         disabled={currentPage === pages}
                         onClick={() => onChange(pages)}
+                        size="md"
                     >
                         <Icon name="chevrons-right" />
-                    </button>
+                    </Button>
 
-                    <button
-                        className="p-2"
+                    <Button
+                        addClass="ml-2"
                         disabled={currentPage === pages}
                         onClick={() => onChange(currentPage + 1)}
+                        size="md"
                     >
                         <Icon name="chevron-right" />
-                    </button>
+                    </Button>
                 </div>
             )}
         </>

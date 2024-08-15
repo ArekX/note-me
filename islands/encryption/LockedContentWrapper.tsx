@@ -8,6 +8,10 @@ import { IS_BROWSER } from "$fresh/runtime.ts";
 import Dialog from "$islands/Dialog.tsx";
 import { useProtectionLock } from "$frontend/hooks/use-protection-lock.ts";
 import Button from "$components/Button.tsx";
+import {
+    consumePropagationTicket,
+    createPropagationTicket,
+} from "$frontend/propagation-manager.ts";
 
 interface LockedContentWrapperProps<T> {
     inputRecords: T[];
@@ -70,6 +74,7 @@ export default function LockedContentWrapper<T>({
 
     const unlockRecords = async (inputRecords: T[]) => {
         loader.start();
+        const propagationTicket = createPropagationTicket();
         const results = [];
 
         try {
@@ -95,6 +100,8 @@ export default function LockedContentWrapper<T>({
             failReason.value = typeof e === "string" ? e : (e.message ??
                 "Unknown error or data could not be decrypted.");
             return;
+        } finally {
+            consumePropagationTicket(propagationTicket);
         }
 
         recordsUnlocked.value = true;

@@ -70,7 +70,7 @@ export default function RecycleBinItem({ record }: RecycleBinItemProps) {
                     })}
                 />{" "}
                 {record.title}
-                <div class="text-sm text-gray-500">
+                <div class="text-sm text-gray-400">
                     <span>
                         <span title="Deleted at">
                             <Icon name="recycle" size="sm" />

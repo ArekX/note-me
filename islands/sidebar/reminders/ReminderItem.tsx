@@ -12,10 +12,13 @@ import TimeAgo from "$components/TimeAgo.tsx";
 import { activeNoteId } from "$frontend/hooks/use-active-note.ts";
 
 interface ReminderItemProps {
+    addClass?: string;
     record: ReminderNoteRecord;
 }
 
-export default function ReminderItem({ record }: ReminderItemProps) {
+export default function ReminderItem(
+    { record, addClass = "" }: ReminderItemProps,
+) {
     const user = useUser();
     const timeFormatter = useTimeFormat();
 
@@ -38,14 +41,14 @@ export default function ReminderItem({ record }: ReminderItemProps) {
         isReminderWindowOpen.value = true;
     };
 
-    const itemClass = activeNoteId.value === record.id
+    const itemClass = activeNoteId.value === record.note_id
         ? "bg-sky-700/50"
         : "hover:bg-gray-700/50";
 
     return (
         <div
             key={record.id}
-            class={`p-2 ${itemClass} cursor-pointer flex group`}
+            class={`p-2 ${itemClass} cursor-pointer flex group ${addClass}`}
             onClick={handleOpenNote}
         >
             <div class="w-full">
@@ -59,7 +62,7 @@ export default function ReminderItem({ record }: ReminderItemProps) {
                     })}
                 />{" "}
                 {record.title}
-                <div class="text-sm text-gray-500">
+                <div class="text-sm text-gray-400">
                     <span
                         title={record.next_at
                             ? timeFormatter.formatDateTime(

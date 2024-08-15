@@ -13,6 +13,7 @@ interface FileItemProps {
     isSelected: boolean;
     adminMode: boolean;
     onSelect: (file: ExtendedFileMetaRecord) => void;
+    onSelectMultiple?: (file: ExtendedFileMetaRecord) => void;
     onDelete: (file: ExtendedFileMetaRecord) => void;
     onToggleVisibility: (file: ExtendedFileMetaRecord) => void;
 }
@@ -88,6 +89,7 @@ export default function FileItem({
     isSelected,
     adminMode,
     onSelect,
+    onSelectMultiple,
     onDelete,
     onToggleVisibility,
 }: FileItemProps) {
@@ -96,7 +98,7 @@ export default function FileItem({
     return (
         <div
             key={file.identifier}
-            class={`group rounded-lg border border-solid  cursor-pointer  relative ${
+            class={`group rounded-lg border border-solid cursor-pointer relative ${
                 isSelected
                     ? "border-blue-500"
                     : "border-gray-300 hover:border-gray-500"
@@ -104,7 +106,12 @@ export default function FileItem({
             onDblClick={() => {
                 globalThis.open(`/file/${file.identifier}`);
             }}
-            onClick={() => {
+            onClick={(e) => {
+                if (e.ctrlKey && onSelectMultiple) {
+                    onSelectMultiple(file);
+                    return;
+                }
+
                 onSelect(file);
             }}
         >
