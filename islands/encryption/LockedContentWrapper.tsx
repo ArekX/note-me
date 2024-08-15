@@ -101,7 +101,7 @@ export default function LockedContentWrapper<T>({
                 "Unknown error or data could not be decrypted.");
             return;
         } finally {
-            consumePropagationTicket(propagationTicket);
+            await consumePropagationTicket(propagationTicket);
         }
 
         recordsUnlocked.value = true;
