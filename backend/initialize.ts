@@ -24,6 +24,11 @@ const initializeFirstRun = async () => {
         role: "admin",
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     });
+    logger.info(
+        "Administrator user created, please use the following credentials to login:",
+    );
+    logger.info("Username: admin");
+    logger.info("Password: admin");
 };
 
 export const initializeBackend = async () => {
