@@ -10,8 +10,9 @@ import { InsertNoteListDef } from "./insert-components/InsertNoteList.tsx";
 import { InsertNoteLinkDef } from "$islands/notes/insert-components/InsertNoteLink.tsx";
 import { useEffect } from "preact/hooks";
 import { InsertTocDef } from "$islands/notes/insert-components/InsertToc.tsx";
-import Picker, { PickerMap } from "$components/Picker.tsx";
 import DropdownMenu from "$islands/DropdownMenu.tsx";
+import SideTabPanel, { PanelItem } from "$islands/SideTabPanel.tsx";
+import { useSelected } from "$frontend/hooks/use-selected.ts";
 
 interface InsertDialogProps {
     noteText: string;
@@ -30,8 +31,8 @@ export interface InsertButton<T = object> {
 }
 
 export interface InsertComponent<
-    T,
-    InsertKeys extends string,
+    T extends string,
+    InsertKeys extends string = string,
     InsertData = object,
 > {
     id: T;
@@ -42,8 +43,6 @@ export interface InsertComponent<
     component: (props: InsertComponentProps) => JSX.Element;
 }
 
-type ComponentId<T extends { id: string }> = T["id"];
-
 const insertComponents = [
     InsertLinkDef,
     InsertImageDef,
@@ -53,39 +52,17 @@ const insertComponents = [
     InsertTocDef,
 ];
 
-const getComponentDef = (
-    id: InsertComponentIds,
-): (typeof insertComponents)[number] => {
-    return insertComponents.find((c) => c.id === id)!;
-};
-
-type ReturnedComponent = ReturnType<typeof getComponentDef>;
-type InsertComponentIds =
-    | ComponentId<typeof InsertLinkDef>
-    | ComponentId<typeof InsertImageDef>
-    | ComponentId<typeof InsertFileDef>
-    | ComponentId<typeof InsertNoteListDef>
-    | ComponentId<typeof InsertNoteLinkDef>
-    | ComponentId<typeof InsertTocDef>;
-
-const componentsMap: PickerMap<InsertComponentIds, InsertComponentProps> =
-    insertComponents.reduce((map, def) => {
-        const Component = def.component as (
-            props: InsertComponentProps,
-        ) => JSX.Element;
-        map[def.id] = (props) => <Component {...props} />;
-        return map;
-    }, {} as PickerMap<InsertComponentIds, InsertComponentProps>);
+type Component = typeof insertComponents[number];
 
 const InsertButton = (
     props: {
-        component: ReturnedComponent;
-        onInsert: (key: keyof ReturnedComponent["insertButtons"]) => void;
+        component: Component;
+        onInsert: (key: keyof Component["insertButtons"]) => void;
     },
 ) => {
     const insertButtonList = Object.entries(
         props.component.insertButtons,
-    ) as [keyof ReturnedComponent["insertButtons"], ReturnedComponent][];
+    ) as [keyof Component["insertButtons"], Component][];
 
     if (insertButtonList.length === 1) {
         const [firstButtonKey, firstButton] = insertButtonList[0];
@@ -121,19 +98,29 @@ const InsertButton = (
     );
 };
 
+const panelItems = insertComponents.map((component) => ({
+    name: component.name,
+    subtitle: component.description,
+    icon: component.icon,
+    data: component,
+    component: component.component,
+} as PanelItem<Component>));
+
 export default function InsertDialog({
     noteText,
     onInsert,
 }: InsertDialogProps) {
-    const selectedComponent = useSignal<InsertComponentIds>("link");
     const insertData = useSignal<object | null>(null);
     const showDialog = useSignal(false);
 
-    const componentDef = getComponentDef(selectedComponent.value);
+    const selectedPanel = useSelected<number>(0);
 
-    const handleSelectComponent = (id: InsertComponentIds) => {
+    const handleSelectComponent = (
+        _panelItem: PanelItem<Component>,
+        index: number,
+    ) => {
         insertData.value = null;
-        selectedComponent.value = id;
+        selectedPanel.select(index);
     };
 
     const handleCancel = () => {
@@ -141,9 +128,11 @@ export default function InsertDialog({
     };
 
     const handleInsert = (
-        action: keyof (typeof componentDef)["insertButtons"],
+        action: keyof Component["insertButtons"],
     ) => {
-        const button = componentDef.insertButtons[action] as InsertButton;
+        const item = panelItems[selectedPanel.selected.value!].data!;
+
+        const button = item.insertButtons[action] as InsertButton;
 
         onInsert(button.formatData(insertData.value!));
         showDialog.value = false;
@@ -152,7 +141,7 @@ export default function InsertDialog({
     const handleOpenInsertDialog = () => {
         showDialog.value = true;
         insertData.value = null;
-        selectedComponent.value = "link";
+        selectedPanel.select(0);
     };
 
     useEffect(() => {
@@ -189,50 +178,28 @@ export default function InsertDialog({
                     }}
                     title="Insert"
                 >
-                    <div
-                        class="relative"
-                        style={{
+                    <SideTabPanel<Component, InsertComponentProps>
+                        selectedIndex={selectedPanel.selected.value ?? 0}
+                        items={panelItems}
+                        onSelect={handleSelectComponent}
+                        styleProps={{
                             height: "calc(100vh - 190px)",
                         }}
-                    >
-                        <div class="absolute top-0 left-0 bottom-14 right-3/4 border-r border-gray-700/50 py-4 overflow-auto">
-                            {insertComponents.map((component) => (
-                                <div
-                                    class={`w-full mb-2 last:mb-0 p-2 rounded-tl-lg rounded-bl-lg hover:bg-gray-700/50 
-                                        hover:border-gray-600/50 border-t border-l cursor-pointer ${
-                                        component.id === selectedComponent.value
-                                            ? "bg-sky-900 border-sky-600/50 pointer-events-none"
-                                            : "border-transparent"
-                                    }`}
-                                    onClick={() =>
-                                        handleSelectComponent(component.id)}
-                                >
-                                    <h1 class="text-lg font-semibold">
-                                        <Icon name={component.icon} />{" "}
-                                        {component.name}
-                                    </h1>
-                                    <span class="block text-sm text-gray-400">
-                                        {component.description}
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
-                        <div class="left-1/4 right-0 top-0 bottom-14 absolute pl-5 max-h-screen overflow-auto">
-                            <Picker<InsertComponentIds, InsertComponentProps>
-                                selector={selectedComponent.value}
-                                propsGetter={() => ({
-                                    noteText,
-                                    onInsertDataChange: (data) =>
-                                        insertData.value = data,
-                                })}
-                                map={componentsMap}
-                            />
-                        </div>
+                        passProps={{
+                            noteText,
+                            onInsertDataChange: (data) =>
+                                insertData.value = data,
+                        }}
+                    />
+
+                    <div class="relative">
                         <div class="absolute bottom-0 right-0">
                             {insertData.value && (
                                 <InsertButton
                                     onInsert={handleInsert}
-                                    component={componentDef}
+                                    component={panelItems[
+                                        selectedPanel.selected.value!
+                                    ].data!}
                                 />
                             )}
 

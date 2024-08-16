@@ -12,9 +12,12 @@ export const useSelected = <T>(initialValue: T | null = null) => {
 
     const isSelected = () => selected.value !== null;
 
+    const isSelectedValue = (value: T) => selected.value === value;
+
     return {
         selected,
         isSelected,
+        isSelectedValue,
         select,
         unselect,
         toggle,

@@ -32,7 +32,10 @@ export const checkReminders: PeriodicTask = {
                             type: "reminder-received",
                             payload: {
                                 id: note.id,
+                                reminder_id: reminder.id,
                                 title: note.title,
+                                is_encrypted: note.is_encrypted,
+                                user_id: note.user_id,
                                 user_name: note.user_name,
                                 type: note.user_id === reminder.user_id
                                     ? "own"

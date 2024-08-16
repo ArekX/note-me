@@ -38,7 +38,7 @@ const Component = ({
                 </div>
                 <div class="w-3/4 pl-2 pr-2">
                     <div class="py-2 font-semibold">List Preview</div>
-                    {selectedGroup.value !== null
+                    {selectedGroup.value
                         ? (
                             <NoteList
                                 groupId={selectedGroup.value.id}
@@ -64,7 +64,7 @@ export const InsertNoteListDef: InsertComponent<
     description: "Insert a dynamic note list from a group",
     insertButtons: {
         list: {
-            name: "List",
+            name: "Insert List",
             icon: "list-ul",
             formatData: (data) => `{:note-list|${data.groupId}}`,
         },

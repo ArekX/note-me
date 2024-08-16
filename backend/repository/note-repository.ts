@@ -209,7 +209,18 @@ export const getNoteDetails = async (
         .leftJoin("group", "group_note.group_id", "group.id")
         .innerJoin("user", "user.id", "note.user_id")
         .where("note.id", "=", note_id)
-        .where("note.user_id", "=", user_id)
+        .where((e) =>
+            e.or([
+                e("note.user_id", "=", user_id),
+                e.exists(
+                    db.selectFrom("note_share_user")
+                        .select(sql<number>`1`.as("exists"))
+                        .where("note_id", "=", note_id)
+                        .where("user_id", "=", user_id)
+                        .limit(1),
+                ),
+            ])
+        )
         .where("note.is_deleted", "=", false)
         .executeTakeFirst() ?? null;
 };
@@ -217,6 +228,7 @@ export const getNoteDetails = async (
 export interface NoteInfoRecord {
     id: number;
     title: string;
+    is_encrypted: boolean;
     user_name: string;
     user_id: number;
 }
@@ -228,6 +240,7 @@ export const getNoteInfo = async (
         .select([
             "note.id",
             "note.title",
+            "note.is_encrypted",
             sql<string>`user.name`.as("user_name"),
             sql<number>`user.id`.as("user_id"),
         ])

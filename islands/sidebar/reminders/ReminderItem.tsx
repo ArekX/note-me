@@ -10,14 +10,17 @@ import { useSignal } from "@preact/signals";
 import NoteWindow from "$islands/notes/NoteWindow.tsx";
 import TimeAgo from "$components/TimeAgo.tsx";
 import { activeNoteId } from "$frontend/hooks/use-active-note.ts";
+import { JSX } from "preact";
 
 interface ReminderItemProps {
     addClass?: string;
+    hideReminderButton?: boolean;
+    buttons?: JSX.Element;
     record: ReminderNoteRecord;
 }
 
 export default function ReminderItem(
-    { record, addClass = "" }: ReminderItemProps,
+    { record, addClass = "", buttons, hideReminderButton }: ReminderItemProps,
 ) {
     const user = useUser();
     const timeFormatter = useTimeFormat();
@@ -75,13 +78,16 @@ export default function ReminderItem(
                 </div>
             </div>
             <div class="w-1/6 pt-1 text-right hidden group-hover:block">
-                <Button
-                    color="primary"
-                    title="Edit reminder"
-                    onClick={handleOpenReminderWindow}
-                >
-                    <Icon name="alarm" size="sm" />
-                </Button>
+                {!hideReminderButton && (
+                    <Button
+                        color="primary"
+                        title="Edit reminder"
+                        onClick={handleOpenReminderWindow}
+                    >
+                        <Icon name="alarm" size="sm" />
+                    </Button>
+                )}
+                {buttons}
             </div>
             {isReminderWindowOpen.value && (
                 <NoteWindow

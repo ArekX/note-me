@@ -46,6 +46,7 @@ import * as $LoadMoreWrapper from "./islands/LoadMoreWrapper.tsx";
 import * as $Loader from "./islands/Loader.tsx";
 import * as $Pagination from "./islands/Pagination.tsx";
 import * as $PasskeySignIn from "./islands/PasskeySignIn.tsx";
+import * as $SideTabPanel from "./islands/SideTabPanel.tsx";
 import * as $TabPanel from "./islands/TabPanel.tsx";
 import * as $TextDiff from "./islands/TextDiff.tsx";
 import * as $ToastMessages from "./islands/ToastMessages.tsx";
@@ -58,6 +59,7 @@ import * as $backups_settings_LocalSettings from "./islands/backups/settings/Loc
 import * as $backups_settings_S3Settings from "./islands/backups/settings/S3Settings.tsx";
 import * as $dashboard_CurrentReminders from "./islands/dashboard/CurrentReminders.tsx";
 import * as $dashboard_Dashboard from "./islands/dashboard/Dashboard.tsx";
+import * as $dashboard_PassedReminders from "./islands/dashboard/PassedReminders.tsx";
 import * as $dashboard_RecentlyOpenedNotes from "./islands/dashboard/RecentlyOpenedNotes.tsx";
 import * as $dashboard_RecentlySharedWithMe from "./islands/dashboard/RecentlySharedWithMe.tsx";
 import * as $data_DataPage from "./islands/data/DataPage.tsx";
@@ -211,6 +213,7 @@ const manifest = {
         "./islands/Loader.tsx": $Loader,
         "./islands/Pagination.tsx": $Pagination,
         "./islands/PasskeySignIn.tsx": $PasskeySignIn,
+        "./islands/SideTabPanel.tsx": $SideTabPanel,
         "./islands/TabPanel.tsx": $TabPanel,
         "./islands/TextDiff.tsx": $TextDiff,
         "./islands/ToastMessages.tsx": $ToastMessages,
@@ -226,6 +229,7 @@ const manifest = {
             $backups_settings_S3Settings,
         "./islands/dashboard/CurrentReminders.tsx": $dashboard_CurrentReminders,
         "./islands/dashboard/Dashboard.tsx": $dashboard_Dashboard,
+        "./islands/dashboard/PassedReminders.tsx": $dashboard_PassedReminders,
         "./islands/dashboard/RecentlyOpenedNotes.tsx":
             $dashboard_RecentlyOpenedNotes,
         "./islands/dashboard/RecentlySharedWithMe.tsx":

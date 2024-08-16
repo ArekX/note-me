@@ -100,6 +100,11 @@ export default function TagInput({
     const { sendMessage } = useWebsocketService();
 
     const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.ctrlKey && e.key === "s") {
+            writeTags();
+            return;
+        }
+
         if (autocompleteTags.value.length == 0) {
             return;
         }

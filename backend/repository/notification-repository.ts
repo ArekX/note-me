@@ -4,7 +4,10 @@ import { getCurrentUnixTimestamp } from "$lib/time/unix.ts";
 
 export interface NoteReminderData {
     id: number;
+    reminder_id: number;
     title: string;
+    is_encrypted: boolean;
+    user_id: number;
     user_name: string;
     type: "own" | "shared";
 }

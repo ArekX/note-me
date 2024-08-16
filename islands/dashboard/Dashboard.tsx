@@ -5,6 +5,7 @@ import RecentlyOpenedNotes from "$islands/dashboard/RecentlyOpenedNotes.tsx";
 import Button from "$components/Button.tsx";
 import CurrentReminders from "./CurrentReminders.tsx";
 import RecentlySharedWithMe from "$islands/dashboard/RecentlySharedWithMe.tsx";
+import PassedReminders from "$islands/dashboard/PassedReminders.tsx";
 
 export default function Dashboard() {
     const user = useUser();
@@ -61,6 +62,11 @@ export default function Dashboard() {
                 </div>
                 <div class="pl-5 w-1/3">
                     <RecentlySharedWithMe />
+                </div>
+            </div>
+            <div class="flex py-5">
+                <div class="w-1/3">
+                    <PassedReminders />
                 </div>
             </div>
         </>

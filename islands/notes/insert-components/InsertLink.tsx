@@ -27,7 +27,7 @@ export const InsertLinkDef: InsertComponent<
 > = {
     id: "link",
     name: "Link",
-    component: Component,
+    component: (props) => <Component {...props} />,
     icon: "link",
     description: "Insert a link",
     insertButtons: {

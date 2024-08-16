@@ -12,11 +12,14 @@ import Icon from "$components/Icon.tsx";
 import Button from "$components/Button.tsx";
 import { ReminderNoteRecord } from "$backend/repository/note-reminder-repository.ts";
 import ReminderItem from "$islands/sidebar/reminders/ReminderItem.tsx";
+import { NotificationFrontendResponse } from "$workers/websocket/api/notifications/messages.ts";
 
 export default function CurrentReminders() {
     const loader = useLoader(true);
 
-    const { sendMessage } = useWebsocketService<NoteFrontendResponse>({
+    const { sendMessage } = useWebsocketService<
+        NoteFrontendResponse | NotificationFrontendResponse
+    >({
         eventMap: {
             notes: {
                 updateNoteResponse: (data) => {
@@ -35,6 +38,16 @@ export default function CurrentReminders() {
                 },
                 setReminderResponse: () => fetchNotes(),
                 removeReminderResponse: () => fetchNotes(),
+            },
+            notifications: {
+                notificationAdded: (notification) => {
+                    if (notification.record.data.type === "reminder-received") {
+                        const payload = notification.record.data.payload;
+                        results.value = results.value.filter((v) =>
+                            v.id !== payload.reminder_id
+                        );
+                    }
+                },
             },
         },
     });
@@ -64,7 +77,7 @@ export default function CurrentReminders() {
     return (
         <div>
             <strong class="text-lg py-2 flex justify-between">
-                <span>Your current reminders{" "}</span>
+                <span>Current reminders{" "}</span>
                 {!loader.running && (
                     <span>
                         <Button color="success" onClick={fetchNotes} size="sm">
