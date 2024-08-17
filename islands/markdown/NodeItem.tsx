@@ -96,6 +96,11 @@ export default function NodeItem({
         case "tableCell":
             return <td>{items}</td>;
         case "tableHead":
+            return (
+                <thead>
+                    <tr>{items}</tr>
+                </thead>
+            );
         case "tableRow":
             return <tr>{items}</tr>;
         case "footnoteDefinition":

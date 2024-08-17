@@ -116,7 +116,7 @@ table {
     border-spacing: 0;
 }
 
-table th {
+table th, table thead td {
     @apply bg-gray-700/50 text-gray-300;
 }   
 
@@ -133,11 +133,11 @@ table tr td:last-child {
      @apply border-gray-700 border-r;
 }
 
-table th:first-child {
+table th:first-child, table thead td:first-child {
     @apply rounded-tl-lg;
 }
 
-table th:last-child {
+table th:last-child, table thead td:last-child  {
     @apply rounded-tr-lg;
 }
 
@@ -220,19 +220,22 @@ table :not(thead) tr:hover {
     padding-bottom: 5em;
 }
 
-.markdown-viewer td {
-    border: .2em solid;
-    @apply p-2;
-    @apply border-gray-600;
+
+
+.markdown-viewer table tr:last-child td:first-child {
+    @apply rounded-bl-lg border-b;
 }
 
-.markdown-viewer tr:nth-child(odd) {
-    @apply bg-gray-800;
+.markdown-viewer table tr:last-child td:last-child {
+    @apply rounded-br-lg border-b;
 }
 
-.markdown-viewer .node-tableHead {
-    @apply font-bold bg-gray-700;
+.markdown-viewer table thead tr td {
+    @apply font-semibold;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
 }
+
 
 
 .markdown-viewer p {

@@ -77,6 +77,9 @@ export default function MoveGroupDialog({
         onClose();
     });
 
+    const canBeMoved = recordType === "note" ||
+        (recordType === "group" && recordId !== selectedGroup.value?.id);
+
     return (
         <Dialog
             canCancel={true}
@@ -105,8 +108,7 @@ export default function MoveGroupDialog({
 
                         {selectedGroup.value !== null && (
                             <>
-                                {recordType === "group" &&
-                                        selectedGroup.value.id !== recordId
+                                {canBeMoved
                                     ? (
                                         <div class="pb-5">
                                             {recordType[0].toUpperCase() +
@@ -120,8 +122,7 @@ export default function MoveGroupDialog({
                                             Cannot move a group into itself.
                                         </div>
                                     )}
-                                {recordType === "group" &&
-                                    selectedGroup.value.id !== recordId && (
+                                {canBeMoved && (
                                     <Button
                                         onClick={handleMove}
                                         color={selectedGroup.value !== null
