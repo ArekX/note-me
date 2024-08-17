@@ -144,7 +144,7 @@ export default function ViewNote(
                 lastUpdatedUnix={recordData.value.updated_at}
                 author={author}
             />
-            <div>
+            <div class="py-4">
                 <Viewer
                     text={recordData.value.note}
                     options={{

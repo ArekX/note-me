@@ -220,14 +220,16 @@ table :not(thead) tr:hover {
     padding-bottom: 5em;
 }
 
-
+.markdown-viewer table tr:last-child td {
+    @apply border-b;
+}
 
 .markdown-viewer table tr:last-child td:first-child {
-    @apply rounded-bl-lg border-b;
+    @apply rounded-bl-lg;
 }
 
 .markdown-viewer table tr:last-child td:last-child {
-    @apply rounded-br-lg border-b;
+    @apply rounded-br-lg;
 }
 
 .markdown-viewer table thead tr td {

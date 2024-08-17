@@ -7,20 +7,26 @@ import Input from "$components/Input.tsx";
 import Icon from "$components/Icon.tsx";
 import Button from "$components/Button.tsx";
 import { useEffect } from "preact/hooks";
-import { createRef } from "preact";
 
 interface InsertTableData {
     rows: string[][];
 }
 
+const focusOnInput = (element: HTMLInputElement | null) => {
+    if (!element) {
+        return;
+    }
+
+    element.focus();
+    element.scrollIntoView();
+};
+
 const Component = (
     { onInsertDataChange }: InsertComponentProps<InsertTableData>,
 ) => {
     const rows = useSignal<string[][]>([
-        [" ", " "],
+        ["", ""],
     ]);
-
-    const tbodyRef = createRef<HTMLTableSectionElement>();
 
     const setRows = (newRows: string[][]) => {
         rows.value = newRows;
@@ -81,23 +87,118 @@ const Component = (
     const handleTableKeyDown = (event: KeyboardEvent) => {
         if (event.key === "Enter") {
             handleAddRow();
+        } else if (event.key === "ArrowUp") {
+            const target = event.target as HTMLInputElement;
+
+            event.preventDefault();
+            const tableCell = target?.closest("td");
+
+            if (!tableCell) {
+                return;
+            }
+
+            const tableRow = tableCell?.closest("tr")!;
+
+            const cellIndex = Array.from(tableRow?.children).indexOf(
+                tableCell,
+            );
+
+            focusOnInput(
+                tableRow.previousElementSibling?.querySelector(
+                    `td:nth-child(${cellIndex + 1}) input`,
+                ) as HTMLInputElement,
+            );
+        } else if (event.key === "ArrowDown") {
+            const target = event.target as HTMLInputElement;
+
+            event.preventDefault();
+            const tableCell = target?.closest("td");
+
+            if (!tableCell) {
+                return;
+            }
+
+            const tableRow = tableCell?.closest("tr")!;
+
+            const cellIndex = Array.from(tableRow?.children).indexOf(
+                tableCell,
+            );
+
+            focusOnInput(
+                tableRow.nextElementSibling?.querySelector(
+                    `td:nth-child(${cellIndex + 1}) input`,
+                ) as HTMLInputElement,
+            );
+        } else if (event.key === "ArrowLeft") {
+            const target = event.target as HTMLInputElement;
+
+            if (target.selectionStart === 0 && target.selectionEnd === 0) {
+                event.preventDefault();
+                const tableCell = target?.closest("td");
+                focusOnInput(
+                    tableCell?.previousElementSibling?.querySelector(
+                        "input",
+                    ) as HTMLInputElement,
+                );
+            }
+        } else if (event.key === "ArrowRight") {
+            const target = event.target as HTMLInputElement;
+
+            if (
+                target.selectionEnd === target.value.length &&
+                target.selectionStart === target.value.length
+            ) {
+                event.preventDefault();
+                const tableCell = target?.closest("td");
+                focusOnInput(
+                    tableCell?.nextElementSibling?.querySelector(
+                        "input",
+                    ) as HTMLInputElement,
+                );
+            }
         }
     };
 
     const handleButtonKeyDown = (event: KeyboardEvent) => {
         if (event.key === "Tab") {
-            handleAddRow();
+            const target = event.target as HTMLButtonElement;
 
-            setTimeout(() => {
-                if (tbodyRef.current) {
-                    const lastRow = tbodyRef.current.querySelector(
-                        "tr:last-child td:first-child input",
-                    ) as HTMLInputElement | null;
-                    if (lastRow) {
-                        lastRow.focus();
-                    }
-                }
-            }, 100);
+            const row = target.closest("tr");
+            const lastRow = row?.parentElement?.querySelector(
+                "tr:nth-last-child(2)",
+            );
+
+            if (lastRow === row) {
+                event.preventDefault();
+
+                handleAddRow();
+
+                setTimeout(() => {
+                    focusOnInput(
+                        lastRow?.nextElementSibling
+                            ?.querySelector(
+                                "td:first-child input",
+                            ) as HTMLInputElement,
+                    );
+                }, 100);
+            } else {
+                focusOnInput(
+                    row?.nextElementSibling?.querySelector(
+                        "td:first-child input",
+                    ) as HTMLInputElement,
+                );
+            }
+
+            event.preventDefault();
+        } else if (event.key === "ArrowLeft") {
+            event.preventDefault();
+            const tableCell = (event.currentTarget as HTMLButtonElement)
+                ?.closest("td");
+            focusOnInput(
+                tableCell?.previousElementSibling?.querySelector(
+                    "input",
+                ) as HTMLInputElement,
+            );
         }
     };
 
@@ -114,7 +215,7 @@ const Component = (
             </div>
             <div class="py-2">
                 <table>
-                    <tbody ref={tbodyRef}>
+                    <tbody>
                         <tr>
                             {rows.value.length > 0 && (
                                 <>
@@ -199,7 +300,7 @@ const Component = (
                 <div class="pt-5">
                     <Button
                         color="danger"
-                        onClick={() => setRows([[" ", " "]])}
+                        onClick={() => setRows([["", ""]])}
                     >
                         Reset table
                     </Button>
