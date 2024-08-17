@@ -59,13 +59,13 @@ const MenuItems = (
         <div
             ref={menuRef}
             class={`text-white absolute ${inlineDirectionClass} text-md mt-1 z-50 drop-shadow-lg 
-                    bg-gray-800 border-gray-700 border border-b-0 rounded-lg shadow-black/80 shadow-sm p-2 
+                    bg-gray-800 border-gray-700 border border-b-0 rounded-lg shadow-black/80 shadow-sm 
                     whitespace-nowrap break-keep`}
         >
             {items.map((item, index) => (
                 <div
                     key={index}
-                    class="hover:bg-gray-700 cursor-pointer p-1 pl-2 pr-2"
+                    class="hover:bg-gray-700 hover:border-gray-600/90 border-t border-transparent cursor-pointer py-1 px-4 last:rounded-b-lg first:rounded-t-lg"
                     onClick={() => onClick(item)}
                 >
                     <Icon name={item.icon} /> {item.name}
