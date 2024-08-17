@@ -35,7 +35,7 @@ export default function SearchBar<T>(
 
             <input
                 type="text"
-                class="transition-colors outline-none border-1 pl-9 pr-9 border-gray-900 bg-gray-700 bg-opacity-30 hover:bg-opacity-100 focus:bg-opacity-100 p-2 w-full"
+                class="transition-colors outline-none border-1 pl-9 pr-9 focus:border-gray-600 border-transparent border-t bg-gray-700 bg-opacity-30 hover:bg-opacity-100 focus:bg-opacity-100 p-2 w-full"
                 placeholder={queryPlaceHolder}
                 value={search.query.value}
                 onInput={(e) =>

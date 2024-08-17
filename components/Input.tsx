@@ -63,7 +63,7 @@ export default function Input(
                 min={min}
                 class={`outline-none border-1 ${
                     icon ? "pl-9" : ""
-                } border-gray-600/50 bg-gray-700/60 hover:bg-gray-700 focus:border-gray-500 border border-b-0 p-2 w-full rounded-md`}
+                } border-gray-600/50 bg-gray-700/60 hover:bg-gray-700 focus:border-gray-600 border border-b-0 p-2 w-full rounded-md`}
                 placeholder={placeholder}
                 onInput={IS_BROWSER
                     ? (e) =>
