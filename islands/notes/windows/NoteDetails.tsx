@@ -106,10 +106,13 @@ export default function NoteDetails(
                                         </>
                                     ),
                                     toc: () => (
-                                        <TableOfContents
-                                            text={noteData.value!.note}
-                                            disableLinks={true}
-                                        />
+                                        <div class="markdown-viewer">
+                                            <TableOfContents
+                                                text={noteData.value!.note}
+                                                disableLinks={true}
+                                                noTocMessage="No table of contents found, ToC is generated from markdown headings."
+                                            />
+                                        </div>
                                     ),
                                 }}
                             />
