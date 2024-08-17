@@ -1,3 +1,4 @@
+import { FunctionalComponent } from "preact";
 import { JSX } from "preact";
 
 export type PickerMap<T extends string | number | symbol, Props = never> = {
@@ -16,14 +17,23 @@ interface PickerProps<
 
 export default function Picker<
     T extends string | number | symbol,
-    Props = never,
+    Props extends object = never,
 >({
     selector,
     map,
     propsGetter,
-    defaultComponent,
+    defaultComponent: DefaultComponent,
 }: PickerProps<T, Props>): JSX.Element | null {
-    return selector && selector in map
-        ? map[selector](propsGetter?.() ?? {} as never)
-        : defaultComponent?.(propsGetter?.() ?? {} as never) ?? null;
+    const props = propsGetter?.() ?? {} as Props;
+
+    if (selector && selector in map) {
+        const PickedComponent: FunctionalComponent<Props> = map[selector];
+        return <PickedComponent key={selector} {...props} />;
+    }
+
+    if (DefaultComponent) {
+        return <DefaultComponent key={selector} {...props} />;
+    }
+
+    return null;
 }

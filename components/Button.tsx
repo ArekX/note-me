@@ -15,6 +15,7 @@ interface ButtonProps {
     addClass?: string;
     tabIndex?: number;
     onClick?: (event: Event) => void;
+    onKeyDown?: (event: KeyboardEvent) => void;
 }
 
 const buttonColors = {
@@ -53,6 +54,7 @@ export default function Button(
         tabIndex,
         addClass,
         onClick,
+        onKeyDown,
     }: ButtonProps,
 ) {
     if (!borderClass) {
@@ -71,6 +73,7 @@ export default function Button(
             name={name}
             tabIndex={tabIndex}
             onClick={(e) => !disabled && onClick?.(e)}
+            onKeyDown={onKeyDown}
             class={`${borderClass} bg-opacity-50 hover:bg-opacity-100 border-solid ${
                 addPadding ? sizeTypes[size] : ""
             } ${buttonColors[color]} ${roundedClass} transition-colors ${

@@ -101,6 +101,7 @@ import * as $notes_insert_components_InsertImage from "./islands/notes/insert-co
 import * as $notes_insert_components_InsertLink from "./islands/notes/insert-components/InsertLink.tsx";
 import * as $notes_insert_components_InsertNoteLink from "./islands/notes/insert-components/InsertNoteLink.tsx";
 import * as $notes_insert_components_InsertNoteList from "./islands/notes/insert-components/InsertNoteList.tsx";
+import * as $notes_insert_components_InsertTable from "./islands/notes/insert-components/InsertTable.tsx";
 import * as $notes_insert_components_InsertToc from "./islands/notes/insert-components/InsertToc.tsx";
 import * as $notes_insert_components_LinkForm from "./islands/notes/insert-components/LinkForm.tsx";
 import * as $notes_pages_EditNotePage from "./islands/notes/pages/EditNotePage.tsx";
@@ -284,6 +285,8 @@ const manifest = {
             $notes_insert_components_InsertNoteLink,
         "./islands/notes/insert-components/InsertNoteList.tsx":
             $notes_insert_components_InsertNoteList,
+        "./islands/notes/insert-components/InsertTable.tsx":
+            $notes_insert_components_InsertTable,
         "./islands/notes/insert-components/InsertToc.tsx":
             $notes_insert_components_InsertToc,
         "./islands/notes/insert-components/LinkForm.tsx":

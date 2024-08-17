@@ -13,6 +13,7 @@ import { InsertTocDef } from "$islands/notes/insert-components/InsertToc.tsx";
 import DropdownMenu from "$islands/DropdownMenu.tsx";
 import SideTabPanel, { PanelItem } from "$islands/SideTabPanel.tsx";
 import { useSelected } from "$frontend/hooks/use-selected.ts";
+import { InsertTableDef } from "$islands/notes/insert-components/InsertTable.tsx";
 
 interface InsertDialogProps {
     noteText: string;
@@ -46,6 +47,7 @@ export interface InsertComponent<
 const insertComponents = [
     InsertLinkDef,
     InsertImageDef,
+    InsertTableDef,
     InsertFileDef,
     InsertNoteListDef,
     InsertNoteLinkDef,
