@@ -26,6 +26,7 @@ import ConfirmDialog from "$islands/ConfirmDialog.tsx";
 import { usePagedData } from "$frontend/hooks/use-paged-data.ts";
 import Icon from "$components/Icon.tsx";
 import TimeAgo from "$components/TimeAgo.tsx";
+import NoItemMessage from "$islands/sidebar/NoItemMessage.tsx";
 
 export default function NoteHistory(
     { noteId, onClose, record }: NoteWindowComponentProps,
@@ -128,9 +129,10 @@ export default function NoteHistory(
                 {listLoader.running ? <Loader color="white" /> : (
                     <div>
                         {total.value === 0 && (
-                            <div class="text-center">
-                                No history records available for this note.
-                            </div>
+                            <NoItemMessage
+                                icon="history"
+                                message="No history records available for this note."
+                            />
                         )}
                         {total.value > 0 && (
                             <div class="flex w-full">
