@@ -68,8 +68,8 @@ export default function Notifications(props: NotificationsProps) {
                 },
                 notificationAdded: (data): void => {
                     notifications.value = [
-                        ...notifications.value,
                         data.record,
+                        ...notifications.value,
                     ];
 
                     addMessage({
@@ -139,57 +139,60 @@ export default function Notifications(props: NotificationsProps) {
                     ref={menuRef}
                     class="absolute top-full left-0 w-96 bg-gray-800 pt-2 z-50 shadow-black/80 shadow-sm text-white text-left rounded-lg border border-b-0 border-gray-600/50"
                 >
-                    <div class="pr-2 pb-1">
-                        <div class="flex">
-                            <div class="text-md font-semibold w-2/4 pl-4 pt-2">
-                                {notifications.value.length > 0
-                                    ? "Notifications "
-                                    : ""}
-                                {unreadCount > 0 && `(${unreadCount})`}
-                            </div>
-                            <div class="w-2/4 text-right">
-                                {unreadCount > 0 && (
-                                    <>
-                                        <Button
-                                            color="success"
-                                            size="sm"
-                                            title="Mark all as read"
-                                            onClick={handleMarkAllRead}
-                                        >
-                                            <Icon name="check-double" />
-                                        </Button>
-                                        {" "}
-                                    </>
-                                )}
-                                {notifications.value.length > 0 && (
-                                    <Button
-                                        color="danger"
-                                        disabled={notifications.value.length ==
-                                            0}
-                                        size="sm"
-                                        title="Delete all notifications"
-                                        onClick={handleDeleteAll}
-                                    >
-                                        <Icon name="minus-circle" />
-                                    </Button>
-                                )}
-                            </div>
-                        </div>
-                    </div>
                     {notifications.value.length > 0 && (
-                        <div class="notifcation-list">
-                            {notifications.value.map((notification) => (
-                                <NotificationItem
-                                    key={notification.id}
-                                    notification={notification}
-                                    onDelete={handleDeleteSingle}
-                                    onMarkRead={handleMarkSingleAsRead}
-                                />
-                            ))}
-                        </div>
+                        <>
+                            <div class="pr-2 pb-2 border-b border-gray-700">
+                                <div class="flex">
+                                    <div class="text-md font-semibold w-2/4 pl-4 pt-2">
+                                        {notifications.value.length > 0
+                                            ? "Notifications "
+                                            : ""}
+                                        {unreadCount > 0 && `(${unreadCount})`}
+                                    </div>
+                                    <div class="w-2/4 text-right">
+                                        {unreadCount > 0 && (
+                                            <>
+                                                <Button
+                                                    color="success"
+                                                    size="sm"
+                                                    title="Mark all as read"
+                                                    onClick={handleMarkAllRead}
+                                                >
+                                                    <Icon name="check-double" />
+                                                </Button>
+                                                {" "}
+                                            </>
+                                        )}
+                                        {notifications.value.length > 0 && (
+                                            <Button
+                                                color="danger"
+                                                disabled={notifications.value
+                                                    .length ==
+                                                    0}
+                                                size="sm"
+                                                title="Delete all notifications"
+                                                onClick={handleDeleteAll}
+                                            >
+                                                <Icon name="minus-circle" />
+                                            </Button>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="notifcation-list">
+                                {notifications.value.map((notification) => (
+                                    <NotificationItem
+                                        key={notification.id}
+                                        notification={notification}
+                                        onDelete={handleDeleteSingle}
+                                        onMarkRead={handleMarkSingleAsRead}
+                                    />
+                                ))}
+                            </div>
+                        </>
                     )}
                     {notifications.value.length === 0 && (
-                        <div class="pb-4">
+                        <div class="py-4">
                             <NoItemMessage
                                 icon="smile"
                                 removePadding={true}

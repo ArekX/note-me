@@ -36,6 +36,7 @@ export const getUserNotifications = async (
         .where("is_deleted", "=", false)
         .where("user_id", "=", userId)
         .select(["id", "data", "created_at", "is_read"])
+        .orderBy("created_at", "desc")
         .execute();
 
     return results.map((row) => ({

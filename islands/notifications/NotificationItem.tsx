@@ -4,6 +4,7 @@ import { JSX } from "preact/jsx-runtime";
 import Button from "$components/Button.tsx";
 import Icon from "$components/Icon.tsx";
 import NotificationSharedView from "$islands/notifications/views/NotificationSharedView.tsx";
+import TimeAgo from "$components/TimeAgo.tsx";
 
 export interface NotificationViewProps<T> {
     data: T;
@@ -42,21 +43,25 @@ export default function NotificationItem({
         return <h1>Component not defined for type: {data.type}</h1>;
     }
 
-    const isReadClass = notification.is_read ? "" : "bg-gray-600";
+    const isReadClass = notification.is_read ? "" : "bg-gray-700/40";
 
     return (
         <div
-            class={`${isReadClass} mt-1 flex last:rounded-lg`}
+            class={`${isReadClass} flex last:rounded-b-lg border-b border-gray-700 last:border-b-0`}
         >
-            <div class="w-3/4">
+            <div class="w-4/6">
                 <NotificationView
                     data={data
                         // deno-lint-ignore no-explicit-any
                         .payload as any}
                     record={notification}
                 />
+
+                <div class="text-xs p-3">
+                    <TimeAgo time={notification.created_at} />
+                </div>
             </div>
-            <div className="text-right pt-3 pr-2 w-1/4">
+            <div className="text-right pt-3 pr-2 w-2/6">
                 {!notification.is_read && (
                     <>
                         <Button

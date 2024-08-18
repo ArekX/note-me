@@ -99,8 +99,12 @@ const Component = ({
                 />
             </div>
 
-            <div class="border-solid border-gray-700 border-2 p-2 mt-2">
-                {loader.running && <Loader color="white" />}
+            <div class="border-solid border-gray-700 border rounded-lg mt-2">
+                {loader.running && (
+                    <div class="text-center p-5">
+                        <Loader color="white" />
+                    </div>
+                )}
                 {!loader.running && results.value.length === 0 && (
                     <div class="p-2 text-center text-gray-400">
                         No results found
@@ -115,6 +119,7 @@ const Component = ({
                         {results.value.map((i) => (
                             <NoteItemView
                                 record={i}
+                                hideActiveNote={true}
                                 addClass={selectedNoteId.value === i.id
                                     ? "bg-gray-600"
                                     : ""}

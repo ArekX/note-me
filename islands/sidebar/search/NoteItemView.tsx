@@ -10,6 +10,7 @@ import { activeNoteId } from "$frontend/hooks/use-active-note.ts";
 interface NoteItemViewProps {
     record: NoteSearchRecord;
     searchQuery: string;
+    hideActiveNote?: boolean;
     addClass?: string;
     onNoteClick: () => void;
 }
@@ -18,6 +19,7 @@ export default function NoteItemView({
     record,
     searchQuery,
     onNoteClick,
+    hideActiveNote,
     addClass = "",
 }: NoteItemViewProps) {
     const foundLines = useMemo(() =>
@@ -27,13 +29,13 @@ export default function NoteItemView({
             100,
         ), [record, searchQuery]);
 
-    const itemClass = activeNoteId.value === record.id
+    const itemClass = !hideActiveNote && activeNoteId.value === record.id
         ? "bg-sky-700/50"
         : "hover:bg-gray-700/50";
 
     return (
         <div
-            class={`p-2 cursor-pointer ${itemClass} rounded-lg ${addClass}`}
+            class={`p-2 cursor-pointer ${itemClass} ${addClass}`}
             onClick={onNoteClick}
         >
             <TreeItemIcon

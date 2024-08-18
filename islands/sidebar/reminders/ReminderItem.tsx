@@ -51,10 +51,10 @@ export default function ReminderItem(
     return (
         <div
             key={record.id}
-            class={`p-2 ${itemClass} cursor-pointer flex group ${addClass}`}
+            class={`${itemClass} cursor-pointer items-center flex group ${addClass}`}
             onClick={handleOpenNote}
         >
-            <div class="w-full">
+            <div class="w-4/6 p-2">
                 <TreeItemIcon
                     container={fromTreeRecord({
                         type: "note",
@@ -77,7 +77,7 @@ export default function ReminderItem(
                     </span>
                 </div>
             </div>
-            <div class="w-1/6 pt-1 text-right hidden group-hover:block">
+            <div class="w-2/6 text-right hidden group-hover:block pr-2">
                 {!hideReminderButton && (
                     <Button
                         color="primary"
