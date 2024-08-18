@@ -115,7 +115,7 @@ import * as $notes_windows_NoteHistory from "./islands/notes/windows/NoteHistory
 import * as $notes_windows_NoteReminder from "./islands/notes/windows/NoteReminder.tsx";
 import * as $notes_windows_NoteShare from "./islands/notes/windows/NoteShare.tsx";
 import * as $notes_windows_components_CreateLinkForm from "./islands/notes/windows/components/CreateLinkForm.tsx";
-import * as $notes_windows_components_HistoryDiff from "./islands/notes/windows/components/HistoryDiff.tsx";
+import * as $notes_windows_components_HistoryRecordView from "./islands/notes/windows/components/HistoryRecordView.tsx";
 import * as $notes_windows_components_OneTimeReminder from "./islands/notes/windows/components/OneTimeReminder.tsx";
 import * as $notes_windows_components_PresetReminder from "./islands/notes/windows/components/PresetReminder.tsx";
 import * as $notes_windows_components_RepeatReminder from "./islands/notes/windows/components/RepeatReminder.tsx";
@@ -306,8 +306,8 @@ const manifest = {
         "./islands/notes/windows/NoteShare.tsx": $notes_windows_NoteShare,
         "./islands/notes/windows/components/CreateLinkForm.tsx":
             $notes_windows_components_CreateLinkForm,
-        "./islands/notes/windows/components/HistoryDiff.tsx":
-            $notes_windows_components_HistoryDiff,
+        "./islands/notes/windows/components/HistoryRecordView.tsx":
+            $notes_windows_components_HistoryRecordView,
         "./islands/notes/windows/components/OneTimeReminder.tsx":
             $notes_windows_components_OneTimeReminder,
         "./islands/notes/windows/components/PresetReminder.tsx":

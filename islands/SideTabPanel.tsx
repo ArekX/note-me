@@ -4,8 +4,8 @@ import Icon from "$components/Icon.tsx";
 import { useEffect } from "preact/hooks";
 
 export interface PanelItem<Data = unknown> {
-    name: string;
-    subtitle?: string;
+    name: string | JSX.Element;
+    subtitle?: string | JSX.Element;
     icon?: string;
     data?: Data;
     component: () => JSX.Element;
@@ -49,7 +49,7 @@ export default function SideTabPanel<T = unknown, PassProps = unknown>(
             class="relative"
             style={styleProps}
         >
-            <div class="absolute top-0 left-0 bottom-14 right-3/4 border-r border-gray-700/50 py-4 overflow-auto">
+            <div class="absolute top-0 left-0 bottom-0 right-3/4 border-r border-gray-700/50 py-4 overflow-auto">
                 {items.map((item, index) => (
                     <div
                         key={index}
@@ -73,7 +73,7 @@ export default function SideTabPanel<T = unknown, PassProps = unknown>(
                     </div>
                 ))}
             </div>
-            <div class="left-1/4 right-0 top-0 bottom-14 absolute pl-5 max-h-screen overflow-auto">
+            <div class="left-1/4 right-0 top-0 bottom-0 absolute pl-5 overflow-auto">
                 <PanelComponent
                     key={selectedPanel.selected.value!}
                     {...passProps}

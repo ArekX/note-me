@@ -235,7 +235,7 @@ const handleRevertNoteToHistory: ListenerFn<RevertNoteToHistoryMessage> =
         }, {
             noteId: note_id,
             userId: sourceClient!.userId,
-            newHistoryVersionName: `Reverted to "${data.version}"`,
+            isHistoryReversal: true,
         });
 
         respond<RevertNoteToHistoryResponse>({

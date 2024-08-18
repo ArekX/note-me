@@ -21,7 +21,7 @@ export interface UpdateNoteData {
 export interface BackendData {
     noteId: number;
     userId: number;
-    newHistoryVersionName?: string;
+    isHistoryReversal?: boolean;
 }
 
 export const runUpdateNoteAction = async (
@@ -44,7 +44,7 @@ export const runUpdateNoteAction = async (
         await addHistory({
             note_id: backend_data.noteId,
             user_id: backend_data.userId,
-            new_version_name: backend_data.newHistoryVersionName,
+            is_reversal: backend_data.isHistoryReversal,
         });
 
         await Promise.all([

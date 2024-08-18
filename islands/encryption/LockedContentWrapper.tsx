@@ -13,11 +13,11 @@ import {
     createPropagationTicket,
 } from "$frontend/propagation-manager.ts";
 
-interface LockedContentWrapperProps<T> {
+interface LockedContentWrapperProps<T extends object> {
     inputRecords: T[];
     protectedKeys: (keyof T)[];
     isLockedKey: keyof T;
-    unlockRender: (unlockedRecords: T[]) => JSX.Element;
+    unlockRender: (props: { unlockedRecords: T[] }) => JSX.Element;
     dialogMode?: boolean;
 }
 
@@ -42,12 +42,12 @@ const ProtectionLoader = ({ isDialogMode }: ProtectionLoaderProps) => {
     return loader;
 };
 
-export default function LockedContentWrapper<T>({
+export default function LockedContentWrapper<T extends object>({
     inputRecords,
     protectedKeys,
     isLockedKey,
     dialogMode,
-    unlockRender,
+    unlockRender: UnlockedRenderComponent,
 }: LockedContentWrapperProps<T>) {
     if (!IS_BROWSER) {
         return null;
@@ -94,6 +94,7 @@ export default function LockedContentWrapper<T>({
                     }
                 }
 
+                record[isLockedKey] = false as T[keyof T];
                 results.push(record);
             }
         } catch (e) {
@@ -182,7 +183,7 @@ export default function LockedContentWrapper<T>({
                         )}
                     </div>
                 )
-                : unlockRender(records.value)}
+                : <UnlockedRenderComponent unlockedRecords={records.value} />}
         </div>
     );
 }

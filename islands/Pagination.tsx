@@ -6,6 +6,7 @@ interface PaginationProps {
     perPage: number;
     currentPage: number;
     onChange: (page: number) => void;
+    alignmentClass?: string;
 }
 
 export default function Pagination({
@@ -13,6 +14,7 @@ export default function Pagination({
     perPage,
     currentPage,
     onChange,
+    alignmentClass = "justify-center",
 }: PaginationProps) {
     const pages = Math.ceil(total / perPage);
 
@@ -37,8 +39,11 @@ export default function Pagination({
     return (
         <>
             {total > perPage && (
-                <div className="flex justify-center">
+                <div className={`flex ${alignmentClass}`}>
                     <Button
+                        addClass={currentPage === 1
+                            ? "pointer-events-none opacity-20"
+                            : ""}
                         disabled={currentPage === 1}
                         onClick={() => onChange(currentPage - 1)}
                         size="md"
@@ -46,7 +51,11 @@ export default function Pagination({
                         <Icon name="chevron-left" />
                     </Button>
                     <Button
-                        addClass="ml-2"
+                        addClass={`ml-2 ${
+                            currentPage === 1
+                                ? "pointer-events-none opacity-20"
+                                : ""
+                        }`}
                         disabled={currentPage === 1}
                         onClick={() => onChange(1)}
                         size="md"
@@ -59,7 +68,11 @@ export default function Pagination({
                         (_, index) => startPage + index,
                     ).map((page) => (
                         <Button
-                            addClass="ml-2"
+                            addClass={`ml-2 ${
+                                currentPage === page
+                                    ? "pointer-events-none"
+                                    : ""
+                            }`}
                             color={currentPage === page ? "success" : "primary"}
                             disabled={currentPage === page}
                             onClick={() => onChange(page)}
@@ -70,7 +83,11 @@ export default function Pagination({
                     ))}
 
                     <Button
-                        addClass="ml-2"
+                        addClass={`ml-2 ${
+                            currentPage === pages
+                                ? "pointer-events-none opacity-20"
+                                : ""
+                        }`}
                         disabled={currentPage === pages}
                         onClick={() => onChange(pages)}
                         size="md"
@@ -79,7 +96,11 @@ export default function Pagination({
                     </Button>
 
                     <Button
-                        addClass="ml-2"
+                        addClass={`ml-2 ${
+                            currentPage === pages
+                                ? "pointer-events-none opacity-20"
+                                : ""
+                        }`}
                         disabled={currentPage === pages}
                         onClick={() => onChange(currentPage + 1)}
                         size="md"

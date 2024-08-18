@@ -8,7 +8,7 @@ import { NoteHistoryTable, RecordId } from "$types";
 interface AddHistoryData {
     note_id: number;
     user_id: number;
-    new_version_name?: string;
+    is_reversal?: boolean;
 }
 
 export const addHistory = async (data: AddHistoryData): Promise<void> => {
@@ -25,8 +25,8 @@ export const addHistory = async (data: AddHistoryData): Promise<void> => {
         .executeTakeFirst() ?? { count: 0 };
 
     await db.insertInto("note_history").values({
-        version: data.new_version_name
-            ? data.new_version_name
+        version: data.is_reversal
+            ? `Version ${count + 1} (before reversal)`
             : `Version ${count + 1}`,
         created_at: getCurrentUnixTimestamp(),
         note_id: noteData.id,
@@ -67,7 +67,7 @@ export const findHistory = async (
         )
         .orderBy("note_history.created_at", "desc");
 
-    return await pageResults(query, page, 10);
+    return await pageResults(query, page, 20);
 };
 
 export type NoteHistoryDataRecord = Pick<

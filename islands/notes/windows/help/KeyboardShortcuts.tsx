@@ -6,14 +6,14 @@ export default function KeyboardShortcuts() {
         const hotkeyMap = getHotkeyMap();
 
         return {
-            noteEditor: {
+            editor: {
                 name: "Anywhere in note editor",
                 hotkeys: [
                     ...hotkeyMap.insertDialog,
                     ...hotkeyMap.noteEditor,
                 ],
             },
-            noteTextArea: {
+            textArea: {
                 name: "When editing note text",
                 hotkeys: [
                     ...hotkeyMap.noteTextArea,

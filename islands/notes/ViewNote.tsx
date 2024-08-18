@@ -18,6 +18,7 @@ export interface ViewNoteProps {
     shareMode?: "none" | "everyone" | "users";
     disableTagLinks?: boolean;
     record: ViewNoteRecord;
+    historyMode?: boolean;
     author?: string;
 }
 
@@ -27,6 +28,7 @@ export default function ViewNote(
         record,
         shareMode = "none",
         disableTagLinks,
+        historyMode = false,
         author,
     }: ViewNoteProps,
 ) {
@@ -36,7 +38,9 @@ export default function ViewNote(
     });
     const search = disableTagLinks ? null : useSearch();
 
-    useActiveNoteEffect(recordData.value.id);
+    if (!historyMode) {
+        useActiveNoteEffect(recordData.value.id);
+    }
 
     useEffect(() => {
         recordData.value = {
@@ -99,7 +103,7 @@ export default function ViewNote(
                 <div class="title w-10/12">
                     {recordData.value.title}
                 </div>
-                {shareMode !== "everyone" && (
+                {!historyMode && shareMode !== "everyone" && (
                     <div class="text-md ml-2 w-2/12 text-right">
                         {!readonly && (
                             <Button
@@ -148,19 +152,20 @@ export default function ViewNote(
                 <Viewer
                     text={recordData.value.note}
                     options={{
-                        isSharing: shareMode !== "none",
+                        isSharing: historyMode || shareMode !== "none",
                     }}
                 />
             </div>
-            {recordData.value.id && windowMode.value !== null && (
-                <NoteWindow
-                    onClose={() => windowMode.value = null}
-                    type={windowMode.value}
-                    isExistingNoteProtected={recordData.value.is_encrypted}
-                    existingNoteText={recordData.value.note}
-                    noteId={recordData.value.id}
-                />
-            )}
+            {!historyMode && recordData.value.id && windowMode.value !== null &&
+                (
+                    <NoteWindow
+                        onClose={() => windowMode.value = null}
+                        type={windowMode.value}
+                        isExistingNoteProtected={recordData.value.is_encrypted}
+                        existingNoteText={recordData.value.note}
+                        noteId={recordData.value.id}
+                    />
+                )}
         </div>
     );
 }

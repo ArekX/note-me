@@ -1,7 +1,6 @@
 import NoteDelete from "$islands/notes/windows/NoteDelete.tsx";
 import NoteDetails from "./windows/NoteDetails.tsx";
 import NoteHelp from "$islands/notes/windows/NoteHelp.tsx";
-import NoteHistory from "$islands/notes/windows/NoteHistory.tsx";
 import NoteShare from "$islands/notes/windows/NoteShare.tsx";
 import Picker from "$components/Picker.tsx";
 import NoteReminder from "$islands/notes/windows/NoteReminder.tsx";
@@ -22,6 +21,7 @@ import Loader from "$islands/Loader.tsx";
 import { useSignal } from "@preact/signals";
 import LockedContentWrapper from "$islands/encryption/LockedContentWrapper.tsx";
 import NoteFiles from "$islands/notes/windows/NoteFiles.tsx";
+import NoteHistory from "./windows/NoteHistory.tsx";
 
 export type NoteWindowTypes =
     | "details"
@@ -48,7 +48,7 @@ interface NoteWindowProps {
     onClose: () => void;
 }
 
-interface NoteRecord {
+export interface NoteRecord {
     text: string;
     is_encrypted: boolean;
 }
@@ -120,7 +120,7 @@ export default function NoteWindow({
             protectedKeys={["text"]}
             dialogMode={true}
             isLockedKey={"is_encrypted"}
-            unlockRender={([record]) => {
+            unlockRender={({ unlockedRecords: [record] }) => {
                 return (
                     <Picker<NoteWindowTypes, NoteWindowComponentProps>
                         selector={type}

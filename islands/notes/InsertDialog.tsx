@@ -203,7 +203,7 @@ export default function InsertDialog({
                         items={panelItems}
                         onSelect={handleSelectComponent}
                         styleProps={{
-                            height: "calc(100vh - 190px)",
+                            height: "calc(100vh - 195px)",
                         }}
                         passProps={{
                             noteText,
@@ -212,25 +212,23 @@ export default function InsertDialog({
                         }}
                     />
 
-                    <div class="relative">
-                        <div class="absolute bottom-0 right-0">
-                            {insertData.value && (
-                                <InsertButton
-                                    onInsert={handleInsert}
-                                    component={panelItems[
-                                        selectedPanel.selected.value!
-                                    ].data!}
-                                />
-                            )}
+                    <div class="pt-5 text-right">
+                        {insertData.value && (
+                            <InsertButton
+                                onInsert={handleInsert}
+                                component={panelItems[
+                                    selectedPanel.selected.value!
+                                ].data!}
+                            />
+                        )}
 
-                            <Button
-                                addClass="ml-2"
-                                color="danger"
-                                onClick={handleCancel}
-                            >
-                                <Icon name="minus-circle" /> Cancel
-                            </Button>
-                        </div>
+                        <Button
+                            addClass="ml-2"
+                            color="danger"
+                            onClick={handleCancel}
+                        >
+                            <Icon name="minus-circle" /> Cancel
+                        </Button>
                     </div>
                 </Dialog>
             )}

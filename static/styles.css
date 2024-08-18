@@ -350,15 +350,34 @@ table :not(thead) tr:hover {
 
 }
 
+.diff-viewer .legend {
+    display: inline-block;
+    padding: .5em;
+    margin-right: .5em;
+    font-size: .8em;
+}
+
+.diff-viewer .legend-added {
+    background-color: #335c67;
+}
+
 .diff-viewer .diff-added {
     background-color: #335c67;
     color: #FFF;
+}
+
+.diff-viewer .legend-removed {
+    background-color: #7d1300;
 }
 
 
 .diff-viewer .diff-removed {
     background-color: #7d1300;
     color: #FFF;
+}
+
+.diff-viewer .legend-changed {
+    background-color: #ffcc00;
 }
 
 .diff-viewer .diff-changed {

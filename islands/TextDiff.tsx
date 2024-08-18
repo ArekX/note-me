@@ -12,39 +12,52 @@ export default function TextDiff({
     const diffLines = diffText(text1, text2);
 
     return (
-        <pre class="diff-viewer text-sm whitespace-pre-wrap">
-            {diffLines.map((line, index) => {
-                switch (line.type) {
-                    case "added":
-                        return (
-                            <div class="diff-added" key={index}>
-                                {line.value}
-                            </div>
-                        );
-                    case "removed":
-                        return (
-                            <div class="diff-removed" key={index}>
-                                {line.value}
-                            </div>
-                        );
-                    case "same":
-                        return (
-                            <div class="diff-unchanged" key={index}>
-                                {line.value}
-                            </div>
-                        );
-                    case "changed":
-                        return (
-                            <div
-                                class="diff-changed"
-                                key={index}
-                                title={`From: ${line.from}`}
-                            >
-                                {line.to}
-                            </div>
-                        );
-                }
-            })}
-        </pre>
+        <div class="diff-viewer">
+            <div>
+                <span>
+                    <span class="legend legend-added"></span> Line added
+                </span>
+                <span class="ml-2">
+                    <span class="legend legend-removed"></span> Line removed
+                </span>
+                <span class="ml-2">
+                    <span class="legend legend-changed"></span> Line changed
+                </span>
+            </div>
+            <pre class="text-sm whitespace-pre-wrap block pt-10">
+                {diffLines.map((line, index) => {
+                    switch (line.type) {
+                        case "added":
+                            return (
+                                <div class="diff-added" key={index}>
+                                    {line.value}
+                                </div>
+                            );
+                        case "removed":
+                            return (
+                                <div class="diff-removed" key={index}>
+                                    {line.value}
+                                </div>
+                            );
+                        case "same":
+                            return (
+                                <div class="diff-unchanged" key={index}>
+                                    {line.value}
+                                </div>
+                            );
+                        case "changed":
+                            return (
+                                <div
+                                    class="diff-changed"
+                                    key={index}
+                                    title={`From: ${line.from}`}
+                                >
+                                    {line.to}
+                                </div>
+                            );
+                    }
+                })}
+            </pre>
+        </div>
     );
 }
