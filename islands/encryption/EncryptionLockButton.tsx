@@ -7,7 +7,7 @@ export default function EncryptionLockButton() {
     const lock = useProtectionLock();
 
     const handleUnlock = () => {
-        if (lock.isLocked()) {
+        if (lock.isLocked.value) {
             lock.requestUnlock().then(() => {
                 addMessage({
                     type: "success",
@@ -28,12 +28,12 @@ export default function EncryptionLockButton() {
         <>
             <a
                 class="hover:text-gray-300 cursor-pointer"
-                title={lock.isLocked() ? "Unlock" : "Lock"}
+                title={lock.isLocked.value ? "Unlock" : "Lock"}
                 onClick={handleUnlock}
             >
                 <Icon
-                    type={lock.isLocked() ? "solid" : "regular"}
-                    name={lock.isLocked() ? "lock-alt" : "lock-open-alt"}
+                    type={lock.isLocked.value ? "solid" : "regular"}
+                    name={lock.isLocked.value ? "lock-alt" : "lock-open-alt"}
                 />
             </a>
             {lock.isUnlockRequested.value && (

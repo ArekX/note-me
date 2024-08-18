@@ -65,7 +65,7 @@ export default function EncryptionLockWindow({
     useEffect(() => {
         password.value = "";
         isInvalidPassword.value = false;
-    }, [lock.isLocked()]);
+    }, [lock.isLocked.value]);
 
     return (
         <Dialog

@@ -111,7 +111,7 @@ export default function LockedContentWrapper<T extends object>({
     };
 
     useEffect(() => {
-        if (inputRecords === records.value) {
+        if (!inputRecords.some((r) => !records.value.includes(r))) {
             return;
         }
 
@@ -128,11 +128,7 @@ export default function LockedContentWrapper<T extends object>({
     }, [inputRecords]);
 
     useEffect(() => {
-        if (!hasProtectedInputRecords()) {
-            return;
-        }
-
-        if (protectionLock.isLocked() && !loader.running) {
+        if (protectionLock.isLocked.value && !loader.running) {
             loader.start();
             failReason.value = "Locked by protection lock.";
         } else {
@@ -142,7 +138,7 @@ export default function LockedContentWrapper<T extends object>({
                 unlockRecords(records.value);
             }
         }
-    }, [protectionLock.isLocked()]);
+    }, [protectionLock.isLocked.value]);
 
     return (
         <div>
@@ -170,7 +166,7 @@ export default function LockedContentWrapper<T extends object>({
                                     Could not unlock due to: {failReason.value}
                                 </p>
 
-                                {protectionLock.isLocked() && (
+                                {protectionLock.isLocked.value && (
                                     <Button
                                         color="success"
                                         onClick={() =>

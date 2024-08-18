@@ -37,6 +37,16 @@ export default function ViewNotePage({ note }: ViewNoteProps) {
         },
     });
 
+    if (noteRecord.value.id !== note.id) {
+        noteRecord.value = {
+            ...note,
+        };
+    }
+
+    if (!noteRecord.value.is_encrypted) {
+        return <ViewNote record={noteRecord.value} />;
+    }
+
     return (
         <LockedContentWrapper
             inputRecords={[noteRecord.value]}

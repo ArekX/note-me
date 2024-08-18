@@ -37,6 +37,15 @@ export default function EditNotePage({ note }: EditNoteProps) {
         },
     });
 
+    if (noteRecord.value.id !== note.id) {
+        noteRecord.value = {
+            ...note,
+        };
+    }
+    if (!noteRecord.value.is_encrypted) {
+        return <NoteEditor note={noteRecord.value} />;
+    }
+
     return (
         <LockedContentWrapper
             inputRecords={[note]}

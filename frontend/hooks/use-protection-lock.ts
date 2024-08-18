@@ -1,4 +1,4 @@
-import { signal } from "@preact/signals";
+import { signal, useComputed } from "@preact/signals";
 import { decodeBase64, encodeBase64 } from "$frontend/deps.ts";
 import { restore, store } from "$frontend/session-storage.ts";
 import { IS_BROWSER } from "$fresh/runtime.ts";
@@ -177,7 +177,7 @@ export const useProtectionLock = () => {
         storeState();
     };
 
-    const isLocked = () => userPassword.value === null;
+    const isLocked = useComputed(() => userPassword.value === null);
 
     return {
         isUnlockRequested,

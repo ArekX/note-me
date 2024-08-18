@@ -68,6 +68,7 @@ export const useTreeWebsocket = (options: TreeWebsocketOptions) => {
 
                     setContainer(container, {
                         name: data.title,
+                        is_protected: !!data.is_encrypted,
                     });
 
                     propagateChanges();
