@@ -121,6 +121,7 @@ import * as $notes_windows_components_PresetReminder from "./islands/notes/windo
 import * as $notes_windows_components_RepeatReminder from "./islands/notes/windows/components/RepeatReminder.tsx";
 import * as $notes_windows_components_ShareLinks from "./islands/notes/windows/components/ShareLinks.tsx";
 import * as $notes_windows_components_ShareToUsers from "./islands/notes/windows/components/ShareToUsers.tsx";
+import * as $notes_windows_help_KeyboardShortcuts from "./islands/notes/windows/help/KeyboardShortcuts.tsx";
 import * as $notifications_NotificationItem from "./islands/notifications/NotificationItem.tsx";
 import * as $notifications_NotificationList from "./islands/notifications/NotificationList.tsx";
 import * as $notifications_notification_message_text from "./islands/notifications/notification-message-text.ts";
@@ -317,6 +318,8 @@ const manifest = {
             $notes_windows_components_ShareLinks,
         "./islands/notes/windows/components/ShareToUsers.tsx":
             $notes_windows_components_ShareToUsers,
+        "./islands/notes/windows/help/KeyboardShortcuts.tsx":
+            $notes_windows_help_KeyboardShortcuts,
         "./islands/notifications/NotificationItem.tsx":
             $notifications_NotificationItem,
         "./islands/notifications/NotificationList.tsx":

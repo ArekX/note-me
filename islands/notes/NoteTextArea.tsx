@@ -12,6 +12,51 @@ import {
     getLinkMarkdown,
 } from "$islands/notes/helpers/markdown.ts";
 import { FileDropWrapper } from "$islands/files/FileDropWrapper.tsx";
+import { HotkeySet } from "$frontend/hotkeys.ts";
+import { useHotkeys } from "$frontend/hooks/use-hotkeys.ts";
+
+export const noteTextAreaHotkeySet: HotkeySet<
+    "noteTextArea",
+    | "boldText"
+    | "italicText"
+    | "insertLink"
+    | "insertImage"
+    | "insertHorizontalRule"
+> = {
+    context: "noteTextArea",
+    items: [
+        {
+            identifier: "boldText",
+            metaKeys: ["ctrl"],
+            key: "b",
+            description: "Make text bold",
+        },
+        {
+            identifier: "italicText",
+            metaKeys: ["ctrl"],
+            key: "i",
+            description: "Make text italic",
+        },
+        {
+            identifier: "insertLink",
+            metaKeys: ["ctrl"],
+            key: "k",
+            description: "Insert link template",
+        },
+        {
+            identifier: "insertImage",
+            metaKeys: ["ctrl"],
+            key: "p",
+            description: "Insert image template",
+        },
+        {
+            identifier: "insertHorizontalRule",
+            metaKeys: ["ctrl"],
+            key: "h",
+            description: "Insert horizontal rule",
+        },
+    ],
+};
 
 interface NoteInputProps {
     isSaving: boolean;
@@ -28,6 +73,8 @@ export default function NoteTextArea({
     const lastCursorPosition = useSignal(0);
     const textAreaRef = createRef<HTMLTextAreaElement>();
     const fileUploader = useFileUploader();
+
+    const { resolveHotkey } = useHotkeys("noteTextArea");
 
     const handleTextInput = (event: Event) => {
         text.value = (event.target as HTMLInputElement).value;
@@ -54,23 +101,33 @@ export default function NoteTextArea({
             e.preventDefault();
         }
 
-        if (e.ctrlKey) {
+        const hotkey = resolveHotkey(e);
+
+        if (hotkey) {
             const selectionStart = textAreaRef.current.selectionStart;
             const selectionEnd = textAreaRef.current.selectionEnd;
             const selectedText = text.value.slice(selectionStart, selectionEnd);
 
-            if (e.key === "b") {
+            if (hotkey === "boldText") {
                 insertTextIntoField(textAreaRef.current, `**${selectedText}**`);
                 textAreaRef.current.selectionStart -= 2;
                 textAreaRef.current.selectionEnd -= 2;
-                e.preventDefault();
-            }
-
-            if (e.key === "u") {
-                insertTextIntoField(textAreaRef.current, `_${selectedText}_`);
+            } else if (hotkey === "italicText") {
+                insertTextIntoField(textAreaRef.current, `*${selectedText}*`);
                 textAreaRef.current.selectionStart -= 1;
                 textAreaRef.current.selectionEnd -= 1;
-                e.preventDefault();
+            } else if (hotkey === "insertLink") {
+                insertTextIntoField(
+                    textAreaRef.current,
+                    getLinkMarkdown("", ""),
+                );
+            } else if (hotkey === "insertImage") {
+                insertTextIntoField(
+                    textAreaRef.current,
+                    getImageMarkdown("", ""),
+                );
+            } else if (hotkey === "insertHorizontalRule") {
+                insertTextIntoField(textAreaRef.current, "\n---\n");
             }
         }
     };

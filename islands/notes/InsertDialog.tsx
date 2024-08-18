@@ -15,6 +15,22 @@ import SideTabPanel, { PanelItem } from "$islands/SideTabPanel.tsx";
 import { useSelected } from "$frontend/hooks/use-selected.ts";
 import { InsertTableDef } from "$islands/notes/insert-components/InsertTable.tsx";
 import { InsertHeadingDef } from "$islands/notes/insert-components/InsertHeading.tsx";
+import { HotkeySet } from "$frontend/hotkeys.ts";
+
+export const insertDialogHotkeySet: HotkeySet<
+    "insertDialog",
+    "openInsertDialog"
+> = {
+    context: "insertDialog",
+    items: [
+        {
+            identifier: "openInsertDialog",
+            metaKeys: ["ctrl"],
+            key: "q",
+            description: "Open insert dialog",
+        },
+    ],
+};
 
 interface InsertDialogProps {
     noteText: string;
@@ -150,7 +166,7 @@ export default function InsertDialog({
 
     useEffect(() => {
         const handleHotkeys = (e: KeyboardEvent) => {
-            if (e.ctrlKey && e.key === "i") {
+            if (e.ctrlKey && e.key === "q") {
                 handleOpenInsertDialog();
                 e.preventDefault();
             }

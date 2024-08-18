@@ -31,6 +31,29 @@ import Viewer from "$islands/markdown/Viewer.tsx";
 import { useContentEncryption } from "$frontend/hooks/use-content-encryption.ts";
 import { downloadTextAsMarkdown } from "$frontend/text-downloader.ts";
 import { useActiveNoteEffect } from "$frontend/hooks/use-active-note.ts";
+import { HotkeySet } from "$frontend/hotkeys.ts";
+import { useHotkeys } from "$frontend/hooks/use-hotkeys.ts";
+
+export const noteEditorHotkeySet: HotkeySet<
+    "noteEditor",
+    "save" | "togglePreview"
+> = {
+    context: "noteEditor",
+    items: [
+        {
+            identifier: "save",
+            key: "s",
+            metaKeys: ["ctrl"],
+            description: "Save note changes",
+        },
+        {
+            identifier: "togglePreview",
+            key: "e",
+            metaKeys: ["ctrl"],
+            description: "Toggle between preview / editor mode",
+        },
+    ],
+};
 
 interface NoteData extends Pick<NoteRecord, "title" | "note" | "is_encrypted"> {
     id?: number;
@@ -57,6 +80,8 @@ export default function NoteEditor({
     const windowMode = useSignal<NoteWindowTypes | null>(null);
     const isPreviewMode = useSignal(false);
     const wasDataChanged = useSignal(false);
+
+    const { resolveHotkey } = useHotkeys("noteEditor");
 
     const contentEncryption = useContentEncryption();
 
@@ -187,13 +212,14 @@ export default function NoteEditor({
 
     useEffect(() => {
         const handleHotkeys = (e: KeyboardEvent) => {
-            if (e.ctrlKey && e.key === "s") {
-                e.preventDefault();
-                handleSave();
-            }
-            if (e.ctrlKey && e.key === "e") {
-                e.preventDefault();
-                handleTogglePreview();
+            const hotkey = resolveHotkey(e);
+
+            if (hotkey) {
+                if (hotkey === "togglePreview") {
+                    handleTogglePreview();
+                } else if (hotkey === "save") {
+                    handleSave();
+                }
             }
         };
 
