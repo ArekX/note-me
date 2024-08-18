@@ -53,7 +53,7 @@ export default function ShareToUsers({
     };
 
     return (
-        <div class="w-1/2">
+        <div>
             <UserPicker
                 onSelectUser={handleSelectUser}
                 onUnselectUser={handleUnselectUser}

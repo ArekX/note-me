@@ -2,7 +2,6 @@ import { PickUserRecord } from "$backend/repository/user-repository.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import Input from "$components/Input.tsx";
 import Loader from "$islands/Loader.tsx";
-import { useFilters } from "$frontend/hooks/use-filters.ts";
 import {
     FindPickUsersMessage,
     FindPickUsersResponse,
@@ -14,6 +13,7 @@ import Button from "$components/Button.tsx";
 import Icon from "$components/Icon.tsx";
 import { JSX } from "preact/jsx-runtime";
 import { useUser } from "$frontend/hooks/use-user.ts";
+import { useSignal } from "@preact/signals";
 
 interface UserPickerProps {
     onSelectUser: (user: PickUserRecord) => void;
@@ -33,7 +33,7 @@ const UserItem = ({
     user,
     button,
 }: UserItemProps) => (
-    <div class="flex justify-between border-b-gray-400 border-b-2 pb-2 mb-2 items-center last:border-b-0">
+    <div class="flex justify-between rounded-lg border-gray-600/50 border-b-0 border p-2 bg-gray-700/50 mb-2 items-center last:border-b-0">
         <div>{user.name} ({user.username})</div>
         <div>
             {button}
@@ -55,19 +55,21 @@ export default function UserPicker({
         >();
 
     const { sendMessage } = useWebsocketService();
+    const searchText = useSignal("");
+    const selectedUsers = useSignal<PickUserRecord[]>(selected);
 
     const userLoader = useLoader();
     const user = useUser();
 
     const performSearch = userLoader.wrap(async () => {
-        if (filters.value.searchText === "") {
+        if (searchText.value === "") {
             setPagedData({
                 results: [],
             });
             return;
         }
 
-        const excludeUserIds = selected.map((user) => user.id);
+        const excludeUserIds = selectedUsers.value.map((user) => user.id);
 
         if (excludeCurrentUser) {
             const currentUserId = user.getUserId();
@@ -82,7 +84,7 @@ export default function UserPicker({
         >("users", "findPickUsers", {
             data: {
                 filters: {
-                    name: filters.value.searchText,
+                    name: searchText.value,
                     exclude_user_ids: excludeUserIds,
                 },
                 page: page.value,
@@ -93,29 +95,26 @@ export default function UserPicker({
         setPagedData(response.records);
     });
 
-    const { filters, setFilter } = useFilters({
-        initialFilters: () => ({
-            searchText: "",
-        }),
-        onFilterLoad: () => {
-            resetPage();
-            return performSearch();
-        },
-        onFiltersSet: () => {
-            if (filters.value.searchText.length > 0) {
-                userLoader.start();
-            }
-        },
-    });
-
     const handlePageChange = (newPage: number) => {
         setPagedData({ page: newPage });
         performSearch();
     };
 
+    if (selectedUsers.value !== selected) {
+        selectedUsers.value = selected;
+        resetPage();
+        performSearch();
+    }
+
     const addableUsers = results.value.filter((user) =>
-        !selected.find((s) => s.id == user.id)
+        !selectedUsers.value.find((s) => s.id == user.id)
     );
+
+    const handleSearchChange = (value: string) => {
+        searchText.value = value;
+        resetPage();
+        performSearch();
+    };
 
     return (
         <div>
@@ -123,8 +122,8 @@ export default function UserPicker({
                 <Input
                     label="Search for user"
                     placeholder="Name or Username"
-                    value={filters.value.searchText}
-                    onInput={(value) => setFilter("searchText", value)}
+                    value={searchText.value}
+                    onInput={handleSearchChange}
                 />
             </div>
 
@@ -137,10 +136,10 @@ export default function UserPicker({
                             </Loader>
                         </div>
                     )
-                    : filters.value.searchText.length > 0 && (
+                    : searchText.value.length > 0 && (
                         <div class="mt-2">
                             <div class="text-sm mb-2">Found Users</div>
-                            <div class="w-full">
+                            <div class="grid grid-cols-2 gap-2">
                                 {addableUsers
                                     .map((user) => (
                                         <UserItem
@@ -184,7 +183,7 @@ export default function UserPicker({
 
             <div class="mt-2">
                 <div class="text-sm">{selectedUsersText}</div>
-                <div>
+                <div class="grid grid-cols-2 gap-2">
                     {selected.map((user) => (
                         <UserItem
                             key={user.id}

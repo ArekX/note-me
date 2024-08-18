@@ -62,47 +62,50 @@ export default function CreateLinkForm({
     });
 
     return (
-        <div class="pt-4">
-            <strong>Create link:</strong>
-            <div class="flex items-center link-form-expiration">
-                <div class="mr-2">
-                    <Checkbox
-                        label="Add expiration date"
-                        checked={includeExpiration.value}
-                        onChange={handleToggleExpiration}
-                    />
-                </div>
-                {includeExpiration.value && (
-                    <div>
-                        <Input
-                            type="date"
-                            value={expiresAt.value}
-                            min={dateToYmd(addDays(1))}
-                            onInput={(value) => expiresAt.value = value}
-                        />
-                        {expiresAt.value.length === 0 && (
-                            <div class="text-sm text-red-400">
-                                Please enter expiration date.
-                            </div>
+        <>
+            <div class="text-xl font-semibold py-2">New link</div>
+            <div class="flex items-start">
+                <div class="mt-2">
+                    {createLinkLoader.running
+                        ? <Loader color="white">Saving...</Loader>
+                        : (
+                            <Button
+                                color="success"
+                                disabled={includeExpiration.value &&
+                                    expiresAt.value.length === 0}
+                                onClick={handleCreateLink}
+                            >
+                                Create link
+                            </Button>
                         )}
+                </div>
+                <div class="flex items-start link-form-expiration ml-2">
+                    <div class="mr-2 mt-4">
+                        <Checkbox
+                            label="Add expiration date"
+                            checked={includeExpiration.value}
+                            onChange={handleToggleExpiration}
+                        />
                     </div>
-                )}
+                    {includeExpiration.value
+                        ? (
+                            <div class="h-14">
+                                <Input
+                                    type="date"
+                                    value={expiresAt.value}
+                                    min={dateToYmd(addDays(1))}
+                                    onInput={(value) => expiresAt.value = value}
+                                />
+                                {expiresAt.value.length === 0 && (
+                                    <div class="text-sm text-red-400">
+                                        Please enter expiration date.
+                                    </div>
+                                )}
+                            </div>
+                        )
+                        : <div class="h-14 w-10"></div>}
+                </div>
             </div>
-
-            <div class="mt-2">
-                {createLinkLoader.running
-                    ? <Loader color="white">Saving...</Loader>
-                    : (
-                        <Button
-                            color="success"
-                            disabled={includeExpiration.value &&
-                                expiresAt.value.length === 0}
-                            onClick={handleCreateLink}
-                        >
-                            Create link
-                        </Button>
-                    )}
-            </div>
-        </div>
+        </>
     );
 }

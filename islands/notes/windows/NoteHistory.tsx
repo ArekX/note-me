@@ -165,7 +165,7 @@ export default function NoteHistory(
                         alignmentClass="justify-start"
                     />
                 </div>
-                <div class="basis-2/5 text-right">
+                <div class="basis-2/5 text-right pr-1.5">
                     <Button onClick={onClose} color="success">
                         Close
                     </Button>

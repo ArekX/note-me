@@ -94,7 +94,6 @@ export default function LockedContentWrapper<T extends object>({
                     }
                 }
 
-                record[isLockedKey] = false as T[keyof T];
                 results.push(record);
             }
         } catch (e) {

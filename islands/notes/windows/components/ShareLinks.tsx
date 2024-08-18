@@ -64,11 +64,13 @@ export default function ShareLinks({
             Links generated here can be viewed by anyone with that link.
 
             <div class="mt-4">
-                <strong>Existing links:</strong>
+                <div class="text-xl font-semibold py-2">
+                    Public links for this note
+                </div>
                 {linkList.value.map((link) => (
                     <div
                         key={link.id}
-                        class="flex justify-between pb-2 border-b-2 border-b-gray-400 mb-2 last:border-b-transparent"
+                        class="flex justify-between p-2 border rounded-lg border-b-0 border-gray-500/50 bg-gray-700/50 mb-2"
                     >
                         <div>
                             <a
