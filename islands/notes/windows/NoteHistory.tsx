@@ -166,7 +166,7 @@ export default function NoteHistory(
                     />
                 </div>
                 <div class="basis-2/5 text-right pr-1.5">
-                    <Button onClick={onClose} color="success">
+                    <Button onClick={onClose} color="primary">
                         Close
                     </Button>
                 </div>

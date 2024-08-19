@@ -65,8 +65,8 @@ export default function GroupDetails(
                             {has_notes ? "Yes" : "No"} <br />
                         </p>
 
-                        <div class="pt-4">
-                            <Button onClick={onClose} color="success">
+                        <div class="pt-4 text-right">
+                            <Button onClick={onClose} color="primary">
                                 Close
                             </Button>
                         </div>

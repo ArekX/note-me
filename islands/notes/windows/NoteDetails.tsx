@@ -118,7 +118,7 @@ export default function NoteDetails(
                             />
                         </div>
 
-                        <div class="pt-4">
+                        <div class="pt-4 text-right">
                             <Button onClick={onClose} color="primary">
                                 Close
                             </Button>

@@ -15,7 +15,6 @@ export type MoreMenuItemAction =
     | "rename"
     | "edit"
     | "details"
-    | "history"
     | "share"
     | "remind-me"
     | "search-group"
@@ -63,12 +62,6 @@ export default function MoreMenu(
             icon: "detail",
             types: ["note", "group"],
             action: "details",
-        },
-        {
-            name: "History",
-            icon: "history",
-            types: ["note"],
-            action: "history",
         },
         {
             name: "Share",

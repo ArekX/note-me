@@ -43,8 +43,8 @@ export default function NoteHelp({ onClose }: HelpProps) {
                     }}
                 />
             </div>
-            <div>
-                <Button onClick={onClose} color="success">
+            <div class="text-right">
+                <Button onClick={onClose} color="primary">
                     Close
                 </Button>
             </div>

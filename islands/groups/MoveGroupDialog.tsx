@@ -137,7 +137,11 @@ export default function MoveGroupDialog({
                             </>
                         )}
 
-                        <Button onClick={onClose} color="danger">Cancel</Button>
+                        <div class="text-right">
+                            <Button onClick={onClose} color="primary">
+                                Cancel
+                            </Button>
+                        </div>
                     </div>
                 )}
         </Dialog>

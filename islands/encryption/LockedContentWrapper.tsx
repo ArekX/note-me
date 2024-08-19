@@ -70,7 +70,9 @@ export default function LockedContentWrapper<T extends object>({
         !hasProtectedInputRecords(),
     );
     const failReason = useSignal<string | null>(null);
-    const records = useSignal<T[]>([]);
+    const records = useSignal<T[]>(
+        hasProtectedInputRecords() ? [] : [...inputRecords],
+    );
 
     const unlockRecords = async (inputRecords: T[]) => {
         loader.start();
@@ -127,7 +129,10 @@ export default function LockedContentWrapper<T extends object>({
     }, [inputRecords]);
 
     useEffect(() => {
-        if (protectionLock.isLocked.value && !loader.running) {
+        if (
+            hasProtectedInputRecords() && protectionLock.isLocked.value &&
+            !loader.running
+        ) {
             loader.start();
             failReason.value = "Locked by protection lock.";
         } else {

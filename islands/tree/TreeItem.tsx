@@ -118,9 +118,6 @@ export default function TreeItem({
             case "details":
                 treeWindowType.value = "details";
                 break;
-            case "history":
-                treeWindowType.value = "history";
-                break;
             case "share":
                 treeWindowType.value = "share";
                 break;

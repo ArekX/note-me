@@ -181,8 +181,8 @@ export default function NoteFiles(
                 </>
             )}
 
-            <div class="py-4">
-                <Button color="danger" onClick={onClose}>
+            <div class="py-4 text-right">
+                <Button color="primary" onClick={onClose}>
                     Close
                 </Button>
             </div>

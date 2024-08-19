@@ -155,8 +155,8 @@ export default function NoteShare({
                 </div>
             )}
 
-            <div>
-                <Button color="danger" onClick={onClose}>
+            <div class="text-right">
+                <Button color="primary" onClick={onClose}>
                     Close
                 </Button>
             </div>
