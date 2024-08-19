@@ -41,6 +41,12 @@ export default function AdvancedSearch(
         onClose();
     };
 
+    const handleSearchKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Enter") {
+            performSearch();
+        }
+    };
+
     return (
         <Dialog
             visible={true}
@@ -60,6 +66,7 @@ export default function AdvancedSearch(
                         placeholder="Search..."
                         value={searchQuery.value}
                         onInput={(v) => searchQuery.value = v}
+                        onKeydown={handleSearchKeyDown}
                     />
                 </div>
 
@@ -105,6 +112,7 @@ export default function AdvancedSearch(
                                     noTransparentBackground={true}
                                     placeholder="Enter tags to filter by"
                                     onChange={(newTags) => tags.value = newTags}
+                                    onEnterPressed={performSearch}
                                 />
                             </div>
                         )}
@@ -112,8 +120,12 @@ export default function AdvancedSearch(
                 </div>
             </div>
 
-            <Button color="success" onClick={performSearch}>Search</Button>{" "}
-            <Button color="danger" onClick={onClose}>Close</Button>
+            <div class="py-2 text-right">
+                <Button color="success" onClick={performSearch}>Search</Button>
+                <Button color="primary" onClick={onClose} addClass="ml-2">
+                    Close
+                </Button>
+            </div>
         </Dialog>
     );
 }

@@ -83,6 +83,7 @@ interface TagInputProps {
     addClass?: string;
     noTransparentBackground?: boolean;
     onChange: (tags: string[]) => void;
+    onEnterPressed?: () => void;
 }
 
 export default function TagInput({
@@ -91,6 +92,7 @@ export default function TagInput({
     placeholder = "Tag your note",
     addClass = "",
     noTransparentBackground = false,
+    onEnterPressed,
     onChange,
 }: TagInputProps) {
     const tagString = useSignal(getFormattedTagString(initialTags.join(" ")));
@@ -106,6 +108,12 @@ export default function TagInput({
     const handleKeyDown = (e: KeyboardEvent) => {
         if (e.ctrlKey && e.key === "s") {
             writeTags();
+            return;
+        }
+
+        if (!isOpen && e.key === "Enter") {
+            writeTags();
+            onEnterPressed?.();
             return;
         }
 
