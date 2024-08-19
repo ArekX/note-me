@@ -308,7 +308,7 @@ export default function NoteEditor({
                         {!isSaving.running
                             ? <Icon name="save" size="lg" />
                             : (
-                                <Loader color="white" size="smButton">
+                                <Loader color="white" size="md">
                                     Saving...
                                 </Loader>
                             )}
