@@ -49,6 +49,9 @@ export default function AdvancedSearch(
             title={`Advanced Search - ${
                 typeDisplayMap[search.type.value] ?? ""
             }`}
+            props={{
+                class: "w-2/3",
+            }}
         >
             <div>
                 <div>
@@ -60,42 +63,52 @@ export default function AdvancedSearch(
                     />
                 </div>
 
-                <div class="pt-2 pb-2">
-                    <Checkbox
-                        label="Filter by Group"
-                        checked={shouldFilterByGroup.value}
-                        onChange={(value) => shouldFilterByGroup.value = value}
-                    />
-                    {shouldFilterByGroup.value && (
-                        <div>
+                <div class="flex py-2">
+                    <div class="basis-1/2">
+                        <Checkbox
+                            label="Filter by Group"
+                            checked={shouldFilterByGroup.value}
+                            onChange={(value) =>
+                                shouldFilterByGroup.value = value}
+                        />
+                        {shouldFilterByGroup.value && (
                             <div>
-                                {selectedGroup.value
-                                    ? `Selected: ${selectedGroup.value.name}`
-                                    : "Select group"}
+                                <div class="pb-1.5">
+                                    {selectedGroup.value
+                                        ? `Selected: ${selectedGroup.value.name}`
+                                        : "Select group to show notes from"}
+                                </div>
+                                <GroupPicker
+                                    selectedId={selectedGroup.value?.id}
+                                    onPick={(r) => selectedGroup.value = r}
+                                />
+                                <div class="text-sm py-2">
+                                    Note: Picking a group will filter notes from
+                                    that group and all its subgroups.
+                                </div>
                             </div>
-                            <GroupPicker
-                                selectedId={selectedGroup.value?.id}
-                                onPick={(r) => selectedGroup.value = r}
-                            />
-                        </div>
-                    )}
-                </div>
-
-                <div class="pt-2 pb-2">
-                    <Checkbox
-                        label="Filter by Tags"
-                        checked={shouldFilterByTags.value}
-                        onChange={(value) => shouldFilterByTags.value = value}
-                    />
-                    {shouldFilterByTags.value && (
-                        <div>
-                            <TagInput
-                                initialTags={tags.value}
-                                placeholder="Enter tags to filter by"
-                                onChange={(newTags) => tags.value = newTags}
-                            />
-                        </div>
-                    )}
+                        )}
+                    </div>
+                    <div class="pl-2 basis-1/2">
+                        <Checkbox
+                            label="Filter by Tags"
+                            checked={shouldFilterByTags.value}
+                            onChange={(value) =>
+                                shouldFilterByTags.value = value}
+                        />
+                        {shouldFilterByTags.value && (
+                            <div>
+                                <div>Enter tags to filter by</div>
+                                <TagInput
+                                    initialTags={tags.value}
+                                    addClass="bg-gray-700/50 border border-b-0 border-gray-600/50 rounded-lg p-2 focus:border-gray-600 "
+                                    noTransparentBackground={true}
+                                    placeholder="Enter tags to filter by"
+                                    onChange={(newTags) => tags.value = newTags}
+                                />
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
 

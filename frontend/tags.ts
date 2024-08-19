@@ -25,20 +25,35 @@ export const tagsToString = (tags: string[]) => {
 export const findTagSides = (text: string, position: number) => {
     let rightIndex = text.length;
 
-    for (let i = position - 1; i <= text.length - 1; i++) {
+    if (text[position] === "#") {
+        position++;
+    }
+
+    if (text[position] === " ") {
+        return null;
+    }
+
+    for (let i = position; i <= text.length; i++) {
         if (text[i] === "#" || text[i] === " ") {
-            rightIndex = i;
+            break;
+        }
+        rightIndex = i;
+    }
+
+    let leftIndex = 0;
+    for (let i = position; i >= 0; i--) {
+        if (text[i] === " ") {
+            break;
+        }
+
+        leftIndex = i;
+
+        if (text[i] === "#") {
             break;
         }
     }
 
-    let leftIndex = 0;
-    for (let i = position - 1; i >= 0; i--) {
-        if (text[i] === "#" || text[i] === " ") {
-            leftIndex = i;
-            break;
-        }
-    }
+    console.log(text, position, leftIndex, rightIndex);
 
     if (
         text.trim().length === 0 || leftIndex === rightIndex || text === "#"
@@ -47,7 +62,7 @@ export const findTagSides = (text: string, position: number) => {
     }
 
     return {
-        tag: text.substring(leftIndex + 1, rightIndex),
+        tag: text.substring(leftIndex, rightIndex + 1).replace(/#/g, ""),
         leftIndex,
         rightIndex,
     };

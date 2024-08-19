@@ -17,13 +17,6 @@ import {
 } from "$frontend/tags.ts";
 import { useDebouncedCallback } from "$frontend/hooks/use-debounced-callback.ts";
 
-interface TagInputProps {
-    initialTags: string[];
-    isSaving?: boolean;
-    placeholder?: string;
-    onChange: (tags: string[]) => void;
-}
-
 const insertTag = (element: HTMLInputElement, tag: string) => {
     const tagString = element.value;
     const { leftIndex = null, rightIndex = null } = findTagSides(
@@ -83,10 +76,21 @@ const calculateDropdownPos = (
     dropdown.style.left = `${textWidth + left}px`;
 };
 
+interface TagInputProps {
+    initialTags: string[];
+    isSaving?: boolean;
+    placeholder?: string;
+    addClass?: string;
+    noTransparentBackground?: boolean;
+    onChange: (tags: string[]) => void;
+}
+
 export default function TagInput({
     initialTags,
     isSaving = false,
     placeholder = "Tag your note",
+    addClass = "",
+    noTransparentBackground = false,
     onChange,
 }: TagInputProps) {
     const tagString = useSignal(getFormattedTagString(initialTags.join(" ")));
@@ -106,8 +110,10 @@ export default function TagInput({
         }
 
         if (autocompleteTags.value.length == 0) {
+            isSearching.start();
             return;
         }
+
         if (e.key === "ArrowDown") {
             selectedTagIndex.value = Math.min(
                 (selectedTagIndex.value ?? -1) + 1,
@@ -140,7 +146,16 @@ export default function TagInput({
             return;
         }
 
-        searchTags();
+        const target = e.currentTarget as HTMLInputElement;
+
+        const { tag } = findTagSides(
+            target.value ?? "",
+            target.selectionStart ?? 0,
+        ) || {};
+
+        console.log(tag, target.value, target.selectionStart);
+        isSearching.start();
+        searchTags(tag ?? null);
     };
 
     const handleTagClick = (tag: string) => {
@@ -148,18 +163,10 @@ export default function TagInput({
         closeTagWindow();
     };
 
-    const searchTags = useDebouncedCallback(async () => {
-        if (!inputRef.current) {
-            return;
-        }
-
-        const { tag } = findTagSides(
-            inputRef.current?.value ?? "",
-            inputRef.current?.selectionStart ?? 0,
-        ) || {};
-
+    const searchTags = useDebouncedCallback(async (tag: string | null) => {
         if (!tag) {
             closeTagWindow();
+            isSearching.stop();
             return;
         }
 
@@ -181,7 +188,7 @@ export default function TagInput({
             autocompleteTags.value = records.results.map((r) => r.name);
             selectedTagIndex.value = 0;
         });
-    }, 500);
+    }, 250);
 
     const recalculatePosition = () => {
         if (!dropdownRef.current || !inputRef.current) {
@@ -241,7 +248,9 @@ export default function TagInput({
         <div ref={tagInputRef}>
             <input
                 ref={inputRef}
-                class="outline-none block bg-transparent mt-2 w-full tag-editor"
+                class={`outline-none block ${
+                    noTransparentBackground ? "" : "bg-transparent"
+                } mt-2 w-full tag-editor ${addClass}`}
                 type="text"
                 placeholder={placeholder}
                 tabIndex={2}
@@ -255,7 +264,7 @@ export default function TagInput({
             {isOpen && (
                 <div
                     ref={dropdownRef}
-                    class="z-40 fixed top-full left-0 bg-gray-800 text-white max-h-52 overflow-auto rounded-md"
+                    class="z-40 fixed top-full left-0 bg-gray-800 border border-b-0 border-gray-600/50 text-white max-h-52 overflow-auto rounded-md"
                 >
                     {isSearching.running && (
                         <div class="p-4">
@@ -276,10 +285,10 @@ export default function TagInput({
                                         });
                                     }
                                 }}
-                                class={`cursor-pointer border-b-2 last:border-b-0 border-gray-100 pr-4 pl-4 pt-2 pb-2 
-                                  hover:bg-gray-100 hover:text-black ${
+                                class={`cursor-pointer border-b last:border-b-0 border-gray-600/50 pr-4 pl-4 pt-2 pb-2 
+                                  hover:bg-gray-400 ${
                                     selectedTagIndex.value === index
-                                        ? "bg-gray-100 text-black"
+                                        ? "bg-gray-600"
                                         : ""
                                 }`}
                             >
