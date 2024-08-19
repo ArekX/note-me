@@ -53,8 +53,6 @@ export const findTagSides = (text: string, position: number) => {
         }
     }
 
-    console.log(text, position, leftIndex, rightIndex);
-
     if (
         text.trim().length === 0 || leftIndex === rightIndex || text === "#"
     ) {

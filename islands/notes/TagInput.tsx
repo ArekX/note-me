@@ -161,7 +161,6 @@ export default function TagInput({
             target.selectionStart ?? 0,
         ) || {};
 
-        console.log(tag, target.value, target.selectionStart);
         isSearching.start();
         searchTags(tag ?? null);
     };
