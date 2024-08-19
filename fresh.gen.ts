@@ -124,6 +124,7 @@ import * as $notes_windows_components_ShareToUsers from "./islands/notes/windows
 import * as $notes_windows_help_KeyboardShortcuts from "./islands/notes/windows/help/KeyboardShortcuts.tsx";
 import * as $notifications_NotificationItem from "./islands/notifications/NotificationItem.tsx";
 import * as $notifications_NotificationList from "./islands/notifications/NotificationList.tsx";
+import * as $notifications_NotificationListView from "./islands/notifications/NotificationListView.tsx";
 import * as $notifications_notification_message_text from "./islands/notifications/notification-message-text.ts";
 import * as $notifications_views_NotificationSharedView from "./islands/notifications/views/NotificationSharedView.tsx";
 import * as $notifications_views_ReminderView from "./islands/notifications/views/ReminderView.tsx";
@@ -137,6 +138,8 @@ import * as $sidebar_NoItemMessage from "./islands/sidebar/NoItemMessage.tsx";
 import * as $sidebar_SearchBar from "./islands/sidebar/SearchBar.tsx";
 import * as $sidebar_SearchView from "./islands/sidebar/SearchView.tsx";
 import * as $sidebar_SideBarPanel from "./islands/sidebar/SideBarPanel.tsx";
+import * as $sidebar_Sidebar from "./islands/sidebar/Sidebar.tsx";
+import * as $sidebar_SidebarMenu from "./islands/sidebar/SidebarMenu.tsx";
 import * as $sidebar_SwitcherContainer from "./islands/sidebar/SwitcherContainer.tsx";
 import * as $sidebar_recycle_bin_RecycleBinItem from "./islands/sidebar/recycle-bin/RecycleBinItem.tsx";
 import * as $sidebar_recycle_bin_RecycleBinList from "./islands/sidebar/recycle-bin/RecycleBinList.tsx";
@@ -324,6 +327,8 @@ const manifest = {
             $notifications_NotificationItem,
         "./islands/notifications/NotificationList.tsx":
             $notifications_NotificationList,
+        "./islands/notifications/NotificationListView.tsx":
+            $notifications_NotificationListView,
         "./islands/notifications/notification-message-text.ts":
             $notifications_notification_message_text,
         "./islands/notifications/views/NotificationSharedView.tsx":
@@ -341,6 +346,8 @@ const manifest = {
         "./islands/sidebar/SearchBar.tsx": $sidebar_SearchBar,
         "./islands/sidebar/SearchView.tsx": $sidebar_SearchView,
         "./islands/sidebar/SideBarPanel.tsx": $sidebar_SideBarPanel,
+        "./islands/sidebar/Sidebar.tsx": $sidebar_Sidebar,
+        "./islands/sidebar/SidebarMenu.tsx": $sidebar_SidebarMenu,
         "./islands/sidebar/SwitcherContainer.tsx": $sidebar_SwitcherContainer,
         "./islands/sidebar/recycle-bin/RecycleBinItem.tsx":
             $sidebar_recycle_bin_RecycleBinItem,

@@ -14,7 +14,10 @@ export default function LogoutButton() {
             class="hover:text-gray-300 cursor-pointer"
             title="Log out"
         >
-            <Icon name="log-out" />
+            <Icon name="log-out" />{" "}
+            <span class="max-md:inline-block hidden">
+                Logout
+            </span>
         </a>
     );
 }

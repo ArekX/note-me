@@ -3,8 +3,6 @@ import Icon from "$components/Icon.tsx";
 
 import { NotificationRecord } from "$backend/repository/notification-repository.ts";
 import { createRef } from "preact";
-import NotificationItem from "$islands/notifications/NotificationItem.tsx";
-import Button from "$components/Button.tsx";
 import { useSinglePopover } from "$frontend/hooks/use-single-popover.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import {
@@ -18,7 +16,10 @@ import {
 import { addMessage } from "$frontend/toast-message.ts";
 import { getNotificationMessageText } from "$islands/notifications/notification-message-text.ts";
 import { useEffect } from "preact/hooks";
-import NoItemMessage from "$islands/sidebar/NoItemMessage.tsx";
+import { useResponsiveQuery } from "$frontend/hooks/use-responsive-query.ts";
+import NotificationListView from "$islands/notifications/NotificationListView.tsx";
+import Dialog from "$islands/Dialog.tsx";
+import Button from "$components/Button.tsx";
 
 interface NotificationsProps {
     initialNotifications: NotificationRecord[];
@@ -28,6 +29,7 @@ export default function Notifications(props: NotificationsProps) {
     const notifications = useSignal<NotificationRecord[]>(
         props.initialNotifications,
     );
+    const query = useResponsiveQuery();
 
     const { dispatchMessage } = useWebsocketService<
         NotificationFrontendResponse
@@ -108,7 +110,17 @@ export default function Notifications(props: NotificationsProps) {
             },
         );
 
+    const handleOpenView = () => {
+        if (query.isNotOver("md")) {
+            isDialogOpen.value = true;
+            return;
+        }
+        open();
+    };
+
     const menuRef = createRef<HTMLDivElement>();
+
+    const isDialogOpen = useSignal(false);
 
     const { isOpen, open } = useSinglePopover("userNotifications-0", menuRef);
 
@@ -116,92 +128,63 @@ export default function Notifications(props: NotificationsProps) {
 
     return (
         <div
-            class="text-right pl-1 pr-1 -mb-6 inline-block relative notification-menu"
+            class="text-right max-md:text-center pl-1 pr-1 -mb-6 max-md:mb-0 inline-block max-md:block relative notification-menu"
             title="Notifications"
         >
-            {unreadCount > 0 && (
-                <span
-                    class="notification-badge cursor-pointer"
-                    onClick={open}
-                >
-                    {unreadCount > 9 ? "9+" : unreadCount}
+            <span className="cursor-pointer" onClick={handleOpenView}>
+                {unreadCount > 0 && (
+                    <span class="notification-badge cursor-pointer">
+                        {unreadCount > 9 ? "9+" : unreadCount}
+                    </span>
+                )}
+                <Icon
+                    name="bell"
+                    type={unreadCount > 0 ? "solid" : "regular"}
+                />{" "}
+                <span class="max-md:inline-block hidden">
+                    Notifications
                 </span>
-            )}
-            <Icon
-                name="bell"
-                className="cursor-pointer"
-                onClick={open}
-                type={unreadCount > 0 ? "solid" : "regular"}
-            />
+            </span>
 
-            {isOpen && (
-                <div
-                    ref={menuRef}
-                    class="absolute top-full left-0 w-96 bg-gray-800 pt-2 z-50 shadow-black/80 shadow-sm text-white text-left rounded-lg border border-b-0 border-gray-600/50"
-                >
-                    {notifications.value.length > 0 && (
-                        <>
-                            <div class="pr-2 pb-2 border-b border-gray-700">
-                                <div class="flex">
-                                    <div class="text-md font-semibold w-2/4 pl-4 pt-2">
-                                        {notifications.value.length > 0
-                                            ? "Notifications "
-                                            : ""}
-                                        {unreadCount > 0 && `(${unreadCount})`}
-                                    </div>
-                                    <div class="w-2/4 text-right">
-                                        {unreadCount > 0 && (
-                                            <>
-                                                <Button
-                                                    color="success"
-                                                    size="sm"
-                                                    title="Mark all as read"
-                                                    onClick={handleMarkAllRead}
-                                                >
-                                                    <Icon name="check-double" />
-                                                </Button>
-                                                {" "}
-                                            </>
-                                        )}
-                                        {notifications.value.length > 0 && (
-                                            <Button
-                                                color="danger"
-                                                disabled={notifications.value
-                                                    .length ==
-                                                    0}
-                                                size="sm"
-                                                title="Delete all notifications"
-                                                onClick={handleDeleteAll}
-                                            >
-                                                <Icon name="minus-circle" />
-                                            </Button>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="notifcation-list">
-                                {notifications.value.map((notification) => (
-                                    <NotificationItem
-                                        key={notification.id}
-                                        notification={notification}
-                                        onDelete={handleDeleteSingle}
-                                        onMarkRead={handleMarkSingleAsRead}
-                                    />
-                                ))}
-                            </div>
-                        </>
-                    )}
-                    {notifications.value.length === 0 && (
-                        <div class="py-4">
-                            <NoItemMessage
-                                icon="smile"
-                                removePadding={true}
-                                message="No notifications. All clear!"
-                            />
+            {query.isFrom("md") && isOpen
+                ? (
+                    <div
+                        ref={menuRef}
+                        class="absolute top-full left-0 w-96 bg-gray-800 pt-2 z-50 shadow-black/80 shadow-sm text-white text-left rounded-lg border border-b-0 border-gray-600/50"
+                    >
+                        <NotificationListView
+                            notifications={notifications.value}
+                            onMarkAllRead={handleMarkAllRead}
+                            onMarkSingleAsRead={handleMarkSingleAsRead}
+                            onDeleteAll={handleDeleteAll}
+                            onDeleteSingle={handleDeleteSingle}
+                        />
+                    </div>
+                )
+                : query.isNotOver("md") && isDialogOpen.value && (
+                    <Dialog
+                        visible={true}
+                        props={{
+                            class: "w-full p-0 py-2",
+                        }}
+                    >
+                        <NotificationListView
+                            notifications={notifications.value}
+                            onMarkAllRead={handleMarkAllRead}
+                            onMarkSingleAsRead={handleMarkSingleAsRead}
+                            onDeleteAll={handleDeleteAll}
+                            onDeleteSingle={handleDeleteSingle}
+                        />
+                        <div class="pt-2 text-right pr-2">
+                            <Button
+                                color="primary"
+                                onClick={() => isDialogOpen.value = false}
+                            >
+                                Close
+                            </Button>
                         </div>
-                    )}
-                </div>
-            )}
+                    </Dialog>
+                )}
         </div>
     );
 }

@@ -4,6 +4,7 @@
 
 html, body {
   height: 100%;
+  min-width: 300px;
   margin: 0;
   overflow: hidden;
   @apply bg-gray-900;

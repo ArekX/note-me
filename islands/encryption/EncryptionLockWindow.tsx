@@ -12,15 +12,9 @@ import {
     VerifyOwnPasswordResponse,
 } from "$workers/websocket/api/users/messages.ts";
 import Loader from "$islands/Loader.tsx";
-import { ProtectionLockHook } from "../../frontend/hooks/use-protection-lock.ts";
+import { useProtectionLock } from "$frontend/hooks/use-protection-lock.ts";
 
-interface EncryptionLockWindowProps {
-    lock: ProtectionLockHook;
-}
-
-export default function EncryptionLockWindow({
-    lock,
-}: EncryptionLockWindowProps) {
+export default function EncryptionLockWindow() {
     const isInvalidPassword = useSignal(false);
 
     const loader = useLoader();
@@ -28,6 +22,8 @@ export default function EncryptionLockWindow({
     const { sendMessage } = useWebsocketService();
 
     const password = useSignal("");
+
+    const lock = useProtectionLock();
 
     const handleCancelLockWindow = () =>
         lock.rejectUnlockRequest("User cancelled password entry.");
@@ -69,8 +65,8 @@ export default function EncryptionLockWindow({
 
     return (
         <Dialog
-            props={{ class: "w-2/5" }}
-            visible={true}
+            props={{ class: "w-2/5 max-md:w-full" }}
+            visible={lock.isUnlockRequested.value}
             canCancel={true}
             onCancel={handleCancelLockWindow}
         >
@@ -98,17 +94,18 @@ export default function EncryptionLockWindow({
                                     Invalid password. Please try again.
                                 </p>
                             )}
-                            <p class="py-2">
+                            <p class="py-2 max-md:text-sm">
                                 <strong>Important:</strong>{" "}
                                 After entering your password, all your protected
                                 notes will be decrypted viewable unless idle for
                                 5 minutes or until you lock them again by
                                 clicking on the lock icon.
                             </p>
-                            <div class="text-right">
+                            <div class="text-right max-md:text-center">
                                 <Button
                                     color="success"
                                     onClick={handleConfirmUnlock}
+                                    addClass="max-md:block max-md:w-full max-md:mb-2"
                                 >
                                     <Icon name="lock-open-alt" type="solid" />
                                     {" "}
@@ -117,7 +114,7 @@ export default function EncryptionLockWindow({
                                 <Button
                                     color="danger"
                                     onClick={handleCancelLockWindow}
-                                    addClass="ml-2"
+                                    addClass="max-md:block max-md:w-full max-md:ml-0"
                                 >
                                     <Icon name="minus-circle" /> Cancel
                                 </Button>

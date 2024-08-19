@@ -1,6 +1,7 @@
 import DropdownMenu from "$islands/DropdownMenu.tsx";
 import { DropdownMenuItem } from "$islands/DropdownMenu.tsx";
 import Icon from "$components/Icon.tsx";
+import { useResponsiveQuery } from "$frontend/hooks/use-responsive-query.ts";
 
 export interface ListSwitcherItem {
     name: string;
@@ -54,6 +55,8 @@ export default function ListSwitcher({
         });
     };
 
+    const query = useResponsiveQuery();
+
     const items: DropdownMenuItem[] = [
         {
             name: "Notes",
@@ -83,7 +86,7 @@ export default function ListSwitcher({
             label={
                 <>
                     <Icon name={selectedItem.icon} size="sm" />{" "}
-                    {selectedItem.label}
+                    {query.isFrom("lg") && selectedItem.label}
                 </>
             }
             buttonColor="transparent"

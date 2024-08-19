@@ -51,10 +51,10 @@ export default function PasskeySignIn({
         <>
             {!passkeyLoader.running && (
                 <Button type="submit" color="success" addClass="mr-2">
-                    <Icon name="log-in" /> Sign in
+                    <Icon name="log-in" className="max-sm:hidden" /> Sign in
                 </Button>
             )}
-            <div class="text-center py-2 passkey-sign-in">
+            <div class="text-center py-2 passkey-sign-in max-sm:basis-full">
                 <Button onClick={handleSignIn}>
                     {passkeyLoader.running
                         ? (
@@ -64,7 +64,10 @@ export default function PasskeySignIn({
                         )
                         : (
                             <>
-                                <Icon name="user" />Sign in with Passkey
+                                <Icon
+                                    name="user"
+                                    className="max-sm:hidden"
+                                />Sign in with Passkey
                             </>
                         )}
                 </Button>

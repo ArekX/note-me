@@ -2,9 +2,10 @@ import { FreshContext } from "$fresh/server.ts";
 import { AppState } from "$types";
 import IslandInitializer from "$islands/IslandInitializer.tsx";
 import { getUserNotifications } from "$backend/repository/notification-repository.ts";
-import Sidebar from "$components/Sidebar.tsx";
+import Sidebar from "../../islands/sidebar/Sidebar.tsx";
 import { canAccessSettings } from "$backend/rbac/role-definitions.ts";
 import { Partial } from "$fresh/runtime.ts";
+import EncryptionLockWindow from "$islands/encryption/EncryptionLockWindow.tsx";
 
 export default async function Layout(
     _req: Request,
@@ -29,10 +30,11 @@ export default async function Layout(
                 />
             )}
             <div
-                class={`w-4/5 bg-gray-900 overflow-auto ${
+                class={`w-4/5 max-md:w-full bg-gray-900 overflow-auto ${
                     isSidebarAllowed ? "main-with-sidebar" : ""
                 }`}
             >
+                <EncryptionLockWindow />
                 <IslandInitializer
                     socketHost={socketHost}
                     userData={{

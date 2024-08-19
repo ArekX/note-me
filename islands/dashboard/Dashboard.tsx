@@ -53,19 +53,17 @@ export default function Dashboard() {
                 </div>
             )}
 
-            <div class="flex py-5">
-                <div class="w-1/3">
+            <div class="flex py-5 flex-wrap">
+                <div class="lg:basis-1/3 md:max-lg:basis-1/2 basis-full">
                     <RecentlyOpenedNotes />
                 </div>
-                <div class="pl-5 w-1/3">
+                <div class="lg:basis-1/3 md:max-lg:basis-1/2 basis-full">
                     <CurrentReminders />
                 </div>
-                <div class="pl-5 w-1/3">
+                <div class="lg:basis-1/3 md:max-lg:basis-1/2 basis-full">
                     <RecentlySharedWithMe />
                 </div>
-            </div>
-            <div class="flex py-5">
-                <div class="w-1/3">
+                <div class="lg:basis-1/3 md:max-lg:basis-1/2 basis-full">
                     <PassedReminders />
                 </div>
             </div>
