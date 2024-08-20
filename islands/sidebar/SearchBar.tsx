@@ -16,8 +16,8 @@ export default function SearchBar<T>(
     const showAdvancedSearch = useSignal(false);
 
     return (
-        <div class="flex relative">
-            <div class="absolute inset-y-0 left-0 flex items-center pl-2 text-gray-400">
+        <div class="relative">
+            <div class="absolute inset-y-0 flex items-center left-0 pl-2 text-gray-400">
                 <Icon
                     onClick={() => search.resetSearch()}
                     className={search.isActive.value ? "cursor-pointer" : ""}

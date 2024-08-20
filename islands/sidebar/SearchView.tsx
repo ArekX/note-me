@@ -19,7 +19,7 @@ import SwitcherContainer from "$islands/sidebar/SwitcherContainer.tsx";
 export default function SearchView() {
     const search = useSearch();
     return (
-        <div class="relative">
+        <div>
             <div class="p-1">
                 {search.groupRecord.value && (
                     <Button

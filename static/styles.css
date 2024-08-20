@@ -47,10 +47,6 @@ body.allow-scrolling {
     @apply text-white
 }
 
-.group-list {
-    height: calc(100vh - 8.5rem);
-}
-
 .group-item {
     height: 2.5rem;
 }
@@ -404,10 +400,6 @@ select.select-input {
     padding: .66em .5em;
 }
 
-.search-view-height {
-    height: calc(100vh - 10.1em);
-}
-
 .group-picker {
     max-height: 200px;
     overflow: auto;
@@ -419,9 +411,5 @@ select.select-input {
 
 .passkey-sign-in {
     max-width: 21em;
-}
-
-.sidebar-container {
-    height: 100vh;
 }
 

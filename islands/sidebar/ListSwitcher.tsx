@@ -86,7 +86,7 @@ export default function ListSwitcher({
             label={
                 <>
                     <Icon name={selectedItem.icon} size="sm" />{" "}
-                    {query.isFrom("lg") && selectedItem.label}
+                    {query.min("lg") && selectedItem.label}
                 </>
             }
             buttonColor="transparent"

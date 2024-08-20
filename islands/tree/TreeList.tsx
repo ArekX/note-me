@@ -34,7 +34,7 @@ export default function TreeList({
                 treeManager={tree}
                 switcherComponent={switcherComponent}
             />
-            <div class="overflow-auto group-list">
+            <div class="overflow-auto note-container">
                 <Loader
                     color="white"
                     visible={tree.rootLoader.running}

@@ -34,8 +34,16 @@ export default function ListPanel() {
     );
 
     return (
-        <div class="mt-3">
+        <div class="pt-3 flex flex-col basis-full overflow-auto">
             <SearchBar />
+
+            <div>
+                Switcher
+            </div>
+
+            <div class="flex-grow overflow-auto">
+                Contents
+            </div>
 
             {search.isActive.value ? <SearchView /> : (
                 <Picker<ListView["type"]>

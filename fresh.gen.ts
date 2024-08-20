@@ -165,7 +165,7 @@ import * as $tree_hooks_use_tree_state from "./islands/tree/hooks/use-tree-state
 import * as $tree_hooks_use_tree_websocket from "./islands/tree/hooks/use-tree-websocket.ts";
 import * as $users_EditUserForm from "./islands/users/EditUserForm.tsx";
 import * as $users_UserList from "./islands/users/UserList.tsx";
-import { type Manifest } from "$fresh/server.ts";
+import type { Manifest } from "$fresh/server.ts";
 
 const manifest = {
     routes: {

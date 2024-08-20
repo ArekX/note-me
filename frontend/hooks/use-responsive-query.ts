@@ -35,18 +35,18 @@ if (IS_BROWSER) {
 }
 
 export const useResponsiveQuery = () => {
-    const isBetween = (from: ResponsiveSize, to: ResponsiveSize) => {
-        return isFrom(from) && isNotOver(to);
+    const between = (from: ResponsiveSize, to: ResponsiveSize) => {
+        return min(from) && max(to);
     };
 
-    const isFrom = (from: ResponsiveSize) => {
+    const min = (from: ResponsiveSize) => {
         const fromIndex = responsiveOrder.indexOf(from);
         const sizeIndex = responsiveOrder.indexOf(size.value);
 
         return sizeIndex >= fromIndex;
     };
 
-    const isNotOver = (to: ResponsiveSize) => {
+    const max = (to: ResponsiveSize) => {
         const toIndex = responsiveOrder.indexOf(to);
         const sizeIndex = responsiveOrder.indexOf(size.value);
 
@@ -59,9 +59,9 @@ export const useResponsiveQuery = () => {
 
     return {
         size,
-        isBetween,
-        isFrom,
-        isNotOver,
+        between,
+        min,
+        max,
         pick,
     };
 };

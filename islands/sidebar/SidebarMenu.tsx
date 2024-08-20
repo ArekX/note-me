@@ -15,7 +15,7 @@ export default function SidebarMenu(
 ) {
     const query = useResponsiveQuery();
 
-    if (query.isNotOver("sm")) {
+    if (query.max("sm")) {
         return (
             <div class="w-full text-center">
                 {showSettings && (
@@ -55,7 +55,7 @@ export default function SidebarMenu(
     }
 
     return (
-        <div class="flex-1 text-right pr-2">
+        <div class="flex-1 text-right pr-2 max-lg:text-center">
             {showSettings && (
                 <a
                     href="/app/settings"

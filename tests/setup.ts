@@ -9,7 +9,7 @@ await load({ envPath: "/tests/.env.test", export: true });
 
 export const url = "http://127.0.0.1:8000";
 
-const CONN_INFO: ServeHandlerInfo = {
+const CONN_INFO = {
     remoteAddr: { hostname: "127.0.0.1", port: 53496, transport: "tcp" },
 };
 
@@ -40,7 +40,7 @@ export const createFormRequest = (
 });
 
 export const sendRequest = (clientHandler: ClientHandler, request: Request) =>
-    clientHandler(request, CONN_INFO);
+    clientHandler(request, CONN_INFO as unknown as ServeHandlerInfo);
 
 const runBeforeTest = async () => {
     setupTestDatabase();
