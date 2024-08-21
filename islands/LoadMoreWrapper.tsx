@@ -1,6 +1,7 @@
 import { ComponentChildren, createRef } from "preact";
 import { useLayoutEffect } from "preact/hooks";
 import Loader from "$islands/Loader.tsx";
+import { useSignal } from "@preact/signals";
 
 interface LoadMoreWrapperProps {
     onLoadMore: () => void;
@@ -11,8 +12,7 @@ interface LoadMoreWrapperProps {
 
 const option = {
     root: null,
-    rootMargin: "20px",
-    threshold: 1,
+    threshold: .9,
 };
 
 export default function LoadMoreWrapper({
@@ -22,33 +22,47 @@ export default function LoadMoreWrapper({
     addCss = "",
 }: LoadMoreWrapperProps) {
     const loadNextRef = createRef<HTMLDivElement>();
+    const timeoutId = useSignal<number | null>(null);
 
     useLayoutEffect(() => {
         const handleObserver: IntersectionObserverCallback = (entries) => {
             const target = entries[0];
-            if (target.isIntersecting && hasMore) {
+            if (target.isIntersecting && hasMore && !timeoutId.value) {
                 onLoadMore();
             }
         };
 
         const observer = new IntersectionObserver(handleObserver, option);
 
-        if (loadNextRef.current) {
-            observer.observe(loadNextRef.current);
+        if (timeoutId.value) {
+            clearTimeout(timeoutId.value);
         }
 
-        return () => {
+        timeoutId.value = setTimeout(() => {
             if (loadNextRef.current) {
-                observer.disconnect();
+                observer.observe(loadNextRef.current);
+            }
+            timeoutId.value = null;
+        }, 1000);
+
+        return () => {
+            observer.disconnect();
+
+            if (timeoutId.value) {
+                clearTimeout(timeoutId.value);
+                timeoutId.value = null;
             }
         };
-    }, [loadNextRef]);
+    }, [loadNextRef.current]);
 
     return (
-        <div class={`overflow-auto ${addCss}`}>
+        <div class={`${addCss}`}>
             {children}
             {hasMore && (
-                <div ref={loadNextRef} class="text-center block h-3">
+                <div
+                    ref={loadNextRef}
+                    class="text-center flex items-center justify-center h-32"
+                >
                     <Loader color="white" />
                 </div>
             )}

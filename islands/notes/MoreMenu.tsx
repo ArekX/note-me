@@ -110,6 +110,7 @@ export default function MoreMenu(
             icon="dots-horizontal-rounded"
             iconSize="lg"
             displayType="inline"
+            buttonBorderClass="border border-b-0"
             items={items.map(({ name, icon, onClick }) => ({
                 name,
                 icon,

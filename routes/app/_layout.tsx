@@ -22,7 +22,11 @@ export default async function Layout(
     const isSidebarAllowed = ctx.route !== "/app/reset-password";
 
     return (
-        <div id="clientNav" className="flex h-screen" f-client-nav>
+        <div
+            id="clientNav"
+            className="flex max-md:flex-col h-screen"
+            f-client-nav
+        >
             {isSidebarAllowed && (
                 <Sidebar
                     initialNotifications={initialNotifications}
@@ -30,7 +34,7 @@ export default async function Layout(
                 />
             )}
             <div
-                class={`w-4/5 max-md:w-full bg-gray-900 overflow-auto ${
+                class={`w-4/5 max-md:w-full max-md:flex-grow bg-gray-900 overflow-auto ${
                     isSidebarAllowed ? "main-with-sidebar" : ""
                 }`}
             >

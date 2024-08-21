@@ -72,7 +72,7 @@ export default function EncryptionLockWindow() {
         >
             <div class="p-4 text-left">
                 <h2 class="text-lg font-semibold">Unlock Protected Notes</h2>
-                <p class="py-4">
+                <p class="py-4 max-md:hidden">
                     In order to view protected notes, please enter your
                     password.
                 </p>
@@ -80,7 +80,7 @@ export default function EncryptionLockWindow() {
                 {loader.running
                     ? <Loader color="white">Validating...</Loader>
                     : (
-                        <div>
+                        <div class="max-md:pt-5">
                             <Input
                                 type="password"
                                 placeholder="Password"
@@ -94,14 +94,14 @@ export default function EncryptionLockWindow() {
                                     Invalid password. Please try again.
                                 </p>
                             )}
-                            <p class="py-2 max-md:text-sm">
+                            <p class="py-2 max-md:text-sm max-md:hidden">
                                 <strong>Important:</strong>{" "}
                                 After entering your password, all your protected
                                 notes will be decrypted viewable unless idle for
                                 5 minutes or until you lock them again by
                                 clicking on the lock icon.
                             </p>
-                            <div class="text-right max-md:text-center">
+                            <div class="text-right max-md:text-center max-md:pt-7">
                                 <Button
                                     color="success"
                                     onClick={handleConfirmUnlock}
@@ -114,7 +114,7 @@ export default function EncryptionLockWindow() {
                                 <Button
                                     color="danger"
                                     onClick={handleCancelLockWindow}
-                                    addClass="max-md:block max-md:w-full max-md:ml-0"
+                                    addClass="max-md:block max-md:w-full max-md:ml-0 md:ml-2"
                                 >
                                     <Icon name="minus-circle" /> Cancel
                                 </Button>

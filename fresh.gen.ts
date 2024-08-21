@@ -140,6 +140,8 @@ import * as $sidebar_SearchView from "./islands/sidebar/SearchView.tsx";
 import * as $sidebar_SideBarPanel from "./islands/sidebar/SideBarPanel.tsx";
 import * as $sidebar_Sidebar from "./islands/sidebar/Sidebar.tsx";
 import * as $sidebar_SidebarMenu from "./islands/sidebar/SidebarMenu.tsx";
+import * as $sidebar_SidebarMenuTop from "./islands/sidebar/SidebarMenuTop.tsx";
+import * as $sidebar_SidebarPanelContents from "./islands/sidebar/SidebarPanelContents.tsx";
 import * as $sidebar_SwitcherContainer from "./islands/sidebar/SwitcherContainer.tsx";
 import * as $sidebar_recycle_bin_RecycleBinItem from "./islands/sidebar/recycle-bin/RecycleBinItem.tsx";
 import * as $sidebar_recycle_bin_RecycleBinList from "./islands/sidebar/recycle-bin/RecycleBinList.tsx";
@@ -348,6 +350,9 @@ const manifest = {
         "./islands/sidebar/SideBarPanel.tsx": $sidebar_SideBarPanel,
         "./islands/sidebar/Sidebar.tsx": $sidebar_Sidebar,
         "./islands/sidebar/SidebarMenu.tsx": $sidebar_SidebarMenu,
+        "./islands/sidebar/SidebarMenuTop.tsx": $sidebar_SidebarMenuTop,
+        "./islands/sidebar/SidebarPanelContents.tsx":
+            $sidebar_SidebarPanelContents,
         "./islands/sidebar/SwitcherContainer.tsx": $sidebar_SwitcherContainer,
         "./islands/sidebar/recycle-bin/RecycleBinItem.tsx":
             $sidebar_recycle_bin_RecycleBinItem,

@@ -54,16 +54,16 @@ export default function Dashboard() {
             )}
 
             <div class="flex py-5 flex-wrap">
-                <div class="lg:basis-1/3 md:max-lg:basis-1/2 basis-full">
+                <div class="lg:basis-1/3 md:max-lg:basis-1/2 basis-full px-2 max-md:pb-7">
                     <RecentlyOpenedNotes />
                 </div>
-                <div class="lg:basis-1/3 md:max-lg:basis-1/2 basis-full">
+                <div class="lg:basis-1/3 md:max-lg:basis-1/2 basis-full px-2 max-md:pb-7">
                     <CurrentReminders />
                 </div>
-                <div class="lg:basis-1/3 md:max-lg:basis-1/2 basis-full">
+                <div class="lg:basis-1/3 md:max-lg:basis-1/2 basis-full px-2 max-md:pb-7">
                     <RecentlySharedWithMe />
                 </div>
-                <div class="lg:basis-1/3 md:max-lg:basis-1/2 basis-full">
+                <div class="lg:basis-1/3 md:max-lg:basis-1/2 basis-full px-2 max-md:pb-7">
                     <PassedReminders />
                 </div>
             </div>

@@ -26,15 +26,15 @@ export default function EncryptionLockButton() {
     return (
         <>
             <a
-                class="hover:text-gray-300 cursor-pointer max-md:block"
+                class="hover:text-gray-300 cursor-pointer"
                 title={lock.isLocked.value ? "Unlock" : "Lock"}
                 onClick={handleUnlock}
             >
                 <Icon
                     type={lock.isLocked.value ? "solid" : "regular"}
                     name={lock.isLocked.value ? "lock-alt" : "lock-open-alt"}
-                />{" "}
-                <span class="max-md:inline-block hidden">
+                />
+                <span class="max-md:inline-block hidden pl-2">
                     {lock.isLocked.value ? "Locked" : "Unlocked"}
                 </span>
             </a>

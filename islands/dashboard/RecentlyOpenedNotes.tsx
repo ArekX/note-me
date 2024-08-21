@@ -74,7 +74,7 @@ export default function RecentlyOpenedNotes() {
             <strong class="text-lg py-2 flex justify-between">
                 <span>Recently Opened Notes{" "}</span>
                 {!loader.running && (
-                    <span class="pr-2">
+                    <span>
                         <Button color="success" onClick={fetchNotes} size="sm">
                             <Icon name="refresh" size="sm" />
                         </Button>

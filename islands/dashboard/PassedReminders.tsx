@@ -103,7 +103,7 @@ export default function PassedReminders() {
             <strong class="text-lg py-2 flex justify-between">
                 <span>Passed reminders{" "}</span>
                 {!loader.running && (
-                    <span class="pr-2">
+                    <span>
                         <Button
                             color="success"
                             onClick={fetchNotifications}

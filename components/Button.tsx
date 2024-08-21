@@ -49,7 +49,7 @@ export default function Button(
         color = "primary",
         type = "button",
         rounded = true,
-        borderClass,
+        borderClass = undefined,
         addPadding = true,
         tabIndex,
         addClass,
@@ -57,7 +57,7 @@ export default function Button(
         onKeyDown,
     }: ButtonProps,
 ) {
-    if (!borderClass) {
+    if (borderClass === undefined) {
         borderClass = color === "transparent"
             ? "border-b"
             : "border border-b-0";

@@ -17,7 +17,7 @@ export default function SwitcherContainer({
     icons,
 }: SwitcherContainerProps) {
     return (
-        <div class={`flex select-none ${addClass}`}>
+        <div class={`flex select-none items-center ${addClass}`}>
             <div>
                 {switcherComponent}
             </div>

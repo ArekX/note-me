@@ -27,6 +27,7 @@ const paths = {
         url: `/app/note/edit-${data.noteId}`,
         partialUrl: `/app/note/partial/edit-${data.noteId}`,
     }),
+    settings: () => "/app/settings",
 } as const;
 
 export const redirectToUrl = (url: PathResult) => {

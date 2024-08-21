@@ -128,10 +128,13 @@ export default function Notifications(props: NotificationsProps) {
 
     return (
         <div
-            class="text-right max-md:text-center pl-1 pr-1 -mb-6 max-md:mb-0 inline-block max-md:block relative notification-menu"
+            class="text-right max-md:text-left pl-1 max-md:pl-5 pr-1 -mb-6 max-md:mb-0 inline-block max-md:block relative notification-menu"
             title="Notifications"
         >
-            <span className="cursor-pointer" onClick={handleOpenView}>
+            <span
+                className="cursor-pointer relative"
+                onClick={handleOpenView}
+            >
                 {unreadCount > 0 && (
                     <span class="notification-badge cursor-pointer">
                         {unreadCount > 9 ? "9+" : unreadCount}

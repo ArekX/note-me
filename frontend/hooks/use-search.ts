@@ -4,7 +4,6 @@ import {
     SearchNoteFilters,
 } from "$backend/repository/note-search-repository.ts";
 import { TreeRecord } from "$backend/repository/tree-list.repository.ts";
-import { useDebouncedCallback } from "$frontend/hooks/use-debounced-callback.ts";
 import {
     NoteFrontendResponse,
     SearchNoteMessage,
@@ -33,6 +32,7 @@ const isActive = computed(() =>
     query.value.length > 0 || groupRecord.value !== null ||
     tags.value.length > 0
 );
+let timeoutId = 0;
 
 export const useSearch = () => {
     const { sendMessage } = useWebsocketService<NoteFrontendResponse>({
@@ -49,8 +49,8 @@ export const useSearch = () => {
         },
     });
 
-    const performSearch = useDebouncedCallback(async () => {
-        if (isRunning.value) {
+    const runDebouncedSearch = async () => {
+        if (isRunning.value || !isActive.value) {
             return;
         }
 
@@ -81,6 +81,11 @@ export const useSearch = () => {
             },
         );
 
+        if (!isActive.value) {
+            isRunning.value = false;
+            return;
+        }
+
         if (response.results.length < 10) {
             hasMoreData.value = false;
         }
@@ -88,7 +93,12 @@ export const useSearch = () => {
         results.value = [...results.value, ...response.results];
         fromId.value = response.results[response.results.length - 1]?.id;
         isRunning.value = false;
-    });
+    };
+
+    const performSearch = () => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(runDebouncedSearch, 250);
+    };
 
     const resetSearch = () => {
         query.value = "";
@@ -100,10 +110,16 @@ export const useSearch = () => {
     };
 
     const reload = () => {
-        results.value = [];
-        hasMoreData.value = true;
-        fromId.value = undefined;
-        performSearch();
+        if (isRunning.value) {
+            return;
+        }
+
+        if (isActive.value) {
+            results.value = [];
+            hasMoreData.value = true;
+            fromId.value = undefined;
+            performSearch();
+        }
     };
 
     const setQuery = (

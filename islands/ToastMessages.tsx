@@ -11,7 +11,7 @@ const typeColorMap = {
 
 export default function ToastMessages() {
     return (
-        <div class="toast-messages absolute bottom-5 right-5 w-1/4">
+        <div class="toast-messages absolute bottom-5 right-5 w-1/4 md:w-full">
             {toastMessages.value.map((message) => (
                 <div
                     class={`${

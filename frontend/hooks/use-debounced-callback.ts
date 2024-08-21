@@ -4,7 +4,7 @@ export const useDebouncedCallback = <R, T extends Array<unknown>>(
     callback: (...args: T) => R,
     debounceTime: number = 500,
 ) => {
-    const callId = useSignal(0);
+    const callId = useSignal(-1);
 
     return (...args: T): void => {
         clearTimeout(callId.value);

@@ -5,7 +5,7 @@ export type ResponsiveSize = "sm" | "md" | "lg" | "xl" | "2xl";
 
 const responsiveOrder = ["sm", "md", "lg", "xl", "2xl"];
 
-const resolveResponsiveSize = (): ResponsiveSize => {
+const updateResponsiveSize = (): ResponsiveSize => {
     if (!IS_BROWSER) {
         return "md";
     }
@@ -28,10 +28,11 @@ const resolveResponsiveSize = (): ResponsiveSize => {
     return "2xl";
 };
 
-const size = signal<ResponsiveSize>(resolveResponsiveSize());
+const size = signal<ResponsiveSize>(updateResponsiveSize());
 
 if (IS_BROWSER) {
-    addEventListener("resize", () => size.value = resolveResponsiveSize());
+    addEventListener("resize", () => size.value = updateResponsiveSize());
+    updateResponsiveSize();
 }
 
 export const useResponsiveQuery = () => {
@@ -53,6 +54,10 @@ export const useResponsiveQuery = () => {
         return sizeIndex <= toIndex;
     };
 
+    const matches = (...target: ResponsiveSize[]) => {
+        return target.includes(size.value);
+    };
+
     const pick = <T>(map: Record<ResponsiveSize, T>, defaultValue: T) => {
         return map[size.value] ?? defaultValue;
     };
@@ -63,5 +68,6 @@ export const useResponsiveQuery = () => {
         min,
         max,
         pick,
+        matches,
     };
 };
