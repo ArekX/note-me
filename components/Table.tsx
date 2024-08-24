@@ -53,84 +53,89 @@ export default function Table<T extends object>(
 ) {
     const hasAnyFilters = columns.some((column) => column.filter);
     return (
-        <table {...tableProps}>
-            <thead {...headerProps}>
-                <tr {...headerRowProps}>
-                    {columns.map((column, index) => (
-                        <th
-                            key={index}
-                            {...(
-                                typeof column.headerCellProps === "function"
-                                    ? column.headerCellProps(column, index)
-                                    : column.headerCellProps
-                            )}
-                        >
-                            {column.name}
-                        </th>
-                    ))}
-                </tr>
-                {hasAnyFilters && (
-                    <tr>
+        <div class="max-md:w-full max-md:overflow-x-auto">
+            <table {...tableProps}>
+                <thead {...headerProps}>
+                    <tr {...headerRowProps}>
                         {columns.map((column, index) => (
-                            <td
+                            <th
                                 key={index}
                                 {...(
-                                    typeof column.filterProps === "function"
-                                        ? column.filterProps(column, index)
-                                        : column.filterProps
+                                    typeof column.headerCellProps === "function"
+                                        ? column.headerCellProps(column, index)
+                                        : column.headerCellProps
                                 )}
                             >
-                                {column.filter}
-                            </td>
+                                {column.name}
+                            </th>
                         ))}
                     </tr>
-                )}
-            </thead>
-            <tbody {...bodyProps}>
-                {isLoading && (
-                    <tr>
-                        <td colSpan={columns.length} class="text-center p-2">
-                            <Loader {...loaderProps} />
-                        </td>
-                    </tr>
-                )}
-                {!isLoading && rows.map((row, rowIndex) => (
-                    <tr
-                        key={rowIndex}
-                        {...(
-                            typeof bodyRowProps === "function"
-                                ? bodyRowProps(row, rowIndex)
-                                : bodyRowProps
-                        )}
-                    >
-                        {columns.map((column, columnIndex) => (
+                    {hasAnyFilters && (
+                        <tr class="filters">
+                            {columns.map((column, index) => (
+                                <td
+                                    key={index}
+                                    {...(
+                                        typeof column.filterProps === "function"
+                                            ? column.filterProps(column, index)
+                                            : column.filterProps
+                                    )}
+                                >
+                                    {column.filter}
+                                </td>
+                            ))}
+                        </tr>
+                    )}
+                </thead>
+                <tbody {...bodyProps}>
+                    {isLoading && (
+                        <tr>
                             <td
-                                key={columnIndex}
-                                {...(
-                                    typeof column.cellProps === "function"
-                                        ? column.cellProps(
+                                colSpan={columns.length}
+                                class="text-center p-2"
+                            >
+                                <Loader {...loaderProps} />
+                            </td>
+                        </tr>
+                    )}
+                    {!isLoading && rows.map((row, rowIndex) => (
+                        <tr
+                            key={rowIndex}
+                            {...(
+                                typeof bodyRowProps === "function"
+                                    ? bodyRowProps(row, rowIndex)
+                                    : bodyRowProps
+                            )}
+                        >
+                            {columns.map((column, columnIndex) => (
+                                <td
+                                    key={columnIndex}
+                                    {...(
+                                        typeof column.cellProps === "function"
+                                            ? column.cellProps(
+                                                row,
+                                                rowIndex,
+                                                column,
+                                                columnIndex,
+                                            )
+                                            : column.cellProps
+                                    )}
+                                >
+                                    {column.key
+                                        ? row[column.key] as RowContents
+                                        : column.render?.(
                                             row,
                                             rowIndex,
                                             column,
                                             columnIndex,
-                                        )
-                                        : column.cellProps
-                                )}
-                            >
-                                {column.key
-                                    ? row[column.key] as RowContents
-                                    : column.render?.(
-                                        row,
-                                        rowIndex,
-                                        column,
-                                        columnIndex,
-                                    )}
-                            </td>
-                        ))}
-                    </tr>
-                ))}
-                {!isLoading && rows.length === 0 && noRowsRow}
-            </tbody>
-        </table>
+                                        )}
+                                </td>
+                            ))}
+                        </tr>
+                    ))}
+                    {!isLoading && rows.length === 0 && noRowsRow}
+                </tbody>
+            </table>
+        </div>
     );
 }

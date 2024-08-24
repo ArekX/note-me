@@ -11,4 +11,19 @@ export const loadEnvironment = () => {
     });
 };
 
-export const getAppUrl = () => new URL(Deno.env.get("APP_URL")!);
+export const getAppUrl = () =>
+    new URL(
+        Deno.env.get("APP_URL") ??
+            `http://localhost:${Deno.env.get("WEBSERVER_PORT") ?? "8000"}`,
+    );
+
+export const getSocketHostname = (req: Request) => {
+    const host = Deno.env.get("SOCKET_HOSTNAME");
+    if (host) {
+        return host;
+    }
+
+    const requestHost = req.headers.get("host")?.split(":")[0] ?? "localhost";
+    const port = +(Deno.env.get("WEBSOCKET_PORT") ?? "8080");
+    return `ws://${requestHost}:${port}`;
+};

@@ -94,8 +94,8 @@ export default function S3Settings({
 
     return (
         <div>
-            <div class="max-w-xl flex">
-                <div class="w-2/4">
+            <div class="flex flex-wrap">
+                <div class="w-2/4 max-md:w-full">
                     <div class="py-2">
                         <Input
                             label="Bucket Name"
@@ -154,7 +154,7 @@ export default function S3Settings({
                         </div>
                     </div>
                 </div>
-                <div class="w-2/4 pl-2">
+                <div class="w-2/4 max-md:w-full pl-2 max-md:pl-0">
                     <div class="py-6">
                         <Checkbox
                             checked={type.value === "access_key"}

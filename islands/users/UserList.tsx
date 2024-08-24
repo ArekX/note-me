@@ -116,7 +116,7 @@ export default function UserList() {
     return (
         <div class="p-4">
             {user.can(CanManageUsers.Update) && (
-                <div class="p-4 w-full text-right">
+                <div class="py-4 w-full text-right">
                     <Button
                         color="success"
                         onClick={() => {
@@ -170,6 +170,7 @@ export default function UserList() {
                                     color="success"
                                     title="Edit"
                                     onClick={() => userToEdit.select(value)}
+                                    addClass="lg:mr-2 mb-2"
                                 >
                                     <Icon name="pencil" />
                                 </Button>
@@ -177,7 +178,7 @@ export default function UserList() {
                                     <Button
                                         color="danger"
                                         title="Delete"
-                                        addClass="ml-2"
+                                        addClass="mb-2"
                                         onClick={() =>
                                             userToDelete.select(value)}
                                     >

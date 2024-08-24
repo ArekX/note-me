@@ -158,10 +158,14 @@ export default function BackupTargetList({
                         <Button
                             color="success"
                             onClick={handleCreateManualBackup}
+                            addClass="lg:mr-2 max-md:w-full max-md:block max-md:mb-2"
                         >
                             Create manual backup
                         </Button>
-                        <Button onClick={loadData} addClass="ml-2">
+                        <Button
+                            onClick={loadData}
+                            addClass="max-md:w-full max-md:block"
+                        >
                             Reload
                         </Button>
                     </div>
@@ -202,11 +206,11 @@ export default function BackupTargetList({
                                     color="success"
                                     title="Manage"
                                     onClick={() => handleDownload(record)}
+                                    addClass="mr-2 mb-2"
                                 >
                                     <Icon name="download" />
                                 </Button>
                                 <Button
-                                    addClass="ml-2"
                                     color="danger"
                                     title="Delete"
                                     onClick={() =>

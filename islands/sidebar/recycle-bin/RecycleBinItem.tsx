@@ -58,8 +58,8 @@ export default function RecycleBinItem({ record }: RecycleBinItemProps) {
     });
 
     return (
-        <div class="p-2 hover:bg-gray-700/50 cursor-pointer flex group">
-            <div class="w-4/6">
+        <div class="p-2 hover:bg-gray-700/50 cursor-pointer flex group justify-center items-center">
+            <div class="basis-3/6">
                 <TreeItemIcon
                     container={fromTreeRecord({
                         type: "note",
@@ -72,11 +72,15 @@ export default function RecycleBinItem({ record }: RecycleBinItemProps) {
                 {record.title}
                 <div class="text-sm text-gray-400">
                     <span>
-                        <span title="Deleted at">
-                            <Icon name="recycle" size="sm" />
+                        <span class="max-xl:block">
+                            <span title="Deleted at">
+                                <Icon name="recycle" size="sm" />
+                                {" "}
+                            </span>
+                            <TimeAgo time={record.deleted_at} />
                             {" "}
                         </span>
-                        <TimeAgo time={record.deleted_at} />{" "}
+
                         <span title="Expires at">
                             <Icon name="calendar-minus" size="sm" />
                             {" "}
@@ -87,16 +91,18 @@ export default function RecycleBinItem({ record }: RecycleBinItemProps) {
                     </span>
                 </div>
             </div>
-            <div class="w-2/6 pt-1 text-right hidden group-hover:block">
+            <div class="basis-3/6 pt-1 text-right invisible group-hover:visible">
                 <Button
                     color="primary"
                     title="Restore note"
+                    addClass="mb-2 ml-2"
                     onClick={() => action.value = "restore"}
                 >
                     <Icon name="undo" size="sm" />
-                </Button>{" "}
+                </Button>
                 <Button
                     color="danger"
+                    addClass="ml-2"
                     title="Fully delete note"
                     onClick={() => action.value = "fully-delete"}
                 >

@@ -31,8 +31,9 @@ const updateResponsiveSize = (): ResponsiveSize => {
 const size = signal<ResponsiveSize>(updateResponsiveSize());
 
 if (IS_BROWSER) {
-    addEventListener("resize", () => size.value = updateResponsiveSize());
-    updateResponsiveSize();
+    const setResponsiveSize = () => size.value = updateResponsiveSize();
+    addEventListener("resize", setResponsiveSize);
+    setResponsiveSize();
 }
 
 export const useResponsiveQuery = () => {

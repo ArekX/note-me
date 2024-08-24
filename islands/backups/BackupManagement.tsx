@@ -214,11 +214,11 @@ export default function BackupManagement({
                                     color="success"
                                     title="Manage"
                                     onClick={() => handleManage(record)}
+                                    addClass="mr-2 mb-2"
                                 >
                                     <Icon name="cog" />
                                 </Button>
                                 <Button
-                                    addClass="ml-2"
                                     color="danger"
                                     title="Delete"
                                     onClick={() =>

@@ -137,11 +137,11 @@ table tr td:last-child {
      @apply border-gray-700 border-r;
 }
 
-table th:first-child, table thead td:first-child {
+table th:first-child, table thead :not(.filters) td:first-child {
     @apply rounded-tl-lg;
 }
 
-table th:last-child, table thead td:last-child  {
+table th:last-child, table thead :not(.filters) td:last-child  {
     @apply rounded-tr-lg;
 }
 

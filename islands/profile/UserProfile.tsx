@@ -64,7 +64,7 @@ export default function UserProfile() {
         <div>
             <h1 class="text-xl py-4 font-semibold">My Profile</h1>
             <form onSubmit={handleSubmit} class="flex flex-wrap">
-                <div class="basis-1/4">
+                <div class="xl:basis-1/4 max-md:basis-full md:max-lg:basis-2/5">
                     <Input
                         label="Name"
                         type="text"
@@ -75,15 +75,16 @@ export default function UserProfile() {
                         state={validation}
                         path="name"
                     />
-                    <br />
-                    <DropdownList
-                        label="Timezone"
-                        items={supportedTimezoneList}
-                        value={userData.value.timezone}
-                        onInput={handlePropertyChange("timezone")}
-                    />
+                    <div class="pt-2">
+                        <DropdownList
+                            label="Timezone"
+                            items={supportedTimezoneList}
+                            value={userData.value.timezone}
+                            onInput={handlePropertyChange("timezone")}
+                        />
+                    </div>
                 </div>
-                <div class="basis-1/4 pl-2">
+                <div class="xl:basis-1/4 md:pl-2 max-md:pt-2 max-md:basis-full md:basis-1/2 lg:basis-2/5">
                     <Input
                         label="Old Password"
                         type="password"
@@ -94,28 +95,30 @@ export default function UserProfile() {
                         state={validation}
                         path="old_password"
                     />
-                    <br />
-                    <Input
-                        label="New Password"
-                        type="password"
-                        value={userData.value.new_password}
-                        onInput={handlePropertyChange("new_password")}
-                    />
-                    <ErrorDisplay
-                        state={validation}
-                        path="new_password"
-                    />
-                    <br />
-                    <Input
-                        label="Confirm Password"
-                        type="password"
-                        value={userData.value.confirm_password}
-                        onInput={handlePropertyChange("confirm_password")}
-                    />
-                    <ErrorDisplay
-                        state={validation}
-                        path="confirm_password"
-                    />
+                    <div class="pt-2">
+                        <Input
+                            label="New Password"
+                            type="password"
+                            value={userData.value.new_password}
+                            onInput={handlePropertyChange("new_password")}
+                        />
+                        <ErrorDisplay
+                            state={validation}
+                            path="new_password"
+                        />
+                    </div>
+                    <div class="pt-2">
+                        <Input
+                            label="Confirm Password"
+                            type="password"
+                            value={userData.value.confirm_password}
+                            onInput={handlePropertyChange("confirm_password")}
+                        />
+                        <ErrorDisplay
+                            state={validation}
+                            path="confirm_password"
+                        />
+                    </div>
                 </div>
                 <div class="basis-full">
                     <div class="py-4">

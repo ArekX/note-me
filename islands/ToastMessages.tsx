@@ -11,12 +11,12 @@ const typeColorMap = {
 
 export default function ToastMessages() {
     return (
-        <div class="toast-messages absolute bottom-5 right-5 w-1/4 md:w-full">
+        <div class="toast-messages absolute bottom-5 right-5 max-md:left-5 lg:w-1/4 z-50">
             {toastMessages.value.map((message) => (
                 <div
                     class={`${
                         typeColorMap[message.type]
-                    } border p-5 flex items-center text-white rounded-xl mt-5 shadow-gray-900 shadow-md`}
+                    } border p-5 max-md:py-1 max-md:px-2 flex items-center text-white rounded-xl mt-5 shadow-gray-900 shadow-md`}
                 >
                     <div class="flex-grow">
                         {message.text}

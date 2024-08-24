@@ -2,13 +2,14 @@ import { FreshContext } from "$fresh/server.ts";
 import { AppState } from "$types";
 import IslandInitializer from "$islands/IslandInitializer.tsx";
 import { getUserNotifications } from "$backend/repository/notification-repository.ts";
-import Sidebar from "../../islands/sidebar/Sidebar.tsx";
+import Sidebar from "$islands/sidebar/Sidebar.tsx";
 import { canAccessSettings } from "$backend/rbac/role-definitions.ts";
 import { Partial } from "$fresh/runtime.ts";
 import EncryptionLockWindow from "$islands/encryption/EncryptionLockWindow.tsx";
+import { getSocketHostname } from "$backend/env.ts";
 
 export default async function Layout(
-    _req: Request,
+    req: Request,
     ctx: FreshContext<AppState>,
 ) {
     const { name = "", id, timezone = "", role = "user", onboarding_state } =
@@ -16,7 +17,8 @@ export default async function Layout(
 
     const permissions = ctx.state.permissions ?? [];
 
-    const socketHost = Deno.env.get("SOCKET_HOSTNAME") ?? "ws://localhost:8080";
+    const socketHost = getSocketHostname(req);
+
     const initialNotifications = await getUserNotifications(id!);
 
     const isSidebarAllowed = ctx.route !== "/app/reset-password";

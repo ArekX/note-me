@@ -83,7 +83,7 @@ export default function PeriodicTaskList() {
                                             record.is_last_run_successful
                                                 ? "text-green-400 bg-green-900 border-green-700/50"
                                                 : "text-red-400 bg-red-900 border-red-700/50"
-                                        } inline-block px-2 py-1 rounded-lg border`}
+                                        } inline-block px-2 py-1 rounded-lg border max-md:text-center`}
                                     >
                                         <Icon
                                             name={record.last_successful_run_at

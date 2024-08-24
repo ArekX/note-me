@@ -131,19 +131,21 @@ export default function TagsList() {
                 {results.value.map((tag) => (
                     <div
                         key={tag.id}
-                        class="inline-block mr-4 mt-8"
+                        class="inline-block mr-4 mt-4"
                     >
-                        <span
-                            class="rounded-l-lg bg-gray-900 text-white p-4 border-b-0 cursor-pointer hover:bg-gray-700 border-gray-700 border border-r-0"
-                            onClick={() => tagToEdit.select(tag)}
-                        >
-                            {tag.name}
-                        </span>
-                        <span
-                            class="rounded-r-lg bg-red-900/90 text-white p-4 border-b-0 cursor-pointer hover:bg-red-700 border border-red-700/40 border-l-0"
-                            onClick={() => tagToDelete.select(tag)}
-                        >
-                            <Icon name="minus-circle" size="xl" />
+                        <span class="flex">
+                            <span
+                                class="rounded-l-lg bg-gray-900 text-white px-6 py-2 border-b-0 cursor-pointer hover:bg-gray-700 border-gray-700 border border-r-0"
+                                onClick={() => tagToEdit.select(tag)}
+                            >
+                                {tag.name}
+                            </span>
+                            <span
+                                class="rounded-r-lg bg-red-900/90 text-white p-2 border-b-0 cursor-pointer hover:bg-red-700 border border-red-700/40 border-l-0"
+                                onClick={() => tagToDelete.select(tag)}
+                            >
+                                <Icon name="minus-circle" size="xl" />
+                            </span>
                         </span>
                     </div>
                 ))}

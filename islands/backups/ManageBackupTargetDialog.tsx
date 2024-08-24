@@ -40,7 +40,9 @@ export default function ManageBackupTargetDialog({
             canCancel={true}
             onCancel={onClose}
             props={{
-                class: selected.value === "backups" ? "w-3/4" : "",
+                class: selected.value === "backups"
+                    ? "w-3/4 max-md:w-full"
+                    : "w-2/4 max-md:w-full",
             }}
         >
             <div>

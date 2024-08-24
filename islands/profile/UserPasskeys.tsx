@@ -288,7 +288,7 @@ export default function UserPasskeys() {
                                         title="Rename"
                                         onClick={() =>
                                             passkeyToRename.select(record)}
-                                        addClass="mr-2"
+                                        addClass="mr-2 mb-2"
                                     >
                                         <Icon name="pencil" size="md" />
                                     </Button>
@@ -298,7 +298,10 @@ export default function UserPasskeys() {
                                         onClick={() =>
                                             passkeyToDelete.select(record)}
                                     >
-                                        <Icon name="minus-circle" size="md" />
+                                        <Icon
+                                            name="minus-circle"
+                                            size="md"
+                                        />
                                     </Button>
                                 </>
                             ),

@@ -72,6 +72,20 @@ const DesktopSidebarMenu = (
                 </a>
             </div>
             <div class="flex-1 text-right max-lg:text-center">
+                {query.max("md") && (
+                    <a
+                        href="/app/note"
+                        class="hover:text-gray-300"
+                        title="Home"
+                    >
+                        <Logo
+                            white={true}
+                            height={16}
+                            width={16}
+                        />
+                        {" "}
+                    </a>
+                )}
                 {showSettings && (
                     <a
                         href="/app/settings"

@@ -39,26 +39,29 @@ export default function Pagination({
     return (
         <>
             {total > perPage && (
-                <div className={`flex ${alignmentClass}`}>
+                <div className={`flex flex-wrap ${alignmentClass}`}>
                     <Button
-                        addClass={currentPage === 1
-                            ? "pointer-events-none opacity-20"
-                            : ""}
+                        addClass={`ml-2 max-md:block max-md:mb-2 max-md:w-full ${
+                            currentPage === 1
+                                ? "pointer-events-none opacity-20"
+                                : ""
+                        }`}
                         disabled={currentPage === 1}
-                        onClick={() => onChange(currentPage - 1)}
-                        size="md"
+                        onClick={() =>
+                            onChange(currentPage - 1)}
+                        size="sm"
                     >
                         <Icon name="chevron-left" />
                     </Button>
                     <Button
-                        addClass={`ml-2 ${
+                        addClass={`max-md:hidden ml-2 ${
                             currentPage === 1
                                 ? "pointer-events-none opacity-20"
                                 : ""
                         }`}
                         disabled={currentPage === 1}
                         onClick={() => onChange(1)}
-                        size="md"
+                        size="sm"
                     >
                         <Icon name="chevrons-left" />
                     </Button>
@@ -68,7 +71,7 @@ export default function Pagination({
                         (_, index) => startPage + index,
                     ).map((page) => (
                         <Button
-                            addClass={`ml-2 ${
+                            addClass={`max-md:block max-md:mb-2 max-md:w-full ml-2 ${
                                 currentPage === page
                                     ? "pointer-events-none"
                                     : ""
@@ -76,34 +79,34 @@ export default function Pagination({
                             color={currentPage === page ? "success" : "primary"}
                             disabled={currentPage === page}
                             onClick={() => onChange(page)}
-                            size="md"
+                            size="sm"
                         >
                             {page.toString().padStart(amountOfZeroes, "0")}
                         </Button>
                     ))}
 
                     <Button
-                        addClass={`ml-2 ${
+                        addClass={`max-md:hidden ml-2 ${
                             currentPage === pages
                                 ? "pointer-events-none opacity-20"
                                 : ""
                         }`}
                         disabled={currentPage === pages}
                         onClick={() => onChange(pages)}
-                        size="md"
+                        size="sm"
                     >
                         <Icon name="chevrons-right" />
                     </Button>
 
                     <Button
-                        addClass={`ml-2 ${
+                        addClass={`max-md:block max-md:mb-2 max-md:w-full ml-2 ${
                             currentPage === pages
                                 ? "pointer-events-none opacity-20"
                                 : ""
                         }`}
                         disabled={currentPage === pages}
                         onClick={() => onChange(currentPage + 1)}
-                        size="md"
+                        size="sm"
                     >
                         <Icon name="chevron-right" />
                     </Button>
