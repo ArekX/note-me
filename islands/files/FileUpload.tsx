@@ -32,7 +32,15 @@ export default function FileUpload({
 
     return (
         <>
-            <Button addClass="relative" size="sm" title="Upload files...">
+            <Button
+                addClass="relative inline-block"
+                size="sm"
+                title="Upload files..."
+            >
+                <div class="flex justify-center items-center w-full">
+                    <Icon name="cloud-upload" />
+                    <div class="pl-2">Upload</div>
+                </div>
                 <input
                     class="absolute left-0 right-0 top-0 bottom-0 opacity-0 cursor-pointer"
                     type="file"
@@ -42,7 +50,6 @@ export default function FileUpload({
                     onAbort={handleAbort}
                     onCancel={handleAbort}
                 />
-                <Icon name="cloud-upload" /> Upload
             </Button>
         </>
     );

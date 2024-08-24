@@ -23,6 +23,7 @@ const excludedStdErrStrings = [
     "\x1b[0m\x1b[32mCheck\x1b[0m",
     "waiting for file lock on node_modules directory",
     "Download\x1b[0m",
+    "\x1b[0m\x1b[33mWarning\x1b[0m No matching files found.",
 ];
 
 const checkUrl = dirname(import.meta.url);
@@ -75,6 +76,7 @@ for await (const entry of Deno.readDir(".")) {
                         });
 
                     if (text.length > 0) {
+                        console.log({ text });
                         console.log(text.join("\n"));
                         console.log(
                             "Error found, stopping further processing.",

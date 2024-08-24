@@ -21,6 +21,7 @@ import { UploadProgressDialog } from "$islands/files/UploadProgressDialog.tsx";
 import { FileDropWrapper } from "$islands/files/FileDropWrapper.tsx";
 import { addMessage } from "$frontend/toast-message.ts";
 import { useSignal } from "@preact/signals";
+import { useResponsiveQuery } from "$frontend/hooks/use-responsive-query.ts";
 
 interface FilePickerProps {
     adminMode?: boolean;
@@ -35,6 +36,8 @@ interface ExtendedFileMetaRecord extends FileMetaRecord {
 }
 
 const gridSizes = {
+    oneColumn: "grid-cols-1",
+    twoColumns: "grid-cols-2 gap-1",
     threeColumns: "grid-cols-3 gap-2",
     fiveColumns: "grid-cols-5 gap-4",
 } as const;
@@ -235,6 +238,14 @@ export default function FilePicker({
         loadFiles();
     }, []);
 
+    const query = useResponsiveQuery();
+
+    if (query.between("md", "lg")) {
+        size = "threeColumns";
+    } else if (query.max("sm")) {
+        size = "oneColumn";
+    }
+
     return (
         <FileDropWrapper
             wrapperClass="file-picker w-full"
@@ -251,11 +262,9 @@ export default function FilePicker({
                         value={filters.value.name}
                     />
                 </div>
-                <div>
-                    <FileUpload
-                        onFilesSelected={handleFilesUpload}
-                    />
-                </div>
+                <FileUpload
+                    onFilesSelected={handleFilesUpload}
+                />
                 <UploadProgressDialog uploader={fileUploader} />
             </div>
 

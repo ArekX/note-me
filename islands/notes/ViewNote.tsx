@@ -12,6 +12,7 @@ import Viewer from "$islands/markdown/Viewer.tsx";
 import { useSearch } from "$frontend/hooks/use-search.ts";
 import { downloadTextAsMarkdown } from "$frontend/text-downloader.ts";
 import { useActiveNoteEffect } from "$frontend/hooks/use-active-note.ts";
+import { useResponsiveQuery } from "$frontend/hooks/use-responsive-query.ts";
 
 export interface ViewNoteProps {
     readonly?: boolean;
@@ -37,6 +38,8 @@ export default function ViewNote(
         ...record,
     });
     const search = disableTagLinks ? null : useSearch();
+
+    const query = useResponsiveQuery();
 
     if (!historyMode) {
         useActiveNoteEffect(recordData.value.id);
@@ -86,6 +89,11 @@ export default function ViewNote(
                     recordData.value.note,
                 );
                 break;
+            case "open-editor":
+                redirectTo.editNote({
+                    noteId: recordData.value.id,
+                });
+                break;
         }
     };
 
@@ -105,10 +113,11 @@ export default function ViewNote(
                 </div>
                 {!historyMode && shareMode !== "everyone" && (
                     <div class="text-md ml-2 w-2/12 text-right">
-                        {!readonly && (
+                        {!readonly && query.min("md") && (
                             <Button
                                 color="success"
                                 title="Edit"
+                                addClass="max-lg:mb-2"
                                 onClick={() => {
                                     redirectTo.editNote({
                                         noteId: recordData.value.id,

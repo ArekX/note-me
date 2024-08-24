@@ -1,5 +1,6 @@
 import { RecordContainer } from "$islands/tree/hooks/record-container.ts";
 import DropdownMenu from "$islands/DropdownMenu.tsx";
+import { useResponsiveQuery } from "$frontend/hooks/use-responsive-query.ts";
 
 export interface MenuItem {
     icon: string;
@@ -95,10 +96,12 @@ export default function MoreMenu(
         },
     ].filter((m) => m.types.includes(container.type)) as MenuItem[];
 
+    const query = useResponsiveQuery();
+
     return (
         <DropdownMenu
             popoverId={`${container.type.toString()}-${container.id ?? -1}`}
-            showDirection="right"
+            showDirection={query.max("md") ? "left" : "right"}
             displayType="portal"
             iconOnly={true}
             icon="dots-horizontal-rounded"

@@ -2,12 +2,18 @@ import Dialog from "$islands/Dialog.tsx";
 import Button from "$components/Button.tsx";
 import SideTabPanel from "$islands/SideTabPanel.tsx";
 import KeyboardShortcuts from "$islands/notes/windows/help/KeyboardShortcuts.tsx";
+import { useSignal } from "@preact/signals";
+import { useResponsiveQuery } from "$frontend/hooks/use-responsive-query.ts";
+import Icon from "$components/Icon.tsx";
 
 interface HelpProps {
     onClose: () => void;
 }
 
 export default function NoteHelp({ onClose }: HelpProps) {
+    const isMobileSidePanelOpen = useSignal(false);
+    const query = useResponsiveQuery();
+
     return (
         <Dialog
             visible={true}
@@ -18,9 +24,25 @@ export default function NoteHelp({ onClose }: HelpProps) {
                 class: "w-4/5",
             }}
         >
-            <div class="p-2">
+            {query.max("sm") && (
+                <div class="text-right">
+                    <Button
+                        color="success"
+                        onClick={() =>
+                            isMobileSidePanelOpen.value = !isMobileSidePanelOpen
+                                .value}
+                    >
+                        <Icon name="menu" size="sm" /> Topics
+                    </Button>
+                </div>
+            )}
+            <div class="py-2">
                 <SideTabPanel
                     selectedIndex={0}
+                    isMobileSidePanelOpen={isMobileSidePanelOpen.value}
+                    onSelect={() => {
+                        isMobileSidePanelOpen.value = false;
+                    }}
                     items={[
                         {
                             name: "Help",

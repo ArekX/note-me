@@ -16,7 +16,7 @@ interface ListView {
     placeholder: string;
 }
 
-export default function ListPanel() {
+export default function SideBarPanel() {
     const search = useSearch();
 
     const currentType = useSignal<SwitcherItem>({

@@ -70,14 +70,14 @@ export default function ShareLinks({
                 {linkList.value.map((link) => (
                     <div
                         key={link.id}
-                        class="flex justify-between p-2 border rounded-lg border-b-0 border-gray-500/50 bg-gray-700/50 mb-2"
+                        class="flex flex-wrap items-center justify-between p-2 border rounded-lg border-b-0 border-gray-500/50 bg-gray-700/50 mb-2"
                     >
-                        <div>
+                        <div class="max-md:basis-full max-md:max-w-full">
                             <a
                                 href={`/public/${link.identifier}`}
                                 target="_blank"
                                 rel="noreferrer"
-                                class="text-lg block mb-2 underline"
+                                class="text-md font-semibold block mb-2 underline whitespace-nowrap overflow-hidden text-ellipsis"
                             >
                                 Link: {link.identifier}
                             </a>
@@ -94,18 +94,19 @@ export default function ShareLinks({
                                 </p>
                             </div>
                         </div>
-                        <div>
+                        <div class="max-md:flex max-md:basis-full max-md:pt-2">
                             <Button
                                 color="success"
                                 size="sm"
+                                addClass="md:mr-2 max-md:block max-md:basis-1/2"
                                 onClick={() => handleCopyToClipboard(link)}
                             >
                                 <Icon name="clipboard" />
                             </Button>
                             <Button
-                                addClass="ml-2"
                                 color="danger"
                                 size="sm"
+                                addClass="max-md:ml-2 max-md:block max-md:basis-1/2"
                                 onClick={() => handleDeleteLink(link)}
                             >
                                 <Icon name="minus-circle" />

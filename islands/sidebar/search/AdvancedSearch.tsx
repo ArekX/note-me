@@ -70,8 +70,8 @@ export default function AdvancedSearch(
                     />
                 </div>
 
-                <div class="flex py-2">
-                    <div class="basis-1/2">
+                <div class="flex flex-wrap py-2">
+                    <div class="basis-1/2 max-md:basis-full">
                         <Checkbox
                             label="Filter by Group"
                             checked={shouldFilterByGroup.value}
@@ -96,7 +96,7 @@ export default function AdvancedSearch(
                             </div>
                         )}
                     </div>
-                    <div class="pl-2 basis-1/2">
+                    <div class="pl-2 max-md:pl-0 max-md:pt-4 basis-1/2 max-md:basis-full">
                         <Checkbox
                             label="Filter by Tags"
                             checked={shouldFilterByTags.value}

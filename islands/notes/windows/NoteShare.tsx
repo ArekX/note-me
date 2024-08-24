@@ -102,7 +102,7 @@ export default function NoteShare({
             visible={true}
             onCancel={onClose}
             canCancel={true}
-            props={{ "class": "w-2/4" }}
+            props={{ "class": "md:w-3/4 lg:w-2/4 max-md:w-full" }}
             title="Share"
         >
             {!!isExistingNoteProtected && (

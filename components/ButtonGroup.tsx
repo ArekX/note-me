@@ -41,9 +41,7 @@ export default function ButtonGroup<T extends ListMap>(
                         } border-t ${
                             id === activeItem ? "pointer-events-none" : ""
                         } border-l border-r ${
-                            id === activeItem
-                                ? ""
-                                : "lg:border-l-transparent lg:border-r-transparent"
+                            id === activeItem ? "" : "md:border-r-gray-600/40"
                         } max-md:block max-md:w-full
                             ${
                             index !== 0 && index !== total.length - 1

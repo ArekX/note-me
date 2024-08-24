@@ -33,6 +33,8 @@ import { downloadTextAsMarkdown } from "$frontend/text-downloader.ts";
 import { useActiveNoteEffect } from "$frontend/hooks/use-active-note.ts";
 import { HotkeySet } from "$frontend/hotkeys.ts";
 import { useHotkeys } from "$frontend/hooks/use-hotkeys.ts";
+import { useResponsiveQuery } from "$frontend/hooks/use-responsive-query.ts";
+import { addMessage } from "$frontend/toast-message.ts";
 
 export const noteEditorHotkeySet: HotkeySet<
     "noteEditor",
@@ -81,6 +83,8 @@ export default function NoteEditor({
     const isPreviewMode = useSignal(false);
     const wasDataChanged = useSignal(false);
 
+    const query = useResponsiveQuery();
+
     const { resolveHotkey } = useHotkeys("noteEditor");
 
     const contentEncryption = useContentEncryption();
@@ -125,6 +129,8 @@ export default function NoteEditor({
             return text.value;
         }
 
+        console.log(isProtected.value);
+
         return await contentEncryption.encryptText(text.value);
     };
 
@@ -156,6 +162,10 @@ export default function NoteEditor({
                 },
             );
             wasDataChanged.value = false;
+            addMessage({
+                type: "success",
+                text: "Note updated successfully",
+            });
         } else {
             const { record } = await sendMessage<
                 CreateNoteMessage,
@@ -198,6 +208,17 @@ export default function NoteEditor({
             case "help":
             case "delete":
                 windowMode.value = action;
+                break;
+            case "editor-save":
+                handleSave();
+                break;
+            case "editor-toggle-protection":
+                isProtected.value = !isProtected.value;
+                break;
+            case "open-viewer":
+                redirectTo.viewNote({
+                    noteId: noteId.value!,
+                });
                 break;
         }
     };
@@ -297,55 +318,65 @@ export default function NoteEditor({
                     />
                 </div>
                 <div class="text-sm ml-2">
-                    <Button
-                        color={!isSaving.running
-                            ? "success"
-                            : "successDisabled"}
-                        title="Save"
-                        disabled={isSaving.running}
-                        onClick={handleSave}
-                    >
-                        {!isSaving.running
-                            ? <Icon name="save" size="lg" />
-                            : (
-                                <Loader color="white" size="md">
-                                    Saving...
-                                </Loader>
-                            )}
-                    </Button>{" "}
-                    <Button
-                        color="primary"
-                        title={isProtected.value ? "Unprotect" : "Protect"}
-                        disabled={isSaving.running}
-                        onClick={() => isProtected.value = !isProtected.value}
-                    >
-                        <Icon
-                            name={isProtected.value
-                                ? "lock-alt"
-                                : "lock-open-alt"}
-                            type={isProtected.value ? "solid" : "regular"}
-                            size="lg"
-                        />
-                    </Button>{" "}
-                    {noteId.value
-                        ? (
-                            <>
-                                <Button
-                                    color="danger"
-                                    disabled={isSaving.running}
-                                    title="Close"
-                                    onClick={handleCancelChanges}
-                                >
-                                    <Icon
-                                        name="minus-circle"
-                                        size="lg"
-                                        type="solid"
-                                    />
-                                </Button>
-                                {" "}
-                            </>
-                        )
-                        : null}
+                    {query.min("md") && (
+                        <>
+                            <Button
+                                color={!isSaving.running
+                                    ? "success"
+                                    : "successDisabled"}
+                                title="Save"
+                                disabled={isSaving.running}
+                                onClick={handleSave}
+                            >
+                                {!isSaving.running
+                                    ? <Icon name="save" size="lg" />
+                                    : (
+                                        <Loader color="white" size="md">
+                                            Saving...
+                                        </Loader>
+                                    )}
+                            </Button>{" "}
+                            <Button
+                                color="primary"
+                                title={isProtected.value
+                                    ? "Unprotect"
+                                    : "Protect"}
+                                disabled={isSaving.running}
+                                onClick={() =>
+                                    isProtected.value = !isProtected.value}
+                            >
+                                <Icon
+                                    name={isProtected.value
+                                        ? "lock-alt"
+                                        : "lock-open-alt"}
+                                    type={isProtected.value
+                                        ? "solid"
+                                        : "regular"}
+                                    size="lg"
+                                />
+                            </Button>{" "}
+                            {noteId.value
+                                ? (
+                                    <>
+                                        <Button
+                                            color="danger"
+                                            disabled={isSaving.running}
+                                            title="Close"
+                                            onClick={handleCancelChanges}
+                                        >
+                                            <Icon
+                                                name="minus-circle"
+                                                size="lg"
+                                                type="solid"
+                                            />
+                                        </Button>
+                                        {" "}
+                                    </>
+                                )
+                                : null}
+                        </>
+                    )}
+
                     {!isSaving.running && (
                         <MoreMenu
                             onMenuItemClick={handleMenuItemClicked}

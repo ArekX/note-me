@@ -24,7 +24,7 @@ import ButtonGroup from "$components/ButtonGroup.tsx";
 import { addMessage } from "$frontend/toast-message.ts";
 import { OneTimeReminder } from "$islands/notes/windows/components/OneTimeReminder.tsx";
 import { RepeatReminder } from "$islands/notes/windows/components/RepeatReminder.tsx";
-import PresetReminder from "$islands/notes/windows/components/PresetReminder.tsx";
+import QuickPickReminder from "./components/QuickPickReminder.tsx";
 import { useTimeFormat } from "$frontend/hooks/use-time-format.ts";
 import { validateSchema } from "$schemas/mod.ts";
 import { setReminderSchema } from "$schemas/notes.ts";
@@ -213,7 +213,7 @@ export default function NoteReminder({
             canCancel={true}
             onCancel={onClose}
             title="Note Reminder"
-            props={{ class: "w-3/6" }}
+            props={{ "class": "md:w-3/4 lg:w-2/4 max-md:w-full" }}
         >
             {reminderLoader.running ? <Loader color="white" /> : (
                 <div>
@@ -242,7 +242,7 @@ export default function NoteReminder({
                                         selector={selected.value}
                                         map={{
                                             preset: () => (
-                                                <PresetReminder
+                                                <QuickPickReminder
                                                     onPresetSelected={handlePresetSelected}
                                                 />
                                             ),

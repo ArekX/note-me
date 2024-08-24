@@ -1,17 +1,27 @@
 import DropdownMenu from "$islands/DropdownMenu.tsx";
 import { closeAllPopovers } from "$frontend/hooks/use-single-popover.ts";
+import {
+    ResponsiveSize,
+    useResponsiveQuery,
+} from "$frontend/hooks/use-responsive-query.ts";
 
 type ModeType = "view" | "view-readonly" | "edit-new" | "edit-existing";
 
 export interface MoreMenuItem {
     name: string;
     icon: string;
+    maxSize?: ResponsiveSize;
+    minSize?: ResponsiveSize;
     modes: ModeType[];
     onClick: () => void;
 }
 
 export type MenuItemActions =
     | "preview"
+    | "open-viewer"
+    | "open-editor"
+    | "editor-toggle-protection"
+    | "editor-save"
     | "edit"
     | "details"
     | "history"
@@ -32,17 +42,47 @@ interface MoreMenuProps {
 export default function MoreMenu(
     { mode, inPreviewMode, onMenuItemClick }: MoreMenuProps,
 ) {
+    const query = useResponsiveQuery();
+
     const sendAction = (action: MenuItemActions) => {
         onMenuItemClick?.(action);
         closeAllPopovers();
     };
 
-    const items: MoreMenuItem[] = [
+    const items: MoreMenuItem[] = ([
         {
             name: inPreviewMode ? "Edit mode" : "Preview mode",
             icon: inPreviewMode ? "pencil" : "show",
             modes: ["edit-new", "edit-existing"],
             onClick: () => sendAction(inPreviewMode ? "edit" : "preview"),
+        },
+        {
+            name: "Save",
+            icon: "save",
+            maxSize: "sm",
+            modes: ["edit-new", "edit-existing"],
+            onClick: () => sendAction("editor-save"),
+        },
+        {
+            name: "Cancel changes",
+            icon: "minus-circle",
+            maxSize: "sm",
+            modes: ["edit-existing"],
+            onClick: () => sendAction("open-viewer"),
+        },
+        {
+            name: "Edit",
+            icon: "pencil",
+            maxSize: "sm",
+            modes: ["view"],
+            onClick: () => sendAction("open-editor"),
+        },
+        {
+            name: "Toggle protection",
+            icon: "lock",
+            maxSize: "sm",
+            modes: ["edit-existing"],
+            onClick: () => sendAction("editor-toggle-protection"),
         },
         {
             name: "Details",
@@ -98,7 +138,21 @@ export default function MoreMenu(
             modes: ["view", "edit-existing", "view-readonly"],
             onClick: () => sendAction("help"),
         },
-    ].filter(({ modes }) => modes.includes(mode)) as MoreMenuItem[];
+    ] as MoreMenuItem[]).filter(({ modes, minSize = null, maxSize = null }) => {
+        if (!modes.includes(mode)) {
+            return false;
+        }
+
+        if (minSize !== null && !query.min(minSize as ResponsiveSize)) {
+            return false;
+        }
+
+        if (maxSize !== null && !query.max(maxSize as ResponsiveSize)) {
+            return false;
+        }
+
+        return true;
+    }) as MoreMenuItem[];
 
     if (items.length === 0) {
         return null;

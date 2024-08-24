@@ -1,7 +1,8 @@
 import { useSignal } from "@preact/signals";
+import { ComponentChild } from "preact";
 
 export interface ListMap {
-    [key: string]: string;
+    [key: string]: string | ComponentChild;
 }
 
 export const useListState = <T extends ListMap>(

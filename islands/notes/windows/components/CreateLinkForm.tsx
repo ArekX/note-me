@@ -64,7 +64,7 @@ export default function CreateLinkForm({
     return (
         <>
             <div class="text-xl font-semibold py-2">New link</div>
-            <div class="flex items-start">
+            <div class="flex items-start flex-wrap">
                 <div class="mt-2">
                     {createLinkLoader.running
                         ? <Loader color="white">Saving...</Loader>
@@ -79,8 +79,8 @@ export default function CreateLinkForm({
                             </Button>
                         )}
                 </div>
-                <div class="flex items-start link-form-expiration ml-2">
-                    <div class="mr-2 mt-4">
+                <div class="max-md:basis-full flex flex-wrap items-start link-form-expiration ml-2">
+                    <div class="pr-2 pt-4">
                         <Checkbox
                             label="Add expiration date"
                             checked={includeExpiration.value}
@@ -89,7 +89,7 @@ export default function CreateLinkForm({
                     </div>
                     {includeExpiration.value
                         ? (
-                            <div class="h-14">
+                            <div class="h-14 max-md:basis-full">
                                 <Input
                                     type="date"
                                     value={expiresAt.value}

@@ -10,7 +10,7 @@ export type IconSize =
 
 interface IconProps {
     name: string;
-    type?: "regular" | "solid";
+    type?: "regular" | "solid" | "logo";
     size?: IconSize;
     onClick?: () => void;
     className?: string;
@@ -25,6 +25,12 @@ interface IconProps {
         | "fade-down";
 }
 
+const iconSettings = {
+    markdown: {
+        modifier: "l",
+    },
+};
+
 export default function Icon(
     {
         name,
@@ -35,9 +41,19 @@ export default function Icon(
         className = "",
     }: IconProps,
 ) {
+    let modifier = name in iconSettings
+        ? iconSettings[name as keyof typeof iconSettings].modifier
+        : "";
+
+    if (type === "solid") {
+        modifier = "s";
+    } else if (type === "logo") {
+        modifier = "l";
+    }
+
     return (
         <i
-            class={`bx bx${type == "regular" ? "" : "s"}-${name} text-${size} ${
+            class={`bx bx${modifier}-${name} text-${size} ${
                 animation ? `bx-${animation}` : ""
             } align-middle ${className}`}
             onClick={onClick}

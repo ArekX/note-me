@@ -37,17 +37,21 @@ export default function ConfirmDialog({
             {isProcessing
                 ? <Loader color="white">Processing...</Loader>
                 : (
-                    <div class="text-center p-2">
-                        <span class="pr-4">
-                            <Button
-                                color={confirmColor}
-                                setAsDefault={true}
-                                onClick={onConfirm}
-                            >
-                                {confirmText}
-                            </Button>
-                        </span>
-                        <Button color={cancelColor} onClick={onCancel}>
+                    <div class="flex flex-wrap items-center justify-center p-2">
+                        <Button
+                            color={confirmColor}
+                            setAsDefault={true}
+                            onClick={onConfirm}
+                            addClass="max-md:basis-3/4"
+                        >
+                            {confirmText}
+                        </Button>
+
+                        <Button
+                            color={cancelColor}
+                            onClick={onCancel}
+                            addClass="max-md:basis-3/4 max-md:mt-2 md:ml-2"
+                        >
                             {cancelText}
                         </Button>
                     </div>

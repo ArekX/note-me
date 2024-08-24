@@ -6,6 +6,7 @@ import { useResponsiveQuery } from "$frontend/hooks/use-responsive-query.ts";
 import { useSignal } from "@preact/signals";
 import { useMobileMenu } from "$frontend/hooks/use-mobile-menu.ts";
 import SidebarMenuTop from "$islands/sidebar/SidebarMenuTop.tsx";
+import { IS_BROWSER } from "$fresh/runtime.ts";
 
 export interface SidebarProps {
     showSettings: boolean;
@@ -21,7 +22,7 @@ export default function Sidebar(
 
     const mobileMenu = useMobileMenu();
 
-    if (query.max("sm") && !mobileMenu.isMenuOpen.value) {
+    if (IS_BROWSER && query.max("sm") && !mobileMenu.isMenuOpen.value) {
         return (
             <div class="w-full text-white border-b border-gray-600/50">
                 <SidebarMenuTop showSettings={showSettings} />
@@ -38,14 +39,16 @@ export default function Sidebar(
             }}
         >
             <div class="backdrop-blur-xl h-full flex flex-col flex-nowrap justify-start items-stretch content-start">
-                <SidebarMenu
-                    initialNotifications={initialNotifications}
-                    showSettings={showSettings}
-                    isOpen={isOpen.value}
-                    onSetOpen={(value) => isOpen.value = value}
-                />
+                {IS_BROWSER && (
+                    <SidebarMenu
+                        initialNotifications={initialNotifications}
+                        showSettings={showSettings}
+                        isOpen={isOpen.value}
+                        onSetOpen={(value) => isOpen.value = value}
+                    />
+                )}
 
-                <SideBarPanel />
+                {IS_BROWSER && <SideBarPanel />}
             </div>
         </div>
     );

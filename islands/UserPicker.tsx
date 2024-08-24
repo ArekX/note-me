@@ -183,7 +183,7 @@ export default function UserPicker({
 
             <div class="mt-2">
                 <div class="text-sm">{selectedUsersText}</div>
-                <div class="grid grid-cols-2 gap-2">
+                <div class="grid md:grid-cols-2 md:gap-2 max-md:grid-cols-1">
                     {selected.map((user) => (
                         <UserItem
                             key={user.id}

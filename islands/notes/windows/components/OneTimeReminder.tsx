@@ -70,8 +70,8 @@ export function OneTimeReminder({
     return (
         <>
             <p class="py-2">When should we remind you?</p>
-            <div class="flex">
-                <div class="w-1/3">
+            <div class="flex flex-wrap">
+                <div class="basis-1/3 max-md:basis-full">
                     <Input
                         type="date"
                         label="At Date"
@@ -80,7 +80,7 @@ export function OneTimeReminder({
                         onInput={(v) => handleInput("date", v)}
                     />
                 </div>
-                <div class="w-1/3 pl-2">
+                <div class="basis-1/3 md:pl-2 max-md:pt-2 max-md:basis-full">
                     <Input
                         type="time"
                         label="At Time"

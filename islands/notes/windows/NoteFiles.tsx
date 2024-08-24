@@ -113,7 +113,7 @@ export default function NoteFiles(
             canCancel={true}
             onCancel={onClose}
             props={{
-                class: "w-1/2",
+                class: "w-1/2 max-md:w-full",
             }}
             title="Files"
         >
@@ -122,13 +122,11 @@ export default function NoteFiles(
                     {files.value.length > 0
                         ? (
                             <>
-                                <div class="py-4">
-                                    Files are detected in this note. If a file
-                                    is public it can be viewed by anyone with
-                                    the link otherwise it is only visible to
-                                    you.
+                                <div class="py-4 max-md:text-sm">
+                                    Files are detected in this note. Files
+                                    marked (Private) are only visible to you.
 
-                                    <p class="pt-2">Files:</p>
+                                    <p class="pt-2 font-semibold">Files</p>
                                 </div>
                                 <ul class="list-disc ml-4">
                                     {files.value.map((file) => (
@@ -151,9 +149,10 @@ export default function NoteFiles(
                                     {isShared.value && hasPrivateFiles() && (
                                         <p class="pt-4 text-sm">
                                             This note is shared with other
-                                            users. Files are not automatically
-                                            shared due to privacy concerns as
-                                            they can be in multiple notes.
+                                            users. Note that files are not
+                                            automatically shared due for privacy
+                                            and security reasons as they can
+                                            appear in multiple notes.
                                         </p>
                                     )}
 

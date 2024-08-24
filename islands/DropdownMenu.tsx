@@ -14,7 +14,7 @@ export interface DropdownMenuItem {
     onClick: () => void;
 }
 
-type MenuShowDirection = "right" | "bottom";
+type MenuShowDirection = "right" | "left" | "bottom";
 type DisplayType = "portal" | "inline";
 type InlineDirection = "left" | "right" | "top";
 
@@ -120,6 +120,10 @@ export default function DropdownMenu(
             menuRef.current.style.left = `${
                 iconRefRect.left + iconRefRect.width
             }px`;
+            return;
+        } else if (showDirection === "left") {
+            menuRef.current.style.top = `${iconRefRect.top - diff}px`;
+            menuRef.current.style.left = `${iconRefRect.left - rect.width}px`;
             return;
         }
 

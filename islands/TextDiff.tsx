@@ -14,13 +14,13 @@ export default function TextDiff({
     return (
         <div class="diff-viewer">
             <div>
-                <span>
+                <span class="inline-block mr-2">
                     <span class="legend legend-added"></span> Line added
                 </span>
-                <span class="ml-2">
+                <span class="inline-block mr-2">
                     <span class="legend legend-removed"></span> Line removed
                 </span>
-                <span class="ml-2">
+                <span class="inline-block">
                     <span class="legend legend-changed"></span> Line changed
                 </span>
             </div>

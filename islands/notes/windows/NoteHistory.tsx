@@ -31,6 +31,8 @@ export default function NoteHistory(
 
     const selectedItemIndex = useSignal<number | null>(0);
 
+    const isMobileSidePanelOpen = useSignal(false);
+
     const historyLoader = useLoader(true);
 
     const initialView = useSignal<ViewType>("preview");
@@ -78,14 +80,14 @@ export default function NoteHistory(
                         <TimeAgo time={history.created_at} />
                         {history.is_encrypted
                             ? (
-                                <>
+                                <span class="max-xl:block max-xl:ml-1">
                                     <Icon
-                                        className="ml-2"
+                                        className="xl:ml-2"
                                         name="lock"
                                         size="sm"
                                     />{" "}
                                     Protected
-                                </>
+                                </span>
                             )
                             : null}
                     </span>
@@ -98,6 +100,9 @@ export default function NoteHistory(
                         noteRecord={record}
                         noteId={noteId}
                         onClose={onClose}
+                        onSidePanelOpen={() =>
+                            isMobileSidePanelOpen.value = !isMobileSidePanelOpen
+                                .value}
                         initialView={initialView.value}
                         onViewChange={(view) => initialView.value = view}
                     />
@@ -123,7 +128,7 @@ export default function NoteHistory(
             canCancel={true}
             onCancel={onClose}
             props={{
-                class: "w-5/6",
+                class: "w-5/6 max-md:w-full",
             }}
             title="History"
         >
@@ -148,6 +153,12 @@ export default function NoteHistory(
                             <SideTabPanel
                                 selectedIndex={selectedItemIndex.value!}
                                 items={results.value}
+                                isMobileSidePanelOpen={isMobileSidePanelOpen
+                                    .value}
+                                onSelect={(_, index) => {
+                                    selectedItemIndex.value = index;
+                                    isMobileSidePanelOpen.value = false;
+                                }}
                                 styleProps={{
                                     height: "calc(100vh - 208px)",
                                 }}
@@ -155,8 +166,8 @@ export default function NoteHistory(
                         )
                 )}
 
-            <div class="flex items-center mt-4">
-                <div class="basis-3/5 text-left ">
+            <div class="flex flex-wrap items-center mt-4">
+                <div class="basis-3/5 max-md:basis-full text-left ">
                     <Pagination
                         currentPage={page.value}
                         perPage={perPage.value}
@@ -165,7 +176,7 @@ export default function NoteHistory(
                         alignmentClass="justify-start"
                     />
                 </div>
-                <div class="basis-2/5 text-right pr-1.5">
+                <div class="basis-2/5 max-md:basis-full text-right md:pr-1.5 max-md:py-4">
                     <Button onClick={onClose} color="primary">
                         Close
                     </Button>
