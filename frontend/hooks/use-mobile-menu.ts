@@ -10,12 +10,15 @@ if (IS_BROWSER) {
         }
     };
 
-    document.addEventListener("click", (event) => {
+    const handleListener = (event: Event) => {
         const target = event.target as HTMLElement;
         if (target.tagName === "A") {
             closeMenu();
         }
-    });
+    };
+
+    document.addEventListener("click", handleListener);
+    document.addEventListener("touchend", handleListener);
 }
 
 export const useMobileMenu = () => {
