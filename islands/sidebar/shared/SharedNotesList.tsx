@@ -16,6 +16,7 @@ import NoItemMessage from "$islands/sidebar/NoItemMessage.tsx";
 import LoadMoreWrapper from "$islands/LoadMoreWrapper.tsx";
 import SharedNoteItem from "$islands/sidebar/shared/SharedNoteItem.tsx";
 import SwitcherContainer from "$islands/sidebar/SwitcherContainer.tsx";
+import SidebarPanelContents from "$islands/sidebar/SidebarPanelContents.tsx";
 
 interface SharedNotesListProps {
     switcherComponent: ComponentChild;
@@ -73,17 +74,20 @@ export default function SharedNotesList({
     }, []);
 
     return (
-        <div>
-            <SwitcherContainer
-                switcherComponent={switcherComponent}
-                icons={[
-                    {
-                        name: "Reload",
-                        icon: "refresh",
-                        onClick: reload,
-                    },
-                ]}
-            />
+        <SidebarPanelContents
+            controlPanel={
+                <SwitcherContainer
+                    switcherComponent={switcherComponent}
+                    icons={[
+                        {
+                            name: "Reload",
+                            icon: "refresh",
+                            onClick: reload,
+                        },
+                    ]}
+                />
+            }
+        >
             {loader.running
                 ? (
                     <div class="text-center">
@@ -114,6 +118,6 @@ export default function SharedNotesList({
                         </LoadMoreWrapper>
                     </>
                 )}
-        </div>
+        </SidebarPanelContents>
     );
 }

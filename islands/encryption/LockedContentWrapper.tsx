@@ -19,6 +19,7 @@ interface LockedContentWrapperProps<T extends object> {
     isLockedKey: keyof T;
     unlockRender: (props: { unlockedRecords: T[] }) => JSX.Element;
     dialogMode?: boolean;
+    onUnlockFail?: (reason: string) => void;
 }
 
 interface ProtectionLoaderProps {
@@ -48,6 +49,7 @@ export default function LockedContentWrapper<T extends object>({
     isLockedKey,
     dialogMode,
     unlockRender: UnlockedRenderComponent,
+    onUnlockFail,
 }: LockedContentWrapperProps<T>) {
     if (!IS_BROWSER) {
         return null;
@@ -101,6 +103,7 @@ export default function LockedContentWrapper<T extends object>({
         } catch (e) {
             failReason.value = typeof e === "string" ? e : (e.message ??
                 "Unknown error or data could not be decrypted.");
+            onUnlockFail?.(failReason.value ?? "Unknown error.");
             return;
         } finally {
             await consumePropagationTicket(propagationTicket);
@@ -154,7 +157,7 @@ export default function LockedContentWrapper<T extends object>({
                                 isDialogMode={dialogMode ?? false}
                             />
                         )}
-                        {failReason.value && (
+                        {!dialogMode && failReason.value && (
                             <div>
                                 <div class="text-2xl font-semibold py-2">
                                     Password is required for this area.

@@ -13,7 +13,7 @@ import {
     SystemErrorMessage,
     useWebsocketService,
 } from "$frontend/hooks/use-websocket-service.ts";
-import { addSystemErrorMessage } from "$frontend/toast-message.ts";
+import { addMessage, addSystemErrorMessage } from "$frontend/toast-message.ts";
 import { useEffect } from "preact/hooks";
 import { useLoader } from "$frontend/hooks/use-loader.ts";
 import Dialog from "$islands/Dialog.tsx";
@@ -93,6 +93,14 @@ export default function NoteWindow({
         }
     });
 
+    const handleUnlockFail = (reason: string) => {
+        addMessage({
+            type: "info",
+            text: `Unlock failed: ${reason}`,
+        });
+        onClose();
+    };
+
     useEffect(() => {
         if (existingNoteText) {
             noteRecord.value = {
@@ -120,6 +128,7 @@ export default function NoteWindow({
             protectedKeys={["text"]}
             dialogMode={true}
             isLockedKey={"is_encrypted"}
+            onUnlockFail={handleUnlockFail}
             unlockRender={({ unlockedRecords: [record] }) => {
                 return (
                     <Picker<NoteWindowTypes, NoteWindowComponentProps>

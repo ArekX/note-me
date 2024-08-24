@@ -23,7 +23,7 @@ export default function SidebarPanelContents({
                 </div>
             )}
 
-            <div class="flex-grow overflow-auto">
+            <div class="flex-grow overflow-auto content-sidebar">
                 {children}
             </div>
         </>

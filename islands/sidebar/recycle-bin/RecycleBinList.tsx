@@ -16,6 +16,7 @@ import RecycleBinItem from "$islands/sidebar/recycle-bin/RecycleBinItem.tsx";
 import { useTreeWebsocket } from "$islands/tree/hooks/use-tree-websocket.ts";
 import { useTreeState } from "$islands/tree/hooks/use-tree-state.ts";
 import SwitcherContainer from "$islands/sidebar/SwitcherContainer.tsx";
+import SidebarPanelContents from "$islands/sidebar/SidebarPanelContents.tsx";
 
 interface RecycleBinListProps {
     switcherComponent: ComponentChild;
@@ -81,17 +82,20 @@ export default function RecycleBinList({
     }, []);
 
     return (
-        <div>
-            <SwitcherContainer
-                switcherComponent={switcherComponent}
-                icons={[
-                    {
-                        name: "Reload",
-                        icon: "refresh",
-                        onClick: reload,
-                    },
-                ]}
-            />
+        <SidebarPanelContents
+            controlPanel={
+                <SwitcherContainer
+                    switcherComponent={switcherComponent}
+                    icons={[
+                        {
+                            name: "Reload",
+                            icon: "refresh",
+                            onClick: reload,
+                        },
+                    ]}
+                />
+            }
+        >
             {loader.running
                 ? (
                     <div class="text-center">
@@ -122,6 +126,6 @@ export default function RecycleBinList({
                         </LoadMoreWrapper>
                     </>
                 )}
-        </div>
+        </SidebarPanelContents>
     );
 }

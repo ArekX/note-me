@@ -14,6 +14,7 @@ import NoItemMessage from "../NoItemMessage.tsx";
 import { useEffect } from "preact/hooks";
 import { useSearch } from "$frontend/hooks/use-search.ts";
 import SwitcherContainer from "$islands/sidebar/SwitcherContainer.tsx";
+import SidebarPanelContents from "$islands/sidebar/SidebarPanelContents.tsx";
 
 interface ReminderListProps {
     switcherComponent: ComponentChild;
@@ -73,18 +74,20 @@ export default function RemindersList({
     }, []);
 
     return (
-        <div>
-            <SwitcherContainer
-                switcherComponent={switcherComponent}
-                icons={[
-                    {
-                        name: "Reload",
-                        icon: "refresh",
-                        onClick: reload,
-                    },
-                ]}
-            />
-
+        <SidebarPanelContents
+            controlPanel={
+                <SwitcherContainer
+                    switcherComponent={switcherComponent}
+                    icons={[
+                        {
+                            name: "Reload",
+                            icon: "refresh",
+                            onClick: reload,
+                        },
+                    ]}
+                />
+            }
+        >
             {loader.running
                 ? (
                     <div class="text-center">
@@ -115,6 +118,6 @@ export default function RemindersList({
                         </LoadMoreWrapper>
                     </>
                 )}
-        </div>
+        </SidebarPanelContents>
     );
 }

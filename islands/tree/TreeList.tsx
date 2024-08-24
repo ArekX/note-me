@@ -11,6 +11,7 @@ import { DeleteGroupProgressDialog } from "$islands/tree/DeleteGroupProgressDial
 import NoItemMessage from "../sidebar/NoItemMessage.tsx";
 import { useEffect } from "preact/hooks";
 import { useSearch } from "$frontend/hooks/use-search.ts";
+import SidebarPanelContents from "$islands/sidebar/SidebarPanelContents.tsx";
 
 interface TreeListProps {
     switcherComponent: ComponentChild;
@@ -28,12 +29,15 @@ export default function TreeList({
     }, []);
 
     return (
-        <>
-            <RootGroupBar
-                dragManager={dragManager}
-                treeManager={tree}
-                switcherComponent={switcherComponent}
-            />
+        <SidebarPanelContents
+            controlPanel={
+                <RootGroupBar
+                    dragManager={dragManager}
+                    treeManager={tree}
+                    switcherComponent={switcherComponent}
+                />
+            }
+        >
             <div class="overflow-auto note-container">
                 <Loader
                     color="white"
@@ -73,6 +77,6 @@ export default function TreeList({
                 {tree.groupDelete &&
                     <DeleteGroupProgressDialog />}
             </div>
-        </>
+        </SidebarPanelContents>
     );
 }
