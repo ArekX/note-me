@@ -129,8 +129,6 @@ export default function NoteEditor({
             return text.value;
         }
 
-        console.log(isProtected.value);
-
         return await contentEncryption.encryptText(text.value);
     };
 
