@@ -66,7 +66,11 @@ const MenuItems = (
                 <div
                     key={index}
                     class="hover:bg-gray-700 hover:border-gray-600/90 border-t border-transparent cursor-pointer py-1 px-4 last:rounded-b-lg first:rounded-t-lg text-left"
-                    onClick={() => onClick(item)}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        onClick(item);
+                    }}
                 >
                     <Icon name={item.icon} /> {item.name}
                 </div>
