@@ -4,21 +4,21 @@ import { IS_BROWSER } from "$fresh/runtime.ts";
 const isMenuOpen = signal(false);
 
 if (IS_BROWSER) {
-    const closeMenu = () => {
-        if (isMenuOpen.value) {
-            isMenuOpen.value = false;
-        }
-    };
-
     const handleListener = (event: Event) => {
         const target = event.target as HTMLElement;
         if (target.tagName === "A") {
-            closeMenu();
+            setTimeout(() => {
+                if (isMenuOpen.value) {
+                    isMenuOpen.value = false;
+                }
+            }, 100);
         }
     };
 
-    document.addEventListener("click", handleListener);
-    document.addEventListener("touchend", handleListener);
+    addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("click", handleListener);
+        document.addEventListener("touchend", handleListener);
+    });
 }
 
 export const useMobileMenu = () => {
