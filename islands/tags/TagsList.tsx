@@ -94,7 +94,7 @@ export default function TagsList() {
     return (
         <div class="p-4 text-white">
             {user.can(CanManageTags.Update) && (
-                <div class="p-4 w-full text-right">
+                <div class="py-4 w-full text-right">
                     <Button
                         color="success"
                         onClick={() => {
@@ -128,32 +128,34 @@ export default function TagsList() {
                         <Loader />
                     </div>
                 )}
-                {results.value.map((tag) => (
-                    <div
-                        key={tag.id}
-                        class="inline-block mr-4 mt-4"
-                    >
-                        <span class="flex">
-                            <span
-                                class="rounded-l-lg bg-gray-900 text-white px-6 py-2 border-b-0 cursor-pointer hover:bg-gray-700 border-gray-700 border border-r-0"
-                                onClick={() => tagToEdit.select(tag)}
-                            >
-                                {tag.name}
+                <div class="flex flex-wrap">
+                    {results.value.map((tag) => (
+                        <div
+                            key={tag.id}
+                            class="max-md:w-full mr-4 mt-4"
+                        >
+                            <span class="flex w-full">
+                                <span
+                                    class="rounded-l-lg bg-gray-900 text-white px-6 py-2 border-b-0 cursor-pointer hover:bg-gray-700 border-gray-700 border border-r-0 overflow-hidden text-ellipsis"
+                                    onClick={() => tagToEdit.select(tag)}
+                                >
+                                    {tag.name}
+                                </span>
+                                <span
+                                    class="rounded-r-lg bg-red-900/90 text-white p-2 border-b-0 cursor-pointer hover:bg-red-700 border border-red-700/40 border-l-0"
+                                    onClick={() => tagToDelete.select(tag)}
+                                >
+                                    <Icon name="minus-circle" size="xl" />
+                                </span>
                             </span>
-                            <span
-                                class="rounded-r-lg bg-red-900/90 text-white p-2 border-b-0 cursor-pointer hover:bg-red-700 border border-red-700/40 border-l-0"
-                                onClick={() => tagToDelete.select(tag)}
-                            >
-                                <Icon name="minus-circle" size="xl" />
-                            </span>
-                        </span>
-                    </div>
-                ))}
-                {!tagsLoader.running && results.value.length === 0 && (
-                    <div class="text-center p-4">
-                        No tags available
-                    </div>
-                )}
+                        </div>
+                    ))}
+                    {!tagsLoader.running && results.value.length === 0 && (
+                        <div class="text-center p-4">
+                            No tags available
+                        </div>
+                    )}
+                </div>
                 {!tagsLoader.running && (
                     <div class="pt-5">
                         <Pagination

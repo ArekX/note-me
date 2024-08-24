@@ -17,6 +17,10 @@ html, body {
     
 }
 
+.content-sidebar {
+    padding-bottom: 20vh;
+}
+
 body.allow-scrolling {
     overflow: auto;
 }

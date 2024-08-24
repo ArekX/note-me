@@ -36,7 +36,7 @@ export default async function Layout(
                 />
             )}
             <div
-                class={`w-4/5 max-md:w-full max-md:flex-grow bg-gray-900 overflow-auto ${
+                class={`content-sidebar w-4/5 max-md:w-full max-md:flex-grow bg-gray-900 overflow-auto ${
                     isSidebarAllowed ? "main-with-sidebar" : ""
                 }`}
             >
