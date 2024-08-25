@@ -111,7 +111,7 @@ export default function Notifications(props: NotificationsProps) {
         );
 
     const handleOpenView = () => {
-        if (query.max("md")) {
+        if (query.max("sm")) {
             isDialogOpen.value = true;
             return;
         }
@@ -164,7 +164,7 @@ export default function Notifications(props: NotificationsProps) {
                         />
                     </div>
                 )
-                : query.max("md") && isDialogOpen.value && (
+                : query.max("sm") && isDialogOpen.value && (
                     <Dialog
                         visible={true}
                         props={{

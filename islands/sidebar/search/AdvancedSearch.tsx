@@ -120,9 +120,19 @@ export default function AdvancedSearch(
                 </div>
             </div>
 
-            <div class="py-2 text-right">
-                <Button color="success" onClick={performSearch}>Search</Button>
-                <Button color="primary" onClick={onClose} addClass="ml-2">
+            <div class="py-2 text-right max-md:text-center">
+                <Button
+                    color="success"
+                    addClass="max-md:w-full max-md:mb-2 max-md:block"
+                    onClick={performSearch}
+                >
+                    Search
+                </Button>
+                <Button
+                    color="primary"
+                    addClass="md:ml-2 max-md:w-full max-md:mb-2 max-md:block"
+                    onClick={onClose}
+                >
                     Close
                 </Button>
             </div>

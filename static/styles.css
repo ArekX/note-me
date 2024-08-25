@@ -39,17 +39,17 @@ body.allow-scrolling {
     line-height: 1.2rem;
 }
 
+.max-notification-height {
+    @media (min-width: 768px) {
+        max-height: 70vh;
+    }
+}
+
 .main-with-sidebar {
     border-left: 1px solid;
     @apply border-gray-800;
 }
 
-
-
-.notification-menu .notifcation-list {
-    overflow: auto;
-    max-height: calc(100vh - 8rem);
-}
 
 .notification-menu:hover {
     @apply text-gray-300;

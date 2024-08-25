@@ -26,7 +26,7 @@ export default function NotificationListView(
     return (
         <>
             {notifications.length > 0 && (
-                <>
+                <div class="flex flex-col items-stretch justify-start h-full max-notification-height">
                     <div class="pr-2 pb-2 border-b border-gray-700">
                         <div class="flex">
                             <div class="text-md max-md:text-left font-semibold w-2/4 pl-4 max-md:pl-2 pt-2">
@@ -65,7 +65,7 @@ export default function NotificationListView(
                             </div>
                         </div>
                     </div>
-                    <div class="notifcation-list">
+                    <div class="flex-grow lg:overflow-auto">
                         {notifications.map((notification) => (
                             <NotificationItem
                                 key={notification.id}
@@ -75,7 +75,7 @@ export default function NotificationListView(
                             />
                         ))}
                     </div>
-                </>
+                </div>
             )}
             {notifications.length === 0 && (
                 <div class="py-4">

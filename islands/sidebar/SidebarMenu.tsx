@@ -59,7 +59,7 @@ const DesktopSidebarMenu = (
     const logoSize = query.max("md") ? 20 : 25;
     return (
         <div class="flex items-center justify-center p-2">
-            <div class="text-left hidden lg:block">
+            <div class="flex-grow text-left hidden lg:block">
                 <a href="/app/note" f-partial={"/app/note"}>
                     <Logo
                         white={true}
@@ -71,7 +71,7 @@ const DesktopSidebarMenu = (
                 </a>
             </div>
 
-            <div class="flex-1 text-right max-lg:text-center">
+            <div class="text-right max-lg:text-center">
                 {query.max("md") && (
                     <a
                         href="/app/note"
