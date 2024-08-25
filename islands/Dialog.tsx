@@ -29,7 +29,6 @@ export default function Dialog({
 
         if (visible) {
             dialogRef.current.showModal();
-            dialogRef.current.focus();
         } else {
             dialogRef.current.close();
         }
