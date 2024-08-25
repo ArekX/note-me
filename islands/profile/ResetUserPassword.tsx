@@ -71,7 +71,7 @@ export default function ResetUserPassword({
     });
 
     return (
-        <div class="text-white w-1/2 m-auto p-5">
+        <div class="text-white w-full lg:w-1/2 m-auto p-5">
             <h1 class="text-3xl font-semibold">
                 <Logo white={true} height={40} width={40} /> Welcome to NoteMe,
                 {" "}
@@ -106,7 +106,7 @@ export default function ResetUserPassword({
                     </>
                 )}
 
-            <div class="w-1/2 py-5">
+            <div class="w-1/2 max-md:w-full py-5">
                 <div class="py-2">
                     <Input
                         label="Current Password"

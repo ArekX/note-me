@@ -108,6 +108,11 @@ export default function EditUserForm(
                 },
             );
 
+            addMessage({
+                type: "success",
+                text: "User created successfully.",
+            });
+
             return;
         }
 

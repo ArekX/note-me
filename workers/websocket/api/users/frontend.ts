@@ -57,7 +57,11 @@ import {
     loadSessionStateByUserId,
 } from "$backend/session/mod.ts";
 import { requireValidSchema } from "$schemas/mod.ts";
-import { addUserSchema, updateUserSchema } from "$schemas/users.ts";
+import {
+    addUserSchema,
+    updateUserSchema,
+    userProfileSchema,
+} from "$schemas/users.ts";
 import { CanManageUsers } from "$backend/rbac/permissions.ts";
 import { decryptNote, encryptNote } from "$backend/encryption.ts";
 import { DecryptTextMessage } from "$workers/websocket/api/users/messages.ts";
@@ -164,6 +168,14 @@ const handleFindUsers: ListenerFn<FindUsersMessage> = async (
 const handleUpdateProfile: ListenerFn<UpdateProfileMessage> = async (
     { message: { data }, sourceClient, respond },
 ) => {
+    await requireValidSchema(userProfileSchema, data);
+
+    if (data.old_password && data.old_password === data.new_password) {
+        throw new Deno.errors.InvalidData(
+            "New password must be different from the old password.",
+        );
+    }
+
     const result = await updateUserProfile(sourceClient?.userId!, data);
 
     if (result) {

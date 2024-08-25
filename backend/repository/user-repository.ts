@@ -152,6 +152,7 @@ export const createUserRecord = async (
         created_at: now,
         updated_at: now,
     };
+    console.log(userRecord);
     const result = await db.insertInto("user")
         .values(userRecord)
         .executeTakeFirst();
