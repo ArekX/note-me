@@ -104,9 +104,27 @@ export default function NodeItem({
         case "tableRow":
             return <tr>{items}</tr>;
         case "footnoteDefinition":
-            return <sup>{items}</sup>;
+            return (
+                <span class="footnote-def">
+                    <strong
+                        class="footnote-number"
+                        id={`footnote-${node.data.label}`}
+                    >
+                        {node.data.label}.
+                    </strong>
+                    {items}
+                </span>
+            );
         case "footnoteReference":
-            return <sup>{items}</sup>;
+            return (
+                <span class="footnote-ref">
+                    <sup
+                        onClick={() => location.hash = `footnote-${node.label}`}
+                    >
+                        {node.label}
+                    </sup>
+                </span>
+            );
         case "extension":
             return (
                 <Extension

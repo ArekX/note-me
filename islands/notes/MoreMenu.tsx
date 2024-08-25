@@ -168,6 +168,7 @@ export default function MoreMenu(
             iconSize="lg"
             displayType="inline"
             buttonBorderClass="border border-b-0"
+            addButtonClass="inline-block"
             items={items.map(({ name, icon, onClick }) => ({
                 name,
                 icon,

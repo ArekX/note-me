@@ -108,11 +108,11 @@ export default function ViewNote(
     return (
         <div class="view-note flex flex-col">
             <div class="flex flex-row">
-                <div class="title w-10/12">
+                <div class="title basis-4/6">
                     {recordData.value.title}
                 </div>
                 {!historyMode && shareMode !== "everyone" && (
-                    <div class="text-md ml-2 w-2/12 text-right">
+                    <div class="basis-2/6 pl-2 w-2/12 text-right">
                         {!readonly && query.min("md") && (
                             <Button
                                 color="success"

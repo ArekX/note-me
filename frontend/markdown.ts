@@ -5,7 +5,7 @@ export type AstNode = AstContainerNode | AstContentNode;
 export type AstContentNode =
     | AstContentNodeOf<"text">
     | AstContentNodeOf<"code">
-    | AstContentNodeOf<"footnoteReference">
+    | (AstContentNodeOf<"footnoteReference"> & { label: string })
     | AstContentNodeOf<"softBreak">
     | AstContentNodeOf<"hardBreak">
     | AstContentNodeOf<"rule">

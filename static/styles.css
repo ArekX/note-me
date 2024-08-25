@@ -368,6 +368,20 @@ table :not(thead) tr:hover {
     display: inline-block;
 }
 
+
+.markdown-viewer .footnote-ref {
+    cursor: pointer;
+    @apply pr-2;
+}
+
+.markdown-viewer .footnote-def > .footnote-number {
+    @apply pr-2 inline-block;
+}
+
+.markdown-viewer .footnote-def * {
+    display: inline;
+}
+
 .diff-viewer {
     display: block;
     margin-bottom: 5em;

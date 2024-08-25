@@ -305,7 +305,7 @@ export default function NoteEditor({
     return (
         <div class="note-editor flex flex-col">
             <div class="flex flex-row">
-                <div class="flex-grow">
+                <div class="basis-4/6">
                     <input
                         class="title-editor"
                         type="text"
@@ -322,7 +322,7 @@ export default function NoteEditor({
                         path="title"
                     />
                 </div>
-                <div class="text-sm ml-2">
+                <div class="basis-2/6 pl-2 text-right">
                     {query.min("xl") && (
                         <>
                             <Button
