@@ -39,12 +39,6 @@ body.allow-scrolling {
     line-height: 1.2rem;
 }
 
-.max-notification-height {
-    @media (min-width: 768px) {
-        max-height: 50vh;
-    }
-}
-
 .main-with-sidebar {
     border-left: 1px solid;
     @apply border-gray-800;
