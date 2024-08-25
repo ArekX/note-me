@@ -98,7 +98,7 @@ export default function RecycleBinList({
         >
             {loader.running
                 ? (
-                    <div class="text-center">
+                    <div class="text-center py-4">
                         <Loader color="white" />
                     </div>
                 )

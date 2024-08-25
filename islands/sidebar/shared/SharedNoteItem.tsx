@@ -43,8 +43,10 @@ export default function SharedNoteItem(
                 <span>
                     <Icon name="share-alt" size="sm" /> by {record.user_name},
                     {" "}
-                    <Icon name="time-five" size="sm" />{" "}
-                    <TimeAgo time={record.created_at} />
+                    <span class="max-lg:block">
+                        <Icon name="time-five" size="sm" />{" "}
+                        <TimeAgo time={record.created_at} />
+                    </span>
                 </span>
             </div>
         </div>

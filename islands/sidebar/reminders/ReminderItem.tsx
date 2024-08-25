@@ -54,7 +54,7 @@ export default function ReminderItem(
             class={`${itemClass} cursor-pointer items-center flex group ${addClass}`}
             onClick={handleOpenNote}
         >
-            <div class="w-4/6 p-2">
+            <div class="flex-grow p-2">
                 <TreeItemIcon
                     container={fromTreeRecord({
                         type: "note",
@@ -73,11 +73,15 @@ export default function ReminderItem(
                             )
                             : ""}
                     >
-                        Reminder set{"  "}<TimeAgo time={record.next_at} />
+                        <span title="Reminder at">
+                            <Icon name="alarm" size="sm" />
+                            {" "}
+                        </span>
+                        <TimeAgo time={record.next_at} />
                     </span>
                 </div>
             </div>
-            <div class="w-2/6 text-right hidden group-hover:block pr-2">
+            <div class="max-lg:hidden text-right hidden group-hover:lg:block pr-2">
                 {!hideReminderButton && (
                     <Button
                         color="primary"

@@ -20,6 +20,7 @@ import { useResponsiveQuery } from "$frontend/hooks/use-responsive-query.ts";
 import NotificationListView from "$islands/notifications/NotificationListView.tsx";
 import Dialog from "$islands/Dialog.tsx";
 import Button from "$components/Button.tsx";
+import { useWindowResize } from "$frontend/hooks/use-window-resize.ts";
 
 interface NotificationsProps {
     initialNotifications: NotificationRecord[];
@@ -125,7 +126,7 @@ export default function Notifications(props: NotificationsProps) {
 
     const { isOpen, open } = useSinglePopover("userNotifications-0", menuRef);
 
-    useEffect(() => {
+    const updateNotificationPanelPosition = () => {
         if (menuRef.current) {
             const el = menuRef.current;
 
@@ -134,8 +135,13 @@ export default function Notifications(props: NotificationsProps) {
             el.style.top = `${rect.bottom}px`;
             el.style.left = `${rect.left}px`;
             el.style.display = "block";
+            el.style.bottom = "20vh";
         }
-    }, [menuRef]);
+    };
+
+    useEffect(updateNotificationPanelPosition, [menuRef]);
+
+    useWindowResize(menuRef, updateNotificationPanelPosition);
 
     const unreadCount = notifications.value.filter((s) => !s.is_read).length;
 
@@ -167,7 +173,7 @@ export default function Notifications(props: NotificationsProps) {
                 ? (
                     <div
                         ref={menuRef}
-                        class="notification-container hidden fixed top-10 bottom-5 left-0 w-96 bg-gray-800 pt-2 z-50 shadow-black/80 shadow-sm text-white text-left rounded-lg border border-b-0 border-gray-600/50"
+                        class="notification-container hidden fixed top-10 left-0 w-96 bg-gray-800 pt-2 z-50 shadow-black/80 shadow-sm text-white text-left rounded-lg border border-b-0 border-gray-600/50"
                     >
                         <NotificationListView
                             notifications={notifications.value}

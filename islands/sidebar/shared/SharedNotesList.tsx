@@ -90,7 +90,7 @@ export default function SharedNotesList({
         >
             {loader.running
                 ? (
-                    <div class="text-center">
+                    <div class="text-center py-4">
                         <Loader color="white" />
                     </div>
                 )
