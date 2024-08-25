@@ -78,7 +78,7 @@ export default function NotificationListView(
                 </div>
             )}
             {notifications.length === 0 && (
-                <div class="py-4">
+                <div class="h-full flex justify-center items-center">
                     <NoItemMessage
                         icon="smile"
                         removePadding={true}
