@@ -90,7 +90,7 @@ export default function SideTabPanel<T = unknown, PassProps = unknown>(
                         ))}
                     </div>
                 )}
-                <div class="max-md:left-0 left-1/4 right-0 top-0 bottom-0 absolute md:pl-5 overflow-auto">
+                <div class="md:left-1/4 md:right-0 md:top-0 md:bottom-0 md:absolute md:pl-5 overflow-auto">
                     <PanelComponent
                         key={selectedPanel.selected.value!}
                         {...passProps}

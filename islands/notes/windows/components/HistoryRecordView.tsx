@@ -155,7 +155,7 @@ export default function HistoryRecordView(
         <>
             <div class="flex h-full flex-col flex-nowrap justify-start items-stretch">
                 <div class="flex-shrink flex w-full pb-2">
-                    <div class="basis-2/5 max-md:basis-1/4">
+                    <div class="basis-2/5 md:max-lg:basis-3/5 max-md:basis-1/4">
                         {query.min("md")
                             ? (
                                 <ButtonGroup<typeof items>
@@ -211,7 +211,7 @@ export default function HistoryRecordView(
                             )}
                     </div>
                     <div class="max-md:flex-grow max-md:block hidden"></div>
-                    <div class="basis-3/5 max-md:basis-1/4 text-right px-2 max-md:pr-0">
+                    <div class="basis-3/5 md:max-lg:basis-2/5 max-md:basis-1/4 text-right px-2 max-md:pr-0">
                         <Button
                             color="warning"
                             onClick={() => confirmRevert.value = true}

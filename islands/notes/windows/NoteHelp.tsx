@@ -60,9 +60,11 @@ export default function NoteHelp({ onClose }: HelpProps) {
                             component: () => <KeyboardShortcuts />,
                         },
                     ]}
-                    styleProps={{
-                        height: "calc(100vh - 208px)",
-                    }}
+                    styleProps={query.min("md")
+                        ? {
+                            height: "calc(100vh - 208px)",
+                        }
+                        : { minHeight: "200px" }}
                 />
             </div>
             <div class="text-right">

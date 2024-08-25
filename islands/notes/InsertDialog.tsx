@@ -221,9 +221,13 @@ export default function InsertDialog({
                         items={panelItems}
                         isMobileSidePanelOpen={isMobileSidePanelOpen.value}
                         onSelect={handleSelectComponent}
-                        styleProps={{
-                            height: "calc(100vh - 195px)",
-                        }}
+                        styleProps={query.min("md")
+                            ? {
+                                height: "calc(100vh - 195px)",
+                            }
+                            : {
+                                minHeight: "200px",
+                            }}
                         passProps={{
                             noteText,
                             onInsertDataChange: (data) =>

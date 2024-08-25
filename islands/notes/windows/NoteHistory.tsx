@@ -21,6 +21,7 @@ import HistoryRecordView, {
     ViewType,
 } from "$islands/notes/windows/components/HistoryRecordView.tsx";
 import Icon from "$components/Icon.tsx";
+import { useResponsiveQuery } from "$frontend/hooks/use-responsive-query.ts";
 
 export default function NoteHistory(
     { noteId, onClose, record }: NoteWindowComponentProps,
@@ -30,6 +31,8 @@ export default function NoteHistory(
     >();
 
     const selectedItemIndex = useSignal<number | null>(0);
+
+    const query = useResponsiveQuery();
 
     const isMobileSidePanelOpen = useSignal(false);
 
@@ -159,9 +162,11 @@ export default function NoteHistory(
                                     selectedItemIndex.value = index;
                                     isMobileSidePanelOpen.value = false;
                                 }}
-                                styleProps={{
-                                    height: "calc(100vh - 208px)",
-                                }}
+                                styleProps={query.min("md")
+                                    ? {
+                                        height: "calc(100vh - 208px)",
+                                    }
+                                    : { minHeight: "200px" }}
                             />
                         )
                 )}
