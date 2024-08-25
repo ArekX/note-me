@@ -38,7 +38,7 @@ export default function TreeList({
                 />
             }
         >
-            <div class="overflow-auto note-container">
+            <div class="note-container">
                 <Loader
                     color="white"
                     visible={tree.rootLoader.running}
