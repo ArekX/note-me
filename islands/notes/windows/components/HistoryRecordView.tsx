@@ -298,7 +298,6 @@ export default function HistoryRecordView(
                                         disableTagLinks={true}
                                         readonly={true}
                                         historyMode={true}
-                                        shareMode="everyone"
                                     />
                                 );
                             }}

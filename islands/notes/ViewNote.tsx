@@ -161,7 +161,7 @@ export default function ViewNote(
                 <Viewer
                     text={recordData.value.note}
                     options={{
-                        isSharing: historyMode || shareMode !== "none",
+                        isSharing: shareMode !== "none",
                     }}
                 />
             </div>
