@@ -31,7 +31,7 @@ const Component = ({
 
     return (
         <div class="w-full">
-            <div class="py-2">
+            <div class="py-2 max-md:text-sm">
                 Please select a file to insert. You can upload a new file or
                 select an existing one. File can be inserted as an image, view
                 or a download link.

@@ -12,7 +12,7 @@ const Component = (
 ) => {
     return (
         <>
-            <div class="py-2">
+            <div class="py-2 max-md:text-sm">
                 Insert an image by providing the URL of the image and the
                 description if the link is not available.
             </div>

@@ -23,6 +23,7 @@ interface DropdownMenuProps {
     label?: string | JSX.Element;
     roundedButton?: boolean;
     buttonBorderClass?: string;
+    addButtonClass?: string;
     icon?: string;
     iconSize?: IconSize;
     buttonSize?: ButtonSize;
@@ -60,7 +61,7 @@ const MenuItems = (
             ref={menuRef}
             class={`text-white absolute ${inlineDirectionClass} text-md mt-1 z-50 drop-shadow-lg 
                     bg-gray-800 border-gray-700 border border-b-0 rounded-lg shadow-black/80 shadow-sm 
-                    whitespace-nowrap break-keep`}
+                    whitespace-nowrap break-keep overscroll-none`}
         >
             {items.map((item, index) => (
                 <div
@@ -94,6 +95,7 @@ export default function DropdownMenu(
         buttonColor = "primary",
         label = "",
         showDirection = "bottom",
+        addButtonClass = "",
     }: DropdownMenuProps,
 ) {
     if (items.length === 0) {
@@ -139,6 +141,10 @@ export default function DropdownMenu(
 
     const handleOpenMenu = (e: Event) => {
         e.stopPropagation();
+        if (isOpen) {
+            close();
+            return;
+        }
         open();
     };
 
@@ -160,7 +166,7 @@ export default function DropdownMenu(
     );
 
     return (
-        <div class="relative inline-block">
+        <div class={`relative ${addButtonClass}`}>
             {iconOnly
                 ? (
                     <span

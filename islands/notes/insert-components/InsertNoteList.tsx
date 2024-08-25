@@ -23,12 +23,12 @@ const Component = ({
 
     return (
         <>
-            <div class="py-2">
+            <div class="py-2 max-md:text-sm">
                 Please select a group to display a list of notes from. This list
                 will be dynamically updated as notes are added or removed.
             </div>
-            <div class="flex">
-                <div class="w-1/4">
+            <div class="flex flex-wrap">
+                <div class="basis-1/4 max-md:basis-full">
                     <div class="py-2 font-semibold">Group</div>
                     <GroupPicker
                         allowRoot={true}
@@ -36,7 +36,7 @@ const Component = ({
                         onPick={handleSelectGroup}
                     />
                 </div>
-                <div class="w-3/4 pl-2 pr-2">
+                <div class="basis-3/4 max-md:basis-full max-md:pt-2 md:pl-2 md:pr-2">
                     <div class="py-2 font-semibold">List Preview</div>
                     {selectedGroup.value
                         ? (

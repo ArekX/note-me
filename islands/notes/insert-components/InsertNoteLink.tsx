@@ -85,8 +85,8 @@ const Component = ({
     }, []);
 
     return (
-        <div>
-            <div class="py-2">
+        <div class="flex flex-col items-stretch justify-start">
+            <div class="py-2 max-md:text-sm">
                 Please select a note from which the link will be inserted, this
                 link will dynamically show the latest title of the note.
             </div>
@@ -99,7 +99,7 @@ const Component = ({
                 />
             </div>
 
-            <div class="border-solid border-gray-700 border rounded-lg mt-2">
+            <div class="border-solid border-gray-700 border rounded-lg mt-2 flex-grow overflow-auto">
                 {loader.running && (
                     <div class="text-center p-5">
                         <Loader color="white" />

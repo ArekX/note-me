@@ -28,8 +28,8 @@ const Component = (
     };
 
     return (
-        <div class="w-1/4">
-            <div class="py-2">
+        <div class="w-1/4 max-md:w-full">
+            <div class="py-2 max-md:text-sm">
                 Insert a heading of a text paragraph
             </div>
             <div>

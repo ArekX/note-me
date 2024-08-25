@@ -16,6 +16,7 @@ import { useSelected } from "$frontend/hooks/use-selected.ts";
 import { InsertTableDef } from "$islands/notes/insert-components/InsertTable.tsx";
 import { InsertHeadingDef } from "$islands/notes/insert-components/InsertHeading.tsx";
 import { HotkeySet } from "$frontend/hotkeys.ts";
+import { useResponsiveQuery } from "$frontend/hooks/use-responsive-query.ts";
 
 export const insertDialogHotkeySet: HotkeySet<
     "insertDialog",
@@ -135,12 +136,17 @@ export default function InsertDialog({
 
     const selectedPanel = useSelected<number>(0);
 
+    const isMobileSidePanelOpen = useSignal(false);
+
+    const query = useResponsiveQuery();
+
     const handleSelectComponent = (
         _panelItem: PanelItem<Component>,
         index: number,
     ) => {
         insertData.value = null;
         selectedPanel.select(index);
+        isMobileSidePanelOpen.value = false;
     };
 
     const handleCancel = () => {
@@ -194,13 +200,26 @@ export default function InsertDialog({
                     canCancel={true}
                     onCancel={handleCancel}
                     props={{
-                        class: "w-4/5",
+                        class: "w-full xl:w-4/5 2xl:w-3/5",
                     }}
                     title="Insert"
                 >
+                    {query.max("sm") && (
+                        <div class="text-right py-2">
+                            <Button
+                                color="success"
+                                onClick={() =>
+                                    isMobileSidePanelOpen.value =
+                                        !isMobileSidePanelOpen.value}
+                            >
+                                <Icon name="menu" size="sm" /> Items
+                            </Button>
+                        </div>
+                    )}
                     <SideTabPanel<Component, InsertComponentProps>
                         selectedIndex={selectedPanel.selected.value ?? 0}
                         items={panelItems}
+                        isMobileSidePanelOpen={isMobileSidePanelOpen.value}
                         onSelect={handleSelectComponent}
                         styleProps={{
                             height: "calc(100vh - 195px)",

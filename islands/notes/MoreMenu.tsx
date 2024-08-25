@@ -36,11 +36,12 @@ export type MenuItemActions =
 interface MoreMenuProps {
     mode: ModeType;
     inPreviewMode: boolean;
+    isProtected?: boolean;
     onMenuItemClick?: (name: MenuItemActions) => void;
 }
 
 export default function MoreMenu(
-    { mode, inPreviewMode, onMenuItemClick }: MoreMenuProps,
+    { mode, inPreviewMode, isProtected, onMenuItemClick }: MoreMenuProps,
 ) {
     const query = useResponsiveQuery();
 
@@ -51,39 +52,41 @@ export default function MoreMenu(
 
     const items: MoreMenuItem[] = ([
         {
+            name: "Save",
+            icon: "save",
+            maxSize: "lg",
+            modes: ["edit-new", "edit-existing"],
+            onClick: () => sendAction("editor-save"),
+        },
+        {
+            name: "Close",
+            icon: "minus-circle",
+            maxSize: "lg",
+            modes: ["edit-existing"],
+            onClick: () => sendAction("open-viewer"),
+        },
+        {
+            name: isProtected ? "Unprotect" : "Protect",
+            icon: isProtected ? "lock-open-alt" : "lock-alt",
+            maxSize: "lg",
+            modes: ["edit-existing"],
+            onClick: () => sendAction("editor-toggle-protection"),
+        },
+        {
             name: inPreviewMode ? "Edit mode" : "Preview mode",
             icon: inPreviewMode ? "pencil" : "show",
             modes: ["edit-new", "edit-existing"],
             onClick: () => sendAction(inPreviewMode ? "edit" : "preview"),
         },
-        {
-            name: "Save",
-            icon: "save",
-            maxSize: "sm",
-            modes: ["edit-new", "edit-existing"],
-            onClick: () => sendAction("editor-save"),
-        },
-        {
-            name: "Cancel changes",
-            icon: "minus-circle",
-            maxSize: "sm",
-            modes: ["edit-existing"],
-            onClick: () => sendAction("open-viewer"),
-        },
+
         {
             name: "Edit",
             icon: "pencil",
-            maxSize: "sm",
+            maxSize: "lg",
             modes: ["view"],
             onClick: () => sendAction("open-editor"),
         },
-        {
-            name: "Toggle protection",
-            icon: "lock",
-            maxSize: "sm",
-            modes: ["edit-existing"],
-            onClick: () => sendAction("editor-toggle-protection"),
-        },
+
         {
             name: "Details",
             icon: "detail",

@@ -260,6 +260,7 @@ table :not(thead) tr:hover {
 .markdown-viewer h5,
 .markdown-viewer h6 {
     font-weight: bold;
+    line-height: initial;
     @apply mt-4 mb-4;
     padding: .5em 0;
 }
@@ -268,31 +269,55 @@ table :not(thead) tr:hover {
 .markdown-viewer h1 {
     font-size: 2.30em;
     padding: .3em 0;
+
+    @media (max-width: 768px) {
+        font-size: 1.8em;
+    }
 }
 
 .markdown-viewer h2 {
     font-size: 1.8em;
     padding: .3em 0;
+
+    @media (max-width: 768px) {
+        font-size: 1.5em;
+    }
 }
 
 .markdown-viewer h3 {
     font-size: 1.50em;
     padding: .4em 0;
+
+    @media (max-width: 768px) {
+        font-size: 1.3em;
+    }
 }
 
 .markdown-viewer h4 {
     font-size: 1.30em;
     padding: .4em 0;
+
+    @media (max-width: 768px) {
+        font-size: 1.2em;
+    }
 }
 
 .markdown-viewer h5 {
     font-size: 1.20em;
     padding: .5em 0;
+
+    @media (max-width: 768px) {
+        font-size: 1.15em;
+    }
 }
 
 .markdown-viewer h6 {
     font-size: 1.15em;
     padding: .5em 0;
+
+    @media (max-width: 768px) {
+        font-size: 1.1em;
+    }
 }
 
 

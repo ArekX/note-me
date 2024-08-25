@@ -35,6 +35,8 @@ import { HotkeySet } from "$frontend/hotkeys.ts";
 import { useHotkeys } from "$frontend/hooks/use-hotkeys.ts";
 import { useResponsiveQuery } from "$frontend/hooks/use-responsive-query.ts";
 import { addMessage } from "$frontend/toast-message.ts";
+import { useTreeState } from "$islands/tree/hooks/use-tree-state.ts";
+import { useTreeWebsocket } from "$islands/tree/hooks/use-tree-websocket.ts";
 
 export const noteEditorHotkeySet: HotkeySet<
     "noteEditor",
@@ -91,6 +93,10 @@ export default function NoteEditor({
 
     const [noteValidation, validateNote] = useValidation<AddNoteRequest>({
         schema: addNoteRequestSchema,
+    });
+
+    useTreeWebsocket({
+        treeState: useTreeState(),
     });
 
     const { sendMessage } = useNoteWebsocket({
@@ -160,6 +166,7 @@ export default function NoteEditor({
                 },
             );
             wasDataChanged.value = false;
+
             addMessage({
                 type: "success",
                 text: "Note updated successfully",
@@ -316,7 +323,7 @@ export default function NoteEditor({
                     />
                 </div>
                 <div class="text-sm ml-2">
-                    {query.min("md") && (
+                    {query.min("xl") && (
                         <>
                             <Button
                                 color={!isSaving.running
@@ -379,6 +386,7 @@ export default function NoteEditor({
                         <MoreMenu
                             onMenuItemClick={handleMenuItemClicked}
                             inPreviewMode={isPreviewMode.value}
+                            isProtected={isProtected.value}
                             mode={noteId.value ? "edit-existing" : "edit-new"}
                         />
                     )}

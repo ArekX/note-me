@@ -137,10 +137,10 @@ export default function ViewNote(
                     </div>
                 )}
             </div>
-            <div>
+            <div class="w-full overflow-hidden">
                 {recordData.value.tags.map((tag) => (
                     <span
-                        class={`inline-block tag ${
+                        class={`text-ellipsis inline-block tag ${
                             disableTagLinks
                                 ? "cursor-default pointer-events-none"
                                 : "cursor-pointer"

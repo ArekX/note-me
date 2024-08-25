@@ -210,7 +210,7 @@ const Component = (
 
     return (
         <>
-            <div class="py-2">
+            <div class="py-2 max-md:text-sm">
                 Insert a table by providing the rows and columns.
             </div>
             <div class="py-2">

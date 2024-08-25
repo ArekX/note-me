@@ -19,7 +19,7 @@ const Component = ({
 
     return (
         <>
-            <div class="py-2">
+            <div class="py-2 max-md:text-sm">
                 Table of contents is generated from the note's content.
                 Specifically from the markdown headings. This table of contents
                 will be dynamically updated as headings are added or removed in

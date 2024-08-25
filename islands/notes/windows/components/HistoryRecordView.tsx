@@ -155,7 +155,7 @@ export default function HistoryRecordView(
         <>
             <div class="flex h-full flex-col flex-nowrap justify-start items-stretch">
                 <div class="flex-shrink flex w-full pb-2">
-                    <div class="basis-2/5">
+                    <div class="basis-2/5 max-md:basis-1/4">
                         {query.min("md")
                             ? (
                                 <ButtonGroup<typeof items>
@@ -183,7 +183,7 @@ export default function HistoryRecordView(
                                     <Button
                                         color="primary"
                                         onClick={onSidePanelOpen}
-                                        addClass="mb-2 mr-2"
+                                        addClass="mb-2 md:mr-2 max-md:w-full max-md:block"
                                         title="Show versions"
                                     >
                                         <Icon name="history" size="sm" />
@@ -192,7 +192,7 @@ export default function HistoryRecordView(
                                         popoverId="historyRecordView-0"
                                         displayType="inline"
                                         inlineDirection="left"
-                                        buttonBorderClass="border border-b-0"
+                                        buttonBorderClass="border border-b-0 max-md:w-full max-md:block"
                                         icon="show-alt"
                                         items={Object.keys(items).map((
                                             key,
@@ -210,12 +210,13 @@ export default function HistoryRecordView(
                                 </>
                             )}
                     </div>
-                    <div class="basis-3/5 text-right px-2 max-md:pr-0">
+                    <div class="max-md:flex-grow max-md:block hidden"></div>
+                    <div class="basis-3/5 max-md:basis-1/4 text-right px-2 max-md:pr-0">
                         <Button
                             color="warning"
                             onClick={() => confirmRevert.value = true}
                             title="Revert to this version"
-                            addClass="ml-2 mb-2"
+                            addClass="md:ml-2 mb-2 max-md:w-full max-md:block"
                         >
                             {query.max("lg")
                                 ? <Icon name="undo" size="sm" />
@@ -233,7 +234,7 @@ export default function HistoryRecordView(
                             color="danger"
                             onClick={() => confirmDelete.value = true}
                             title="Delete this version"
-                            addClass="ml-2"
+                            addClass="md:ml-2 max-md:w-full max-md:block"
                         >
                             {query.max("lg")
                                 ? <Icon name="minus-circle" size="sm" />

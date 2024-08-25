@@ -1,5 +1,5 @@
 import { restore, store } from "$frontend/session-storage.ts";
-import { useMemo, useState } from "preact/hooks";
+import { useState } from "preact/hooks";
 import {
     createRootContainer,
     RecordContainer,
@@ -10,6 +10,7 @@ import {
     createPropagationTicket,
     TicketId,
 } from "$frontend/propagation-manager.ts";
+import { signal } from "@preact/signals";
 
 export interface TreeStateHook {
     tree: RecordContainer;
@@ -40,18 +41,14 @@ export interface GroupDelete {
     propagationTicket: TicketId;
 }
 
-export const useTreeState = (): TreeStateHook => {
-    const restoredTree = useMemo(
-        (): RecordContainer | null =>
-            restore<RecordContainer>(
-                "treeStorage",
-            ),
-        [],
-    );
+const treeState = signal<RecordContainer>(
+    restore<RecordContainer>(
+        "treeStorage",
+    ) ?? createRootContainer(),
+);
 
-    const [tree, setTree] = useState<RecordContainer>(
-        restoredTree ?? createRootContainer(),
-    );
+export const useTreeState = (): TreeStateHook => {
+    const tree = treeState.value;
     const [groupDelete, setGroupDelete] = useState<GroupDelete | null>(null);
 
     const propagateChanges = () => setRoot(JSON.parse(JSON.stringify(tree)));
@@ -156,7 +153,7 @@ export const useTreeState = (): TreeStateHook => {
     };
 
     const setRoot = (container: RecordContainer) => {
-        setTree(container);
+        treeState.value = container;
         storeTree(container);
     };
 

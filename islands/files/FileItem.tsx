@@ -98,7 +98,7 @@ export default function FileItem({
     return (
         <div
             key={file.identifier}
-            class={`group rounded-lg border border-solid cursor-pointer relative ${
+            class={`max-md:mb-2 group rounded-lg border border-solid cursor-pointer relative ${
                 isSelected
                     ? "border-blue-500"
                     : "border-gray-300 hover:border-gray-500"

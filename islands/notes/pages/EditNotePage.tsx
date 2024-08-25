@@ -51,9 +51,11 @@ export default function EditNotePage({ note }: EditNoteProps) {
             inputRecords={[note]}
             protectedKeys={["note"]}
             isLockedKey={"is_encrypted"}
-            unlockRender={({ unlockedRecords: [note] }) => {
-                return <NoteEditor note={note} />;
-            }}
+            unlockRender={({ unlockedRecords: [note] }) => (
+                <NoteEditor
+                    note={note}
+                />
+            )}
         />
     );
 }

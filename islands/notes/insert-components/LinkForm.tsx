@@ -23,7 +23,7 @@ export default function LinkForm({
     };
 
     return (
-        <div class="w-1/2">
+        <div class="w-1/2 max-md:w-full">
             <Input
                 label="Link"
                 labelColor="white"

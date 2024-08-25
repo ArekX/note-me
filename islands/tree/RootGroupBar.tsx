@@ -40,7 +40,11 @@ export default function RootGroupBar({
                     onDragLeave={handleDragLeave}
                 >
                     {source
-                        ? <div class="pl-2">Drop here to move to top level</div>
+                        ? (
+                            <div class="pl-2 max-lg:text-xs">
+                                Top Level
+                            </div>
+                        )
                         : switcherComponent}
                 </div>
             }
