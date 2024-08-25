@@ -117,8 +117,8 @@ export const handler: Handlers<LoginResult> = {
 
 export default function Page(props: PageProps<LoginResult>) {
     return (
-        <div class="flex items-center lg:justify-end justify-center h-screen text-white">
-            <div class="bg-gray-900/90 h-full px-10 pt-10 w-1/3 backdrop-blur-xl max-w-lg max-lg:min-w-full max-lg:overflow-auto">
+        <div class="flex items-center lg:justify-end justify-center h-screen text-white ">
+            <div class="bg-gray-900/90 h-full px-10 pt-10 w-1/3 backdrop-blur-xl max-w-lg max-lg:min-w-full overflow-auto">
                 <div class="text-center mb-5">
                     <Logo white={true} width={96} height={96} />
                 </div>
@@ -153,7 +153,7 @@ export default function Page(props: PageProps<LoginResult>) {
                             />
                         </div>
                     </div>
-                    <div class="flex items-center justify-center mt-8 flex-wrap">
+                    <div class="flex items-center justify-center mt-8 flex-wrap max-md:pb-36 md:pb-5">
                         <PasskeySignIn
                             request_id={props.data.passkey_request.request_id}
                             options={props.data.passkey_request.options}

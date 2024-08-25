@@ -122,12 +122,18 @@ import * as $notes_windows_components_RepeatReminder from "./islands/notes/windo
 import * as $notes_windows_components_ShareLinks from "./islands/notes/windows/components/ShareLinks.tsx";
 import * as $notes_windows_components_ShareToUsers from "./islands/notes/windows/components/ShareToUsers.tsx";
 import * as $notes_windows_help_KeyboardShortcuts from "./islands/notes/windows/help/KeyboardShortcuts.tsx";
+import * as $notes_windows_help_MarkdownSyntax from "./islands/notes/windows/help/MarkdownSyntax.tsx";
+import * as $notes_windows_help_SupportedLanguageHighlights from "./islands/notes/windows/help/SupportedLanguageHighlights.tsx";
 import * as $notifications_NotificationItem from "./islands/notifications/NotificationItem.tsx";
 import * as $notifications_NotificationList from "./islands/notifications/NotificationList.tsx";
 import * as $notifications_NotificationListView from "./islands/notifications/NotificationListView.tsx";
 import * as $notifications_notification_message_text from "./islands/notifications/notification-message-text.ts";
 import * as $notifications_views_NotificationSharedView from "./islands/notifications/views/NotificationSharedView.tsx";
 import * as $notifications_views_ReminderView from "./islands/notifications/views/ReminderView.tsx";
+import * as $onboarding_OnboardingDialog from "./islands/onboarding/OnboardingDialog.tsx";
+import * as $onboarding_OnboardingWrapper from "./islands/onboarding/OnboardingWrapper.tsx";
+import * as $onboarding_content_DashboardIntroduction from "./islands/onboarding/content/DashboardIntroduction.tsx";
+import * as $onboarding_content_ViewNoteIntroduction from "./islands/onboarding/content/ViewNoteIntroduction.tsx";
 import * as $periodic_tasks_PeriodicTaskList from "./islands/periodic-tasks/PeriodicTaskList.tsx";
 import * as $profile_ResetUserPassword from "./islands/profile/ResetUserPassword.tsx";
 import * as $profile_UserPasskeys from "./islands/profile/UserPasskeys.tsx";
@@ -325,6 +331,10 @@ const manifest = {
             $notes_windows_components_ShareToUsers,
         "./islands/notes/windows/help/KeyboardShortcuts.tsx":
             $notes_windows_help_KeyboardShortcuts,
+        "./islands/notes/windows/help/MarkdownSyntax.tsx":
+            $notes_windows_help_MarkdownSyntax,
+        "./islands/notes/windows/help/SupportedLanguageHighlights.tsx":
+            $notes_windows_help_SupportedLanguageHighlights,
         "./islands/notifications/NotificationItem.tsx":
             $notifications_NotificationItem,
         "./islands/notifications/NotificationList.tsx":
@@ -337,6 +347,14 @@ const manifest = {
             $notifications_views_NotificationSharedView,
         "./islands/notifications/views/ReminderView.tsx":
             $notifications_views_ReminderView,
+        "./islands/onboarding/OnboardingDialog.tsx":
+            $onboarding_OnboardingDialog,
+        "./islands/onboarding/OnboardingWrapper.tsx":
+            $onboarding_OnboardingWrapper,
+        "./islands/onboarding/content/DashboardIntroduction.tsx":
+            $onboarding_content_DashboardIntroduction,
+        "./islands/onboarding/content/ViewNoteIntroduction.tsx":
+            $onboarding_content_ViewNoteIntroduction,
         "./islands/periodic-tasks/PeriodicTaskList.tsx":
             $periodic_tasks_PeriodicTaskList,
         "./islands/profile/ResetUserPassword.tsx": $profile_ResetUserPassword,

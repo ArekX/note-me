@@ -23,10 +23,15 @@ export default function Dialog({
     const dialogRef = createRef<HTMLDialogElement>();
 
     useEffect(() => {
+        if (!dialogRef.current) {
+            return;
+        }
+
         if (visible) {
-            dialogRef.current?.showModal();
+            dialogRef.current.showModal();
+            dialogRef.current.focus();
         } else {
-            dialogRef.current?.close();
+            dialogRef.current.close();
         }
     }, [dialogRef, visible]);
 

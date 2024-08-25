@@ -48,52 +48,54 @@ export default function PasskeySignIn({
     }
 
     return (
-        <>
+        <div class="text-center">
             {!passkeyLoader.running && (
-                <Button type="submit" color="success" addClass="mr-2">
-                    <Icon name="log-in" className="max-sm:hidden" /> Sign in
+                <Button
+                    type="submit"
+                    color="success"
+                    addClass="md:mr-2 max-md:block max-md:w-full mb-2"
+                >
+                    <Icon name="log-in" /> Sign in
                 </Button>
             )}
-            <div class="text-center py-2 passkey-sign-in max-sm:basis-full">
-                <Button onClick={handleSignIn}>
-                    {passkeyLoader.running
-                        ? (
-                            <Loader color="white" size="mdButton">
-                                Waiting...
-                            </Loader>
-                        )
-                        : (
-                            <>
-                                <Icon
-                                    name="user"
-                                    className="max-sm:hidden"
-                                />Sign in with Passkey
-                            </>
-                        )}
-                </Button>
 
-                {passkeyResult.value && (
-                    <>
-                        <input
-                            type="hidden"
-                            name="passkey_request_id"
-                            value={request_id}
-                        />
-                        <input
-                            type="hidden"
-                            name="passkey_authentication_data"
-                            value={JSON.stringify(passkeyResult.value)}
-                        />
-                        <button
-                            ref={(el) => el?.click()}
-                            type="submit"
-                            name="passkey_sign_in"
-                            class="hidden"
-                        >
-                        </button>
-                    </>
-                )}
-            </div>
-        </>
+            <Button
+                onClick={handleSignIn}
+                addClass="max-md:w-full max-md:block"
+            >
+                {passkeyLoader.running
+                    ? (
+                        <Loader color="white" size="mdButton">
+                            Waiting...
+                        </Loader>
+                    )
+                    : (
+                        <>
+                            <Icon name="user" />Sign in with Passkey
+                        </>
+                    )}
+            </Button>
+            {passkeyResult.value && (
+                <>
+                    <input
+                        type="hidden"
+                        name="passkey_request_id"
+                        value={request_id}
+                    />
+                    <input
+                        type="hidden"
+                        name="passkey_authentication_data"
+                        value={JSON.stringify(passkeyResult.value)}
+                    />
+                    <button
+                        ref={(el) => el?.click()}
+                        type="submit"
+                        name="passkey_sign_in"
+                        class="hidden"
+                    >
+                    </button>
+                </>
+            )}
+        </div>
     );
 }

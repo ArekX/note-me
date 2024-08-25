@@ -120,6 +120,7 @@ const InsertButton = (
 };
 
 const panelItems = insertComponents.map((component) => ({
+    key: component.id,
     name: component.name,
     subtitle: component.description,
     icon: component.icon,

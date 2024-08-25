@@ -5,6 +5,7 @@ import { useEffect } from "preact/hooks";
 import { useResponsiveQuery } from "$frontend/hooks/use-responsive-query.ts";
 
 export interface PanelItem<Data = unknown> {
+    key?: string;
     name: string | JSX.Element;
     subtitle?: string | JSX.Element;
     icon?: string;
@@ -54,6 +55,9 @@ export default function SideTabPanel<T = unknown, PassProps = unknown>(
     const PanelComponent = items[selectedPanel.selected.value!]?.component ??
         null;
 
+    const panelKey = items[selectedPanel.selected.value!]?.key ??
+        selectedPanel.selected.value ?? -1;
+
     return (
         <>
             <div
@@ -92,7 +96,7 @@ export default function SideTabPanel<T = unknown, PassProps = unknown>(
                 )}
                 <div class="md:left-1/4 md:right-0 md:top-0 md:bottom-0 md:absolute md:pl-5 overflow-auto">
                     <PanelComponent
-                        key={selectedPanel.selected.value!}
+                        key={panelKey}
                         {...passProps}
                     />
                 </div>

@@ -5,10 +5,22 @@ import { NoteFrontendResponse } from "$workers/websocket/api/notes/messages.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import { useSignal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
+import ViewNoteIntroduction from "$islands/onboarding/content/ViewNoteIntroduction.tsx";
 
 interface ViewNoteProps {
     note: ViewNoteRecord;
 }
+
+const ViewNoteInternal = (props: { record: ViewNoteRecord }) => {
+    return (
+        <>
+            <ViewNoteIntroduction />
+            <ViewNote
+                record={props.record}
+            />
+        </>
+    );
+};
 
 export default function ViewNotePage({ note }: ViewNoteProps) {
     const noteRecord = useSignal<ViewNoteRecord>(note);
@@ -44,7 +56,7 @@ export default function ViewNotePage({ note }: ViewNoteProps) {
     }
 
     if (!noteRecord.value.is_encrypted) {
-        return <ViewNote record={noteRecord.value} />;
+        return <ViewNoteInternal record={noteRecord.value} />;
     }
 
     return (
@@ -53,9 +65,7 @@ export default function ViewNotePage({ note }: ViewNoteProps) {
             protectedKeys={["note"]}
             isLockedKey={"is_encrypted"}
             unlockRender={({ unlockedRecords: [note] }) => (
-                <ViewNote
-                    record={note}
-                />
+                <ViewNoteInternal record={note} />
             )}
         />
     );
