@@ -65,7 +65,7 @@ export default function NotificationListView(
                             </div>
                         </div>
                     </div>
-                    <div class="flex-grow lg:overflow-auto">
+                    <div class="flex-grow md:overflow-auto">
                         {notifications.map((notification) => (
                             <NotificationItem
                                 key={notification.id}
