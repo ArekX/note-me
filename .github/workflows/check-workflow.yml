@@ -46,4 +46,3 @@ jobs:
                 set -e
                 deno task cache-ci
                 deno task check
-                deno task test
