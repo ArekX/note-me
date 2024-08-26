@@ -14,7 +14,6 @@
         "build-assets": "deno run -A build.ts build",
         "production": "deno run -A main.ts",
         "debug": "deno run --inspect-wait -A dev.ts",
-        "test": "deno test -A",
         "preview": "deno run -A main.ts",
         "build": "deno run -A dev.ts build"
     },
