@@ -460,6 +460,10 @@ select.select-input {
     max-width: 21em;
 }
 
+.onbarding-contents h1 {
+    @apply text-lg font-semibold py-2;
+}
+
 .onbarding-contents p {
     @apply py-2 block;
 }

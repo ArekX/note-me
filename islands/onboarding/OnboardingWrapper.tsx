@@ -48,7 +48,7 @@ export default function OnboardingWrapper(
                     onClick={handleDismiss}
                     addClass="max-md:w-full max-md:block max-md:mb-2"
                 >
-                    Dismiss
+                    Don't show this again
                 </Button>
                 {allowClose && (
                     <Button

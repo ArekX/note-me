@@ -106,6 +106,7 @@ import * as $notes_insert_components_InsertTable from "./islands/notes/insert-co
 import * as $notes_insert_components_InsertToc from "./islands/notes/insert-components/InsertToc.tsx";
 import * as $notes_insert_components_LinkForm from "./islands/notes/insert-components/LinkForm.tsx";
 import * as $notes_pages_EditNotePage from "./islands/notes/pages/EditNotePage.tsx";
+import * as $notes_pages_NotePage from "./islands/notes/pages/NotePage.tsx";
 import * as $notes_pages_ViewNotePage from "./islands/notes/pages/ViewNotePage.tsx";
 import * as $notes_windows_NoteDelete from "./islands/notes/windows/NoteDelete.tsx";
 import * as $notes_windows_NoteDetails from "./islands/notes/windows/NoteDetails.tsx";
@@ -133,6 +134,7 @@ import * as $notifications_views_ReminderView from "./islands/notifications/view
 import * as $onboarding_OnboardingDialog from "./islands/onboarding/OnboardingDialog.tsx";
 import * as $onboarding_OnboardingWrapper from "./islands/onboarding/OnboardingWrapper.tsx";
 import * as $onboarding_content_DashboardIntroduction from "./islands/onboarding/content/DashboardIntroduction.tsx";
+import * as $onboarding_content_EditNoteIntroduction from "./islands/onboarding/content/EditNoteIntroduction.tsx";
 import * as $onboarding_content_ViewNoteIntroduction from "./islands/onboarding/content/ViewNoteIntroduction.tsx";
 import * as $periodic_tasks_PeriodicTaskList from "./islands/periodic-tasks/PeriodicTaskList.tsx";
 import * as $profile_ResetUserPassword from "./islands/profile/ResetUserPassword.tsx";
@@ -307,6 +309,7 @@ const manifest = {
         "./islands/notes/insert-components/LinkForm.tsx":
             $notes_insert_components_LinkForm,
         "./islands/notes/pages/EditNotePage.tsx": $notes_pages_EditNotePage,
+        "./islands/notes/pages/NotePage.tsx": $notes_pages_NotePage,
         "./islands/notes/pages/ViewNotePage.tsx": $notes_pages_ViewNotePage,
         "./islands/notes/windows/NoteDelete.tsx": $notes_windows_NoteDelete,
         "./islands/notes/windows/NoteDetails.tsx": $notes_windows_NoteDetails,
@@ -353,6 +356,8 @@ const manifest = {
             $onboarding_OnboardingWrapper,
         "./islands/onboarding/content/DashboardIntroduction.tsx":
             $onboarding_content_DashboardIntroduction,
+        "./islands/onboarding/content/EditNoteIntroduction.tsx":
+            $onboarding_content_EditNoteIntroduction,
         "./islands/onboarding/content/ViewNoteIntroduction.tsx":
             $onboarding_content_ViewNoteIntroduction,
         "./islands/periodic-tasks/PeriodicTaskList.tsx":

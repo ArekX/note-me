@@ -60,12 +60,101 @@ export default function NoteHelp({ onClose }: HelpProps) {
                     }}
                     items={[
                         {
-                            name: "Help",
+                            name: "General",
                             component: () => (
                                 <div class="p-2">
-                                    <h2 class="text-lg font-bold">Help</h2>
-                                    <p class="pt-2">
-                                        This is the help dialog.
+                                    <p>
+                                        General
+                                    </p>
+                                </div>
+                            ),
+                        },
+                        {
+                            name: "Organizing notes",
+                            component: () => (
+                                <div class="p-2">
+                                    <p>
+                                        Organizing notes - groups, tags
+                                    </p>
+                                </div>
+                            ),
+                        },
+                        {
+                            name: "Editing notes",
+                            component: () => (
+                                <div class="p-2">
+                                    <p>
+                                        Editing notes
+                                    </p>
+                                </div>
+                            ),
+                        },
+                        {
+                            name: "Sharing notes",
+                            component: () => (
+                                <div class="p-2">
+                                    <p>
+                                        Sharing notes
+                                    </p>
+                                </div>
+                            ),
+                        },
+                        {
+                            name: "Note history",
+                            component: () => (
+                                <div class="p-2">
+                                    <p>
+                                        Note history
+                                    </p>
+                                </div>
+                            ),
+                        },
+                        {
+                            name: "Note protection",
+                            component: () => (
+                                <div class="p-2">
+                                    <p>
+                                        Note protection
+                                    </p>
+                                </div>
+                            ),
+                        },
+                        {
+                            name: "Setting reminders",
+                            component: () => (
+                                <div class="p-2">
+                                    <p>
+                                        Setting reminders
+                                    </p>
+                                </div>
+                            ),
+                        },
+                        {
+                            name: "Deleting notes",
+                            component: () => (
+                                <div class="p-2">
+                                    <p>
+                                        Note deletion
+                                    </p>
+                                </div>
+                            ),
+                        },
+                        {
+                            name: "Inserting content",
+                            component: () => (
+                                <div class="p-2">
+                                    <p>
+                                        Inserting content
+                                    </p>
+                                </div>
+                            ),
+                        },
+                        {
+                            name: "Files",
+                            component: () => (
+                                <div class="p-2">
+                                    <p>
+                                        Files
                                     </p>
                                 </div>
                             ),

@@ -16,6 +16,7 @@ export type UserId = { id: number };
 export interface UserOnboardingState {
     introduction_dismissed?: boolean;
     view_note_introduction_dismissed?: boolean;
+    edit_note_introduction_dismissed?: boolean;
 }
 
 export type UserRecord =
