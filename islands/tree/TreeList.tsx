@@ -39,13 +39,13 @@ export default function TreeList({
             }
         >
             <div class="note-container">
-                <Loader
-                    color="white"
-                    visible={tree.rootLoader.running}
-                    displayType="center-block"
-                >
-                    Loading notes and groups...
-                </Loader>
+                {tree.rootLoader.running && (
+                    <div class="py-4">
+                        <Loader displayType="center-block">
+                            Loading notes and groups...
+                        </Loader>
+                    </div>
+                )}
                 {!tree.rootLoader.running &&
                     tree.root.children_loaded &&
                     tree.root.children.length === 0 &&
