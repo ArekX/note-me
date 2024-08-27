@@ -55,7 +55,7 @@ const markdownFeatures: MarkdownFeature[] = [
                 for all possible values.
             </>
         ),
-        example: "```js\const number = 2;\n``` \n\n\n ```\nCode block\n```",
+        example: "```js\nconst number = 2;\n``` \n\n\n ```\nCode block\n```",
     },
     {
         description: () => "Create a hyperlink.",
