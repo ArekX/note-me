@@ -37,6 +37,9 @@ the ownership of your notes and keep them organized however you see fit.
   NoteMe or create a full export of all of your notes and files.
 - **Recycled Notes**. Deleted notes are kept in recycle bin for 30 days and can
   be retrieved by you at any time or fully deleted.
+- **Easily hostable**. NoteMe can easily be run on any system running Deno with
+  minimal configuration, or you can run it as a docker container using one of
+  the prebuilt images.
 
 # Development
 
