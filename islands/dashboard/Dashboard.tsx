@@ -4,8 +4,13 @@ import CurrentReminders from "./CurrentReminders.tsx";
 import RecentlySharedWithMe from "$islands/dashboard/RecentlySharedWithMe.tsx";
 import PassedReminders from "$islands/dashboard/PassedReminders.tsx";
 import DashboardIntroduction from "$islands/onboarding/content/DashboardIntroduction.tsx";
+import { IS_BROWSER } from "$fresh/runtime.ts";
 
 export default function Dashboard() {
+    if (!IS_BROWSER) {
+        return null;
+    }
+
     const user = useUser();
 
     return (

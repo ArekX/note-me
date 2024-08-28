@@ -1,6 +1,6 @@
 # Note Me
 
-NoteMe is a simple, note-taking app with powerful features which help to to keep
+NoteMe is a simple, note-taking app with powerful features which help to keep
 the ownership of your notes and keep them organized however you see fit.
 
 ## Features
