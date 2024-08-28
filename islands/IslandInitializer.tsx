@@ -22,7 +22,8 @@ export default function IslandInitializer(props: ScriptsProps) {
     const connectToSocketManager = async () => {
         const url = new URL(props.socketHost);
         url.searchParams.set("csrfToken", props.userData.csrfToken);
-        return await connect(url);
+        await connect(url);
+        isInitialied.value = true;
     };
 
     useWebsocketService<UserFrontendResponse>({
@@ -39,7 +40,6 @@ export default function IslandInitializer(props: ScriptsProps) {
     useEffect(() => {
         connectToSocketManager();
         initializeProtectionLock();
-        isInitialied.value = true;
     }, []);
 
     if (isInitialied.value) {
