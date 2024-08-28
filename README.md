@@ -47,8 +47,8 @@ Requirements:
 
 - [Deno](https://docs.deno.com/runtime/manual/getting_started/installation)
 
-1. Copy the environment example file: `cp .env.example .env` to override
-   defaults.
+1. (Optional) Copy the environment example file: `cp .env.example .env` to
+   override defaults.
 2. Install git hooks by running `setup-githooks.sh`
 3. Start the development server: `deno task dev`
 
