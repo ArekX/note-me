@@ -25,6 +25,11 @@ export default function SharingNotesPage() {
             </p>
 
             <p>
+                If you share a protected note, that note cannot be opened by
+                anyone you shared it to as it is protected by your password.
+            </p>
+
+            <p>
                 Please note that sharing a note will not automatically share all
                 note files. This is done for security reasons as files can
                 contain sensitive information. If you want to share files as

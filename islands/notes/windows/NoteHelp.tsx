@@ -6,7 +6,7 @@ import Icon from "$components/Icon.tsx";
 
 import MarkdownSyntaxPage from "./help/MarkdownSyntaxPage.tsx";
 import SupportedLanguageHighlightsPage from "./help/SupportedLanguageHighlightsPage.tsx";
-import General from "./help/General.tsx";
+import General from "./help/GeneralPage.tsx";
 import NoteFilesPage from "./help/NoteFilesPage.tsx";
 import OrganizingNotesPage from "./help/OrganizingNotesPage.tsx";
 import SettingRemindersPage from "./help/SettingRemindersPage.tsx";
@@ -24,7 +24,12 @@ interface HelpProps {
     onClose: () => void;
 }
 
-export type NoteHelpAction = "open-languages" | "open-markdown-syntax";
+export type NoteHelpAction =
+    | "open-languages"
+    | "open-markdown-syntax"
+    | "open-sharing-notes"
+    | "open-keyboard-shortcuts"
+    | "open-protecting-notes";
 
 export default function NoteHelp({ onClose }: HelpProps) {
     const isMobileSidePanelOpen = useSignal(false);
@@ -50,6 +55,7 @@ export default function NoteHelp({ onClose }: HelpProps) {
             component: () => <SettingRemindersPage />,
         },
         {
+            key: "protecting-notes",
             name: "Protecting notes",
             component: () => <ProtectingNotesPage />,
         },
@@ -63,7 +69,7 @@ export default function NoteHelp({ onClose }: HelpProps) {
         },
         {
             name: "Editing notes",
-            component: () => <EditingNotesPage />,
+            component: () => <EditingNotesPage onAction={handleTopicAction} />,
         },
         {
             name: "Deleting notes",
@@ -107,6 +113,22 @@ export default function NoteHelp({ onClose }: HelpProps) {
                     p.key === "markdown-syntax"
                 );
                 break;
+
+            case "open-sharing-notes":
+                itemIndex.value = panels.findIndex((p) =>
+                    p.name === "Sharing notes"
+                );
+                break;
+            case "open-keyboard-shortcuts":
+                itemIndex.value = panels.findIndex((p) =>
+                    p.key === "keyboard-shortcuts"
+                );
+                break;
+            case "open-protecting-notes":
+                itemIndex.value = panels.findIndex((p) =>
+                    p.key === "protecting-notes"
+                );
+                break;
         }
     };
 
@@ -117,7 +139,7 @@ export default function NoteHelp({ onClose }: HelpProps) {
             onCancel={onClose}
             title="Help"
             props={{
-                class: "w-full",
+                class: "max-lg:w-full lg:w-3/4 xl:w-1/2",
             }}
         >
             {query.max("sm") && (

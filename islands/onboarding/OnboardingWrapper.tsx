@@ -10,6 +10,7 @@ interface OnboardingWrapperProps {
     onClosed?: () => void;
     onboardingKey: keyof UserOnboardingState;
     allowClose?: boolean;
+    showBorder?: boolean;
     className?: string;
     content: ContentFn;
 }
@@ -19,6 +20,7 @@ export default function OnboardingWrapper(
         onboardingKey,
         onDismissed,
         onClosed,
+        showBorder,
         allowClose,
         content: ContentComponent,
     }: OnboardingWrapperProps,
@@ -35,6 +37,10 @@ export default function OnboardingWrapper(
         });
         onDismissed?.();
     };
+
+    if (!className && showBorder) {
+        className = "default-onboarding-wrapper";
+    }
 
     return (
         <div className={className}>

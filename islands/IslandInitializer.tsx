@@ -6,6 +6,8 @@ import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import { UserFrontendResponse } from "$workers/websocket/api/users/messages.ts";
 import { redirectTo } from "$frontend/redirection-manager.ts";
 import { clearStorage } from "$frontend/session-storage.ts";
+import Loader from "$islands/Loader.tsx";
+import { useSignal } from "@preact/signals";
 
 interface ScriptsProps {
     socketHost: string;
@@ -14,6 +16,8 @@ interface ScriptsProps {
 
 export default function IslandInitializer(props: ScriptsProps) {
     setupUserData(props.userData);
+
+    const isInitialied = useSignal(false);
 
     const connectToSocketManager = async () => {
         const url = new URL(props.socketHost);
@@ -35,7 +39,16 @@ export default function IslandInitializer(props: ScriptsProps) {
     useEffect(() => {
         connectToSocketManager();
         initializeProtectionLock();
+        isInitialied.value = true;
     }, []);
 
-    return null;
+    if (isInitialied.value) {
+        return null;
+    }
+
+    return (
+        <div class="island-initalizer">
+            <Loader>Loading application...</Loader>
+        </div>
+    );
 }

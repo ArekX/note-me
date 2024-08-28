@@ -475,3 +475,11 @@ select.select-input {
 .onboarding-contents .link {
     @apply underline text-gray-300 cursor-pointer;
 }
+
+.default-onboarding-wrapper {
+    @apply bg-gray-900 border-gray-600/50 border border-b-0 rounded-lg p-4;
+}
+
+.island-initalizer {
+    @apply fixed top-0 left-0 w-full h-full bg-gray-900 z-50 text-white flex items-center justify-center;
+}

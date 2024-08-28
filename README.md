@@ -1,8 +1,42 @@
 # Note Me
 
-NoteMe is a self-hosted powerful note-taking app designed for enhanced
-productivity. It includes features like note history, reminders, and support for
-multiple users as well as note tagging and adding attachments.
+NoteMe is a simple, note-taking app with powerful features which help to to keep
+the ownership of your notes and keep them organized however you see fit.
+
+## Features
+
+- **Markdown support**. Notes are written and shown using markdown. All standard
+  markdown syntax is supported with additional flavors like task lists,
+  footnotes, tables and extensions special to NoteMe like showing dynamic table
+  of contents, note links and listing notes from a specific group.
+- **Organize your notes**. You can tag your notes, store them in any kind of
+  groups or subgroups making it easy to create an exact structure you want.
+- **Multiple users welcome**. NoteMe support any amount of users with different
+  roles, each user has its own space for notes so that everyone on the same
+  NoteMe server can have their own folder structure.
+- **Sharing notes**. Notes created can be shared internally between users or to
+  everyone outside by creating a share link.
+- **Remind yourself of important notes**. You can set one-time or recurring
+  reminders for your own notes or the notes shared with you so that you never
+  forget an important task.
+- **History of changes**. Every saved change to your note is recorded in the
+  history so that you can easily compare changes or go back and forward in time.
+- **Note files**. You can upload any kind of file into NoteMe and use it in your
+  notes as an image or make it downloadable. Files can be made private or public
+  so that you can control who has access to them.
+- **Protect your notes**. Notes can be protected with your password meaning they
+  will be encrypted at rest in the database so that nobody except you can see
+  their contents, not even administrators, not even by anyone accessing the
+  database directly.
+- **Backup support**. Daily backups can be created by NoteMe and stored on the
+  server location or on AWS S3. You can specify multiple backup targets so that
+  you can backup to more than one place.
+- **Easy login with Passkeys**. You can setup a login into your notes by only
+  using secure Passkey standard without even needing to enter a password.
+- **Import/Export your data**. You can import all of your existing notes into
+  NoteMe or create a full export of all of your notes and files.
+- **Recycled Notes**. Deleted notes are kept in recycle bin for 30 days and can
+  be retrieved by you at any time or fully deleted.
 
 # Development
 

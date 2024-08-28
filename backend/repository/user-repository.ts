@@ -17,6 +17,7 @@ export interface UserOnboardingState {
     introduction_dismissed?: boolean;
     view_note_introduction_dismissed?: boolean;
     edit_note_introduction_dismissed?: boolean;
+    backup_management_intro_dismissed?: boolean;
 }
 
 export type UserRecord =

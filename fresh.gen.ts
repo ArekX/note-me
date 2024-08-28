@@ -124,7 +124,7 @@ import * as $notes_windows_components_ShareLinks from "./islands/notes/windows/c
 import * as $notes_windows_components_ShareToUsers from "./islands/notes/windows/components/ShareToUsers.tsx";
 import * as $notes_windows_help_DeletingNotesPage from "./islands/notes/windows/help/DeletingNotesPage.tsx";
 import * as $notes_windows_help_EditingNotesPage from "./islands/notes/windows/help/EditingNotesPage.tsx";
-import * as $notes_windows_help_General from "./islands/notes/windows/help/General.tsx";
+import * as $notes_windows_help_GeneralPage from "./islands/notes/windows/help/GeneralPage.tsx";
 import * as $notes_windows_help_KeyboardShortcutsPage from "./islands/notes/windows/help/KeyboardShortcutsPage.tsx";
 import * as $notes_windows_help_MarkdownSyntaxPage from "./islands/notes/windows/help/MarkdownSyntaxPage.tsx";
 import * as $notes_windows_help_NoteFilesPage from "./islands/notes/windows/help/NoteFilesPage.tsx";
@@ -346,7 +346,8 @@ const manifest = {
             $notes_windows_help_DeletingNotesPage,
         "./islands/notes/windows/help/EditingNotesPage.tsx":
             $notes_windows_help_EditingNotesPage,
-        "./islands/notes/windows/help/General.tsx": $notes_windows_help_General,
+        "./islands/notes/windows/help/GeneralPage.tsx":
+            $notes_windows_help_GeneralPage,
         "./islands/notes/windows/help/KeyboardShortcutsPage.tsx":
             $notes_windows_help_KeyboardShortcutsPage,
         "./islands/notes/windows/help/MarkdownSyntaxPage.tsx":

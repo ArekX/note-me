@@ -19,6 +19,12 @@ export default function OrganizingNotesPage() {
             </p>
 
             <p>
+                To move note back to top level choose Top Level in the Move
+                option or dragged the note to "Top Level" which appear instead
+                of Notes in the sidebar during the drag.
+            </p>
+
+            <p>
                 You can also tag notes by adding one or more tags when creating
                 or editing a note. If you have tags you already created you can
                 pick and reuse them. To see which notes are tagged with a
