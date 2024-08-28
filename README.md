@@ -47,7 +47,8 @@ Requirements:
 
 - [Deno](https://docs.deno.com/runtime/manual/getting_started/installation)
 
-1. Copy the environment example file: `cp env.example .env`
+1. Copy the environment example file: `cp .env.example .env` to override
+   defaults.
 2. Install git hooks by running `setup-githooks.sh`
 3. Start the development server: `deno task dev`
 
@@ -56,7 +57,7 @@ First time login is with `admin` as both username and password.
 # Run
 
 **Important:** Environment file `.env` is required to properly run the
-containers. See [example.env](example.env) for details.
+containers. See [.env.example](.env.example) for details.
 
 On first run, database will be created with an administrator username `admin`
 and password `admin`.
@@ -91,7 +92,7 @@ Requirements:
 
 - [Deno](https://docs.deno.com/runtime/manual/getting_started/installation)
 
-1. Set environment variables (see env.example)
+1. Set environment variables (see .env.example)
 2. Add DENO_DEPLOYMENT_ID environment variable. Should be
    `export DENO_DEPLOYMENT_ID=$(git rev-parse HEAD)`
 3. Run `deno task cache` to pre-install all dependencies.
