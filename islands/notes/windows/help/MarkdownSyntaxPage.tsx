@@ -1,7 +1,8 @@
 import { JSX } from "preact";
+import { NoteHelpAction } from "$islands/notes/windows/NoteHelp.tsx";
 
 interface FeatureProps {
-    onAction: (action: MarkdownSyntaxActions) => void;
+    onAction: (action: NoteHelpAction) => void;
 }
 
 interface MarkdownFeature {
@@ -116,10 +117,8 @@ const markdownFeatures: MarkdownFeature[] = [
     },
 ];
 
-export type MarkdownSyntaxActions = "open-languages";
-
 interface MarkdownSyntaxProps {
-    onAction: (action: MarkdownSyntaxActions) => void;
+    onAction: (action: NoteHelpAction) => void;
 }
 
 export default function MarkdownSyntax({ onAction }: MarkdownSyntaxProps) {

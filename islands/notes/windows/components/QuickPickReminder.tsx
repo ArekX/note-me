@@ -26,11 +26,11 @@ const presets: PresetMap = {
         getNextAtFromNow: () => getCurrentUnixTimestamp() + 10800,
     },
     in1Day: {
-        title: "Tomorrow",
+        title: "In 1 day",
         getNextAtFromNow: () => getCurrentUnixTimestamp() + 86400,
     },
     in3Days: {
-        title: "3 days from now",
+        title: "In 3 days",
         getNextAtFromNow: () => getCurrentUnixTimestamp() + 259200,
     },
     in1Week: {

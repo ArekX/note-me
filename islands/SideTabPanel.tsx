@@ -15,6 +15,7 @@ export interface PanelItem<Data = unknown> {
 
 interface SideTabPanelProps<Data = unknown, PassProps = unknown> {
     selectedIndex?: number;
+    addPanelClass?: string;
     items: PanelItem<Data>[];
     onSelect?: (item: PanelItem<Data>, index: number) => void;
     styleProps?: Record<string, string>;
@@ -29,6 +30,7 @@ export default function SideTabPanel<T = unknown, PassProps = unknown>(
         onSelect,
         styleProps,
         passProps,
+        addPanelClass = "",
         isMobileSidePanelOpen = true,
     }: SideTabPanelProps<T, PassProps>,
 ) {
@@ -94,7 +96,9 @@ export default function SideTabPanel<T = unknown, PassProps = unknown>(
                         ))}
                     </div>
                 )}
-                <div class="md:left-1/4 md:right-0 md:top-0 md:bottom-0 md:absolute md:pl-5 overflow-auto">
+                <div
+                    class={`md:left-1/4 md:right-0 md:top-0 md:bottom-0 md:absolute md:pl-5 overflow-auto ${addPanelClass}`}
+                >
                     <PanelComponent
                         key={panelKey}
                         {...passProps}

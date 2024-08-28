@@ -47,7 +47,7 @@ export default function NotificationItem({
 
     return (
         <div
-            class={`${isReadClass} flex last:rounded-b-lg max-md:last:rounded-b-none border-b border-gray-700 last:border-b-0 max-md:last:border-b`}
+            class={`${isReadClass} flex last:border-b-0 border-b border-gray-700`}
         >
             <div class="w-4/6">
                 <NotificationView

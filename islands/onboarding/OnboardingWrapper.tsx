@@ -38,7 +38,7 @@ export default function OnboardingWrapper(
 
     return (
         <div className={className}>
-            <div class="onbarding-contents">
+            <div class="onboarding-contents">
                 <ContentComponent />
             </div>
             <div class="text-right py-4">

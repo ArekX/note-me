@@ -1,18 +1,30 @@
 import Dialog from "$islands/Dialog.tsx";
 import Button from "$components/Button.tsx";
 import SideTabPanel from "$islands/SideTabPanel.tsx";
-import KeyboardShortcuts from "$islands/notes/windows/help/KeyboardShortcuts.tsx";
+import KeyboardShortcutsPage from "./help/KeyboardShortcutsPage.tsx";
+import Icon from "$components/Icon.tsx";
+
+import MarkdownSyntaxPage from "./help/MarkdownSyntaxPage.tsx";
+import SupportedLanguageHighlightsPage from "./help/SupportedLanguageHighlightsPage.tsx";
+import General from "./help/General.tsx";
+import NoteFilesPage from "./help/NoteFilesPage.tsx";
+import OrganizingNotesPage from "./help/OrganizingNotesPage.tsx";
+import SettingRemindersPage from "./help/SettingRemindersPage.tsx";
+import NoteHistoryPage from "./help/NoteHistoryPage.tsx";
+import SearchingNotesPage from "./help/SearchingNotesPage.tsx";
+import ProtectingNotesPage from "./help/ProtectingNotesPage.tsx";
+import SharingNotesPage from "./help/SharingNotesPage.tsx";
+import DeletingNotesPage from "./help/DeletingNotesPage.tsx";
+import EditingNotesPage from "./help/EditingNotesPage.tsx";
+
 import { useSignal } from "@preact/signals";
 import { useResponsiveQuery } from "$frontend/hooks/use-responsive-query.ts";
-import Icon from "$components/Icon.tsx";
-import MarkdownSyntax, {
-    MarkdownSyntaxActions,
-} from "$islands/notes/windows/help/MarkdownSyntax.tsx";
-import SupportedLanguageHighlights from "$islands/notes/windows/help/SupportedLanguageHighlights.tsx";
 
 interface HelpProps {
     onClose: () => void;
 }
+
+export type NoteHelpAction = "open-languages" | "open-markdown-syntax";
 
 export default function NoteHelp({ onClose }: HelpProps) {
     const isMobileSidePanelOpen = useSignal(false);
@@ -20,10 +32,80 @@ export default function NoteHelp({ onClose }: HelpProps) {
 
     const itemIndex = useSignal(0);
 
-    const handleTopicAction = (action: MarkdownSyntaxActions) => {
+    const panels = [
+        {
+            name: "General",
+            component: () => <General onAction={handleTopicAction} />,
+        },
+        {
+            name: "Organizing notes",
+            component: () => <OrganizingNotesPage />,
+        },
+        {
+            name: "Sharing notes",
+            component: () => <SharingNotesPage />,
+        },
+        {
+            name: "Setting reminders",
+            component: () => <SettingRemindersPage />,
+        },
+        {
+            name: "Protecting notes",
+            component: () => <ProtectingNotesPage />,
+        },
+        {
+            name: "Note history",
+            component: () => <NoteHistoryPage />,
+        },
+        {
+            name: "Searching notes",
+            component: () => <SearchingNotesPage />,
+        },
+        {
+            name: "Editing notes",
+            component: () => <EditingNotesPage />,
+        },
+        {
+            name: "Deleting notes",
+            component: () => <DeletingNotesPage />,
+        },
+
+        {
+            name: "Files",
+            component: () => <NoteFilesPage />,
+        },
+        {
+            key: "keyboard-shortcuts",
+            name: "Keyboard Shortcuts",
+            component: () => <KeyboardShortcutsPage />,
+        },
+        {
+            key: "markdown-syntax",
+            name: "Markdown Syntax",
+            component: () => (
+                <MarkdownSyntaxPage
+                    onAction={handleTopicAction}
+                />
+            ),
+        },
+        {
+            key: "codeblock-languages",
+            name: "Supported languages in code blocks",
+            component: () => <SupportedLanguageHighlightsPage />,
+        },
+    ];
+
+    const handleTopicAction = (action: NoteHelpAction) => {
         switch (action) {
             case "open-languages":
-                itemIndex.value = 3;
+                itemIndex.value = panels.findIndex((p) =>
+                    p.key === "codeblock-languages"
+                );
+                break;
+            case "open-markdown-syntax":
+                itemIndex.value = panels.findIndex((p) =>
+                    p.key === "markdown-syntax"
+                );
                 break;
         }
     };
@@ -58,122 +140,8 @@ export default function NoteHelp({ onClose }: HelpProps) {
                         itemIndex.value = index;
                         isMobileSidePanelOpen.value = false;
                     }}
-                    items={[
-                        {
-                            name: "General",
-                            component: () => (
-                                <div class="p-2">
-                                    <p>
-                                        General
-                                    </p>
-                                </div>
-                            ),
-                        },
-                        {
-                            name: "Organizing notes",
-                            component: () => (
-                                <div class="p-2">
-                                    <p>
-                                        Organizing notes - groups, tags
-                                    </p>
-                                </div>
-                            ),
-                        },
-                        {
-                            name: "Editing notes",
-                            component: () => (
-                                <div class="p-2">
-                                    <p>
-                                        Editing notes
-                                    </p>
-                                </div>
-                            ),
-                        },
-                        {
-                            name: "Sharing notes",
-                            component: () => (
-                                <div class="p-2">
-                                    <p>
-                                        Sharing notes
-                                    </p>
-                                </div>
-                            ),
-                        },
-                        {
-                            name: "Note history",
-                            component: () => (
-                                <div class="p-2">
-                                    <p>
-                                        Note history
-                                    </p>
-                                </div>
-                            ),
-                        },
-                        {
-                            name: "Note protection",
-                            component: () => (
-                                <div class="p-2">
-                                    <p>
-                                        Note protection
-                                    </p>
-                                </div>
-                            ),
-                        },
-                        {
-                            name: "Setting reminders",
-                            component: () => (
-                                <div class="p-2">
-                                    <p>
-                                        Setting reminders
-                                    </p>
-                                </div>
-                            ),
-                        },
-                        {
-                            name: "Deleting notes",
-                            component: () => (
-                                <div class="p-2">
-                                    <p>
-                                        Note deletion
-                                    </p>
-                                </div>
-                            ),
-                        },
-                        {
-                            name: "Inserting content",
-                            component: () => (
-                                <div class="p-2">
-                                    <p>
-                                        Inserting content
-                                    </p>
-                                </div>
-                            ),
-                        },
-                        {
-                            name: "Files",
-                            component: () => (
-                                <div class="p-2">
-                                    <p>
-                                        Files
-                                    </p>
-                                </div>
-                            ),
-                        },
-                        {
-                            name: "Keyboard Shortcuts",
-                            component: () => <KeyboardShortcuts />,
-                        },
-                        {
-                            name: "Markdown Syntax",
-                            component: () => (
-                                <MarkdownSyntax onAction={handleTopicAction} />
-                            ),
-                        },
-                        {
-                            name: "Supported languages in code blocks",
-                            component: () => <SupportedLanguageHighlights />,
-                        },
-                    ]}
+                    addPanelClass="onboarding-contents"
+                    items={panels}
                     styleProps={query.min("md")
                         ? {
                             height: "calc(100vh - 208px)",

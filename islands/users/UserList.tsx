@@ -115,6 +115,11 @@ export default function UserList() {
 
     return (
         <div class="p-4">
+            <div class="py-4">
+                Here you can manage user access to the NoteMe app. You can add
+                users, change their roles, and delete them. Only admin role
+                users can access this page and manage users.
+            </div>
             {user.can(CanManageUsers.Update) && (
                 <div class="py-4 w-full text-right">
                     <Button

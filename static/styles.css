@@ -460,14 +460,18 @@ select.select-input {
     max-width: 21em;
 }
 
-.onbarding-contents h1 {
-    @apply text-lg font-semibold py-2;
+.onboarding-contents h1 {
+    @apply text-lg font-semibold py-4;
 }
 
-.onbarding-contents p {
+.onboarding-contents p {
     @apply py-2 block;
 }
 
-.onbarding-contents a {
+.onboarding-contents a {
     @apply underline text-gray-300;
+}
+
+.onboarding-contents .link {
+    @apply underline text-gray-300 cursor-pointer;
 }

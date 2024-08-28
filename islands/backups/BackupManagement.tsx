@@ -147,8 +147,17 @@ export default function BackupManagement({
 
             <div class="py-2">
                 Backup targets are used to specify where the backups should be
-                stored. Backups are ran automatically every day at midnight.
-                Every backup is stored to all backup targets.
+                stored. Backups are ran automatically every day at midnight by
+                {" "}
+                <a href="/app/settings/periodic-tasks" class="underline">
+                    periodic tasks
+                </a>. Every backup run goes through all of the targets and
+                stores a backup in each of them.
+
+                <br />
+                <br />
+                Status of each backup target with available backups to download
+                can be seen in the Backup List when managing a specific backup.
             </div>
 
             {!backupTargetLoader.running && (

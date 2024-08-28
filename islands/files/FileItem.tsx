@@ -126,7 +126,7 @@ export default function FileItem({
                 {file.name}
             </div>
 
-            <div class="text-xs p-2">
+            <div class="text-xs p-2 max-md:hidden">
                 Type: {file.mime_type.length > 0 ? file.mime_type : "unknown"}
                 {" "}
                 <br />
