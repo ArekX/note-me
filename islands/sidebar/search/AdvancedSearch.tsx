@@ -64,6 +64,7 @@ export default function AdvancedSearch(
                     <Input
                         label="Search"
                         placeholder="Search..."
+                        disableAutocomplete={true}
                         value={searchQuery.value}
                         onInput={(v) => searchQuery.value = v}
                         onKeydown={handleSearchKeyDown}

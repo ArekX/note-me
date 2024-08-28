@@ -18,6 +18,7 @@ interface InputProps {
     value?: string;
     tabIndex?: number;
     disabled?: boolean;
+    disableAutocomplete?: boolean;
     onInput?: (value: string) => void;
     onKeydown?: (e: KeyboardEvent) => void;
     placeholder?: string;
@@ -36,6 +37,7 @@ export default function Input(
         tabIndex,
         labelColor = "white",
         placeholder,
+        disableAutocomplete,
         disabled = false,
     }: InputProps,
 ) {
@@ -60,6 +62,7 @@ export default function Input(
                 disabled={disabled}
                 value={value}
                 tabIndex={tabIndex}
+                autoComplete={disableAutocomplete ? "off" : undefined}
                 min={min}
                 class={`outline-none border-1 ${
                     icon ? "pl-9" : ""
