@@ -1,4 +1,4 @@
-# Note Me
+# NoteMe
 
 NoteMe is a simple, note-taking app with powerful features which help to keep
 the ownership of your notes and keep them organized however you see fit.
