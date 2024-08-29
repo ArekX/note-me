@@ -1,7 +1,7 @@
 # NoteMe
 
-NoteMe is a simple, note-taking app with powerful features which help to keep
-the ownership of your notes and keep them organized however you see fit.
+NoteMe is a simple, note-taking app with powerful features which help you to
+keep the ownership of your notes and keep them organized however you see fit.
 
 ## Features
 
@@ -11,7 +11,7 @@ the ownership of your notes and keep them organized however you see fit.
   of contents, note links and listing notes from a specific group.
 - **Organize your notes**. You can tag your notes, store them in any kind of
   groups or subgroups making it easy to create an exact structure you want.
-- **Multiple users welcome**. NoteMe support any amount of users with different
+- **Multiple users welcome**. NoteMe supports multiple users with different
   roles, each user has its own space for notes so that everyone on the same
   NoteMe server can have their own folder structure.
 - **Sharing notes**. Notes created can be shared internally between users or to
@@ -39,71 +39,67 @@ the ownership of your notes and keep them organized however you see fit.
   be retrieved by you at any time or fully deleted.
 - **Easily hostable**. NoteMe can easily be run on any system running Deno with
   minimal configuration, or you can run it as a docker container using one of
-  the prebuilt images.
+  the prebuilt container images.
 
-# Development
+# Development and Contributing
 
 Requirements:
+[Deno](https://docs.deno.com/runtime/manual/getting_started/installation)
 
-- [Deno](https://docs.deno.com/runtime/manual/getting_started/installation)
-
-1. (Optional) Copy the environment example file: `cp .env.example .env` to
-   override defaults.
-2. Install git hooks by running `setup-githooks.sh`
+1. Copy the environment example file: `cp .env.example .env` to override
+   defaults. This is optional as `.env.defaults` will be loaded if this step is
+   omitted.
+2. Install git hooks by running `setup-githooks.sh` to setup git hooks.
 3. Start the development server: `deno task dev`
-
-First time login is with `admin` as both username and password.
-
-# Run
-
-**Important:** Environment file `.env` is required to properly run the
-containers. See [.env.example](.env.example) for details.
-
-On first run, database will be created with an administrator username `admin`
-and password `admin`.
-
-## via Docker
-
-Requirements:
-
-- [Docker](https://docs.docker.com/engine/install/)
-
-1. Find version you want to run at
-   [DockerHub](https://hub.docker.com/r/arekxv/note-me)
-2. Create `.env` file (use the one from this repository or follow instructions
-   on docker hub)
-3. Run `docker run -p 8000:8000 -p 8080:8080 --env-file ./.env arekxv/note-me`
 
 By default application will be on `http://localhost:8000` with additional
 backend websocket connection at `http://localhost:8080`.
 
-## via Podman
+On first run, administrator user will be created with username `admin` and
+password `admin`.
+
+# Run
+
+## Run as a container
+
+Requirements: [Docker](https://docs.docker.com/engine/install/) or
+[Podman](https://podman.io/docs/installation) (replace `docker` command with
+`podman`)
+
+1. Create `.env` file (use the one from this [repository](.env.example) or
+   follow instructions on [DockerHub](https://hub.docker.com/r/arekxv/note-me))
+2. Run `docker run -p 8000:8000 -p 8080:8080 --env-file ./.env arekxv/note-me`
+
+By default application will be on `http://localhost:8000` with additional
+backend websocket connection at `http://localhost:8080`.
+
+On first run, administrator user will be created with username `admin` and
+password `admin`.
+
+# Run manually
 
 Requirements:
+[Deno](https://docs.deno.com/runtime/manual/getting_started/installation)
 
-- [Podman](https://podman.io/docs/installation)
-
-Use same instruction as for Docker, but use `podman run` instead of
-`docker run`.
-
-# Build and run manually
-
-Requirements:
-
-- [Deno](https://docs.deno.com/runtime/manual/getting_started/installation)
-
-1. Set environment variables (see .env.example)
+1. Set environment variables (see [.env.example](.env.example))
 2. Add DENO_DEPLOYMENT_ID environment variable. Should be
    `export DENO_DEPLOYMENT_ID=$(git rev-parse HEAD)`
-3. Run `deno task cache` to pre-install all dependencies.
-4. RUN `deno task build-assets` to build islands and other assets.
-5. Run `deno task production`
+3. Run `deno task cache` to pre-install all dependencies. This is optional but
+   will speedup first-time run.
+4. Run `deno task build-assets` to build assets needed for the application.
+5. Run `deno task production` to start the main application.
 
-# Build and run using Docker
+By default application will be on `http://localhost:8000` with additional
+backend websocket connection at `http://localhost:8080`.
 
-Requirements:
+On first run, administrator user will be created with username `admin` and
+password `admin`.
 
-- [Docker](https://docs.docker.com/engine/install/)
+# Building
+
+## Build using Docker
+
+Requirements: [Docker](https://docs.docker.com/engine/install/)
 
 Steps:
 
@@ -112,18 +108,27 @@ Steps:
    `docker run -p 8000:8000 -p 8080:8080 --env-file ./.env arekxv/note-me:<VERSION>`,
    replace `<VERSION>` with the version you see from the output of the build
 
-Or see
-[pre-built versions on DockerHub](https://hub.docker.com/r/arekxv/note-me) and
-download that by just doing step 3.
+## Build using Podman
 
-# Build and run using Podman
-
-Requirements:
-
-- [Podman](https://podman.io/docs/installation)
+Requirements: [Podman](https://podman.io/docs/installation)
 
 Steps:
 
 1. Run `deno task build-podman`
 2. After image is built run
    `podman run -p 8000:8000 -p 8080:8080 --env-file ./.env localhost/arekxv/note-me`
+
+# License
+
+Copyright 2024 Aleksandar Panic
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
