@@ -11,6 +11,13 @@ export const loadEnvironment = () => {
     });
 };
 
+const trimSlashes = (str: string): string => {
+    return str.replace(/^\/+|\/+$/g, "");
+};
+
+export const getAssetUrl = (asset: string) =>
+    `${trimSlashes(getAppUrl().toString())}/${trimSlashes(asset)}`;
+
 export const getAppUrl = () =>
     new URL(
         Deno.env.get("APP_URL") ??

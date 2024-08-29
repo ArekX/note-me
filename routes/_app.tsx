@@ -1,6 +1,7 @@
 import { type PageProps } from "$fresh/server.ts";
 import { getCurrentMonthWallpaper } from "$frontend/wallpaper.ts";
 import ToastMessages from "$islands/ToastMessages.tsx";
+import { getAppUrl, getAssetUrl } from "$backend/env.ts";
 
 export default function App({ Component, route, data }: PageProps) {
     const allowWallpaper = data?.disableWallpaper !== true;
@@ -19,6 +20,17 @@ export default function App({ Component, route, data }: PageProps) {
                     name="viewport"
                     content="width=device-width, initial-scale=1.0"
                 />
+                <meta property="og:title" content={`NoteMe ${subTitle}`} />
+                <meta
+                    property="og:description"
+                    content="NoteMe is a simple and powerful note app to own your notes and have them organized."
+                />
+                <meta
+                    property="og:image"
+                    content={`${getAssetUrl("noteme.png")}`}
+                />
+                <meta property="og:site_name" content="NoteMe" />
+                <meta property="og:url" content={getAppUrl().toString()} />
                 <title>NoteMe {subTitle}</title>
                 <link
                     rel="stylesheet"
