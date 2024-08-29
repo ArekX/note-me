@@ -10,6 +10,9 @@ import { SystemErrorMessage } from "$frontend/hooks/use-websocket-service.ts";
 import { useValidation } from "$frontend/hooks/use-validation.ts";
 import ErrorDisplay from "$components/ErrorDisplay.tsx";
 
+const toOptionalValue = (value: string | undefined) =>
+    value && value.length > 0 ? value : undefined;
+
 export default function UserProfile() {
     const user = useUser();
     const userData = useSignal<EditUserProfile>({
@@ -26,19 +29,21 @@ export default function UserProfile() {
 
     const handleSubmit = async (event: Event) => {
         event.preventDefault();
-        if (
-            !await validate({
-                ...userData.value,
-                old_password: userData.value.old_password || undefined,
-                new_password: userData.value.new_password || undefined,
-                confirm_password: userData.value.confirm_password || undefined,
-            })
-        ) {
+
+        const data = {
+            ...userData.value,
+            old_password: toOptionalValue(userData.value.old_password),
+            new_password: toOptionalValue(userData.value.new_password),
+            confirm_password: toOptionalValue(
+                userData.value.confirm_password,
+            ),
+        };
+
+        if (!await validate(data)) {
             return;
         }
-
         try {
-            await user.updateProfile(userData.value);
+            await user.updateProfile(data);
             addMessage({
                 type: "success",
                 text: "Profile updated successfully.",

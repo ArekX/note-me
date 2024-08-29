@@ -1,7 +1,6 @@
 import { signal } from "@preact/signals";
 import {
     UserOnboardingState,
-    UserProfileData,
     UserRecord,
 } from "$backend/repository/user-repository.ts";
 import { AppPermissions } from "$backend/rbac/permissions.ts";
@@ -13,6 +12,7 @@ import {
     UserFrontendResponse,
 } from "$workers/websocket/api/users/messages.ts";
 import { useProtectionLock } from "$frontend/hooks/use-protection-lock.ts";
+import { EditUserProfile } from "$schemas/users.ts";
 
 export type FrontendUserData =
     & Pick<
@@ -95,7 +95,7 @@ export const useUser = () => {
         );
     };
 
-    const updateProfile = async (data: UserProfileData) => {
+    const updateProfile = async (data: EditUserProfile) => {
         if (!userData.value) {
             return;
         }

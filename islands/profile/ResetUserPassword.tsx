@@ -44,13 +44,13 @@ export default function ResetUserPassword({
     };
 
     const handleSave = resetLoader.wrap(async () => {
-        const isValid = await validate({
+        const passwordData: ResetPasswordRequest = {
             new_password: newPassword.value,
             old_password: oldPassword.value,
-            confirm_new_password: confirmPassword.value,
-        });
+            confirm_password: confirmPassword.value,
+        };
 
-        if (!isValid) {
+        if (!await validate(passwordData)) {
             return;
         }
 
@@ -58,8 +58,7 @@ export default function ResetUserPassword({
             await user.updateProfile({
                 name: user.getName(),
                 timezone: user.getTimezone(),
-                new_password: newPassword.value,
-                old_password: oldPassword.value,
+                ...passwordData,
             });
         } catch (e) {
             const systemError = e as SystemErrorMessage;

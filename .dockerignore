@@ -7,8 +7,10 @@ _fresh
 database.sqlite
 database2.sqlite
 .env
-env.example
+.env.defaults
+.env.example
 Dockerfile
 .github
 .dvmrc
 setup-githooks.sh
+node_modules

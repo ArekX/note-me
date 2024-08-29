@@ -1,5 +1,9 @@
 import { Message } from "$workers/websocket/types.ts";
-import { AddUserRequest, UpdateUserRequest } from "$schemas/users.ts";
+import {
+    AddUserRequest,
+    EditUserProfile,
+    UpdateUserRequest,
+} from "$schemas/users.ts";
 import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
 import {
     FindPickUserFilters,
@@ -7,7 +11,6 @@ import {
     PickUserRecord,
     UserId,
     UserOnboardingState,
-    UserProfileData,
     UserRecord,
 } from "$backend/repository/user-repository.ts";
 import {
@@ -67,12 +70,12 @@ export type FindUsersResponse = UserMessage<
 
 export type UpdateProfileMessage = UserMessage<
     "updateProfile",
-    { data: UserProfileData }
+    { data: EditUserProfile }
 >;
 
 export type UpdateProfileResponse = UserMessage<
     "updateProfileResponse",
-    { data: UserProfileData }
+    { data: EditUserProfile }
 >;
 
 export type FindPickUsersMessage = UserMessage<
