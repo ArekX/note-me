@@ -35,6 +35,10 @@ export const useTreeWebsocket = (options: TreeWebsocketOptions) => {
                         return;
                     }
 
+                    if (findContainerById(data.record.id, "note")) {
+                        return;
+                    }
+
                     const newNote = fromTreeRecord({
                         type: "note",
                         id: data.record.id,
