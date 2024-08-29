@@ -69,13 +69,13 @@ Requirements:
 - [Docker](https://docs.docker.com/engine/install/)
 
 1. Find version you want to run at
-   [DockerHub](https://hub.docker.com/repository/docker/arekxv/note-me/general)
-2. Run
-   `docker run -p 8000:8000 -p 8080:8080 --env-file ./.env arekxv/note-me:<VERSION>`,
-   replace `<VERSION>` with the version.
+   [DockerHub](https://hub.docker.com/r/arekxv/note-me)
+2. Create `.env` file (use the one from this repository or follow instructions
+   on docker hub)
+3. Run `docker run -p 8000:8000 -p 8080:8080 --env-file ./.env arekxv/note-me`
 
-Application will be on `http://localhost:8000`. Additional WebSocket interface
-(for notifications and communication) will be used at `http://localhost:8080`.
+By default application will be on `http://localhost:8000` with additional
+backend websocket connection at `http://localhost:8080`.
 
 ## via Podman
 
@@ -107,11 +107,10 @@ Requirements:
 
 Steps:
 
-1. Tag a release with `git tag <VERSION>` or fetch tags via `git fetch --tags`
-2. Run `deno task build-docker`
-3. After docker image is built run
+1. Run `deno task build-docker`
+2. After docker image is built run
    `docker run -p 8000:8000 -p 8080:8080 --env-file ./.env arekxv/note-me:<VERSION>`,
-   replace `<VERSION>` with the version.
+   replace `<VERSION>` with the version you see from the output of the build
 
 Or see
 [pre-built versions on DockerHub](https://hub.docker.com/r/arekxv/note-me) and
@@ -125,7 +124,6 @@ Requirements:
 
 Steps:
 
-1. Tag a release with `git tag <VERSION>` or fetch tags via `git fetch --tags`
-2. Run `deno task build-podman`
-3. After image is built run
+1. Run `deno task build-podman`
+2. After image is built run
    `podman run -p 8000:8000 -p 8080:8080 --env-file ./.env localhost/arekxv/note-me`
