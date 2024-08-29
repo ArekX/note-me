@@ -114,8 +114,8 @@ Steps:
    replace `<VERSION>` with the version.
 
 Or see
-[pre-built versions on DockerHub](https://hub.docker.com/repository/docker/arekxv/note-me/general)
-and download that by just doing step 3.
+[pre-built versions on DockerHub](https://hub.docker.com/r/arekxv/note-me) and
+download that by just doing step 3.
 
 # Build and run using Podman
 
