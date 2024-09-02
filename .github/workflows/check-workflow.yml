@@ -4,7 +4,7 @@ permissions:
     contents: read
 
 env:
-  DENO_VERSION: "1.46.1"
+  DENO_VERSION: "1.46.2"
   DENO_DIR: /home/runner/.deno-cache
   SQLITE_DATABASE_LOCATION: ":memory:"
   COOKIE_DOMAIN: localhost
@@ -33,7 +33,7 @@ jobs:
 
             - uses: denoland/setup-deno@v1
               with:
-                deno-version: v1.46.1
+                deno-version: v1.46.2
 
             - name: Cache Deno dependencies 
               uses: actions/cache@v3

@@ -1,40 +1,73 @@
 import OnboardingDialog from "$islands/onboarding/OnboardingDialog.tsx";
+import HelpAction from "$islands/help/HelpAction.tsx";
+import Icon from "$components/Icon.tsx";
 
 export default function ViewNoteIntroduction() {
     return (
         <OnboardingDialog
             title="Viewing your notes"
             onboardingKey="view_note_introduction_dismissed"
-            content={() => (
+            content={({ onClosed }) => (
                 <div>
-                    Here you can see the contents of your note in view mode.
-                    {" "}
-                    <br />
-
                     <p>
-                        All notes are rendered using{" "}
-                        <a
-                            href="https://en.wikipedia.org/wiki/Markdown"
-                            target="_blank"
+                        This is a view page for your note. Here you can see your
+                        note rendered from the{" "}
+                        <HelpAction
+                            action="open-markdown-syntax"
+                            onOpened={onClosed}
                         >
                             markdown syntax
-                        </a>. While it is not strictly necessary to know
-                        Markdown to use NoteMe and you can use it to write plain
-                        text notes, knowing Markdown can help and allow you to
-                        take a full advantage of NoteMe's features.
+                        </HelpAction>.
+                    </p>
+
+                    <h1>Searching</h1>
+
+                    <p>
+                        If your note contains tags, you can click on the tag to
+                        find all notes with the same tag in the sidebar on the
+                        left.
                     </p>
 
                     <p>
-                        NoteMe supports all basic markdown features like
-                        headers, lists, links, images, and code blocks. You can
-                        also use advanced features like tables, footnotes, and
-                        strikethrough text and some extensions specific to
-                        NoteMe.
+                        If your note is organized in a group, group name will
+                        appear below the note title. You can click on the group
+                        name to search all notes in that group or it subgroups.
+                    </p>
+
+                    <h1>Sharing</h1>
+
+                    <p>
+                        Notes can be shared with other users or everyone by
+                        creating a public link. Check{" "}
+                        <HelpAction
+                            onOpened={onClosed}
+                            action="open-sharing-notes"
+                        >
+                            note sharing
+                        </HelpAction>{" "}
+                        in help for more information.
+                    </p>
+
+                    <h1>Reminders</h1>
+
+                    <p>
+                        If you need to be reminded about this note later, you
+                        can set a one-time or recurring reminder. Check{" "}
+                        <HelpAction
+                            onOpened={onClosed}
+                            action="open-setting-reminders"
+                        >
+                            setting reminders
+                        </HelpAction>{" "}
+                        in help for more information.
                     </p>
 
                     <p>
-                        To see all supported markdown features, check the help
-                        window in the upper right menu of this page.
+                        For more help, click on the{" "}
+                        <HelpAction onOpened={onClosed} disableUnderline={true}>
+                            <Icon name="help-circle" />
+                        </HelpAction>{" "}
+                        in the left sidebar menu.
                     </p>
                 </div>
             )}

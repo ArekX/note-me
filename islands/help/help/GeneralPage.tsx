@@ -1,4 +1,4 @@
-import { NoteHelpAction } from "$islands/notes/windows/NoteHelp.tsx";
+import { NoteHelpAction } from "../HelpWindow.tsx";
 import { redirectTo } from "$frontend/redirection-manager.ts";
 
 export interface GeneralPageProps {

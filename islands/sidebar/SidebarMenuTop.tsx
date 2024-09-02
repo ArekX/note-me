@@ -3,6 +3,7 @@ import Button from "$components/Button.tsx";
 import Icon from "$components/Icon.tsx";
 import Logo from "$components/Logo.tsx";
 import { redirectTo } from "$frontend/redirection-manager.ts";
+import HelpButton from "$islands/help/HelpButton.tsx";
 
 interface SidebarMenuProps {
     showSettings: boolean;
@@ -45,18 +46,21 @@ export default function SidebarMenuTop(
                 />
                 <span class="pl-1">NoteMe</span>
             </a>
-            {showSettings && (
-                <Button
-                    onClick={handleOpenSettings}
-                    color="transparent"
-                    size="sm"
-                    title="Settings"
-                    rounded={false}
-                    borderClass="border-b-0"
-                >
-                    <Icon name="cog" />
-                </Button>
-            )}
+            <div>
+                {showSettings && (
+                    <Button
+                        onClick={handleOpenSettings}
+                        color="transparent"
+                        size="sm"
+                        title="Settings"
+                        rounded={false}
+                        borderClass="border-b-0"
+                    >
+                        <Icon name="cog" />
+                    </Button>
+                )}
+                <HelpButton />
+            </div>
         </div>
     );
 }

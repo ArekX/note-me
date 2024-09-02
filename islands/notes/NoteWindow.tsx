@@ -1,6 +1,5 @@
 import NoteDelete from "$islands/notes/windows/NoteDelete.tsx";
 import NoteDetails from "./windows/NoteDetails.tsx";
-import NoteHelp from "$islands/notes/windows/NoteHelp.tsx";
 import NoteShare from "$islands/notes/windows/NoteShare.tsx";
 import Picker from "$components/Picker.tsx";
 import NoteReminder from "$islands/notes/windows/NoteReminder.tsx";
@@ -28,7 +27,6 @@ export type NoteWindowTypes =
     | "history"
     | "share"
     | "remind"
-    | "help"
     | "move"
     | "files"
     | "delete";
@@ -155,7 +153,6 @@ export default function NoteWindow({
                                 />
                             ),
                             files: (props) => <NoteFiles {...props} />,
-                            help: (props) => <NoteHelp {...props} />,
                             delete: (props) => <NoteDelete {...props} />,
                         }}
                     />

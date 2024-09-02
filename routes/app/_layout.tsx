@@ -7,6 +7,7 @@ import { canAccessSettings } from "$backend/rbac/role-definitions.ts";
 import { Partial } from "$fresh/runtime.ts";
 import EncryptionLockWindow from "$islands/encryption/EncryptionLockWindow.tsx";
 import { getSocketHostname } from "$backend/env.ts";
+import HelpWindow from "$islands/help/HelpWindow.tsx";
 
 export default async function Layout(
     req: Request,
@@ -43,6 +44,7 @@ export default async function Layout(
                 }`}
             >
                 <EncryptionLockWindow />
+                <HelpWindow />
                 <IslandInitializer
                     socketHost={socketHost}
                     userData={{

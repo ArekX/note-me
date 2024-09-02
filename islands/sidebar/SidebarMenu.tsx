@@ -6,6 +6,7 @@ import EncryptionLockButton from "$islands/encryption/EncryptionLockButton.tsx";
 import { useResponsiveQuery } from "$frontend/hooks/use-responsive-query.ts";
 import Logo from "$components/Logo.tsx";
 import SidebarMenuTop from "$islands/sidebar/SidebarMenuTop.tsx";
+import HelpButton from "$islands/help/HelpButton.tsx";
 
 interface SidebarMenuProps {
     showSettings: boolean;
@@ -75,15 +76,15 @@ const DesktopSidebarMenu = (
                 {query.max("md") && (
                     <a
                         href="/app/note"
-                        class="hover:text-gray-300"
+                        class="hover:text-gray-300 block pb-2"
                         title="Home"
                     >
                         <Logo
                             white={true}
                             height={16}
                             width={16}
-                        />
-                        {" "}
+                        />{" "}
+                        <span class="pl-1k">NoteMe</span>
                     </a>
                 )}
                 {showSettings && (
@@ -106,6 +107,7 @@ const DesktopSidebarMenu = (
                     <Icon name="user" />
                 </a>
                 <EncryptionLockButton />
+                <HelpButton />
                 <LogoutButton />
             </div>
         </div>

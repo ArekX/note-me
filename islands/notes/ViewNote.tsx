@@ -13,6 +13,7 @@ import { useSearch } from "$frontend/hooks/use-search.ts";
 import { downloadTextAsMarkdown } from "$frontend/text-downloader.ts";
 import { useActiveNoteEffect } from "$frontend/hooks/use-active-note.ts";
 import { useResponsiveQuery } from "$frontend/hooks/use-responsive-query.ts";
+import { useHelp } from "$frontend/hooks/use-help.ts";
 
 export interface ViewNoteProps {
     readonly?: boolean;
@@ -38,6 +39,8 @@ export default function ViewNote(
         ...record,
     });
     const search = disableTagLinks ? null : useSearch();
+
+    const help = useHelp();
 
     const query = useResponsiveQuery();
 
@@ -77,11 +80,13 @@ export default function ViewNote(
             case "history":
             case "share":
             case "remind":
-            case "help":
             case "move":
             case "files":
             case "delete":
                 windowMode.value = action;
+                break;
+            case "help":
+                help.open();
                 break;
             case "download":
                 downloadTextAsMarkdown(
@@ -153,6 +158,7 @@ export default function ViewNote(
                 ))}
             </div>
             <DetailsLine
+                groupId={recordData.value.group_id}
                 groupName={recordData.value.group_name}
                 lastUpdatedUnix={recordData.value.updated_at}
                 author={author}

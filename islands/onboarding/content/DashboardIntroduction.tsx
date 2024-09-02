@@ -1,13 +1,14 @@
 import { redirectTo } from "$frontend/redirection-manager.ts";
 import Icon from "$components/Icon.tsx";
 import OnboardingDialog from "$islands/onboarding/OnboardingDialog.tsx";
+import HelpAction from "$islands/help/HelpAction.tsx";
 
 export default function DashboardIntroduction() {
     return (
         <OnboardingDialog
             onboardingKey="introduction_dismissed"
             title="Welcome to NoteMe!"
-            content={() => (
+            content={({ onClosed }) => (
                 <div>
                     <p>
                         NoteMe is a simple, note-taking app with powerful
@@ -34,6 +35,14 @@ export default function DashboardIntroduction() {
                         profile icon in the top left corner of the sidebar. From
                         there you can access your settings, data and other
                         information.
+                    </p>
+
+                    <p>
+                        For more help, click on the{" "}
+                        <HelpAction onOpened={onClosed} disableUnderline={true}>
+                            <Icon name="help-circle" />
+                        </HelpAction>{" "}
+                        in the left sidebar menu.
                     </p>
 
                     <p>

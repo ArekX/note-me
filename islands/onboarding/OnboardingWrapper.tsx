@@ -3,7 +3,7 @@ import Button from "$components/Button.tsx";
 import { UserOnboardingState } from "$backend/repository/user-repository.ts";
 import { useUser } from "$frontend/hooks/use-user.ts";
 
-export type ContentFn = () => JSX.Element;
+export type ContentFn = (props: { onClosed?: () => void }) => JSX.Element;
 
 interface OnboardingWrapperProps {
     onDismissed?: () => void;
@@ -45,7 +45,7 @@ export default function OnboardingWrapper(
     return (
         <div className={className}>
             <div class="onboarding-contents">
-                <ContentComponent />
+                <ContentComponent onClosed={onClosed} />
             </div>
             <div class="text-right py-4">
                 <Button

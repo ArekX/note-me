@@ -1,5 +1,5 @@
 import Icon from "$components/Icon.tsx";
-import { useProtectionLock } from "../../frontend/hooks/use-protection-lock.ts";
+import { useProtectionLock } from "$frontend/hooks/use-protection-lock.ts";
 import { addMessage } from "$frontend/toast-message.ts";
 
 export default function EncryptionLockButton() {

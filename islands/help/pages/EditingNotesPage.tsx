@@ -1,4 +1,4 @@
-import { NoteHelpAction } from "$islands/notes/windows/NoteHelp.tsx";
+import { NoteHelpAction } from "../HelpWindow.tsx";
 
 export interface EditingNotePageProps {
     onAction: (action: NoteHelpAction) => void;
@@ -18,8 +18,14 @@ export default function EditingNotesPage({ onAction }: EditingNotePageProps) {
             <p>
                 In note editor you can set the title of the note, add one or
                 more tags and edit the contents of the note. Please note that
-                NoteMe works with markdown syntax which will be displayed here,
-                refer to the{" "}
+                NoteMe works with{" "}
+                <a
+                    href="https://en.wikipedia.org/wiki/Markdown"
+                    target="_blank"
+                >
+                    markdown syntax
+                </a>{" "}
+                which will be displayed here, refer to the{" "}
                 <span
                     class="link"
                     onClick={() => onAction("open-markdown-syntax")}

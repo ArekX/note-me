@@ -37,6 +37,7 @@ import { useResponsiveQuery } from "$frontend/hooks/use-responsive-query.ts";
 import { addMessage } from "$frontend/toast-message.ts";
 import { useTreeState } from "$islands/tree/hooks/use-tree-state.ts";
 import { useTreeWebsocket } from "$islands/tree/hooks/use-tree-websocket.ts";
+import { useHelp } from "$frontend/hooks/use-help.ts";
 
 export const noteEditorHotkeySet: HotkeySet<
     "noteEditor",
@@ -94,6 +95,8 @@ export default function NoteEditor({
     const [noteValidation, validateNote] = useValidation<AddNoteRequest>({
         schema: addNoteRequestSchema,
     });
+
+    const help = useHelp();
 
     useTreeWebsocket({
         treeState: useTreeState(),
@@ -210,9 +213,11 @@ export default function NoteEditor({
             case "remind":
             case "move":
             case "files":
-            case "help":
             case "delete":
                 windowMode.value = action;
+                break;
+            case "help":
+                help.open();
                 break;
             case "editor-save":
                 handleSave();
@@ -405,6 +410,7 @@ export default function NoteEditor({
                 />
             </div>
             <DetailsLine
+                groupId={groupId.value}
                 groupName={groupName.value}
             />
             <div class="mt-2">

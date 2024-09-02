@@ -77,6 +77,25 @@ import * as $files_hooks_use_file_uploader from "./islands/files/hooks/use-file-
 import * as $groups_GroupDetails from "./islands/groups/GroupDetails.tsx";
 import * as $groups_GroupPicker from "./islands/groups/GroupPicker.tsx";
 import * as $groups_MoveGroupDialog from "./islands/groups/MoveGroupDialog.tsx";
+import * as $help_HelpAction from "./islands/help/HelpAction.tsx";
+import * as $help_HelpButton from "./islands/help/HelpButton.tsx";
+import * as $help_HelpWindow from "./islands/help/HelpWindow.tsx";
+import * as $help_help_EditingNotesPage from "./islands/help/help/EditingNotesPage.tsx";
+import * as $help_help_GeneralPage from "./islands/help/help/GeneralPage.tsx";
+import * as $help_help_MarkdownSyntaxPage from "./islands/help/help/MarkdownSyntaxPage.tsx";
+import * as $help_pages_DeletingNotesPage from "./islands/help/pages/DeletingNotesPage.tsx";
+import * as $help_pages_EditingNotesPage from "./islands/help/pages/EditingNotesPage.tsx";
+import * as $help_pages_GeneralPage from "./islands/help/pages/GeneralPage.tsx";
+import * as $help_pages_KeyboardShortcutsPage from "./islands/help/pages/KeyboardShortcutsPage.tsx";
+import * as $help_pages_MarkdownSyntaxPage from "./islands/help/pages/MarkdownSyntaxPage.tsx";
+import * as $help_pages_NoteFilesPage from "./islands/help/pages/NoteFilesPage.tsx";
+import * as $help_pages_NoteHistoryPage from "./islands/help/pages/NoteHistoryPage.tsx";
+import * as $help_pages_OrganizingNotesPage from "./islands/help/pages/OrganizingNotesPage.tsx";
+import * as $help_pages_ProtectingNotesPage from "./islands/help/pages/ProtectingNotesPage.tsx";
+import * as $help_pages_SearchingNotesPage from "./islands/help/pages/SearchingNotesPage.tsx";
+import * as $help_pages_SettingRemindersPage from "./islands/help/pages/SettingRemindersPage.tsx";
+import * as $help_pages_SharingNotesPage from "./islands/help/pages/SharingNotesPage.tsx";
+import * as $help_pages_SupportedLanguageHighlightsPage from "./islands/help/pages/SupportedLanguageHighlightsPage.tsx";
 import * as $markdown_NodeItem from "./islands/markdown/NodeItem.tsx";
 import * as $markdown_Viewer from "./islands/markdown/Viewer.tsx";
 import * as $markdown_nodes_CodeBlock from "./islands/markdown/nodes/CodeBlock.tsx";
@@ -111,7 +130,6 @@ import * as $notes_pages_ViewNotePage from "./islands/notes/pages/ViewNotePage.t
 import * as $notes_windows_NoteDelete from "./islands/notes/windows/NoteDelete.tsx";
 import * as $notes_windows_NoteDetails from "./islands/notes/windows/NoteDetails.tsx";
 import * as $notes_windows_NoteFiles from "./islands/notes/windows/NoteFiles.tsx";
-import * as $notes_windows_NoteHelp from "./islands/notes/windows/NoteHelp.tsx";
 import * as $notes_windows_NoteHistory from "./islands/notes/windows/NoteHistory.tsx";
 import * as $notes_windows_NoteReminder from "./islands/notes/windows/NoteReminder.tsx";
 import * as $notes_windows_NoteShare from "./islands/notes/windows/NoteShare.tsx";
@@ -122,19 +140,6 @@ import * as $notes_windows_components_QuickPickReminder from "./islands/notes/wi
 import * as $notes_windows_components_RepeatReminder from "./islands/notes/windows/components/RepeatReminder.tsx";
 import * as $notes_windows_components_ShareLinks from "./islands/notes/windows/components/ShareLinks.tsx";
 import * as $notes_windows_components_ShareToUsers from "./islands/notes/windows/components/ShareToUsers.tsx";
-import * as $notes_windows_help_DeletingNotesPage from "./islands/notes/windows/help/DeletingNotesPage.tsx";
-import * as $notes_windows_help_EditingNotesPage from "./islands/notes/windows/help/EditingNotesPage.tsx";
-import * as $notes_windows_help_GeneralPage from "./islands/notes/windows/help/GeneralPage.tsx";
-import * as $notes_windows_help_KeyboardShortcutsPage from "./islands/notes/windows/help/KeyboardShortcutsPage.tsx";
-import * as $notes_windows_help_MarkdownSyntaxPage from "./islands/notes/windows/help/MarkdownSyntaxPage.tsx";
-import * as $notes_windows_help_NoteFilesPage from "./islands/notes/windows/help/NoteFilesPage.tsx";
-import * as $notes_windows_help_NoteHistoryPage from "./islands/notes/windows/help/NoteHistoryPage.tsx";
-import * as $notes_windows_help_OrganizingNotesPage from "./islands/notes/windows/help/OrganizingNotesPage.tsx";
-import * as $notes_windows_help_ProtectingNotesPage from "./islands/notes/windows/help/ProtectingNotesPage.tsx";
-import * as $notes_windows_help_SearchingNotesPage from "./islands/notes/windows/help/SearchingNotesPage.tsx";
-import * as $notes_windows_help_SettingRemindersPage from "./islands/notes/windows/help/SettingRemindersPage.tsx";
-import * as $notes_windows_help_SharingNotesPage from "./islands/notes/windows/help/SharingNotesPage.tsx";
-import * as $notes_windows_help_SupportedLanguageHighlightsPage from "./islands/notes/windows/help/SupportedLanguageHighlightsPage.tsx";
 import * as $notifications_NotificationItem from "./islands/notifications/NotificationItem.tsx";
 import * as $notifications_NotificationList from "./islands/notifications/NotificationList.tsx";
 import * as $notifications_NotificationListView from "./islands/notifications/NotificationListView.tsx";
@@ -279,6 +284,36 @@ const manifest = {
         "./islands/groups/GroupDetails.tsx": $groups_GroupDetails,
         "./islands/groups/GroupPicker.tsx": $groups_GroupPicker,
         "./islands/groups/MoveGroupDialog.tsx": $groups_MoveGroupDialog,
+        "./islands/help/HelpAction.tsx": $help_HelpAction,
+        "./islands/help/HelpButton.tsx": $help_HelpButton,
+        "./islands/help/HelpWindow.tsx": $help_HelpWindow,
+        "./islands/help/help/EditingNotesPage.tsx": $help_help_EditingNotesPage,
+        "./islands/help/help/GeneralPage.tsx": $help_help_GeneralPage,
+        "./islands/help/help/MarkdownSyntaxPage.tsx":
+            $help_help_MarkdownSyntaxPage,
+        "./islands/help/pages/DeletingNotesPage.tsx":
+            $help_pages_DeletingNotesPage,
+        "./islands/help/pages/EditingNotesPage.tsx":
+            $help_pages_EditingNotesPage,
+        "./islands/help/pages/GeneralPage.tsx": $help_pages_GeneralPage,
+        "./islands/help/pages/KeyboardShortcutsPage.tsx":
+            $help_pages_KeyboardShortcutsPage,
+        "./islands/help/pages/MarkdownSyntaxPage.tsx":
+            $help_pages_MarkdownSyntaxPage,
+        "./islands/help/pages/NoteFilesPage.tsx": $help_pages_NoteFilesPage,
+        "./islands/help/pages/NoteHistoryPage.tsx": $help_pages_NoteHistoryPage,
+        "./islands/help/pages/OrganizingNotesPage.tsx":
+            $help_pages_OrganizingNotesPage,
+        "./islands/help/pages/ProtectingNotesPage.tsx":
+            $help_pages_ProtectingNotesPage,
+        "./islands/help/pages/SearchingNotesPage.tsx":
+            $help_pages_SearchingNotesPage,
+        "./islands/help/pages/SettingRemindersPage.tsx":
+            $help_pages_SettingRemindersPage,
+        "./islands/help/pages/SharingNotesPage.tsx":
+            $help_pages_SharingNotesPage,
+        "./islands/help/pages/SupportedLanguageHighlightsPage.tsx":
+            $help_pages_SupportedLanguageHighlightsPage,
         "./islands/markdown/NodeItem.tsx": $markdown_NodeItem,
         "./islands/markdown/Viewer.tsx": $markdown_Viewer,
         "./islands/markdown/nodes/CodeBlock.tsx": $markdown_nodes_CodeBlock,
@@ -324,7 +359,6 @@ const manifest = {
         "./islands/notes/windows/NoteDelete.tsx": $notes_windows_NoteDelete,
         "./islands/notes/windows/NoteDetails.tsx": $notes_windows_NoteDetails,
         "./islands/notes/windows/NoteFiles.tsx": $notes_windows_NoteFiles,
-        "./islands/notes/windows/NoteHelp.tsx": $notes_windows_NoteHelp,
         "./islands/notes/windows/NoteHistory.tsx": $notes_windows_NoteHistory,
         "./islands/notes/windows/NoteReminder.tsx": $notes_windows_NoteReminder,
         "./islands/notes/windows/NoteShare.tsx": $notes_windows_NoteShare,
@@ -342,32 +376,6 @@ const manifest = {
             $notes_windows_components_ShareLinks,
         "./islands/notes/windows/components/ShareToUsers.tsx":
             $notes_windows_components_ShareToUsers,
-        "./islands/notes/windows/help/DeletingNotesPage.tsx":
-            $notes_windows_help_DeletingNotesPage,
-        "./islands/notes/windows/help/EditingNotesPage.tsx":
-            $notes_windows_help_EditingNotesPage,
-        "./islands/notes/windows/help/GeneralPage.tsx":
-            $notes_windows_help_GeneralPage,
-        "./islands/notes/windows/help/KeyboardShortcutsPage.tsx":
-            $notes_windows_help_KeyboardShortcutsPage,
-        "./islands/notes/windows/help/MarkdownSyntaxPage.tsx":
-            $notes_windows_help_MarkdownSyntaxPage,
-        "./islands/notes/windows/help/NoteFilesPage.tsx":
-            $notes_windows_help_NoteFilesPage,
-        "./islands/notes/windows/help/NoteHistoryPage.tsx":
-            $notes_windows_help_NoteHistoryPage,
-        "./islands/notes/windows/help/OrganizingNotesPage.tsx":
-            $notes_windows_help_OrganizingNotesPage,
-        "./islands/notes/windows/help/ProtectingNotesPage.tsx":
-            $notes_windows_help_ProtectingNotesPage,
-        "./islands/notes/windows/help/SearchingNotesPage.tsx":
-            $notes_windows_help_SearchingNotesPage,
-        "./islands/notes/windows/help/SettingRemindersPage.tsx":
-            $notes_windows_help_SettingRemindersPage,
-        "./islands/notes/windows/help/SharingNotesPage.tsx":
-            $notes_windows_help_SharingNotesPage,
-        "./islands/notes/windows/help/SupportedLanguageHighlightsPage.tsx":
-            $notes_windows_help_SupportedLanguageHighlightsPage,
         "./islands/notifications/NotificationItem.tsx":
             $notifications_NotificationItem,
         "./islands/notifications/NotificationList.tsx":

@@ -1,5 +1,5 @@
 import { JSX } from "preact";
-import { NoteHelpAction } from "$islands/notes/windows/NoteHelp.tsx";
+import { NoteHelpAction } from "../HelpWindow.tsx";
 
 interface FeatureProps {
     onAction: (action: NoteHelpAction) => void;

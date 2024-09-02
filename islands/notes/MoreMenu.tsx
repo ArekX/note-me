@@ -138,7 +138,7 @@ export default function MoreMenu(
         {
             name: "Help",
             icon: "help-circle",
-            modes: ["view", "edit-existing", "view-readonly"],
+            modes: ["view", "edit-existing", "view-readonly", "edit-new"],
             onClick: () => sendAction("help"),
         },
     ] as MoreMenuItem[]).filter(({ modes, minSize = null, maxSize = null }) => {
