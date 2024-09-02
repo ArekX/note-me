@@ -28,16 +28,13 @@ const stopHeartbeatCheck = () => {
 const startHeartbeatCheck = (host: URL) => {
     stopHeartbeatCheck();
     heartbeatIntervalId = setInterval(() => {
-        if (!socket || isReconnecting) {
-            return;
-        }
-
-        if (socket && socket.readyState !== WebSocket.OPEN) {
+        if (socket?.readyState !== WebSocket.OPEN) {
             addMessage({
                 type: "warning",
                 text:
                     "Connection to the server was lost. Attempting to reconnect...",
             }, "socket-reconnect-message");
+            stopHeartbeatCheck();
             socket = null;
             connectInternal(host);
         }
