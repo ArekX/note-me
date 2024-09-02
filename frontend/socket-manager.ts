@@ -123,7 +123,7 @@ const pushToPendingRequests = (message: string | ArrayBuffer) => {
 
 export const send = <T>(message: T) => {
     const jsonMessage = JSON.stringify(message);
-    if (!socket || socket.readyState !== WebSocket.OPEN) {
+    if (!socket || socket.readyState !== WebSocket.OPEN || isReconnecting) {
         pushToPendingRequests(jsonMessage);
         return;
     }
@@ -132,7 +132,7 @@ export const send = <T>(message: T) => {
 };
 
 export const sendBinary = (data: ArrayBuffer) => {
-    if (!socket || socket.readyState !== WebSocket.OPEN) {
+    if (!socket || socket.readyState !== WebSocket.OPEN || isReconnecting) {
         pushToPendingRequests(data);
         return;
     }
