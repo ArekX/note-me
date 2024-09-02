@@ -17,6 +17,33 @@ const handlers: Set<SocketHandler> = new Set();
 let isReconnecting = false;
 let connectionRetries = 0;
 
+const MAX_RETRIES = 5;
+
+let heartbeatIntervalId = 0;
+
+const stopHeartbeatCheck = () => {
+    clearInterval(heartbeatIntervalId);
+};
+
+const startHeartbeatCheck = (host: URL) => {
+    stopHeartbeatCheck();
+    heartbeatIntervalId = setInterval(() => {
+        if (!socket || isReconnecting) {
+            return;
+        }
+
+        if (socket && socket.readyState !== WebSocket.OPEN) {
+            addMessage({
+                type: "warning",
+                text:
+                    "Connection to the server was lost. Attempting to reconnect...",
+            }, "socket-reconnect-message");
+            socket = null;
+            connectInternal(host);
+        }
+    }, 1000);
+};
+
 const connectInternal = (host: URL, onConnected?: () => void) => {
     if (socket) {
         return;
@@ -26,25 +53,27 @@ const connectInternal = (host: URL, onConnected?: () => void) => {
     socket.onmessage = (event) => processHandlers(event.data);
     socket.onclose = (event) => {
         socket = null;
+        stopHeartbeatCheck();
 
         if (event.wasClean) {
-            return;
-        }
-
-        if (isReconnecting) {
             return;
         }
 
         addMessage({
             type: "warning",
             text:
-                "Connection to the server was lost. Attempting to reconnect...",
-        });
+                `Connection to the server was lost. Attempting to reconnect (${connectionRetries}/${MAX_RETRIES})...`,
+        }, "socket-reconnect-attempt-message");
+
+        if (isReconnecting) {
+            return;
+        }
+
         isReconnecting = true;
         setTimeout(() => connect(host), 1000);
     };
     socket.onerror = () => {
-        if (isReconnecting && connectionRetries < 5) {
+        if (isReconnecting && connectionRetries < MAX_RETRIES) {
             connectionRetries++;
             setTimeout(() => connect(host), 1000);
             return;
@@ -52,7 +81,8 @@ const connectInternal = (host: URL, onConnected?: () => void) => {
 
         addMessage({
             type: "error",
-            text: "Connection to the server failed after 5 attempts.",
+            text:
+                "Connection to the server failed after 5 attempts. Please refresh the page to try again.",
         });
     };
     socket.onopen = async () => {
@@ -71,26 +101,12 @@ const connectInternal = (host: URL, onConnected?: () => void) => {
         }
         pendingRequests = [];
         await consumePropagationTicket(pendingRequestsPropagationTicket!);
+        startHeartbeatCheck(host);
         onConnected?.();
     };
 };
 
 export const connect = (host: URL): Promise<void> => {
-    document.addEventListener("visibilitychange", () => {
-        if (document.visibilityState !== "visible") {
-            return;
-        }
-        if (!socket || socket.readyState !== WebSocket.OPEN) {
-            addMessage({
-                type: "warning",
-                text:
-                    "Connection to the server was lost. Attempting to reconnect...",
-            });
-            socket = null;
-            connectInternal(host);
-        }
-    });
-
     return new Promise((resolve) => connectInternal(host, resolve));
 };
 

@@ -26,7 +26,7 @@ export default function ToastMessages() {
                         <Button
                             color="danger"
                             size="xs"
-                            onClick={() => removeMessage(message)}
+                            onClick={() => removeMessage(message.identifier)}
                         >
                             <Icon name="minus-circle" size="lg" />
                         </Button>
