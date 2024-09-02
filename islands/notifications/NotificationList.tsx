@@ -112,7 +112,7 @@ export default function Notifications(props: NotificationsProps) {
         );
 
     const handleOpenView = () => {
-        if (query.max("sm")) {
+        if (query.isMobile()) {
             isDialogOpen.value = true;
             return;
         }
@@ -184,7 +184,7 @@ export default function Notifications(props: NotificationsProps) {
                         />
                     </div>
                 )
-                : query.max("sm") && isDialogOpen.value && (
+                : query.isMobile() && isDialogOpen.value && (
                     <Dialog
                         visible={true}
                         props={{

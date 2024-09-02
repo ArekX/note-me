@@ -121,7 +121,7 @@ export default function SidebarMenu(
 
     return (
         <div>
-            {query.max("sm")
+            {query.isMobile()
                 ? (
                     <MobileSidebarMenu
                         showSettings={showSettings}

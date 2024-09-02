@@ -13,6 +13,8 @@ import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import { ReminderNoteRecord } from "$backend/repository/note-reminder-repository.ts";
 import { UserSharedNoteMeta } from "$backend/repository/note-share-repository.ts";
 import { DeletedNoteRecord } from "$backend/repository/note-repository.ts";
+import { useMobileMenu } from "$frontend/hooks/use-mobile-menu.ts";
+import { useResponsiveQuery } from "$frontend/hooks/use-responsive-query.ts";
 
 type NoteSearchResult =
     | NoteSearchRecord
@@ -35,6 +37,9 @@ const isActive = computed(() =>
 let timeoutId = 0;
 
 export const useSearch = () => {
+    const mobileMenu = useMobileMenu();
+    const responsiveQuery = useResponsiveQuery();
+
     const { sendMessage } = useWebsocketService<NoteFrontendResponse>({
         eventMap: {
             notes: {
@@ -52,6 +57,10 @@ export const useSearch = () => {
     const runDebouncedSearch = async () => {
         if (isRunning.value || !isActive.value) {
             return;
+        }
+
+        if (responsiveQuery.isMobile()) {
+            mobileMenu.open();
         }
 
         isRunning.value = true;

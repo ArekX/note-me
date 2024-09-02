@@ -8,7 +8,7 @@ export default function HelpButton() {
 
     const query = useResponsiveQuery();
 
-    if (query.max("sm")) {
+    if (query.isMobile()) {
         return (
             <Button
                 color="transparent"

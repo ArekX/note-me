@@ -205,7 +205,7 @@ export default function InsertDialog({
                     }}
                     title="Insert"
                 >
-                    {query.max("sm") && (
+                    {query.isMobile() && (
                         <div class="text-right py-2">
                             <Button
                                 color="success"

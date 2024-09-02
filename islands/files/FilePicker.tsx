@@ -242,7 +242,7 @@ export default function FilePicker({
 
     if (query.between("md", "lg")) {
         size = "threeColumns";
-    } else if (query.max("sm")) {
+    } else if (query.isMobile()) {
         size = "oneColumn";
     }
 

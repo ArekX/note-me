@@ -63,8 +63,11 @@ export const useResponsiveQuery = () => {
         return map[size.value] ?? defaultValue;
     };
 
+    const isMobile = () => max("sm");
+
     return {
         size,
+        isMobile,
         between,
         min,
         max,

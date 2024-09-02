@@ -166,7 +166,7 @@ export default function NoteHelp() {
                 class: "max-lg:w-full lg:w-3/4 xl:w-1/2",
             }}
         >
-            {query.max("sm") && (
+            {query.isMobile() && (
                 <div class="text-right">
                     <Button
                         color="success"

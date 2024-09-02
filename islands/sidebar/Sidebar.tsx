@@ -22,7 +22,7 @@ export default function Sidebar(
 
     const mobileMenu = useMobileMenu();
 
-    if (IS_BROWSER && query.max("sm") && !mobileMenu.isMenuOpen.value) {
+    if (IS_BROWSER && query.isMobile() && !mobileMenu.isMenuOpen.value) {
         return (
             <div class="w-full text-white border-b border-gray-600/50">
                 <SidebarMenuTop showSettings={showSettings} />
