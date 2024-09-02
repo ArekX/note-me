@@ -17,64 +17,81 @@ const handlers: Set<SocketHandler> = new Set();
 let isReconnecting = false;
 let connectionRetries = 0;
 
-export const connect = (host: URL): Promise<void> => {
-    return new Promise((resolve) => {
-        if (socket) {
+const connectInternal = (host: URL, onConnected?: () => void) => {
+    if (socket) {
+        return;
+    }
+
+    socket = new WebSocket(host);
+    socket.onmessage = (event) => processHandlers(event.data);
+    socket.onclose = (event) => {
+        socket = null;
+
+        if (event.wasClean) {
             return;
         }
 
-        socket = new WebSocket(host);
-        socket.onmessage = (event) => processHandlers(event.data);
-        socket.onclose = (event) => {
-            socket = null;
+        if (isReconnecting) {
+            return;
+        }
 
-            if (event.wasClean) {
-                return;
-            }
+        addMessage({
+            type: "warning",
+            text:
+                "Connection to the server was lost. Attempting to reconnect...",
+        });
+        isReconnecting = true;
+        setTimeout(() => connect(host), 1000);
+    };
+    socket.onerror = () => {
+        if (isReconnecting && connectionRetries < 5) {
+            connectionRetries++;
+            setTimeout(() => connect(host), 1000);
+            return;
+        }
 
-            if (isReconnecting) {
-                return;
-            }
+        addMessage({
+            type: "error",
+            text: "Connection to the server failed after 5 attempts.",
+        });
+    };
+    socket.onopen = async () => {
+        if (isReconnecting) {
+            addMessage({
+                type: "success",
+                text: "Connection to the server was restored.",
+            });
+        }
 
+        isReconnecting = false;
+        connectionRetries = 0;
+
+        for (const request of pendingRequests) {
+            socket?.send(request);
+        }
+        pendingRequests = [];
+        await consumePropagationTicket(pendingRequestsPropagationTicket!);
+        onConnected?.();
+    };
+};
+
+export const connect = (host: URL): Promise<void> => {
+    document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState !== "visible") {
+            return;
+        }
+        if (!socket || socket.readyState !== WebSocket.OPEN) {
             addMessage({
                 type: "warning",
                 text:
                     "Connection to the server was lost. Attempting to reconnect...",
             });
-            isReconnecting = true;
-            setTimeout(() => connect(host), 1000);
-        };
-        socket.onerror = () => {
-            if (isReconnecting && connectionRetries < 5) {
-                connectionRetries++;
-                setTimeout(() => connect(host), 1000);
-                return;
-            }
-
-            addMessage({
-                type: "error",
-                text: "Connection to the server failed after 5 attempts.",
-            });
-        };
-        socket.onopen = async () => {
-            if (isReconnecting) {
-                addMessage({
-                    type: "success",
-                    text: "Connection to the server was restored.",
-                });
-            }
-
-            isReconnecting = false;
-            connectionRetries = 0;
-
-            for (const request of pendingRequests) {
-                socket?.send(request);
-            }
-            pendingRequests = [];
-            await consumePropagationTicket(pendingRequestsPropagationTicket!);
-            resolve();
-        };
+            socket = null;
+            connectInternal(host);
+        }
     });
+
+    return new Promise((resolve) => connectInternal(host, resolve));
 };
 
 const processHandlers = (message: string) => {
