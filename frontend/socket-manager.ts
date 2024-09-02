@@ -48,13 +48,9 @@ const connectInternal = (host: URL, onConnected?: () => void) => {
 
     socket = new WebSocket(host);
     socket.onmessage = (event) => processHandlers(event.data);
-    socket.onclose = (event) => {
+    socket.onclose = () => {
         socket = null;
         stopHeartbeatCheck();
-
-        if (event.wasClean) {
-            return;
-        }
 
         addMessage({
             type: "warning",
