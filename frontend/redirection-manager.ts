@@ -30,6 +30,7 @@ const paths = {
     settings: () => "/app/settings",
     userFiles: () => "/app/profile/files",
     userData: () => "/app/profile/data",
+    userProfile: () => "/app/profile",
 } as const;
 
 export const redirectToUrl = (url: PathResult) => {

@@ -7,6 +7,7 @@ import { useResponsiveQuery } from "$frontend/hooks/use-responsive-query.ts";
 import Logo from "$components/Logo.tsx";
 import SidebarMenuTop from "$islands/sidebar/SidebarMenuTop.tsx";
 import HelpButton from "$islands/help/HelpButton.tsx";
+import { redirectTo } from "$frontend/redirection-manager.ts";
 
 interface SidebarMenuProps {
     showSettings: boolean;
@@ -16,7 +17,7 @@ interface SidebarMenuProps {
 }
 
 const MobileSidebarMenu = (
-    { showSettings, initialNotifications, onSetOpen }: Omit<
+    { showSettings, initialNotifications }: Omit<
         SidebarMenuProps,
         "isOpen"
     >,
@@ -31,10 +32,11 @@ const MobileSidebarMenu = (
 
                 <div class="pr-5 text-right">
                     <a
-                        href="/app/profile"
                         title="Your account"
                         class="hover:text-gray-300 cursor-pointer"
-                        onClick={() => onSetOpen(false)}
+                        onClick={() => {
+                            redirectTo.userProfile();
+                        }}
                     >
                         <Icon name="user" /> Profile
                     </a>
@@ -61,7 +63,7 @@ const DesktopSidebarMenu = (
     return (
         <div class="flex items-center justify-center p-2">
             <div class="flex-grow text-left hidden lg:block">
-                <a href="/app/note" f-partial={"/app/note"}>
+                <a onClick={() => redirectTo.root()} class="cursor-pointer">
                     <Logo
                         white={true}
                         height={logoSize}
@@ -75,8 +77,8 @@ const DesktopSidebarMenu = (
             <div class="text-right max-lg:text-center">
                 {query.max("md") && (
                     <a
-                        href="/app/note"
-                        class="hover:text-gray-300 block pb-2"
+                        onClick={() => redirectTo.root()}
+                        class="hover:text-gray-300 block pb-2 cursor-pointer"
                         title="Home"
                     >
                         <Logo
@@ -89,8 +91,8 @@ const DesktopSidebarMenu = (
                 )}
                 {showSettings && (
                     <a
-                        href="/app/settings"
-                        class="hover:text-gray-300"
+                        onClick={() => redirectTo.settings()}
+                        class="hover:text-gray-300 cursor-pointer"
                         title="Administration settings"
                     >
                         <Icon name="cog" />
@@ -100,8 +102,8 @@ const DesktopSidebarMenu = (
                     initialNotifications={initialNotifications}
                 />
                 <a
-                    href="/app/profile"
-                    class="hover:text-gray-300"
+                    onClick={() => redirectTo.userProfile()}
+                    class="hover:text-gray-300 cursor-pointer"
                     title="Your account"
                 >
                     <Icon name="user" />

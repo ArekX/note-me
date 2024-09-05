@@ -34,10 +34,8 @@ export default function SidebarMenuTop(
                 </Button>
             </div>
             <a
-                href="/app/note"
-                f-partial={"/app/note"}
-                onClick={() => mobileMenu.close()}
-                class="block flex-grow text-center pt-1"
+                onClick={() => redirectTo.root()}
+                class="block flex-grow text-center pt-1 cursor-pointer"
             >
                 <Logo
                     white={true}
