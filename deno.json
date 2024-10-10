@@ -42,5 +42,5 @@
         "$tests/": "./tests/"
     },
     "compilerOptions": { "jsx": "react-jsx", "jsxImportSource": "preact" },
-    "nodeModulesDir": true
+    "nodeModulesDir": "auto"
 }

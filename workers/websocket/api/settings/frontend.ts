@@ -100,12 +100,12 @@ const handleCreateBackupNow: ListenerFn<CreateBackupNowMessage> = async (
                 backup: item,
             },
         });
-    } catch (e) {
+    } catch (e: unknown) {
         respond<CreateBackupNowResponse>({
             type: "createBackupNowResponse",
             result: {
                 success: false,
-                message: e.message ?? "Unknown message",
+                message: (e as Error).message ?? "Unknown message",
             },
         });
     } finally {

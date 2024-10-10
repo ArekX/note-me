@@ -14,5 +14,5 @@ export const downloadTextAsMarkdown = (title: string, text: string) => {
     link.click();
 
     document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
+    globalThis.URL.revokeObjectURL(url);
 };

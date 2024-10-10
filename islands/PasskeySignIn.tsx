@@ -29,7 +29,7 @@ export default function PasskeySignIn({
     const handleSignIn = passkeyLoader.wrap(async () => {
         try {
             passkeyResult.value = await startAuthentication(options);
-        } catch (e) {
+        } catch (e: Error | unknown) {
             passkeyResult.value = null;
 
             if (e instanceof Error && e.name === "AbortError") {
@@ -38,7 +38,9 @@ export default function PasskeySignIn({
 
             addMessage({
                 type: "error",
-                text: `Passkey sign in failed: ${e.message ?? "Unknown error"}`,
+                text: `Passkey sign in failed: ${
+                    (e as Error).message ?? "Unknown error"
+                }`,
             });
         }
     });

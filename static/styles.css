@@ -3,19 +3,18 @@
 @tailwind utilities;
 
 html, body {
-  height: 100%;
-  min-width: 300px;
-  margin: 0;
-  overflow: hidden;
-  overscroll-behavior: none;
-  @apply bg-gray-900;
+    height: 100%;
+    min-width: 300px;
+    margin: 0;
+    overflow: hidden;
+    overscroll-behavior: none;
+    @apply bg-gray-900;
 }
 
 .sidebar-panel {
     @media (max-width: 640px) {
-       min-width: 300px;
+        min-width: 300px;
     }
-    
 }
 
 .content-sidebar {
@@ -44,13 +43,12 @@ body.allow-scrolling {
     @apply border-gray-800;
 }
 
-
 .notification-menu:hover {
     @apply text-gray-300;
 }
 
 .notification-menu:hover .notification-badge {
-    @apply text-white
+    @apply text-white;
 }
 
 .group-item {
@@ -78,13 +76,13 @@ body.allow-scrolling {
     display: block;
     position: absolute;
     left: 0;
-    right: .3rem;
+    right: 0.3rem;
     top: 0.1rem;
 }
 
 .group-item .group-item-actions {
     visibility: hidden;
-    padding-top: .12rem;
+    padding-top: 0.12rem;
 }
 
 .group-item:hover .group-item-name {
@@ -98,22 +96,23 @@ body.allow-scrolling {
 }
 
 dialog {
-  pointer-events: none;
-  opacity: 0;
-  outline: none;
-  display: block;
-  padding: 2em;
-  @apply rounded-lg bg-gray-800 text-white border-gray-700 border border-b-0 shadow-black/80 shadow-sm;
+    pointer-events: none;
+    opacity: 0;
+    outline: none;
+    display: block;
+    padding: 2em;
+    @apply rounded-lg bg-gray-800 text-white border-gray-700 border border-b-0
+        shadow-black/80 shadow-sm;
 }
 dialog[open] {
-  opacity: 1;
-  pointer-events: inherit;
-  transition: all .5s;
-  outline: none;
+    opacity: 1;
+    pointer-events: inherit;
+    transition: all 0.5s;
+    outline: none;
 }
 dialog::backdrop {
-  @apply bg-gray-950;
-  @apply opacity-50;
+    @apply bg-gray-950;
+    @apply opacity-50;
 }
 
 table {
@@ -123,26 +122,25 @@ table {
 
 table th, table thead td {
     @apply bg-gray-700/50 text-gray-300;
-}   
-
+}
 
 table td, table th {
     @apply border-gray-700 border p-2 border-r-0 border-b-0;
 }
 
-table :not(thead)  tr:last-child td {
+table :not(thead) tr:last-child td {
     @apply border-gray-700 border-b;
 }
 
 table tr td:last-child {
-     @apply border-gray-700 border-r;
+    @apply border-gray-700 border-r;
 }
 
 table th:first-child, table thead :not(.filters) td:first-child {
     @apply rounded-tl-lg;
 }
 
-table th:last-child, table thead :not(.filters) td:last-child  {
+table th:last-child, table thead :not(.filters) td:last-child {
     @apply rounded-tr-lg;
 }
 
@@ -167,10 +165,10 @@ table :not(thead) tr:hover {
 }
 
 .note-editor {
-     flex-direction: column;
-  flex-wrap: nowrap;
-  justify-content: normal;
-  align-items: normal;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: normal;
+    align-items: normal;
 }
 
 .note-editor input, .note-editor textarea {
@@ -199,7 +197,7 @@ table :not(thead) tr:hover {
 
 .view-note .title {
     font-size: 2em;
-   font-weight: bold;
+    font-weight: bold;
 }
 
 .view-note .tag, .note-editor .tag-editor {
@@ -212,13 +210,12 @@ table :not(thead) tr:hover {
 
 .view-note .tag:hover {
     @apply text-gray-300;
-
 }
 
 .markdown-viewer {
     all: initial;
-    color: #FFF;
-    @apply font-sans; 
+    color: #fff;
+    @apply font-sans;
     line-height: 1.5em;
     display: block;
     margin-bottom: 5em;
@@ -243,10 +240,8 @@ table :not(thead) tr:hover {
     border-bottom-right-radius: 0 !important;
 }
 
-
-
 .markdown-viewer p {
-    padding: .5em 0;
+    padding: 0.5em 0;
 }
 
 .markdown-viewer h1,
@@ -258,13 +253,12 @@ table :not(thead) tr:hover {
     font-weight: bold;
     line-height: initial;
     @apply mt-4 mb-4;
-    padding: .5em 0;
+    padding: 0.5em 0;
 }
-
 
 .markdown-viewer h1 {
     font-size: 2.30em;
-    padding: .3em 0;
+    padding: 0.3em 0;
 
     @media (max-width: 768px) {
         font-size: 1.8em;
@@ -273,7 +267,7 @@ table :not(thead) tr:hover {
 
 .markdown-viewer h2 {
     font-size: 1.8em;
-    padding: .3em 0;
+    padding: 0.3em 0;
 
     @media (max-width: 768px) {
         font-size: 1.5em;
@@ -282,7 +276,7 @@ table :not(thead) tr:hover {
 
 .markdown-viewer h3 {
     font-size: 1.50em;
-    padding: .4em 0;
+    padding: 0.4em 0;
 
     @media (max-width: 768px) {
         font-size: 1.3em;
@@ -291,7 +285,7 @@ table :not(thead) tr:hover {
 
 .markdown-viewer h4 {
     font-size: 1.30em;
-    padding: .4em 0;
+    padding: 0.4em 0;
 
     @media (max-width: 768px) {
         font-size: 1.2em;
@@ -300,7 +294,7 @@ table :not(thead) tr:hover {
 
 .markdown-viewer h5 {
     font-size: 1.20em;
-    padding: .5em 0;
+    padding: 0.5em 0;
 
     @media (max-width: 768px) {
         font-size: 1.15em;
@@ -309,13 +303,12 @@ table :not(thead) tr:hover {
 
 .markdown-viewer h6 {
     font-size: 1.15em;
-    padding: .5em 0;
+    padding: 0.5em 0;
 
     @media (max-width: 768px) {
         font-size: 1.1em;
     }
 }
-
 
 .markdown-viewer ul, .markdown-viewer ol {
     padding-left: 1.5em;
@@ -326,7 +319,7 @@ table :not(thead) tr:hover {
 }
 
 .markdown-viewer ul li {
-    padding: .15em 0;
+    padding: 0.15em 0;
 }
 
 .markdown-viewer ol {
@@ -334,16 +327,16 @@ table :not(thead) tr:hover {
 }
 
 .markdown-viewer blockquote {
-    padding: .5em 1em;
+    padding: 0.5em 1em;
     @apply bg-gray-950;
-    border-left: 3px solid #FFF;
-     border-radius: .5em;
+    border-left: 3px solid #fff;
+    border-radius: 0.5em;
 }
 
 .markdown-viewer pre {
     padding: 1em;
     @apply bg-gray-950;
-    border-radius: .5em;
+    border-radius: 0.5em;
 }
 
 .markdown-viewer a {
@@ -368,7 +361,6 @@ table :not(thead) tr:hover {
     display: inline-block;
 }
 
-
 .markdown-viewer .footnote-ref {
     cursor: pointer;
     @apply pr-2;
@@ -390,15 +382,14 @@ table :not(thead) tr:hover {
 
 .diff-viewer div {
     display: block;
-    padding-bottom: .5em;
-
+    padding-bottom: 0.5em;
 }
 
 .diff-viewer .legend {
     display: inline-block;
-    padding: .5em;
-    margin-right: .5em;
-    font-size: .8em;
+    padding: 0.5em;
+    margin-right: 0.5em;
+    font-size: 0.8em;
 }
 
 .diff-viewer .legend-added {
@@ -407,17 +398,16 @@ table :not(thead) tr:hover {
 
 .diff-viewer .diff-added {
     background-color: #335c67;
-    color: #FFF;
+    color: #fff;
 }
 
 .diff-viewer .legend-removed {
     background-color: #7d1300;
 }
 
-
 .diff-viewer .diff-removed {
     background-color: #7d1300;
-    color: #FFF;
+    color: #fff;
 }
 
 .diff-viewer .legend-changed {
@@ -434,7 +424,6 @@ table :not(thead) tr:hover {
     color: #000;
 }
 
-
 code, pre {
     font-family: monospace;
 }
@@ -444,7 +433,7 @@ code, pre {
 }
 
 select.select-input {
-    padding: .66em .5em;
+    padding: 0.66em 0.5em;
 }
 
 .group-picker {
@@ -481,5 +470,6 @@ select.select-input {
 }
 
 .island-initalizer {
-    @apply fixed top-0 left-0 w-full h-full bg-gray-900 z-50 text-white flex items-center justify-center;
+    @apply fixed top-0 left-0 w-full h-full bg-gray-900 z-50 text-white flex
+        items-center justify-center;
 }

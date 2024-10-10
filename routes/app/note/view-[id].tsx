@@ -6,6 +6,7 @@ import {
     ViewNoteRecord,
 } from "$backend/repository/note-repository.ts";
 import ViewNotePage from "$islands/notes/pages/ViewNotePage.tsx";
+import { reloadDatabase } from "$backend/database.ts";
 
 export interface PageData {
     note: ViewNoteRecord;
@@ -25,6 +26,8 @@ export const handler: Handlers<PageData> = {
         }
 
         await updateLastOpenAt(noteId, ctx.state.session!.getUserId());
+
+        reloadDatabase();
 
         return ctx.render({
             note,

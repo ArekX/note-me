@@ -77,7 +77,7 @@ export default function BackupTargetList({
     const handleDownload = (record: BackupItem) => {
         const url = new URL(
             `/app/settings/download-backup`,
-            window.location.href,
+            globalThis.location.href,
         );
         url.searchParams.set("identifier", record.identifier.toString());
         url.searchParams.set("target_id", targetId.toString());

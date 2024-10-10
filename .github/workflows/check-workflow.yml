@@ -4,23 +4,23 @@ permissions:
     contents: read
 
 env:
-  DENO_VERSION: "1.46.3"
-  DENO_DIR: /home/runner/.deno-cache
-  SQLITE_DATABASE_LOCATION: ":memory:"
-  COOKIE_DOMAIN: localhost
-  SERVER_ADDRESS: 0.0.0.0
-  COOKIE_SECURE: 1
-  COOKIE_MAX_AGE_SECONDS: 43200
-  DISABLE_SERVICE_PERIODIC_TASKS: 0
-  WEBSOCKET_PORT: 8080
-  WEBSERVER_PORT: 8000
-  LOGGING_LEVEL: INFO
-  SHOW_LOG_COLORS: 1
-  MAX_FILE_SIZE: 52428800
-  RUN_MIGRATIONS_ON_STARTUP: 0
-  SOCKET_HOSTNAME: ws://localhost:8080
-  MAX_ALLOWED_BACKUP_COUNT: 5
-  APP_URL: http://localhost:8000
+    DENO_VERSION: "1.46.3"
+    DENO_DIR: /home/runner/.deno-cache
+    SQLITE_DATABASE_LOCATION: ":memory:"
+    COOKIE_DOMAIN: localhost
+    SERVER_ADDRESS: 0.0.0.0
+    COOKIE_SECURE: 1
+    COOKIE_MAX_AGE_SECONDS: 43200
+    DISABLE_SERVICE_PERIODIC_TASKS: 0
+    WEBSOCKET_PORT: 8080
+    WEBSERVER_PORT: 8000
+    LOGGING_LEVEL: INFO
+    SHOW_LOG_COLORS: 1
+    MAX_FILE_SIZE: 52428800
+    RUN_MIGRATIONS_ON_STARTUP: 0
+    SOCKET_HOSTNAME: ws://localhost:8080
+    MAX_ALLOWED_BACKUP_COUNT: 5
+    APP_URL: http://localhost:8000
 
 jobs:
     run-check:
@@ -29,20 +29,20 @@ jobs:
             - name: Check out repository code
               uses: actions/checkout@v4
               with:
-                ref: ${{ github.ref }}
+                  ref: ${{ github.ref }}
 
             - uses: denoland/setup-deno@v1
               with:
-                deno-version: v1.46.3
+                  deno-version: v1.46.3
 
-            - name: Cache Deno dependencies 
+            - name: Cache Deno dependencies
               uses: actions/cache@v3
               with:
-                path: ${{ env.DENO_DIR }}
-                key: ${{ hashFiles('deno.lock') }}
+                  path: ${{ env.DENO_DIR }}
+                  key: ${{ hashFiles('deno.lock') }}
 
             - name: Run checks and tests
               run: |
-                set -e
-                deno task cache-ci
-                deno task check
+                  set -e
+                  deno task cache-ci
+                  deno task check

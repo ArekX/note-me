@@ -55,7 +55,7 @@ export const redirectToUrl = (url: PathResult) => {
         }
 
         if (fullRender) {
-            window.location.href = location;
+            globalThis.location.href = location;
             return;
         }
 
@@ -71,7 +71,7 @@ export const redirectToUrl = (url: PathResult) => {
 
 export const reload = () => {
     runOnReady(() => {
-        window.location.reload();
+        globalThis.location.reload();
         return Promise.resolve();
     });
 };

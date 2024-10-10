@@ -66,7 +66,7 @@ export default function ResetUserPassword({
             return;
         }
 
-        window.location.reload();
+        globalThis.location.reload();
     });
 
     return (

@@ -72,11 +72,11 @@ const processRequest = async (message: ProcessJobRequest) => {
                 job: message.name,
             });
         }
-    } catch (e) {
+    } catch (e: unknown) {
         logger.error("Error processing job {jobId} {job}: {error}", {
             jobId,
             job: message.name,
-            error: e.message,
+            error: (e as Error).message,
         });
     } finally {
         runningJobs.delete(jobId);

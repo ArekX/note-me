@@ -145,8 +145,8 @@ export const finalizePasskeyRegistration = async (
         });
 
         return { success: true };
-    } catch (e) {
-        const errorMessage = e.message ?? "Unknown error";
+    } catch (e: Error | unknown) {
+        const errorMessage = (e as Error).message ?? "Unknown error";
         logger.debug("Error verifying registration response. Error: {e}", {
             e: errorMessage,
         });
@@ -256,9 +256,9 @@ export const finalizePasskeyAuthentication = async (
             user_id: result.verified ? passkey.user_id : null,
             verified: result.verified,
         };
-    } catch (e) {
+    } catch (e: Error | unknown) {
         logger.debug("Error verifying authentication response, reason: {e}", {
-            e: e.message ?? "Unknown error",
+            e: (e as Error).message ?? "Unknown error",
         });
         return { user_id: null, verified: false };
     } finally {

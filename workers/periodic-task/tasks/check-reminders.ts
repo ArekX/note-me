@@ -52,12 +52,12 @@ export const checkReminders: PeriodicTask = {
                         toUserId: reminder.user_id,
                     });
                 });
-            } catch (e) {
+            } catch (e: unknown) {
                 logger.error(
                     "Error while processing note reminder ID {reminderId}: {error}",
                     {
                         reminderId: reminder.id,
-                        error: e.message || e,
+                        error: (e as Error).message || e,
                     },
                 );
             }

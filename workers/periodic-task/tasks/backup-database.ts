@@ -82,7 +82,7 @@ export const backupDatabase: PeriodicTask = {
                     {
                         name: target.name,
                         id: target.id,
-                        message: e.message ?? "Unknown error",
+                        message: (e as Error).message ?? "Unknown error",
                     },
                 );
             } finally {

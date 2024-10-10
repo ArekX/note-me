@@ -100,9 +100,11 @@ export default function LockedContentWrapper<T extends object>({
 
                 results.push(record);
             }
-        } catch (e) {
-            failReason.value = typeof e === "string" ? e : (e.message ??
-                "Unknown error or data could not be decrypted.");
+        } catch (e: unknown) {
+            failReason.value = typeof e === "string"
+                ? e
+                : ((e as Error).message ??
+                    "Unknown error or data could not be decrypted.");
             onUnlockFail?.(failReason.value ?? "Unknown error.");
             return;
         } finally {

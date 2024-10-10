@@ -85,16 +85,16 @@ const triggerHandler = async (handler: RegisteredTask) => {
             task: handler.task.name,
         });
         isSuccessful = true;
-    } catch (e) {
+    } catch (e: unknown) {
         logger.error(
             "Error occurred when runnig periodic task '{task}': {error}",
             {
                 task: handler.task.name,
-                error: e.message,
+                error: (e as Error).message,
             },
         );
 
-        failureReason = e.message || e || "Unknown error";
+        failureReason = (e as Error).message ?? "Unknown error";
     }
 
     await savePeriodicTaskRun(

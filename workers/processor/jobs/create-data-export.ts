@@ -290,7 +290,11 @@ export const createDataExportJobHandler: JobHandler<CreateDataExportJob> =
     ) => {
         try {
             await tryProcessJob(job, abortSignal);
-        } catch (e) {
-            notifyUserExportFailed(job.export_id, job.user_id, e.message);
+        } catch (e: Error | unknown) {
+            notifyUserExportFailed(
+                job.export_id,
+                job.user_id,
+                (e as Error).message,
+            );
         }
     };
