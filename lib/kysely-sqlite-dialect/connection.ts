@@ -1,21 +1,22 @@
+import { RestBindParameters } from "jsr:@db/sqlite@0.11";
 import {
     CompiledQuery,
+    Database,
     DatabaseConnection,
-    DB,
-    QueryParameterSet,
     QueryResult,
 } from "./deps.ts";
 
 export class SqliteDatabaseConnection implements DatabaseConnection {
-    constructor(private db: DB) {}
+    constructor(private db: Database) {}
     executeQuery<R>(
         compiledQuery: CompiledQuery<unknown>,
     ): Promise<QueryResult<R>> {
         return new Promise((resolve, reject) => {
             try {
-                const rows = this.db.queryEntries(
-                    compiledQuery.sql,
-                    compiledQuery.parameters as QueryParameterSet,
+                const query = this.db.prepare(compiledQuery.sql);
+
+                const rows = query.all(
+                    ...compiledQuery.parameters as RestBindParameters,
                 );
 
                 resolve({
@@ -33,11 +34,9 @@ export class SqliteDatabaseConnection implements DatabaseConnection {
         compiledQuery: CompiledQuery<string>,
         chunkSize?: number | undefined,
     ): AsyncIterableIterator<QueryResult<R>> {
-        const query = this.db.prepareQuery(compiledQuery.sql);
+        const query = this.db.prepare(compiledQuery.sql);
 
-        const queryIterator = query.iter(
-            compiledQuery.parameters as QueryParameterSet,
-        );
+        query.bind(...compiledQuery.parameters as RestBindParameters);
 
         let itemsInChunk: R[] = [];
 
@@ -53,18 +52,15 @@ export class SqliteDatabaseConnection implements DatabaseConnection {
             ): Promise<IteratorResult<QueryResult<R>>> {
                 return new Promise((resolve, reject) => {
                     try {
-                        let row;
                         itemsInChunk = [];
-                        do {
-                            row = queryIterator.next();
-                            itemsInChunk.push(row.value);
-                        } while (
-                            itemsInChunk.length < itemsToRetrieve && !row.done
-                        );
 
-                        if (row.done) {
-                            query.finalize();
-                            isFinalized = true;
+                        for (const row of query) {
+                            itemsInChunk.push(row);
+
+                            if (itemsInChunk.length >= itemsToRetrieve) {
+                                isFinalized = true;
+                                break;
+                            }
                         }
 
                         resolve({

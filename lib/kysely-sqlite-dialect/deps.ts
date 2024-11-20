@@ -1,9 +1,4 @@
 export {
-    DB,
-    type QueryParameterSet,
-} from "https://deno.land/x/sqlite@v3.9.1/mod.ts";
-
-export {
     CompiledQuery,
     type DatabaseConnection,
     type DatabaseIntrospector,
@@ -31,3 +26,5 @@ export {
 } from "npm:kysely@0.27.4";
 
 export { Semaphore } from "https://deno.land/x/semaphore@v1.1.1/mod.ts";
+
+export { Database, type RestBindParameters } from "jsr:@db/sqlite@0.11";

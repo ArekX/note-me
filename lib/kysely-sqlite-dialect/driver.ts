@@ -1,20 +1,21 @@
 import { SqliteDatabaseConnection } from "./connection.ts";
+
 import {
     CompiledQuery,
+    Database,
     DatabaseConnection,
-    DB,
     Driver,
     Semaphore,
     TransactionSettings,
 } from "./deps.ts";
 
 export class SqliteDriver implements Driver {
-    #db: DB;
+    #db: Database;
     #semaphore: Semaphore;
     #semaphoreRelease: (() => void) | null = null;
 
     constructor(databaseLocation: string) {
-        this.#db = new DB(databaseLocation);
+        this.#db = new Database(databaseLocation);
         this.#semaphore = new Semaphore(1);
     }
 
