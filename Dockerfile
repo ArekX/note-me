@@ -1,4 +1,4 @@
-FROM denoland/deno:1.46.3
+FROM denoland/deno:2.0.6
 
 ARG BUILD_ID
 ENV DENO_DEPLOYMENT_ID=${BUILD_ID}
