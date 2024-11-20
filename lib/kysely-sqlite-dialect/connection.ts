@@ -8,10 +8,11 @@ import {
 
 export class SqliteDatabaseConnection implements DatabaseConnection {
     constructor(private db: Database) {}
-    executeQuery<R>(
+    async executeQuery<R>(
         compiledQuery: CompiledQuery<unknown>,
     ): Promise<QueryResult<R>> {
-        return new Promise((resolve, reject) => {
+        let retries = 0;
+        while (retries < 10) {
             try {
                 const query = this.db.prepare(compiledQuery.sql);
 
@@ -19,15 +20,28 @@ export class SqliteDatabaseConnection implements DatabaseConnection {
                     ...compiledQuery.parameters as RestBindParameters,
                 );
 
-                resolve({
+                return {
                     rows: rows as R[],
                     numAffectedRows: BigInt(this.db.changes),
                     insertId: BigInt(this.db.lastInsertRowId),
-                });
+                };
             } catch (error) {
-                reject(error);
+                if (
+                    error instanceof Error &&
+                    error.message.includes("database is locked")
+                ) {
+                    retries++;
+                    await new Promise((resolve) =>
+                        setTimeout(resolve, retries * 200)
+                    );
+                    continue;
+                }
+
+                throw error;
             }
-        });
+        }
+
+        throw new Error("Database is locked");
     }
 
     streamQuery<R>(
