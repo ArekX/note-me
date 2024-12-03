@@ -34,15 +34,15 @@ export const connectDbMessageListener = () => {
 };
 
 export const requestFromDb = <Request extends DatabaseData, Response>(
-    repoKey: `${Request["name"]}.${Request["key"]}`,
+    repo: Request["name"],
+    key: Request["key"],
     data: Request["data"],
 ) => {
-    const [repository, key] = repoKey.split(".");
     const message: DbRequest<Request> = {
         requestId: crypto.randomUUID(),
         from: getConnectedWorkerName()!,
         data: {
-            name: repository,
+            name: repo,
             key,
             data,
         } as Request,

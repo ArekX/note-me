@@ -24,6 +24,6 @@ export const handleMesage = async (request: DbRequest) => {
     const r = await getUserById(+request.data.data.id);
 
     // Respond to the request
-    respondFromDb(request, { success: true, data: r });
+    respondFromDb(request, r);
     return { success: true };
 };

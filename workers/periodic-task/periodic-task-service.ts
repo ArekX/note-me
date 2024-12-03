@@ -6,8 +6,9 @@ import {
     savePeriodicTaskRun,
 } from "$backend/repository/periodic-task-repository.ts";
 import { getCurrentUnixTimestamp, unixToDate } from "$lib/time/unix.ts";
-import { requestFromDb } from "$workers/database/database-message.ts";
+
 import { sendServiceReadyMessage } from "$workers/services/worker-bus.ts";
+import { repository } from "$workers/database/repository.ts";
 
 export interface PeriodicTask {
     name: string;
@@ -146,13 +147,12 @@ const start = async () => {
     logger.info("Periodic task service started.");
 
     console.log(
-        await requestFromDb(
-            "UserRepository.getUser",
-            {
-                id: "1",
-            },
-        ),
+        await repository.userRepository.getUser({
+            "id": "1",
+        }),
     );
+
+    await repository.userRepository.listUsers();
 
     await deleteInvalidPeriodicTasks();
     await restorePreviouslyScheduledTasks();
