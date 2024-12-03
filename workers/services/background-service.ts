@@ -1,8 +1,10 @@
 import { logger } from "$backend/logger.ts";
+import { waitUntilServiceIsReady } from "$workers/services/worker-bus.ts";
 import { connectServiceToBus } from "$workers/services/worker-bus.ts";
 
 interface BackgroundServiceOptions {
     required: boolean;
+    dependencies?: string[];
 }
 
 export type OnMessageHandler<T = unknown> = (message: T) => void;
@@ -13,7 +15,7 @@ export class BackgroundService {
     #retriesLeft: number = +(Deno.env.get("ALLOWED_SERVICE_RETRIES") || 3);
 
     constructor(
-        private readonly workerPath: string,
+        public readonly name: string,
         public readonly options: BackgroundServiceOptions = {
             required: false,
         },
@@ -29,13 +31,18 @@ export class BackgroundService {
 
     stop() {
         this.#worker?.terminate();
+        this.#worker = null;
         this.#started = false;
     }
 
-    start() {
+    async start() {
+        if (this.#worker) {
+            return;
+        }
+
         this.#worker = new Worker(
             new URL(
-                `../${this.workerPath}/worker.ts`,
+                `../${this.name}/worker.ts`,
                 import.meta.url,
             ).href,
             {
@@ -47,17 +54,17 @@ export class BackgroundService {
             logger.error(
                 "Received unserializeable message from worker '{worker}': {error}",
                 {
-                    worker: this.workerPath,
+                    worker: this.name,
                 },
             );
             event.preventDefault();
         };
 
-        this.#worker.onerror = (event) => {
+        this.#worker.onerror = async (event) => {
             logger.error(
                 "Restarting worker '{worker}' due to error '{error}' at {file}:{line}.",
                 {
-                    worker: this.workerPath,
+                    worker: this.name,
                     error: event.message,
                     file: event.filename,
                     line: event.lineno,
@@ -66,19 +73,28 @@ export class BackgroundService {
 
             if (this.#retriesLeft > 0) {
                 this.stop();
-                this.start();
+                await this.start();
                 event.preventDefault();
                 this.#retriesLeft--;
             }
         };
 
-        this.#started = true;
         connectServiceToBus(this);
+        await waitUntilServiceIsReady(this);
+
+        this.#started = true;
     }
 
     onMessage(callback: OnMessageHandler) {
-        this.#worker?.addEventListener("message", (event) => {
+        const listener = (event: MessageEvent) => {
             callback(JSON.parse(event.data));
-        });
+        };
+
+        this.#worker?.addEventListener("message", listener);
+        return listener;
+    }
+
+    removeMessageListener(callback: OnMessageHandler) {
+        this.#worker?.removeEventListener("message", callback);
     }
 }

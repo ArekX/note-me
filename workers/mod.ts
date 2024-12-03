@@ -31,16 +31,23 @@ const checkServiceDisabled = (serviceName: string): boolean => {
     return false;
 };
 
-export const initializeWorkers = (): void => {
+export const initializeServices = async (): Promise<void> => {
+    logger.info("Starting database service.");
+    await services.database.start();
+    logger.info("Database service started successfully.");
+
     for (const [serviceName, service] of Object.entries(services)) {
-        if (!service.options.required && checkServiceDisabled(serviceName)) {
+        if (
+            !service.isStarted && !service.options.required &&
+            checkServiceDisabled(serviceName)
+        ) {
             continue;
         }
 
         logger.info(`Starting background service: ${serviceName}`);
-        service.start();
+        await service.start();
 
         logger.debug("Background service started.");
     }
-    logger.debug("All background services started");
+    logger.info("All background services started successfully.");
 };

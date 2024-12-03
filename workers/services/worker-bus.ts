@@ -6,6 +6,11 @@ import {
 } from "$workers/services/background-service.ts";
 import { services } from "$workers/services/mod.ts";
 
+export interface ServiceReadyMessage {
+    from: ServiceName;
+    type: "ready";
+}
+
 type ServiceName = keyof typeof services;
 
 export interface WorkerMessage<T = unknown> {
@@ -14,11 +19,16 @@ export interface WorkerMessage<T = unknown> {
 }
 
 let connectedWorker: DedicatedWorkerGlobalScope | null = null;
+let connectedWorkerName: ServiceName | null = null;
 
 export const connectWorkerToBus = <T>(
+    name: ServiceName,
     worker: DedicatedWorkerGlobalScope,
     onMessage?: (message: T) => void,
 ) => {
+    connectedWorkerName = name;
+    connectedWorker = worker;
+
     if (onMessage) {
         worker.addEventListener(
             "message",
@@ -28,9 +38,9 @@ export const connectWorkerToBus = <T>(
             },
         );
     }
-
-    connectedWorker = worker;
 };
+
+export const getConnectedWorkerName = () => connectedWorkerName;
 
 export const workerSendMesage = <T>(to: ServiceName | "*", message: T) => {
     if (!connectedWorker) {
@@ -61,7 +71,9 @@ export const serviceBusSendMessage = <T>(
 ) => {
     if (message.to === "*") {
         for (const destinationService of Object.values(services)) {
-            destinationService.send(message);
+            if (destinationService.isStarted) {
+                destinationService.send(message);
+            }
         }
 
         return;
@@ -78,5 +90,29 @@ export const connectServiceToBus = (service: BackgroundService) => {
     service.onMessage(
         ((message: WorkerMessage) =>
             serviceBusSendMessage(message)) as OnMessageHandler,
+    );
+};
+
+export const waitUntilServiceIsReady = (service: BackgroundService) => {
+    return new Promise<void>((resolve) => {
+        const serviceListener = service.onMessage(
+            ((message: ServiceReadyMessage) => {
+                if (message.type === "ready" && message.from === service.name) {
+                    service.removeMessageListener(
+                        serviceListener as OnMessageHandler,
+                    );
+                    resolve();
+                }
+            }) as OnMessageHandler,
+        );
+    });
+};
+
+export const sendServiceReadyMessage = () => {
+    connectedWorker?.postMessage(
+        JSON.stringify({
+            from: connectedWorkerName,
+            type: "ready",
+        } as ServiceReadyMessage),
     );
 };

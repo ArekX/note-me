@@ -20,6 +20,7 @@ import { readMessage } from "$workers/websocket/reader/mod.ts";
 import { canRole, roleRequire } from "$backend/rbac/authorizer.ts";
 import { SessionState } from "$backend/session/mod.ts";
 import { parseQueryParams } from "$backend/parse-query-params.ts";
+import { sendServiceReadyMessage } from "$workers/services/worker-bus.ts";
 
 const clients: SocketClientMap = {};
 
@@ -132,6 +133,7 @@ const startServer = (hostname: string, port: number) => {
                 { hostname, port },
             );
             isServerRunning = true;
+            sendServiceReadyMessage();
         },
     });
 };

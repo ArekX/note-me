@@ -6,6 +6,8 @@ import {
     savePeriodicTaskRun,
 } from "$backend/repository/periodic-task-repository.ts";
 import { getCurrentUnixTimestamp, unixToDate } from "$lib/time/unix.ts";
+import { requestFromDb } from "$workers/database/database-message.ts";
+import { sendServiceReadyMessage } from "$workers/services/worker-bus.ts";
 
 export interface PeriodicTask {
     name: string;
@@ -142,9 +144,14 @@ const scheduleFirstTimeJobs = async () => {
 
 const start = async () => {
     logger.info("Periodic task service started.");
+
+    requestFromDb("start");
+
     await deleteInvalidPeriodicTasks();
     await restorePreviouslyScheduledTasks();
     await scheduleFirstTimeJobs();
+
+    sendServiceReadyMessage();
 
     while (true) {
         const now = getCurrentUnixTimestamp();

@@ -1,8 +1,9 @@
 import { logger } from "$backend/logger.ts";
 import { PeriodicTask } from "../periodic-task-service.ts";
-import { startOfNextDay } from "$workers/periodic-task/next-at.ts";
+import { startOfNextDay } from "../next-at.ts";
 import { databaseLocation } from "$backend/database.ts";
 import {
+    clearAllBackupInProgress,
     getBackupTargets,
     updateBackupInProgress,
     updateLastBackupAt,
@@ -42,6 +43,9 @@ export const backupDatabase: PeriodicTask = {
             );
             return;
         }
+
+        logger.info("Clearing stale locks for backup...");
+        await clearAllBackupInProgress();
 
         const targets = await getBackupTargets();
 

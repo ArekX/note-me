@@ -21,6 +21,7 @@ self.onerror = (event) => {
 if (import.meta.main) {
     registerApiHandlers(websocketService);
     connectWorkerToBus(
+        "websocket",
         self,
         (message) => websocketService.handleBackendRequest(message as Message),
     );

@@ -5,11 +5,11 @@ declare const self: DedicatedWorkerGlobalScope;
 import { logger, setLoggerName } from "$backend/logger.ts";
 import { checkReminders } from "./tasks/check-reminders.ts";
 import { periodicTaskService } from "./periodic-task-service.ts";
-import { cleanupTempFolder } from "$workers/periodic-task/tasks/cleanup-temp-folder.ts";
+import { cleanupTempFolder } from "./tasks/cleanup-temp-folder.ts";
 import { connectWorkerToBus } from "$workers/services/worker-bus.ts";
-import { removeExpiredShareLinks } from "$workers/periodic-task/tasks/remove-expired-share-links.ts";
-import { removeExpiredDeletedNotes } from "$workers/periodic-task/tasks/remove-expired-deleted-notes.ts";
-import { backupDatabase } from "$workers/periodic-task/tasks/backup-database.ts";
+import { removeExpiredShareLinks } from "./tasks/remove-expired-share-links.ts";
+import { removeExpiredDeletedNotes } from "./tasks/remove-expired-deleted-notes.ts";
+import { backupDatabase } from "./tasks/backup-database.ts";
 import { loadEnvironment } from "$backend/env.ts";
 
 loadEnvironment();
@@ -32,7 +32,7 @@ if (import.meta.main) {
     periodicTaskService.registerPeriodicTask(removeExpiredDeletedNotes);
     periodicTaskService.registerPeriodicTask(backupDatabase);
 
-    connectWorkerToBus(self);
+    connectWorkerToBus("periodic-task", self);
 
     periodicTaskService.start();
 }

@@ -8,7 +8,7 @@ import { sendMessageToWebsocket } from "$workers/websocket/websocket-worker-mess
 import { createTransaction } from "$backend/database.ts";
 import { logger } from "$backend/logger.ts";
 import { getNoteInfo } from "$backend/repository/note-repository.ts";
-import { nextMinute } from "$workers/periodic-task/next-at.ts";
+import { nextMinute } from "../next-at.ts";
 
 export const checkReminders: PeriodicTask = {
     name: "check-reminders",
