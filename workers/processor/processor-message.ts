@@ -15,14 +15,17 @@ export interface AbortJobRequest {
 
 export type ProcessorRequestMessage = ProcessJobRequest | AbortJobRequest;
 
+export type ProcessorMessageKey = ProcessorRequestMessage["type"];
+
 export const sendProcessorRequest = <T extends JobNames>(
     name: T,
     job: Parameters<JobDefinition[T]>["0"],
 ) => {
     const jobId = crypto.randomUUID();
 
-    workerSendMesage<ProcessorRequestMessage>(
+    workerSendMesage<ProcessorRequestMessage, ProcessorMessageKey>(
         "processor",
+        "process",
         {
             type: "process",
             jobId,
@@ -35,8 +38,9 @@ export const sendProcessorRequest = <T extends JobNames>(
 };
 
 export const sendAbortRequest = (jobId: string) => {
-    workerSendMesage<ProcessorRequestMessage>(
+    workerSendMesage<ProcessorRequestMessage, ProcessorMessageKey>(
         "processor",
+        "abort",
         {
             type: "abort",
             jobId,

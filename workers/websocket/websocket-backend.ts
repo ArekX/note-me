@@ -11,9 +11,9 @@ export const createBackendMessage = <T extends BackendMessage>(
     namespace: T["namespace"],
     type: T["type"],
     message: Omit<T, "namespace" | "type" | "requestId">,
-) => ({
+): T => ({
     requestId: crypto.randomUUID(),
     namespace,
     type,
     ...message,
-});
+} as T);

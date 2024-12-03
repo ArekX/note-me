@@ -11,46 +11,63 @@ export interface ServiceReadyMessage {
     type: "ready";
 }
 
-type ServiceName = keyof typeof services;
+export type ServiceName = keyof typeof services;
 
 export interface WorkerMessage<T = unknown> {
     to: ServiceName | "*";
+    key: string;
     data: T;
 }
 
 let connectedWorker: DedicatedWorkerGlobalScope | null = null;
 let connectedWorkerName: ServiceName | null = null;
+const connectedMessageListeners: { [key: string]: OnMessageHandler } = {};
 
 export const connectWorkerToBus = <T>(
     name: ServiceName,
     worker: DedicatedWorkerGlobalScope,
-    onMessage?: (message: T) => void,
 ) => {
     connectedWorkerName = name;
     connectedWorker = worker;
 
-    if (onMessage) {
-        worker.addEventListener(
-            "message",
-            (event) => {
-                const message = JSON.parse(event.data) as WorkerMessage<T>;
-                onMessage(message.data);
-            },
-        );
-    }
+    worker.addEventListener(
+        "message",
+        (event) => {
+            if (Object.keys(connectedMessageListeners).length === 0) {
+                return;
+            }
+
+            const message = JSON.parse(event.data) as WorkerMessage<T>;
+
+            const messageListener = connectedMessageListeners[message.key];
+            messageListener?.(message.data);
+        },
+    );
+};
+
+export const connectWorkerMessageListener = <T, K extends string>(
+    key: K,
+    onMessage: OnMessageHandler<T>,
+) => {
+    connectedMessageListeners[key] = onMessage as OnMessageHandler;
 };
 
 export const getConnectedWorkerName = () => connectedWorkerName;
 
-export const workerSendMesage = <T>(to: ServiceName | "*", message: T) => {
+export const workerSendMesage = <T, K>(
+    to: ServiceName | "*",
+    key: K,
+    message: T,
+) => {
     if (!connectedWorker) {
         throw new Error("No worker is connected to the bus.");
     }
 
     connectedWorker.postMessage(JSON.stringify({
         to,
+        key,
         data: message,
-    }));
+    } as WorkerMessage<T>));
 };
 
 export const listenServiceBroadcasts = <T>(

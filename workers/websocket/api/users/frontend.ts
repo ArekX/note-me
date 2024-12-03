@@ -82,6 +82,7 @@ import {
     findUserPasskeys,
     updatePasskey,
 } from "$backend/repository/passkey-repository.ts";
+import { WebsocketMessageKey } from "$workers/websocket/websocket-worker-message.ts";
 
 const handleCreateUser: ListenerFn<CreateUserMessage> = async (
     { message: { data }, respond, sourceClient },
@@ -139,8 +140,9 @@ const handleDeleteUser: ListenerFn<DeleteUserMessage> = async (
     await deleteUserRecord(id);
     await destroySession(id);
 
-    workerSendMesage(
+    workerSendMesage<LogoutUserMessage, WebsocketMessageKey>(
         "websocket",
+        "backendRequest",
         createBackendMessage<LogoutUserMessage>("users", "logoutUser", {
             user_id: id,
         }),

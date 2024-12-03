@@ -145,7 +145,14 @@ const scheduleFirstTimeJobs = async () => {
 const start = async () => {
     logger.info("Periodic task service started.");
 
-    requestFromDb("start");
+    console.log(
+        await requestFromDb(
+            "UserRepository.getUser",
+            {
+                id: "1",
+            },
+        ),
+    );
 
     await deleteInvalidPeriodicTasks();
     await restorePreviouslyScheduledTasks();

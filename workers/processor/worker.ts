@@ -4,12 +4,15 @@ declare const self: DedicatedWorkerGlobalScope;
 
 import { logger, setLoggerName } from "$backend/logger.ts";
 import {
+    connectWorkerMessageListener,
     connectWorkerToBus,
     sendServiceReadyMessage,
 } from "$workers/services/worker-bus.ts";
 import { loadEnvironment } from "$backend/env.ts";
 import {
-    ProcessorRequestMessage,
+    AbortJobRequest,
+    ProcessJobRequest,
+    ProcessorMessageKey,
 } from "$workers/processor/processor-message.ts";
 import { processorService } from "$workers/processor/processor-service.ts";
 
@@ -30,24 +33,16 @@ if (import.meta.main) {
     connectWorkerToBus(
         "processor",
         self,
-        async (message: ProcessorRequestMessage) => {
-            switch (message.type) {
-                case "process":
-                    await processorService.processRequest(message);
-                    break;
-                case "abort":
-                    processorService.abortRequest(message);
-                    break;
-                default:
-                    logger.error(
-                        "Received an invalid message type: {message}",
-                        {
-                            message: JSON.stringify(message),
-                        },
-                    );
-                    break;
-            }
-        },
+    );
+
+    connectWorkerMessageListener<ProcessJobRequest, ProcessorMessageKey>(
+        "process",
+        (message) => processorService.processRequest(message),
+    );
+
+    connectWorkerMessageListener<AbortJobRequest, ProcessorMessageKey>(
+        "abort",
+        (message) => processorService.abortRequest(message),
     );
 
     logger.info("Processor service started.");

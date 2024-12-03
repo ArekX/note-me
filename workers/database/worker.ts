@@ -4,13 +4,15 @@ declare const self: DedicatedWorkerGlobalScope;
 
 import { logger, setLoggerName } from "$backend/logger.ts";
 import {
+    connectWorkerMessageListener,
     connectWorkerToBus,
     sendServiceReadyMessage,
 } from "$workers/services/worker-bus.ts";
 import { loadEnvironment } from "$backend/env.ts";
 import { handleMesage } from "./database.ts";
-import { RepositoryRequest } from "$workers/database/message.ts";
+import { DbRequest } from "$workers/database/message.ts";
 import { bootstrap } from "$workers/database/bootstrap.ts";
+import { DatabaseMessageKey } from "$workers/database/database-message.ts";
 
 loadEnvironment();
 setLoggerName("database");
@@ -25,7 +27,11 @@ if (import.meta.main) {
     connectWorkerToBus(
         "database",
         self,
-        (message) => handleMesage(message as RepositoryRequest),
+    );
+
+    connectWorkerMessageListener<DbRequest, DatabaseMessageKey>(
+        "databaseRequest",
+        (message) => handleMesage(message),
     );
 
     await bootstrap();
