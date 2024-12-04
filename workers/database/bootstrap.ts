@@ -18,7 +18,11 @@ const initializeFirstRun = async () => {
     logger.info("Password: admin");
 };
 
-const runMigrations = async () => {
+export const bootstrap = async () => {
+    if ((Deno.env.get("RUN_MIGRATIONS_ON_STARTUP") ?? "1") != "1") {
+        return;
+    }
+
     const isFirstRun = await migrator.isFirstRun();
     await migrator.migrateUp();
 
@@ -26,11 +30,5 @@ const runMigrations = async () => {
         logger.info("Setting up initial data on first run.");
         await initializeFirstRun();
         logger.info("First time setup complete!");
-    }
-};
-
-export const bootstrap = async () => {
-    if ((Deno.env.get("RUN_MIGRATIONS_ON_STARTUP") ?? "1") == "1") {
-        await runMigrations();
     }
 };

@@ -44,10 +44,12 @@ export const initializeServices = async (): Promise<void> => {
             continue;
         }
 
-        logger.info(`Starting background service: ${serviceName}`);
+        logger.info("Starting service: {serviceName}", { serviceName });
         await service.start();
 
-        logger.debug("Background service started.");
+        logger.debug(`Service '{serviceName}' started successfully.`, {
+            serviceName,
+        });
     }
-    logger.info("All background services started successfully.");
+    logger.info("All services started successfully.");
 };

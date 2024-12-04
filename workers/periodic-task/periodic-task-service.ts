@@ -8,7 +8,7 @@ import {
 import { getCurrentUnixTimestamp, unixToDate } from "$lib/time/unix.ts";
 
 import { sendServiceReadyMessage } from "$workers/services/worker-bus.ts";
-import { repository } from "$workers/database/repository.ts";
+import { db } from "$workers/database/lib.ts";
 
 export interface PeriodicTask {
     name: string;
@@ -147,7 +147,7 @@ const start = async () => {
     logger.info("Periodic task service started.");
 
     console.log(
-        await repository.backupTarget.getTargetCount(),
+        await db.backupTarget.getBackupTargets(),
     );
 
     await deleteInvalidPeriodicTasks();

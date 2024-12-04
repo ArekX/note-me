@@ -1,4 +1,4 @@
-import { requestFromDb } from "$workers/database/database-message.ts";
+import { requestFromDb } from "./request.ts";
 import { DatabaseData } from "$workers/database/message.ts";
 
 type Data<Repo, Key> = Extract<DatabaseData, { name: Repo; key: Key }>["data"];
@@ -39,7 +39,7 @@ const createRepoProxy = <T extends DatabaseData["name"]>(
     }) as RepositoryFn<T>;
 };
 
-export const repository = new Proxy({} as Repository, {
+export const db = new Proxy({} as Repository, {
     get: (target, prop: string) => {
         if (!(prop in target)) {
             target[prop as DatabaseData["name"]] = createRepoProxy(

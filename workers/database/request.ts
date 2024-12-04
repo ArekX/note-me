@@ -3,7 +3,7 @@ import {
     getConnectedWorkerName,
     workerSendMesage,
 } from "$workers/services/worker-bus.ts";
-import { DatabaseData, DbRequest } from "$workers/database/message.ts";
+import { DatabaseData } from "$workers/database/message.ts";
 
 export interface DatabaseResponse<T = unknown> {
     forRequestId: string;
@@ -13,6 +13,12 @@ export interface DatabaseResponse<T = unknown> {
 export type DatabaseMessageKey = "databaseRequest" | "databaseResponse";
 
 type PendingResolveFn = (response: DatabaseResponse["data"]) => void;
+
+export interface DbRequest<T extends DatabaseData = DatabaseData> {
+    requestId: string;
+    from: string;
+    data: T;
+}
 
 const pendingRequests: { [key: string]: PendingResolveFn } = {};
 

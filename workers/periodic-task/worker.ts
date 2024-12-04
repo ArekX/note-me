@@ -11,7 +11,7 @@ import { removeExpiredShareLinks } from "./tasks/remove-expired-share-links.ts";
 import { removeExpiredDeletedNotes } from "./tasks/remove-expired-deleted-notes.ts";
 import { backupDatabase } from "./tasks/backup-database.ts";
 import { loadEnvironment } from "$backend/env.ts";
-import { connectDbMessageListener } from "$workers/database/database-message.ts";
+import { connectDbMessageListener } from "../database/request.ts";
 
 loadEnvironment();
 

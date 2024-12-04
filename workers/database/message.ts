@@ -18,10 +18,4 @@ export type RepositoryHandlerMap<T extends RepositoryRequest> = {
     ) => Promise<Extract<T, { key: K }>["response"]>;
 };
 
-export interface DbRequest<T extends DatabaseData = DatabaseData> {
-    requestId: string;
-    from: string;
-    data: T;
-}
-
 export type DatabaseData = BackupTargetRepository;

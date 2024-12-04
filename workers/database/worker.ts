@@ -9,10 +9,9 @@ import {
     sendServiceReadyMessage,
 } from "$workers/services/worker-bus.ts";
 import { loadEnvironment } from "$backend/env.ts";
-import { handleMesage } from "./database.ts";
-import { DbRequest } from "$workers/database/message.ts";
+import { handleMesage } from "./message-handler.ts";
 import { bootstrap } from "$workers/database/bootstrap.ts";
-import { DatabaseMessageKey } from "$workers/database/database-message.ts";
+import { DatabaseMessageKey, DbRequest } from "./request.ts";
 
 loadEnvironment();
 setLoggerName("database");

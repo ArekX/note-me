@@ -1,8 +1,4 @@
-import { DbRequest } from "$workers/database/message.ts";
-import {
-    DatabaseMessageKey,
-    DatabaseResponse,
-} from "$workers/database/database-message.ts";
+import { DatabaseMessageKey, DatabaseResponse, DbRequest } from "./request.ts";
 import { ServiceName, workerSendMesage } from "$workers/services/worker-bus.ts";
 import { backupTarget } from "$workers/database/repository/backup-target.ts";
 
@@ -34,6 +30,7 @@ export const handleMesage = async (request: DbRequest) => {
         );
     }
 
+    // TODO: Add try catch block and respond with error message
     const response = await repo[request.data.key](request.data.data as never);
 
     respondFromDb(request, response);

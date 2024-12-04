@@ -4,9 +4,15 @@ import {
 } from "$workers/database/message.ts";
 import {
     BackupTargetRecord,
+    clearAllBackupInProgress,
     createBackupTarget,
+    deleteBackupTarget,
+    getBackupTargets,
     getTargetCount,
+    isBackupInProgress,
+    updateBackupInProgress,
     updateBackupTarget,
+    updateLastBackupAt,
 } from "$backend/repository/backup-target-repository.ts";
 import { BackupTargetRequest } from "$schemas/settings.ts";
 
@@ -28,14 +34,44 @@ type UpdateBackupTarget = BackupRequest<
     { id: number; data: BackupTargetRequest },
     void
 >;
+type GetBackupTargets = BackupRequest<
+    "getBackupTargets",
+    never,
+    BackupTargetRecord[]
+>;
+type DeleteBackupTarget = BackupRequest<"deleteBackupTarget", number, void>;
+type IsBackupInProgress = BackupRequest<"isBackupInProgress", never, boolean>;
+type UpdateLastBackupAt = BackupRequest<"updateLastBackupAt", number, void>;
+type UpdateBackupInProgress = BackupRequest<"updateBackupInProgress", {
+    id: number;
+    inProgress: boolean;
+}, void>;
+type ClearAllBackupInProgress = BackupRequest<
+    "clearAllBackupInProgress",
+    never,
+    void
+>;
 
 export type BackupTargetRepository =
     | GetTargetCount
     | CreateBackupTarget
-    | UpdateBackupTarget;
+    | UpdateBackupTarget
+    | GetBackupTargets
+    | DeleteBackupTarget
+    | IsBackupInProgress
+    | UpdateLastBackupAt
+    | UpdateBackupInProgress
+    | ClearAllBackupInProgress;
 
 export const backupTarget: RepositoryHandlerMap<BackupTargetRepository> = {
     getTargetCount,
     createBackupTarget,
-    updateBackupTarget: (data) => updateBackupTarget(data.id, data.data),
+    updateBackupTarget: ({ id, data }) => updateBackupTarget(id, data),
+    getBackupTargets,
+    deleteBackupTarget,
+    isBackupInProgress,
+    updateLastBackupAt,
+    updateBackupInProgress: ({ id, inProgress }) =>
+        updateBackupInProgress(id, inProgress),
+    clearAllBackupInProgress,
 };
