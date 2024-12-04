@@ -1,10 +1,6 @@
 import { DatabaseMessageKey, DatabaseResponse, DbRequest } from "./request.ts";
 import { ServiceName, workerSendMesage } from "$workers/services/worker-bus.ts";
-import { backupTarget } from "$workers/database/repository/backup-target.ts";
-
-const repositories = {
-    backupTarget,
-};
+import { repositories } from "$workers/database/repository/mod.ts";
 
 const respondFromDb = <T>(fromRequest: DbRequest, response: T) => {
     workerSendMesage<DatabaseResponse, DatabaseMessageKey>(
