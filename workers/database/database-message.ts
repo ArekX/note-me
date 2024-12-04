@@ -12,7 +12,7 @@ export interface DatabaseResponse<T = unknown> {
 
 export type DatabaseMessageKey = "databaseRequest" | "databaseResponse";
 
-type PendingResolveFn = (response: DatabaseResponse) => void;
+type PendingResolveFn = (response: DatabaseResponse["data"]) => void;
 
 const pendingRequests: { [key: string]: PendingResolveFn } = {};
 
@@ -20,13 +20,13 @@ export const connectDbMessageListener = () => {
     connectWorkerMessageListener<DatabaseResponse, DatabaseMessageKey>(
         "databaseResponse",
         (message) => {
-            const { forRequestId } = message;
+            const { forRequestId, data } = message;
 
             if (!pendingRequests[forRequestId]) {
                 return;
             }
 
-            pendingRequests[forRequestId](message);
+            pendingRequests[forRequestId](data);
 
             delete pendingRequests[forRequestId];
         },

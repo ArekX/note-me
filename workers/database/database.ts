@@ -4,7 +4,11 @@ import {
     DatabaseResponse,
 } from "$workers/database/database-message.ts";
 import { ServiceName, workerSendMesage } from "$workers/services/worker-bus.ts";
-import { getUserById } from "$backend/repository/user-repository.ts";
+import { backupTarget } from "$workers/database/repository/backup-target.ts";
+
+const repositories = {
+    backupTarget,
+};
 
 const respondFromDb = <T>(fromRequest: DbRequest, response: T) => {
     workerSendMesage<DatabaseResponse, DatabaseMessageKey>(
@@ -18,12 +22,19 @@ const respondFromDb = <T>(fromRequest: DbRequest, response: T) => {
 };
 
 export const handleMesage = async (request: DbRequest) => {
-    // Handle the request
-    console.log("request", request);
+    if (!(request.data.name in repositories)) {
+        return;
+    }
 
-    const r = await getUserById(+request.data.data.id);
+    const repo = repositories[request.data.name];
 
-    // Respond to the request
-    respondFromDb(request, r);
-    return { success: true };
+    if (!(request.data.key in repo)) {
+        throw new Error(
+            `Key ${request.data.key} not found in repository ${request.data.name}`,
+        );
+    }
+
+    const response = await repo[request.data.key](request.data.data as never);
+
+    respondFromDb(request, response);
 };

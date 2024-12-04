@@ -147,12 +147,8 @@ const start = async () => {
     logger.info("Periodic task service started.");
 
     console.log(
-        await repository.userRepository.getUser({
-            "id": "1",
-        }),
+        await repository.backupTarget.getTargetCount(),
     );
-
-    await repository.userRepository.listUsers();
 
     await deleteInvalidPeriodicTasks();
     await restorePreviouslyScheduledTasks();

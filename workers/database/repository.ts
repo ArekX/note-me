@@ -18,7 +18,7 @@ type Repository = {
     [K in DatabaseData["name"]]: RepositoryFn<K>;
 };
 
-const createFnProxy = <T extends DatabaseData["name"]>(
+const createRepoProxy = <T extends DatabaseData["name"]>(
     repo: T,
 ): RepositoryFn<T> => {
     return new Proxy({} as RepositoryFn<T>, {
@@ -42,7 +42,7 @@ const createFnProxy = <T extends DatabaseData["name"]>(
 export const repository = new Proxy({} as Repository, {
     get: (target, prop: string) => {
         if (!(prop in target)) {
-            target[prop as DatabaseData["name"]] = createFnProxy(
+            target[prop as DatabaseData["name"]] = createRepoProxy(
                 prop as DatabaseData[
                     "name"
                 ],
