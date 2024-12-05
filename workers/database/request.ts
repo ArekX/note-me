@@ -7,12 +7,16 @@ import { DatabaseData } from "$workers/database/message.ts";
 
 export interface DatabaseResponse<T = unknown> {
     forRequestId: string;
-    data: T;
+    errorMessage: string | null;
+    data: T | null;
 }
 
 export type DatabaseMessageKey = "databaseRequest" | "databaseResponse";
 
-type PendingResolveFn = (response: DatabaseResponse["data"]) => void;
+type PendingResolver = {
+    resolve: (response: DatabaseResponse["data"]) => void;
+    reject: (error: string) => void;
+};
 
 export interface DbRequest<T extends DatabaseData = DatabaseData> {
     requestId: string;
@@ -20,19 +24,23 @@ export interface DbRequest<T extends DatabaseData = DatabaseData> {
     data: T;
 }
 
-const pendingRequests: { [key: string]: PendingResolveFn } = {};
+const pendingRequests: { [key: string]: PendingResolver } = {};
 
 export const connectDbMessageListener = () => {
     connectWorkerMessageListener<DatabaseResponse, DatabaseMessageKey>(
         "databaseResponse",
         (message) => {
-            const { forRequestId, data } = message;
+            const { forRequestId, errorMessage, data } = message;
 
             if (!pendingRequests[forRequestId]) {
                 return;
             }
 
-            pendingRequests[forRequestId](data);
+            if (errorMessage) {
+                pendingRequests[forRequestId].reject(errorMessage);
+            } else {
+                pendingRequests[forRequestId].resolve(data);
+            }
 
             delete pendingRequests[forRequestId];
         },
@@ -54,8 +62,11 @@ export const requestFromDb = <Request extends DatabaseData, Response>(
         } as Request,
     };
 
-    return new Promise<DatabaseResponse<Response>>((resolve) => {
-        pendingRequests[message.requestId] = resolve as PendingResolveFn;
+    return new Promise<DatabaseResponse<Response>>((resolve, reject) => {
+        pendingRequests[message.requestId] = {
+            resolve,
+            reject,
+        } as PendingResolver;
 
         workerSendMesage<DbRequest<Request>, DatabaseMessageKey>(
             "database",

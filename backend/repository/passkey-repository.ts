@@ -64,7 +64,18 @@ export const passkeyExists = async (passkeyId: string): Promise<boolean> => {
         .executeTakeFirst())?.exists === 1;
 };
 
-export const getPasskeyById = async (passkeyId: string) => {
+export type PasskeyByIdRecord = Pick<
+    UserPasskeyTable,
+    | "credential_identifier"
+    | "public_key"
+    | "counter"
+    | "transports"
+    | "user_id"
+>;
+
+export const getPasskeyById = async (
+    passkeyId: string,
+): Promise<PasskeyByIdRecord | undefined> => {
     return await db.selectFrom("user_passkey")
         .where("credential_identifier", "=", passkeyId)
         .select([

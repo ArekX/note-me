@@ -386,7 +386,7 @@ export const findDeletedNotes = async (
         .execute();
 };
 
-interface RemovedNote {
+export interface RemovedNote {
     id: number;
     user_id: number;
 }

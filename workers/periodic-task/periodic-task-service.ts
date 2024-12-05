@@ -1,10 +1,4 @@
 import { logger } from "$backend/logger.ts";
-import {
-    deleteUnusedPeriodicTasks,
-    findPendingPeriodicTasks,
-    getScheduledTasks,
-    savePeriodicTaskRun,
-} from "$backend/repository/periodic-task-repository.ts";
 import { getCurrentUnixTimestamp, unixToDate } from "$lib/time/unix.ts";
 
 import { sendServiceReadyMessage } from "$workers/services/worker-bus.ts";
@@ -46,7 +40,7 @@ const registerPeriodicTask = (task: PeriodicTask) => {
 };
 
 const restorePreviouslyScheduledTasks = async () => {
-    const periodicTasks = await findPendingPeriodicTasks();
+    const periodicTasks = await db.periodicTask.findPendingPeriodicTasks();
 
     for (const handler of handlers) {
         const task = periodicTasks.find((task) =>
@@ -73,7 +67,7 @@ const deleteInvalidPeriodicTasks = async () => {
         tasks.push(handler.task.name);
     }
 
-    await deleteUnusedPeriodicTasks(tasks);
+    await db.periodicTask.deleteUnusedPeriodicTasks(tasks);
 };
 
 const triggerHandler = async (handler: RegisteredTask) => {
@@ -100,12 +94,12 @@ const triggerHandler = async (handler: RegisteredTask) => {
         failureReason = (e as Error).message ?? "Unknown error";
     }
 
-    await savePeriodicTaskRun(
-        handler.task.name,
-        handler.task.getNextAt(getCurrentUnixTimestamp()),
-        isSuccessful,
-        failureReason,
-    );
+    await db.periodicTask.savePeriodicTaskRun({
+        task_identifier: handler.task.name,
+        next_run_at: handler.task.getNextAt(getCurrentUnixTimestamp()),
+        is_successful: isSuccessful,
+        fail_reason: failureReason,
+    });
 };
 
 const scheduleFirstTimeJobs = async () => {
@@ -118,7 +112,7 @@ const scheduleFirstTimeJobs = async () => {
         tasks.push(handler.task.name);
     }
 
-    const scheduledTasks = await getScheduledTasks(tasks);
+    const scheduledTasks = await db.periodicTask.getScheduledTasks(tasks);
 
     const unscheduledTasks = tasks.filter((task) =>
         !scheduledTasks.includes(task)
@@ -135,10 +129,10 @@ const scheduleFirstTimeJobs = async () => {
                 task: handler.task.name,
             },
         );
-        await savePeriodicTaskRun(
-            handler.task.name,
-            handler.task.getNextAt(now),
-        );
+        await db.periodicTask.savePeriodicTaskRun({
+            task_identifier: handler.task.name,
+            next_run_at: handler.task.getNextAt(now),
+        });
         tasksInUse.push(handler.task.name);
     }
 };
@@ -173,12 +167,12 @@ const start = async () => {
 const storeScheduledTasks = async () => {
     logger.info("Storing current scheduled task times into database.");
     for (const handler of handlers) {
-        await savePeriodicTaskRun(
-            handler.task.name,
-            handler.next_at,
-            true,
-            null,
-        );
+        await db.periodicTask.savePeriodicTaskRun({
+            task_identifier: handler.task.name,
+            next_run_at: handler.next_at,
+            is_successful: true,
+            fail_reason: null,
+        });
     }
 };
 
