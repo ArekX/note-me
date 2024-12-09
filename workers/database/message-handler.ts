@@ -1,29 +1,53 @@
-import { DatabaseMessageKey, DatabaseResponse, DbRequest } from "./request.ts";
-import { ServiceName, workerSendMesage } from "$workers/services/worker-bus.ts";
+import { DbRequest } from "./request.ts";
 import { repositories } from "$workers/database/repository/mod.ts";
 import { logger } from "$backend/logger.ts";
+import {
+    Channel,
+    createMessageTypeListener,
+    Listener,
+} from "$workers/channel/mod.ts";
+
+let channel: Channel | null = null;
+
+export const connectWorkerChannel = (newChannel: Channel) => {
+    if (channel) {
+        throw new Error("Database channel already connected");
+    }
+
+    newChannel.onReceive(
+        createMessageTypeListener<DbRequest>(
+            "workerRequest",
+            (recv) => {
+                handleMesage(recv.message);
+            },
+        ) as Listener,
+    );
+
+    channel = newChannel;
+};
 
 const respondFromDb = <T>(
     fromRequest: DbRequest,
     response: T | null,
     errorMessage: string | null = null,
 ) => {
-    workerSendMesage<DatabaseResponse, DatabaseMessageKey>(
-        fromRequest.from as ServiceName,
-        "databaseResponse",
-        {
+    channel!.send({
+        from: "database",
+        to: fromRequest.from,
+        type: "workerResponse",
+        message: {
             forRequestId: fromRequest.requestId,
             errorMessage,
             data: response,
         },
-    );
+    });
 };
 
 export const handleMesage = async (request: DbRequest) => {
     try {
         if (!(request.data.name in repositories)) {
             throw new Error(
-                `Repository ${request.data.name} not found in database`,
+                `Repository ${request.data.name} not found in database library.`,
             );
         }
 

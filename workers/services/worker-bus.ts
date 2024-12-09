@@ -13,14 +13,16 @@ export interface ServiceReadyMessage {
 
 export type ServiceName = keyof typeof services;
 
+type Destination = ServiceName | "*" | "app";
+
 export interface WorkerMessage<T = unknown> {
-    to: ServiceName | "*";
+    to: Destination;
     key: string;
     data: T;
 }
 
 let connectedWorker: DedicatedWorkerGlobalScope | null = null;
-let connectedWorkerName: ServiceName | null = null;
+let connectedWorkerName: ServiceName | "app" | null = null;
 const connectedMessageListeners: { [key: string]: OnMessageHandler } = {};
 
 export const connectWorkerToBus = <T>(
@@ -33,16 +35,19 @@ export const connectWorkerToBus = <T>(
     worker.addEventListener(
         "message",
         (event) => {
-            if (Object.keys(connectedMessageListeners).length === 0) {
-                return;
-            }
-
             const message = JSON.parse(event.data) as WorkerMessage<T>;
-
-            const messageListener = connectedMessageListeners[message.key];
-            messageListener?.(message.data);
+            handleListenerMessage(message);
         },
     );
+};
+
+const handleListenerMessage = <T>(message: WorkerMessage<T>) => {
+    if (Object.keys(connectedMessageListeners).length === 0) {
+        return;
+    }
+
+    const messageListener = connectedMessageListeners[message.key];
+    messageListener?.(message.data);
 };
 
 export const connectWorkerMessageListener = <T, K extends string>(
@@ -55,7 +60,7 @@ export const connectWorkerMessageListener = <T, K extends string>(
 export const getConnectedWorkerName = () => connectedWorkerName;
 
 export const workerSendMesage = <T, K>(
-    to: ServiceName | "*",
+    to: Destination,
     key: K,
     message: T,
 ) => {
@@ -68,19 +73,6 @@ export const workerSendMesage = <T, K>(
         key,
         data: message,
     } as WorkerMessage<T>));
-};
-
-export const listenServiceBroadcasts = <T>(
-    service: BackgroundService,
-    onMessage: (message: T) => void,
-) => {
-    service.onMessage(
-        ((message: WorkerMessage<T>) => {
-            if (message.to === "*") {
-                onMessage(message.data);
-            }
-        }) as OnMessageHandler,
-    );
 };
 
 export const serviceBusSendMessage = <T>(
@@ -96,6 +88,10 @@ export const serviceBusSendMessage = <T>(
         return;
     }
 
+    if (message.to === "app") {
+        return;
+    }
+
     const destinationService = services[message.to ?? ""];
 
     if (destinationService) {
@@ -107,6 +103,19 @@ export const connectServiceToBus = (service: BackgroundService) => {
     service.onMessage(
         ((message: WorkerMessage) =>
             serviceBusSendMessage(message)) as OnMessageHandler,
+    );
+};
+
+export const connectAppToService = (
+    service: BackgroundService,
+) => {
+    connectedWorkerName = "app";
+    service.onMessage(
+        ((message: WorkerMessage) => {
+            if (message.to === "app") {
+                handleListenerMessage(message);
+            }
+        }) as OnMessageHandler,
     );
 };
 

@@ -1,6 +1,5 @@
 import { logger } from "$backend/logger.ts";
-import { waitUntilServiceIsReady } from "$workers/services/worker-bus.ts";
-import { connectServiceToBus } from "$workers/services/worker-bus.ts";
+import { hostWaitForWokerReady } from "$workers/services/worker-helper.ts";
 
 interface BackgroundServiceOptions {
     required: boolean;
@@ -79,8 +78,7 @@ export class BackgroundService {
             }
         };
 
-        connectServiceToBus(this);
-        await waitUntilServiceIsReady(this);
+        await hostWaitForWokerReady(this.#worker);
 
         this.#started = true;
     }

@@ -1,9 +1,9 @@
-import {
-    connectWorkerMessageListener,
-    getConnectedWorkerName,
-    workerSendMesage,
-} from "$workers/services/worker-bus.ts";
 import { DatabaseData } from "$workers/database/message.ts";
+import {
+    Channel,
+    createMessageTypeListener,
+    Listener,
+} from "$workers/channel/mod.ts";
 
 export interface DatabaseResponse<T = unknown> {
     forRequestId: string;
@@ -26,25 +26,31 @@ export interface DbRequest<T extends DatabaseData = DatabaseData> {
 
 const pendingRequests: { [key: string]: PendingResolver } = {};
 
-export const connectDbMessageListener = () => {
-    connectWorkerMessageListener<DatabaseResponse, DatabaseMessageKey>(
-        "databaseResponse",
-        (message) => {
-            const { forRequestId, errorMessage, data } = message;
+let connectedChannel: Channel | null = null;
 
-            if (!pendingRequests[forRequestId]) {
-                return;
-            }
+export const connectHostChannel = (channel: Channel) => {
+    channel.onReceive(
+        createMessageTypeListener<DatabaseResponse>(
+            "workerResponse",
+            ({ message }) => {
+                const { forRequestId, errorMessage, data } = message;
 
-            if (errorMessage) {
-                pendingRequests[forRequestId].reject(errorMessage);
-            } else {
-                pendingRequests[forRequestId].resolve(data);
-            }
+                if (!pendingRequests[forRequestId]) {
+                    return;
+                }
 
-            delete pendingRequests[forRequestId];
-        },
+                if (errorMessage) {
+                    pendingRequests[forRequestId].reject(errorMessage);
+                } else {
+                    pendingRequests[forRequestId].resolve(data);
+                }
+
+                delete pendingRequests[forRequestId];
+            },
+        ) as Listener,
     );
+
+    connectedChannel = channel;
 };
 
 export const requestFromDb = <Request extends DatabaseData, Response>(
@@ -54,7 +60,7 @@ export const requestFromDb = <Request extends DatabaseData, Response>(
 ) => {
     const message: DbRequest<Request> = {
         requestId: crypto.randomUUID(),
-        from: getConnectedWorkerName()!,
+        from: connectedChannel!.name,
         data: {
             name: repo,
             key,
@@ -68,10 +74,11 @@ export const requestFromDb = <Request extends DatabaseData, Response>(
             reject,
         } as PendingResolver;
 
-        workerSendMesage<DbRequest<Request>, DatabaseMessageKey>(
-            "database",
-            "databaseRequest",
+        connectedChannel!.send({
+            from: connectedChannel!.name,
+            to: "database",
+            type: "workerRequest",
             message,
-        );
+        });
     });
 };

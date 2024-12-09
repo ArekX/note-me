@@ -7,6 +7,7 @@ import {
     clearAllBackupInProgress,
     createBackupTarget,
     deleteBackupTarget,
+    getBackupTarget,
     getBackupTargets,
     getTargetCount,
     isBackupInProgress,
@@ -34,13 +35,18 @@ type UpdateBackupTarget = BackupRequest<
     { id: number; data: BackupTargetRequest },
     void
 >;
+type GetBackupTarget = BackupRequest<
+    "getBackupTarget",
+    number,
+    BackupTargetRecord | null
+>;
 type GetBackupTargets = BackupRequest<
     "getBackupTargets",
     never,
     BackupTargetRecord[]
 >;
 type DeleteBackupTarget = BackupRequest<"deleteBackupTarget", number, void>;
-type IsBackupInProgress = BackupRequest<"isBackupInProgress", never, boolean>;
+type IsBackupInProgress = BackupRequest<"isBackupInProgress", number, boolean>;
 type UpdateLastBackupAt = BackupRequest<"updateLastBackupAt", number, void>;
 type UpdateBackupInProgress = BackupRequest<"updateBackupInProgress", {
     id: number;
@@ -56,6 +62,7 @@ export type BackupTargetRepository =
     | GetTargetCount
     | CreateBackupTarget
     | UpdateBackupTarget
+    | GetBackupTarget
     | GetBackupTargets
     | DeleteBackupTarget
     | IsBackupInProgress
@@ -67,6 +74,7 @@ export const backupTarget: RepositoryHandlerMap<BackupTargetRepository> = {
     getTargetCount,
     createBackupTarget,
     updateBackupTarget: ({ id, data }) => updateBackupTarget(id, data),
+    getBackupTarget,
     getBackupTargets,
     deleteBackupTarget,
     isBackupInProgress,

@@ -1,8 +1,8 @@
 import { logger } from "$backend/logger.ts";
 import { getCurrentUnixTimestamp, unixToDate } from "$lib/time/unix.ts";
 
-import { sendServiceReadyMessage } from "$workers/services/worker-bus.ts";
 import { db } from "$workers/database/lib.ts";
+import { waitUntilChannelReady } from "$workers/periodic-task/channel.ts";
 
 export interface PeriodicTask {
     name: string;
@@ -140,15 +140,11 @@ const scheduleFirstTimeJobs = async () => {
 const start = async () => {
     logger.info("Periodic task service started.");
 
-    console.log(
-        await db.backupTarget.getBackupTargets(),
-    );
+    await waitUntilChannelReady();
 
     await deleteInvalidPeriodicTasks();
     await restorePreviouslyScheduledTasks();
     await scheduleFirstTimeJobs();
-
-    sendServiceReadyMessage();
 
     while (true) {
         const now = getCurrentUnixTimestamp();

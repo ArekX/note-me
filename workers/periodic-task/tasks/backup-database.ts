@@ -3,17 +3,12 @@ import { PeriodicTask } from "../periodic-task-service.ts";
 import { startOfNextDay } from "../next-at.ts";
 import { databaseLocation } from "$backend/database.ts";
 import {
-    clearAllBackupInProgress,
-    getBackupTargets,
-    updateBackupInProgress,
-    updateLastBackupAt,
-} from "$backend/repository/backup-target-repository.ts";
-import {
     BackupTargetHandler,
     createBackupHandler,
 } from "$lib/backup-handler/mod.ts";
 import { TargetType } from "$lib/backup-handler/handlers.ts";
 import { createBackupInputRecord } from "$backend/backups.ts";
+import { db } from "$workers/database/lib.ts";
 
 const removeBackupsOverLimit = async (
     handler: BackupTargetHandler<TargetType>,
@@ -45,9 +40,9 @@ export const backupDatabase: PeriodicTask = {
         }
 
         logger.info("Clearing stale locks for backup...");
-        await clearAllBackupInProgress();
+        await db.backupTarget.clearAllBackupInProgress();
 
-        const targets = await getBackupTargets();
+        const targets = await db.backupTarget.getBackupTargets();
 
         if (targets.length === 0) {
             logger.info("No backup targets found, skipping database backup");
@@ -68,7 +63,10 @@ export const backupDatabase: PeriodicTask = {
                 target: target.name,
             });
 
-            await updateBackupInProgress(target.id, true);
+            await db.backupTarget.updateBackupInProgress({
+                id: target.id,
+                inProgress: true,
+            });
 
             try {
                 logger.info("Saving backup...");
@@ -79,7 +77,7 @@ export const backupDatabase: PeriodicTask = {
                 logger.info("Removing old automated backups...");
                 await removeBackupsOverLimit(handler);
 
-                await updateLastBackupAt(target.id);
+                await db.backupTarget.updateLastBackupAt(target.id);
             } catch (e) {
                 logger.error(
                     "Error while backing up target '{name}' (ID: {id}): {message}",
@@ -90,7 +88,10 @@ export const backupDatabase: PeriodicTask = {
                     },
                 );
             } finally {
-                await updateBackupInProgress(target.id, false);
+                await db.backupTarget.updateBackupInProgress({
+                    id: target.id,
+                    inProgress: false,
+                });
             }
 
             logger.info("Target {target} processing finished...", {
