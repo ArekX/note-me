@@ -1,13 +1,13 @@
 import { FreshContext } from "$fresh/server.ts";
 import { AppState } from "$types";
 import IslandInitializer from "$islands/IslandInitializer.tsx";
-import { getUserNotifications } from "$backend/repository/notification-repository.ts";
 import Sidebar from "$islands/sidebar/Sidebar.tsx";
 import { canAccessSettings } from "$backend/rbac/role-definitions.ts";
 import { Partial } from "$fresh/runtime.ts";
 import EncryptionLockWindow from "$islands/encryption/EncryptionLockWindow.tsx";
 import { getSocketHostname } from "$backend/env.ts";
 import HelpWindow from "$islands/help/HelpWindow.tsx";
+import { db } from "$workers/database/lib.ts";
 
 export default async function Layout(
     req: Request,
@@ -20,7 +20,9 @@ export default async function Layout(
 
     const socketHost = getSocketHostname(req);
 
-    const initialNotifications = await getUserNotifications(id!);
+    const initialNotifications = await db.notification.getUserNotifications(
+        id!,
+    );
 
     const isSidebarAllowed = ctx.route !== "/app/reset-password";
 

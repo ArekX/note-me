@@ -1,6 +1,6 @@
-import { db } from "$backend/database.ts";
 import { SessionState } from "$backend/session/mod.ts";
-import { sql } from "$lib/kysely-sqlite-dialect/deps.ts";
+import { TypedSession } from "$backend/repository/session-repository.ts";
+import { db } from "$workers/database/lib.ts";
 
 export const loadSessionState = async <T>(
     sessionId: string,
@@ -9,13 +9,9 @@ export const loadSessionState = async <T>(
         return null;
     }
 
-    const result = await db.selectFrom("session")
-        .select(["key", "data", "user_id"])
-        .where("key", "=", sessionId)
-        .where("expires_at", ">", (new Date()).getTime())
-        .orderBy("expires_at", "desc")
-        .limit(1)
-        .executeTakeFirst() ?? null;
+    const result = await db.session.getSessionByKey(sessionId) as
+        | TypedSession<T>
+        | null;
 
     return toSessionObject(result);
 };
@@ -23,30 +19,25 @@ export const loadSessionState = async <T>(
 export const loadSessionStateByUserId = async <T>(
     userId: number,
 ): Promise<SessionState<T> | null> => {
-    const result = await db.selectFrom("session")
-        .select(["key", "data", "user_id"])
-        .where("user_id", "=", userId)
-        .where("expires_at", ">", (new Date()).getTime())
-        .orderBy("expires_at", "desc")
-        .limit(1)
-        .executeTakeFirst() ?? null;
+    const result = await db.session.getSessionByUserId(userId) as
+        | TypedSession<T>
+        | null;
 
     return toSessionObject(result);
 };
 
 const toSessionObject = <T>(
-    result: { key: string; data: string; user_id: number } | null,
+    result: { key: string; data: T; user_id: number } | null,
 ): SessionState<T> | null => {
-    try {
-        if (!result) {
-            return null;
-        }
-
-        const data = result ? JSON.parse(result.data) : null;
-        return createSessionStateObject(result.key, result.user_id, data);
-    } catch {
+    if (!result) {
         return null;
     }
+
+    return createSessionStateObject(
+        result.key,
+        result.user_id,
+        result.data,
+    );
 };
 
 export const createSessionState = async <T>(
@@ -63,42 +54,28 @@ export const setSession = async <T>(
     userId: number,
     data: T,
 ): Promise<void> => {
-    const existingRow = await db.selectFrom("session")
-        .where("key", "=", sessionId)
-        .where("expires_at", ">", (new Date()).getTime())
-        .select(sql.lit("1").as("one"))
-        .executeTakeFirst();
-
-    const dataString = JSON.stringify(data);
+    const existingRow = await db.session.sessionExists(sessionId);
 
     if (existingRow) {
-        await db.updateTable("session")
-            .set({
-                data: dataString,
-            })
-            .where("key", "=", sessionId)
-            .execute();
+        await db.session.updateSessionData({
+            key: sessionId,
+            data,
+        });
     } else {
-        await db.insertInto("session")
-            .values({
-                data: dataString,
-                key: sessionId,
-                user_id: userId,
-                expires_at: (new Date()).getTime() +
-                    +(Deno.env.get("COOKIE_MAX_AGE_SECONDS") ?? 43200) * 1000,
-            })
-            .execute();
+        await db.session.createNewSession({
+            data,
+            key: sessionId,
+            user_id: userId,
+            expires_at: (new Date()).getTime() +
+                +(Deno.env.get("COOKIE_MAX_AGE_SECONDS") ?? 43200) * 1000,
+        });
     }
 
-    await db.deleteFrom("session")
-        .where("expires_at", "<", (new Date()).getTime())
-        .execute();
+    await db.session.deleteExpiredSessions();
 };
 
 export const destroySession = async (userId: number) => {
-    await db.deleteFrom("session")
-        .where("user_id", "=", userId)
-        .execute();
+    await db.session.deleteSessionByUserId(userId);
 };
 
 const createSessionStateObject = <T>(

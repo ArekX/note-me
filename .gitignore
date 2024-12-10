@@ -15,4 +15,4 @@ database.sqlite
 database2.sqlite
 temp
 app.log
-/backups
+/backup

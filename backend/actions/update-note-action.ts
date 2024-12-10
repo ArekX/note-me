@@ -1,14 +1,8 @@
 import { requireValidSchema } from "$schemas/mod.ts";
 import { updateNoteSchema } from "$schemas/notes.ts";
-import {
-    noteExists,
-    updateNote,
-    updateNoteParent,
-} from "$backend/repository/note-repository.ts";
 import { createTransaction } from "$backend/database.ts";
-import { addHistory } from "$backend/repository/note-history-repository.ts";
 import { when } from "$backend/promise.ts";
-import { linkNoteWithTags } from "$backend/repository/note-tags-repository.ts";
+import { db } from "$workers/database/lib.ts";
 
 export interface UpdateNoteData {
     title?: string;
@@ -34,14 +28,19 @@ export const runUpdateNoteAction = async (
 
     await requireValidSchema(updateNoteSchema, data);
 
-    if (!await noteExists(backend_data.noteId, backend_data.userId)) {
+    if (
+        !await db.note.noteExists({
+            note_id: backend_data.noteId,
+            user_id: backend_data.userId,
+        })
+    ) {
         throw new Error("Note does not exist.");
     }
 
     const transaction = await createTransaction();
 
     return await transaction.run(async () => {
-        await addHistory({
+        await db.noteHistory.addHistory({
             note_id: backend_data.noteId,
             user_id: backend_data.userId,
             is_reversal: backend_data.isHistoryReversal,
@@ -51,35 +50,35 @@ export const runUpdateNoteAction = async (
             when(
                 () => "group_id" in data,
                 () =>
-                    updateNoteParent(
-                        backend_data.noteId,
-                        data.group_id ? +data.group_id : null,
-                        backend_data.userId,
-                    ),
+                    db.note.updateNoteParent({
+                        note_id: backend_data.noteId,
+                        user_id: backend_data.userId,
+                        new_parent_id: data.group_id ? +data.group_id : null,
+                    }),
                 () => Promise.resolve(true),
             ),
             when(
                 () => [data.title, data.text].some(Boolean),
                 () =>
-                    updateNote(
-                        backend_data.noteId,
-                        backend_data.userId,
-                        {
+                    db.note.updateNote({
+                        id: backend_data.noteId,
+                        user_id: backend_data.userId,
+                        note: {
                             title: data.title,
                             note: data.text,
                             is_encrypted: data.is_encrypted,
                         },
-                    ),
+                    }),
                 () => Promise.resolve(true),
             ),
             when(
                 () => !!data.tags,
                 () =>
-                    linkNoteWithTags(
-                        backend_data.noteId,
-                        backend_data.userId,
-                        data.tags!,
-                    ),
+                    db.noteTags.linkNoteWithTags({
+                        note_id: backend_data.noteId,
+                        user_id: backend_data.userId,
+                        tags: data.tags!,
+                    }),
                 () => Promise.resolve(true),
             ),
         ]);

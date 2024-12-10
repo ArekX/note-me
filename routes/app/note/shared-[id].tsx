@@ -1,19 +1,17 @@
 import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
 import { AppState } from "$types";
 import ViewNote from "$islands/notes/ViewNote.tsx";
-import {
-    getUserShareNote,
-    PublicSharedNote,
-} from "$backend/repository/note-share-repository.ts";
+import { PublicSharedNote } from "$backend/repository/note-share-repository.ts";
+import { db } from "$workers/database/lib.ts";
 
 export const handler: Handlers<PageData> = {
     async GET(_req, ctx: FreshContext<AppState, PageData>) {
         const noteId = +ctx.params.id;
 
-        const note = await getUserShareNote(
-            noteId,
-            ctx.state.session?.getUserId() ?? 0,
-        );
+        const note = await db.noteShare.getUserShareNote({
+            note_id: noteId,
+            user_id: ctx.state.session?.getUserId() ?? 0,
+        });
 
         if (!note) {
             throw new Deno.errors.NotFound("Requested note not found.");

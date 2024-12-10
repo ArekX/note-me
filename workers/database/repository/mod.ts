@@ -12,6 +12,7 @@ import { notification } from "$workers/database/repository/notification.ts";
 import { passkey } from "$workers/database/repository/passkey.ts";
 import { periodicTask } from "$workers/database/repository/periodic-task.ts";
 import { treeList } from "$workers/database/repository/tree-list.ts";
+import { session } from "$workers/database/repository/session.ts";
 
 export const repositories = {
     backupTarget,
@@ -28,4 +29,5 @@ export const repositories = {
     passkey,
     periodicTask,
     treeList,
+    session,
 };

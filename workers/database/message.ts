@@ -12,6 +12,7 @@ import { NotificationRepository } from "$workers/database/repository/notificatio
 import { PasskeyRepository } from "$workers/database/repository/passkey.ts";
 import { PeriodicTaskRepository } from "$workers/database/repository/periodic-task.ts";
 import { TreeListRepository } from "$workers/database/repository/tree-list.ts";
+import { SessionRepository } from "$workers/database/repository/session.ts";
 
 export interface RepositoryRequest<
     T extends string = string,
@@ -45,4 +46,5 @@ export type DatabaseData =
     | NotificationRepository
     | PasskeyRepository
     | PeriodicTaskRepository
-    | TreeListRepository;
+    | TreeListRepository
+    | SessionRepository;
