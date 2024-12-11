@@ -1,7 +1,4 @@
-import {
-    RepositoryHandlerMap,
-    RepositoryRequest,
-} from "$workers/database/message.ts";
+import { DbHandlerMap, DbRequest } from "$workers/database/message.ts";
 import {
     createFileRecord,
     deleteFileByUser,
@@ -24,8 +21,9 @@ import {
 import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
 import { decodeBase64, encodeBase64 } from "$std/encoding/base64.ts";
 
-type FileRequest<Key extends string, Request, Response> = RepositoryRequest<
+type FileRequest<Key extends string, Request, Response> = DbRequest<
     "file",
+    "repository",
     Key,
     Request,
     Response
@@ -95,7 +93,7 @@ export type FileRepository =
     | UpdateMultipleFiles
     | GetUserFileCount;
 
-export const file: RepositoryHandlerMap<FileRepository> = {
+export const file: DbHandlerMap<FileRepository> = {
     createFileRecord,
     setFileRecordData: ({ identifier, data }) =>
         setFileRecordData(identifier, decodeBase64(data)),

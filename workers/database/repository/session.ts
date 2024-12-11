@@ -1,7 +1,4 @@
-import {
-    RepositoryHandlerMap,
-    RepositoryRequest,
-} from "$workers/database/message.ts";
+import { DbHandlerMap, DbRequest } from "$workers/database/message.ts";
 import {
     createNewSession,
     deleteExpiredSessions,
@@ -14,8 +11,9 @@ import {
     updateSessionData,
 } from "$backend/repository/session-repository.ts";
 
-type SessionRequest<Key extends string, Request, Response> = RepositoryRequest<
+type SessionRequest<Key extends string, Request, Response> = DbRequest<
     "session",
+    "repository",
     Key,
     Request,
     Response
@@ -62,7 +60,7 @@ export type SessionRepository =
     | UpdateSessionData
     | CreateNewSession;
 
-export const session: RepositoryHandlerMap<SessionRepository> = {
+export const session: DbHandlerMap<SessionRepository> = {
     getSessionByKey,
     sessionExists,
     getSessionByUserId,

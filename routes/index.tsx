@@ -17,7 +17,7 @@ import {
     initializePasskeyAuthentication,
     PasskeyAuthenticationRequestData,
 } from "$backend/passkeys.ts";
-import { db } from "$workers/database/lib.ts";
+import { repository } from "$workers/database/lib.ts";
 
 interface LoginResult {
     username: string;
@@ -78,9 +78,9 @@ export const handler: Handlers<LoginResult> = {
                 );
             }
 
-            user = await db.user.getUserById(result.user_id!);
+            user = await repository.user.getUserById(result.user_id!);
         } else {
-            user = await db.user.getUserByLogin({
+            user = await repository.user.getUserByLogin({
                 username: form.get("username")?.toString() ?? "",
                 password: form.get("password")?.toString() ?? "",
             });

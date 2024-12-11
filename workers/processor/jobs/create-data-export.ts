@@ -9,7 +9,7 @@ import {
     NotifyUserExportUpdatedMessage,
 } from "$workers/websocket/api/users/messages.ts";
 import { getExportLocation } from "$backend/export-generator.ts";
-import { db } from "$workers/database/lib.ts";
+import { repository } from "$workers/database/lib.ts";
 import { decodeBase64 } from "$std/encoding/base64.ts";
 
 export interface CreateDataExportJob {
@@ -68,7 +68,7 @@ const resolveNoteContent = async ({
     user_password,
     file_map,
 }: ResolveNoteContentOptions) => {
-    const details = await db.note.getNoteDetails({
+    const details = await repository.note.getNoteDetails({
         note_id,
         user_id,
         options: {
@@ -113,7 +113,7 @@ const processGroup = async (options: ProcessGroupOptions) => {
         return;
     }
 
-    const notes = await db.treeList.getTreeList({
+    const notes = await repository.treeList.getTreeList({
         group_id: options.group_id,
         user_id: options.user_id,
         type: "note",
@@ -146,7 +146,7 @@ const processGroup = async (options: ProcessGroupOptions) => {
         50 + (options.done_user_notes / options.total_user_notes) * 50,
     );
 
-    const groups = await db.group.getUserGroups({
+    const groups = await repository.group.getUserGroups({
         parent_id: options.group_id,
         user_id: options.user_id,
     });
@@ -170,11 +170,11 @@ export const processFiles = async (
     user_id: number,
     abort_signal: AbortSignal,
 ) => {
-    const fileCount = await db.file.getUserFileCount(user_id);
+    const fileCount = await repository.file.getUserFileCount(user_id);
     let doneCount = 0;
     let page = 1;
 
-    let files = await db.file.findFiles({
+    let files = await repository.file.findFiles({
         user_id,
         page,
         filters: {},
@@ -188,7 +188,7 @@ export const processFiles = async (
                 return fileMap;
             }
 
-            const fileData = await db.file.getFileData(file.identifier);
+            const fileData = await repository.file.getFileData(file.identifier);
 
             if (!fileData || !fileData.data) {
                 continue;
@@ -210,7 +210,7 @@ export const processFiles = async (
         }
 
         page += 1;
-        files = await db.file.findFiles({
+        files = await repository.file.findFiles({
             user_id,
             page,
             filters: {},
@@ -244,7 +244,7 @@ export const tryProcessJob = async (
         await Deno.remove(fileLocation);
     };
 
-    const decryptionKey = await db.user.getNoteEncryptionKey(user_id);
+    const decryptionKey = await repository.user.getNoteEncryptionKey(user_id);
 
     if (!decryptionKey) {
         throw new Error("Failed to get decryption key for user");
@@ -261,7 +261,7 @@ export const tryProcessJob = async (
         return;
     }
 
-    const totalNoteCount = await db.note.getUserNoteCount(user_id);
+    const totalNoteCount = await repository.note.getUserNoteCount(user_id);
 
     await processGroup({
         zip,

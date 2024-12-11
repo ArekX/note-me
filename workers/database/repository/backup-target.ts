@@ -1,7 +1,4 @@
-import {
-    RepositoryHandlerMap,
-    RepositoryRequest,
-} from "$workers/database/message.ts";
+import { DbHandlerMap, DbRequest } from "$workers/database/message.ts";
 import {
     BackupTargetRecord,
     clearAllBackupInProgress,
@@ -17,8 +14,9 @@ import {
 } from "$backend/repository/backup-target-repository.ts";
 import { BackupTargetRequest } from "$schemas/settings.ts";
 
-type BackupRequest<Key extends string, Request, Response> = RepositoryRequest<
+type BackupRequest<Key extends string, Request, Response> = DbRequest<
     "backupTarget",
+    "repository",
     Key,
     Request,
     Response
@@ -70,7 +68,7 @@ export type BackupTargetRepository =
     | UpdateBackupInProgress
     | ClearAllBackupInProgress;
 
-export const backupTarget: RepositoryHandlerMap<BackupTargetRepository> = {
+export const backupTarget: DbHandlerMap<BackupTargetRepository> = {
     getTargetCount,
     createBackupTarget,
     updateBackupTarget: ({ id, data }) => updateBackupTarget(id, data),

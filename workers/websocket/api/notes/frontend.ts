@@ -47,7 +47,6 @@ import {
 } from "./messages.ts";
 import { CreateNoteMessage } from "$workers/websocket/api/notes/messages.ts";
 import {
-    createNote,
     deleteNote,
     findDeletedNotes,
     findRecentlyOpenedNotes,
@@ -57,9 +56,6 @@ import {
     getNoteInfo,
     noteExists,
 } from "$backend/repository/note-repository.ts";
-import { createTransaction } from "$backend/database.ts";
-import { linkNoteWithTags } from "$backend/repository/note-tags-repository.ts";
-import { assignNoteToGroup } from "$backend/repository/group-repository.ts";
 import { requireValidSchema } from "$schemas/mod.ts";
 import {
     addNoteRequestSchema,
@@ -96,28 +92,16 @@ import {
     searchSharedNotes,
 } from "$backend/repository/note-search-repository.ts";
 import { restoreDeletedNote } from "$backend/repository/note-repository.ts";
+import { action } from "$workers/database/lib.ts";
 
 const handleCreateNote: ListenerFn<CreateNoteMessage> = async (
     { message: { data }, sourceClient, respond },
 ) => {
     await requireValidSchema(addNoteRequestSchema, data);
 
-    const transaction = await createTransaction();
-
-    const record = await transaction.run(async () => {
-        const record = await createNote({
-            title: data.title,
-            note: data.text,
-            is_encrypted: data.is_encrypted,
-            user_id: sourceClient!.userId,
-        });
-
-        await Promise.all([
-            linkNoteWithTags(record.id, sourceClient!.userId, data.tags),
-            assignNoteToGroup(data.group_id, record.id, sourceClient!.userId),
-        ]);
-
-        return record;
+    const record = await action.note.createNote({
+        data,
+        user_id: sourceClient!.userId,
     });
 
     respond<CreateNoteResponse>({

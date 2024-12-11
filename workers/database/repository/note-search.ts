@@ -1,7 +1,4 @@
-import {
-    RepositoryHandlerMap,
-    RepositoryRequest,
-} from "$workers/database/message.ts";
+import { DbHandlerMap, DbRequest } from "$workers/database/message.ts";
 import {
     NoteSearchRecord,
     searchDeletedNotes,
@@ -14,13 +11,13 @@ import { DeletedNoteRecord } from "$backend/repository/note-repository.ts";
 import { ReminderNoteRecord } from "$backend/repository/note-reminder-repository.ts";
 import { UserSharedNoteMeta } from "$backend/repository/note-share-repository.ts";
 
-type NoteSearchRequest<Key extends string, Request, Response> =
-    RepositoryRequest<
-        "noteSearch",
-        Key,
-        Request,
-        Response
-    >;
+type NoteSearchRequest<Key extends string, Request, Response> = DbRequest<
+    "noteSearch",
+    "repository",
+    Key,
+    Request,
+    Response
+>;
 
 type SearchGeneral = NoteSearchRequest<"searchGeneral", {
     filters: SearchNoteFilters;
@@ -45,7 +42,7 @@ export type NoteSearchRepository =
     | SearchReminderNotes
     | SearchSharedNotes;
 
-export const noteSearch: RepositoryHandlerMap<NoteSearchRepository> = {
+export const noteSearch: DbHandlerMap<NoteSearchRepository> = {
     searchGeneral: ({ filters, user_id }) => searchGeneral(filters, user_id),
     searchDeletedNotes: ({ filters, user_id }) =>
         searchDeletedNotes(filters, user_id),

@@ -13,7 +13,7 @@ import { loadSessionStateByUserId } from "$backend/session/session.ts";
 import { AppSessionData } from "$types";
 import { getAppUrl } from "$backend/env.ts";
 import { logger } from "$backend/logger.ts";
-import { db } from "$workers/database/lib.ts";
+import { repository } from "$workers/database/lib.ts";
 
 export const getRelyingPartyId = () => getAppUrl().hostname;
 export const getRelyingPartyOrigin = () => getAppUrl().origin;
@@ -49,9 +49,10 @@ export const initializePasskeyRegistration = async (
         throw new Error("User not found in session or is not logged in.");
     }
 
-    const registeredPasskeys = await db.passkey.getRegisteredUserPasskeys(
-        user_id,
-    );
+    const registeredPasskeys = await repository.passkey
+        .getRegisteredUserPasskeys(
+            user_id,
+        );
 
     const options: PublicKeyCredentialCreationOptionsJSON =
         await generateRegistrationOptions({
@@ -121,7 +122,7 @@ export const finalizePasskeyRegistration = async (
         }
 
         if (
-            await db.passkey.passkeyExists(
+            await repository.passkey.passkeyExists(
                 verification.registrationInfo.credentialID,
             )
         ) {
@@ -132,7 +133,7 @@ export const finalizePasskeyRegistration = async (
             };
         }
 
-        await db.passkey.registerPassKey({
+        await repository.passkey.registerPassKey({
             noteme_user_id: user_id,
             name: getDefaultPasskeyName(
                 registrationResponse.response.transports ?? [],
@@ -225,7 +226,7 @@ export const finalizePasskeyAuthentication = async (
 
         const { data } = request;
 
-        const passkey = await db.passkey.getPasskeyById(response.id);
+        const passkey = await repository.passkey.getPasskeyById(response.id);
 
         if (!passkey) {
             return { user_id: null, verified: false };
@@ -247,7 +248,7 @@ export const finalizePasskeyAuthentication = async (
         });
 
         if (result.verified) {
-            await db.passkey.updatePasskeyLastUsedAt(
+            await repository.passkey.updatePasskeyLastUsedAt(
                 passkey.credential_identifier,
             );
         }

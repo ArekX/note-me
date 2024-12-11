@@ -17,7 +17,7 @@ import {
     updateGroupRequestSchema,
 } from "$schemas/groups.ts";
 import { DeleteNoteResponse } from "$workers/websocket/api/notes/messages.ts";
-import { db } from "$workers/database/lib.ts";
+import { repository } from "$workers/database/lib.ts";
 
 const handleCreateGroupRequest: ListenerFn<CreateGroupMessage> = async (
     { message: { data }, sourceClient, respond },
@@ -26,7 +26,7 @@ const handleCreateGroupRequest: ListenerFn<CreateGroupMessage> = async (
 
     respond<CreateGroupResponse>({
         type: "createGroupResponse",
-        record: await db.group.createGroup({
+        record: await repository.group.createGroup({
             ...data,
             user_id: sourceClient!.userId,
         }),
@@ -42,7 +42,7 @@ const handleUpdateGroupRequest: ListenerFn<UpdateGroupMessage> = async (
         throw new Error("Group cannot be its own parent");
     }
 
-    await db.group.updateGroup({
+    await repository.group.updateGroup({
         user_id: sourceClient!.userId,
         record: {
             id,
@@ -63,22 +63,22 @@ const handleDeleteGroupRequest: ListenerFn<DeleteGroupMessage> = async (
     let deletedCount = 0;
 
     const deleteChildren = async (parentId: number) => {
-        const childGroupIds = await db.group.getUserGroupIds({
+        const childGroupIds = await repository.group.getUserGroupIds({
             id: parentId,
             user_id: sourceClient!.userId,
         });
 
-        const userNoteIds = await db.note.getUserNoteIds({
+        const userNoteIds = await repository.note.getUserNoteIds({
             parent_id: parentId,
             user_id: sourceClient!.userId,
         });
 
         const [groupCount, noteCount] = await Promise.all([
-            db.group.deleteUserGroupsByParentId({
+            repository.group.deleteUserGroupsByParentId({
                 parent_id: parentId,
                 user_id: sourceClient!.userId,
             }),
-            db.note.deleteUserNotesByParentId({
+            repository.note.deleteUserNotesByParentId({
                 parent_id: parentId,
                 user_id: sourceClient!.userId,
             }),
@@ -113,7 +113,7 @@ const handleDeleteGroupRequest: ListenerFn<DeleteGroupMessage> = async (
     };
 
     await deleteChildren(id);
-    await db.group.deleteGroup({
+    await repository.group.deleteGroup({
         id,
         user_id: sourceClient!.userId,
     });
@@ -129,7 +129,7 @@ const handleGetSingleGroup: ListenerFn<GetSingleGroupMessage> = async (
 ) => {
     respond<GetSingleGroupResponse>({
         type: "getSingleGroupResponse",
-        record: await db.group.getGroupById({
+        record: await repository.group.getGroupById({
             id,
             user_id: sourceClient!.userId,
         }),

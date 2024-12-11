@@ -1,7 +1,4 @@
-import {
-    RepositoryHandlerMap,
-    RepositoryRequest,
-} from "$workers/database/message.ts";
+import { DbHandlerMap, DbRequest } from "$workers/database/message.ts";
 import {
     findUserReminderNotes,
     getNoteReminderData,
@@ -17,13 +14,13 @@ import {
     UserReminderNotesFilters,
 } from "$backend/repository/note-reminder-repository.ts";
 
-type NoteReminderRequest<Key extends string, Request, Response> =
-    RepositoryRequest<
-        "noteReminder",
-        Key,
-        Request,
-        Response
-    >;
+type NoteReminderRequest<Key extends string, Request, Response> = DbRequest<
+    "noteReminder",
+    "repository",
+    Key,
+    Request,
+    Response
+>;
 
 type SetReminder = NoteReminderRequest<
     "setReminder",
@@ -64,7 +61,7 @@ export type NoteReminderRepository =
     | GetReadyReminders
     | ResolveReminderNextOcurrence;
 
-export const noteReminder: RepositoryHandlerMap<NoteReminderRepository> = {
+export const noteReminder: DbHandlerMap<NoteReminderRepository> = {
     setReminder,
     removeReminder: ({ note_id, user_id }) => removeReminder(note_id, user_id),
     findUserReminderNotes: ({ filters, user_id }) =>

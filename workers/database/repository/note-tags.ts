@@ -1,7 +1,4 @@
-import {
-    RepositoryHandlerMap,
-    RepositoryRequest,
-} from "$workers/database/message.ts";
+import { DbHandlerMap, DbRequest } from "$workers/database/message.ts";
 import {
     CreateTagData,
     createTagRecord,
@@ -16,8 +13,9 @@ import {
 } from "$backend/repository/note-tags-repository.ts";
 import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
 
-type NoteTagsRequest<Key extends string, Request, Response> = RepositoryRequest<
+type NoteTagsRequest<Key extends string, Request, Response> = DbRequest<
     "noteTags",
+    "repository",
     Key,
     Request,
     Response
@@ -58,7 +56,7 @@ export type NoteTagsRepository =
     | UpdateTagRecord
     | DeleteTagRecord;
 
-export const noteTags: RepositoryHandlerMap<NoteTagsRepository> = {
+export const noteTags: DbHandlerMap<NoteTagsRepository> = {
     resolveTags: ({ user_id, tags }) => resolveTags(user_id, tags),
     linkNoteWithTags: ({ note_id, user_id, tags }) =>
         linkNoteWithTags(note_id, user_id, tags),

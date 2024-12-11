@@ -2,13 +2,13 @@ import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
 import { AppState } from "$types";
 import ViewNote from "$islands/notes/ViewNote.tsx";
 import { PublicSharedNote } from "$backend/repository/note-share-repository.ts";
-import { db } from "$workers/database/lib.ts";
+import { repository } from "$workers/database/lib.ts";
 
 export const handler: Handlers<PageData> = {
     async GET(_req, ctx: FreshContext<AppState, PageData>) {
         const noteId = +ctx.params.id;
 
-        const note = await db.noteShare.getUserShareNote({
+        const note = await repository.noteShare.getUserShareNote({
             note_id: noteId,
             user_id: ctx.state.session?.getUserId() ?? 0,
         });

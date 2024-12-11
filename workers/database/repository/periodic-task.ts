@@ -1,7 +1,4 @@
-import {
-    RepositoryHandlerMap,
-    RepositoryRequest,
-} from "$workers/database/message.ts";
+import { DbHandlerMap, DbRequest } from "$workers/database/message.ts";
 import {
     deleteUnusedPeriodicTasks,
     findPendingPeriodicTasks,
@@ -11,13 +8,13 @@ import {
     savePeriodicTaskRun,
 } from "$backend/repository/periodic-task-repository.ts";
 
-type PeriodicTaskRequest<Key extends string, Request, Response> =
-    RepositoryRequest<
-        "periodicTask",
-        Key,
-        Request,
-        Response
-    >;
+type PeriodicTaskRequest<Key extends string, Request, Response> = DbRequest<
+    "periodicTask",
+    "repository",
+    Key,
+    Request,
+    Response
+>;
 
 type SavePeriodicTaskRun = PeriodicTaskRequest<"savePeriodicTaskRun", {
     task_identifier: string;
@@ -57,7 +54,7 @@ export type PeriodicTaskRepository =
     | GetAllPeriodicTasks
     | DeleteUnusedPeriodicTasks;
 
-export const periodicTask: RepositoryHandlerMap<PeriodicTaskRepository> = {
+export const periodicTask: DbHandlerMap<PeriodicTaskRepository> = {
     savePeriodicTaskRun: (
         { task_identifier, next_run_at, is_successful, fail_reason },
     ) => savePeriodicTaskRun(

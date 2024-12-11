@@ -1,6 +1,6 @@
 import { SessionState } from "$backend/session/mod.ts";
 import { TypedSession } from "$backend/repository/session-repository.ts";
-import { db } from "$workers/database/lib.ts";
+import { repository } from "$workers/database/lib.ts";
 
 export const loadSessionState = async <T>(
     sessionId: string,
@@ -9,7 +9,7 @@ export const loadSessionState = async <T>(
         return null;
     }
 
-    const result = await db.session.getSessionByKey(sessionId) as
+    const result = await repository.session.getSessionByKey(sessionId) as
         | TypedSession<T>
         | null;
 
@@ -19,7 +19,7 @@ export const loadSessionState = async <T>(
 export const loadSessionStateByUserId = async <T>(
     userId: number,
 ): Promise<SessionState<T> | null> => {
-    const result = await db.session.getSessionByUserId(userId) as
+    const result = await repository.session.getSessionByUserId(userId) as
         | TypedSession<T>
         | null;
 
@@ -54,15 +54,15 @@ export const setSession = async <T>(
     userId: number,
     data: T,
 ): Promise<void> => {
-    const existingRow = await db.session.sessionExists(sessionId);
+    const existingRow = await repository.session.sessionExists(sessionId);
 
     if (existingRow) {
-        await db.session.updateSessionData({
+        await repository.session.updateSessionData({
             key: sessionId,
             data,
         });
     } else {
-        await db.session.createNewSession({
+        await repository.session.createNewSession({
             data,
             key: sessionId,
             user_id: userId,
@@ -71,11 +71,11 @@ export const setSession = async <T>(
         });
     }
 
-    await db.session.deleteExpiredSessions();
+    await repository.session.deleteExpiredSessions();
 };
 
 export const destroySession = async (userId: number) => {
-    await db.session.deleteSessionByUserId(userId);
+    await repository.session.deleteSessionByUserId(userId);
 };
 
 const createSessionStateObject = <T>(

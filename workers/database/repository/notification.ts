@@ -1,7 +1,4 @@
-import {
-    RepositoryHandlerMap,
-    RepositoryRequest,
-} from "$workers/database/message.ts";
+import { DbHandlerMap, DbRequest } from "$workers/database/message.ts";
 import {
     createNotification,
     deleteSingleNotification,
@@ -13,13 +10,13 @@ import {
     NotificationRecord,
 } from "$backend/repository/notification-repository.ts";
 
-type NotificationRequest<Key extends string, Request, Response> =
-    RepositoryRequest<
-        "notification",
-        Key,
-        Request,
-        Response
-    >;
+type NotificationRequest<Key extends string, Request, Response> = DbRequest<
+    "notification",
+    "repository",
+    Key,
+    Request,
+    Response
+>;
 
 type GetUserNotifications = NotificationRequest<
     "getUserNotifications",
@@ -60,7 +57,7 @@ export type NotificationRepository =
     | MarkReadUserNotifications
     | MarkSingleNotificationRead;
 
-export const notification: RepositoryHandlerMap<NotificationRepository> = {
+export const notification: DbHandlerMap<NotificationRepository> = {
     getUserNotifications,
     createNotification,
     deleteUserNotifications,

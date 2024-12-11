@@ -2,7 +2,7 @@ import { FreshContext } from "$fresh/server.ts";
 import { AppState } from "$types";
 import { CanManageFiles } from "$backend/rbac/permissions.ts";
 import { hasPermission } from "$backend/rbac/authorizer.ts";
-import { db } from "$workers/database/lib.ts";
+import { repository } from "$workers/database/lib.ts";
 import { decodeBase64 } from "$std/encoding/base64.ts";
 
 const ALLOWED_RENDER_MIME_TYPES = [
@@ -29,7 +29,7 @@ export const handler = async (_req: Request, ctx: FreshContext<AppState>) => {
 
     const userId = ctx.state.session?.getUserId()!;
 
-    const file = await db.file.getFileData(identifier);
+    const file = await repository.file.getFileData(identifier);
 
     if (!file) {
         throw new Deno.errors.NotFound("Requested file not found.");

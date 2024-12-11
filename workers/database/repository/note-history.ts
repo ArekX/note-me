@@ -7,19 +7,16 @@ import {
     NoteHistoryDataRecord,
     NoteHistoryMetaRecord,
 } from "$backend/repository/note-history-repository.ts";
-import {
-    RepositoryHandlerMap,
-    RepositoryRequest,
-} from "$workers/database/message.ts";
+import { DbHandlerMap, DbRequest } from "$workers/database/message.ts";
 import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
 
-type NoteHistoryRequest<Key extends string, Request, Response> =
-    RepositoryRequest<
-        "noteHistory",
-        Key,
-        Request,
-        Response
-    >;
+type NoteHistoryRequest<Key extends string, Request, Response> = DbRequest<
+    "noteHistory",
+    "repository",
+    Key,
+    Request,
+    Response
+>;
 
 type AddHistory = NoteHistoryRequest<"addHistory", AddHistoryData, void>;
 type DeleteHistoryRecord = NoteHistoryRequest<
@@ -44,7 +41,7 @@ export type NoteHistoryRepository =
     | FindHistory
     | GetHistoryRecordData;
 
-export const noteHistory: RepositoryHandlerMap<NoteHistoryRepository> = {
+export const noteHistory: DbHandlerMap<NoteHistoryRepository> = {
     addHistory,
     deleteHistoryRecord: ({ id, note_id }) => deleteHistoryRecord(id, note_id),
     findHistory: ({ note_id, user_id, page }) =>

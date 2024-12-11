@@ -1,7 +1,4 @@
-import {
-    RepositoryHandlerMap,
-    RepositoryRequest,
-} from "$workers/database/message.ts";
+import { DbHandlerMap, DbRequest } from "$workers/database/message.ts";
 import {
     checkIfUserExists,
     CreateUserData,
@@ -29,8 +26,9 @@ import {
 } from "$backend/repository/user-repository.ts";
 import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
 
-type UserRequest<Key extends string, Request, Response> = RepositoryRequest<
+type UserRequest<Key extends string, Request, Response> = DbRequest<
     "user",
+    "repository",
     Key,
     Request,
     Response
@@ -96,7 +94,7 @@ export type UserRepository =
     | UpdateOnboardingState
     | GetNoteEncryptionKey;
 
-export const user: RepositoryHandlerMap<UserRepository> = {
+export const user: DbHandlerMap<UserRepository> = {
     checkIfUserExists,
     getUserByLogin: ({ username, password }) =>
         getUserByLogin(username, password),

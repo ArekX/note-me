@@ -3,7 +3,7 @@ import { AppState } from "$types";
 import { parseQueryParams } from "$backend/parse-query-params.ts";
 import { GroupRecord } from "$backend/repository/group-repository.ts";
 import EditNotePage from "$islands/notes/pages/EditNotePage.tsx";
-import { db } from "$workers/database/lib.ts";
+import { repository } from "$workers/database/lib.ts";
 
 interface PageData {
     group: GroupRecord | null;
@@ -19,7 +19,7 @@ export const handler: Handlers<PageData> = {
             group_id: { type: "number", optional: true },
         });
 
-        const group = await db.group.getSingleUserGroup({
+        const group = await repository.group.getSingleUserGroup({
             id: noteParams.group_id ?? 0,
             user_id: ctx.state.session?.getUserId() ?? 0,
         });

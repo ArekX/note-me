@@ -8,7 +8,7 @@ import {
 } from "$lib/backup-handler/mod.ts";
 import { TargetType } from "$lib/backup-handler/handlers.ts";
 import { createBackupInputRecord } from "$backend/backups.ts";
-import { db } from "$workers/database/lib.ts";
+import { repository } from "$workers/database/lib.ts";
 
 const removeBackupsOverLimit = async (
     handler: BackupTargetHandler<TargetType>,
@@ -40,9 +40,9 @@ export const backupDatabase: PeriodicTask = {
         }
 
         logger.info("Clearing stale locks for backup...");
-        await db.backupTarget.clearAllBackupInProgress();
+        await repository.backupTarget.clearAllBackupInProgress();
 
-        const targets = await db.backupTarget.getBackupTargets();
+        const targets = await repository.backupTarget.getBackupTargets();
 
         if (targets.length === 0) {
             logger.info("No backup targets found, skipping database backup");
@@ -63,7 +63,7 @@ export const backupDatabase: PeriodicTask = {
                 target: target.name,
             });
 
-            await db.backupTarget.updateBackupInProgress({
+            await repository.backupTarget.updateBackupInProgress({
                 id: target.id,
                 inProgress: true,
             });
@@ -77,7 +77,7 @@ export const backupDatabase: PeriodicTask = {
                 logger.info("Removing old automated backups...");
                 await removeBackupsOverLimit(handler);
 
-                await db.backupTarget.updateLastBackupAt(target.id);
+                await repository.backupTarget.updateLastBackupAt(target.id);
             } catch (e) {
                 logger.error(
                     "Error while backing up target '{name}' (ID: {id}): {message}",
@@ -88,7 +88,7 @@ export const backupDatabase: PeriodicTask = {
                     },
                 );
             } finally {
-                await db.backupTarget.updateBackupInProgress({
+                await repository.backupTarget.updateBackupInProgress({
                     id: target.id,
                     inProgress: false,
                 });

@@ -7,7 +7,7 @@ import { Partial } from "$fresh/runtime.ts";
 import EncryptionLockWindow from "$islands/encryption/EncryptionLockWindow.tsx";
 import { getSocketHostname } from "$backend/env.ts";
 import HelpWindow from "$islands/help/HelpWindow.tsx";
-import { db } from "$workers/database/lib.ts";
+import { repository } from "$workers/database/lib.ts";
 
 export default async function Layout(
     req: Request,
@@ -20,9 +20,10 @@ export default async function Layout(
 
     const socketHost = getSocketHostname(req);
 
-    const initialNotifications = await db.notification.getUserNotifications(
-        id!,
-    );
+    const initialNotifications = await repository.notification
+        .getUserNotifications(
+            id!,
+        );
 
     const isSidebarAllowed = ctx.route !== "/app/reset-password";
 

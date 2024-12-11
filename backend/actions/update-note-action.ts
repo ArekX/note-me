@@ -2,7 +2,7 @@ import { requireValidSchema } from "$schemas/mod.ts";
 import { updateNoteSchema } from "$schemas/notes.ts";
 import { createTransaction } from "$backend/database.ts";
 import { when } from "$backend/promise.ts";
-import { db } from "$workers/database/lib.ts";
+import { repository } from "$workers/database/lib.ts";
 
 export interface UpdateNoteData {
     title?: string;
@@ -29,7 +29,7 @@ export const runUpdateNoteAction = async (
     await requireValidSchema(updateNoteSchema, data);
 
     if (
-        !await db.note.noteExists({
+        !await repository.note.noteExists({
             note_id: backend_data.noteId,
             user_id: backend_data.userId,
         })
@@ -40,7 +40,7 @@ export const runUpdateNoteAction = async (
     const transaction = await createTransaction();
 
     return await transaction.run(async () => {
-        await db.noteHistory.addHistory({
+        await repository.noteHistory.addHistory({
             note_id: backend_data.noteId,
             user_id: backend_data.userId,
             is_reversal: backend_data.isHistoryReversal,
@@ -50,7 +50,7 @@ export const runUpdateNoteAction = async (
             when(
                 () => "group_id" in data,
                 () =>
-                    db.note.updateNoteParent({
+                    repository.note.updateNoteParent({
                         note_id: backend_data.noteId,
                         user_id: backend_data.userId,
                         new_parent_id: data.group_id ? +data.group_id : null,
@@ -60,7 +60,7 @@ export const runUpdateNoteAction = async (
             when(
                 () => [data.title, data.text].some(Boolean),
                 () =>
-                    db.note.updateNote({
+                    repository.note.updateNote({
                         id: backend_data.noteId,
                         user_id: backend_data.userId,
                         note: {
@@ -74,7 +74,7 @@ export const runUpdateNoteAction = async (
             when(
                 () => !!data.tags,
                 () =>
-                    db.noteTags.linkNoteWithTags({
+                    repository.noteTags.linkNoteWithTags({
                         note_id: backend_data.noteId,
                         user_id: backend_data.userId,
                         tags: data.tags!,

@@ -1,9 +1,9 @@
-import { DatabaseData } from "$workers/database/message.ts";
 import {
     Channel,
     createMessageTypeListener,
     Listener,
 } from "$workers/channel/mod.ts";
+import { DatabaseData } from "$workers/database/lib.ts";
 
 export interface DatabaseResponse<T = unknown> {
     forRequestId: string;
@@ -55,6 +55,7 @@ export const connectHostChannel = (channel: Channel) => {
 
 export const requestFromDb = <Request extends DatabaseData, Response>(
     repo: Request["name"],
+    kind: Request["kind"],
     key: Request["key"],
     data: Request["data"],
 ) => {
@@ -63,6 +64,7 @@ export const requestFromDb = <Request extends DatabaseData, Response>(
         from: connectedChannel!.name,
         data: {
             name: repo,
+            kind,
             key,
             data,
         } as Request,

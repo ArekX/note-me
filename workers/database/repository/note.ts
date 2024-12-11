@@ -1,7 +1,4 @@
-import {
-    RepositoryHandlerMap,
-    RepositoryRequest,
-} from "$workers/database/message.ts";
+import { DbHandlerMap, DbRequest } from "$workers/database/message.ts";
 import {
     createNote,
     DeletedNoteRecord,
@@ -33,8 +30,9 @@ import {
     ViewNoteRecord,
 } from "$backend/repository/note-repository.ts";
 
-type NoteRequest<Key extends string, Request, Response> = RepositoryRequest<
+type NoteRequest<Key extends string, Request, Response> = DbRequest<
     "note",
+    "repository",
     Key,
     Request,
     Response
@@ -129,7 +127,7 @@ export type NoteRepository =
     | DeleteUserNotesByParentId
     | FullyDeleteNotes;
 
-export const note: RepositoryHandlerMap<NoteRepository> = {
+export const note: DbHandlerMap<NoteRepository> = {
     createNote,
     updateNote: ({ id, user_id, note }) => updateNote(id, user_id, note),
     deleteNote: ({ note_id, user_id }) => deleteNote(note_id, user_id),

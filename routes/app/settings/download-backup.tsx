@@ -6,7 +6,7 @@ import { parseQueryParams } from "$backend/parse-query-params.ts";
 import { requireValidSchema } from "$schemas/mod.ts";
 import { backupNameSchema } from "$schemas/settings.ts";
 import { createBackupHandler } from "$lib/backup-handler/mod.ts";
-import { db } from "$workers/database/lib.ts";
+import { repository } from "$workers/database/lib.ts";
 
 export const handler = async (req: Request, ctx: FreshContext<AppState>) => {
     requirePemission(CanManageBackups.Update, ctx.state);
@@ -21,7 +21,9 @@ export const handler = async (req: Request, ctx: FreshContext<AppState>) => {
 
     await requireValidSchema(backupNameSchema, { name: params.identifier });
 
-    const target = await db.backupTarget.getBackupTarget(params.target_id);
+    const target = await repository.backupTarget.getBackupTarget(
+        params.target_id,
+    );
 
     if (!target) {
         throw new Error("Backup target not found");

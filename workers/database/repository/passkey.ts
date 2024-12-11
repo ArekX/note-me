@@ -11,18 +11,16 @@ import {
 } from "$backend/repository/passkey-repository.ts";
 import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
 import { UserPasskeyRecord } from "$backend/repository/passkey-repository.ts";
-import {
-    RepositoryHandlerMap,
-    RepositoryRequest,
-} from "$workers/database/message.ts";
+import { DbHandlerMap, DbRequest } from "$workers/database/message.ts";
 import {
     PublicKeyCredentialCreationOptionsJSON,
     VerifiedRegistrationResponse,
 } from "$backend/deps.ts";
 import { UserPasskeyTable } from "$types";
 
-type PasskeyRequest<Key extends string, Request, Response> = RepositoryRequest<
+type PasskeyRequest<Key extends string, Request, Response> = DbRequest<
     "passkey",
+    "repository",
     Key,
     Request,
     Response
@@ -84,7 +82,7 @@ export type PasskeyRepository =
     | FindUserPasskeys
     | DeletePasskey;
 
-export const passkey: RepositoryHandlerMap<PasskeyRepository> = {
+export const passkey: DbHandlerMap<PasskeyRepository> = {
     registerPassKey,
     getRegisteredUserPasskeys,
     passkeyExists,

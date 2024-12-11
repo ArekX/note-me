@@ -26,7 +26,7 @@ import { createBackupInputRecord } from "$backend/backups.ts";
 import { requireValidSchema } from "$schemas/mod.ts";
 import { backupNameSchema, backupTargetSchema } from "$schemas/settings.ts";
 import { createBackupHandler } from "$lib/backup-handler/mod.ts";
-import { db } from "$workers/database/lib.ts";
+import { repository } from "$workers/database/lib.ts";
 
 const handleGetPeriodicTasks: ListenerFn<GetPeriodicTasksMessage> = async (
     { respond, sourceClient },
@@ -35,7 +35,7 @@ const handleGetPeriodicTasks: ListenerFn<GetPeriodicTasksMessage> = async (
 
     respond<GetPeriodicTasksResponse>({
         type: "getPeriodicTasksResponse",
-        tasks: await db.periodicTask.getAllPeriodicTasks(),
+        tasks: await repository.periodicTask.getAllPeriodicTasks(),
     });
 };
 
@@ -44,7 +44,7 @@ const handleGetBackups: ListenerFn<GetBackupsMessage> = async (
 ) => {
     sourceClient!.auth.require(CanManageBackups.Update);
 
-    const target = await db.backupTarget.getBackupTarget(target_id);
+    const target = await repository.backupTarget.getBackupTarget(target_id);
 
     if (!target) {
         throw new Error("Target not found");
@@ -63,18 +63,18 @@ const handleCreateBackupNow: ListenerFn<CreateBackupNowMessage> = async (
 ) => {
     sourceClient!.auth.require(CanManageBackups.Update);
 
-    const target = await db.backupTarget.getBackupTarget(target_id);
+    const target = await repository.backupTarget.getBackupTarget(target_id);
     if (!target) {
         throw new Error("Target not found");
     }
 
-    if (await db.backupTarget.isBackupInProgress(target_id)) {
+    if (await repository.backupTarget.isBackupInProgress(target_id)) {
         throw new Error("Backup is already in progress");
     }
 
     const handler = createBackupHandler(target.type, target.settings);
 
-    await db.backupTarget.updateBackupInProgress({
+    await repository.backupTarget.updateBackupInProgress({
         id: target_id,
         inProgress: true,
     });
@@ -84,7 +84,7 @@ const handleCreateBackupNow: ListenerFn<CreateBackupNowMessage> = async (
             createBackupInputRecord("manual"),
         );
 
-        await db.backupTarget.updateLastBackupAt(target.id);
+        await repository.backupTarget.updateLastBackupAt(target.id);
         respond<CreateBackupNowResponse>({
             type: "createBackupNowResponse",
             result: {
@@ -102,7 +102,7 @@ const handleCreateBackupNow: ListenerFn<CreateBackupNowMessage> = async (
             },
         });
     } finally {
-        await db.backupTarget.updateBackupInProgress({
+        await repository.backupTarget.updateBackupInProgress({
             id: target_id,
             inProgress: false,
         });
@@ -116,7 +116,7 @@ const handleDeleteBackup: ListenerFn<DeleteBackupMessage> = async (
 
     await requireValidSchema(backupNameSchema, { name: identifier });
 
-    const target = await db.backupTarget.getBackupTarget(target_id);
+    const target = await repository.backupTarget.getBackupTarget(target_id);
 
     if (!target) {
         throw new Error("Target not found");
@@ -140,7 +140,7 @@ const handleCreateBackupTarget: ListenerFn<CreateBackupTargetMessage> = async (
 
     await requireValidSchema(backupTargetSchema, target);
 
-    const record = await db.backupTarget.createBackupTarget(target);
+    const record = await repository.backupTarget.createBackupTarget(target);
 
     const handler = createBackupHandler(record.type, record.settings);
     await handler.setup();
@@ -156,7 +156,7 @@ const handleGetBackupTargets: ListenerFn<GetBackupTargetsMessage> = async (
 ) => {
     sourceClient!.auth.require(CanManageBackups.Update);
 
-    const targets = await db.backupTarget.getBackupTargets();
+    const targets = await repository.backupTarget.getBackupTargets();
 
     respond<GetBackupTargetsResponse>({
         type: "getBackupTargetsResponse",
@@ -171,11 +171,11 @@ const handleUpdateBackupTarget: ListenerFn<UpdateBackupTargetMessage> = async (
 
     await requireValidSchema(backupTargetSchema, data);
 
-    if (await db.backupTarget.isBackupInProgress(target_id)) {
+    if (await repository.backupTarget.isBackupInProgress(target_id)) {
         throw new Error("Backup is in progress. Cannot update target");
     }
 
-    await db.backupTarget.updateBackupTarget({
+    await repository.backupTarget.updateBackupTarget({
         id: target_id,
         data,
     });
@@ -195,11 +195,11 @@ const handleDeleteBackupTarget: ListenerFn<DeleteBackupTargetMessage> = async (
 ) => {
     sourceClient!.auth.require(CanManageBackups.Update);
 
-    if (await db.backupTarget.isBackupInProgress(target_id)) {
+    if (await repository.backupTarget.isBackupInProgress(target_id)) {
         throw new Error("Backup is in progress. Cannot delete target");
     }
 
-    await db.backupTarget.deleteBackupTarget(target_id);
+    await repository.backupTarget.deleteBackupTarget(target_id);
 
     respond<DeleteBackupTargetResponse>({
         type: "deleteBackupTargetResponse",

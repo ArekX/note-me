@@ -1,7 +1,4 @@
-import {
-    RepositoryHandlerMap,
-    RepositoryRequest,
-} from "$workers/database/message.ts";
+import { DbHandlerMap, DbRequest } from "$workers/database/message.ts";
 import {
     createPublicShare,
     findUserSharedNotes,
@@ -19,13 +16,13 @@ import {
 } from "$backend/repository/note-share-repository.ts";
 import { PickUserRecord } from "$backend/repository/user-repository.ts";
 
-type NoteShareRequest<Key extends string, Request, Response> =
-    RepositoryRequest<
-        "noteShare",
-        Key,
-        Request,
-        Response
-    >;
+type NoteShareRequest<Key extends string, Request, Response> = DbRequest<
+    "noteShare",
+    "repository",
+    Key,
+    Request,
+    Response
+>;
 
 type GetPublicShareNote = NoteShareRequest<
     "getPublicShareNote",
@@ -80,7 +77,7 @@ export type NoteShareRepository =
     | RemoveExpiredPublicShares
     | SharedNoteWithUser;
 
-export const noteShare: RepositoryHandlerMap<NoteShareRepository> = {
+export const noteShare: DbHandlerMap<NoteShareRepository> = {
     getPublicShareNote,
     getUserShareNote: ({ note_id, user_id }) =>
         getUserShareNote(note_id, user_id),

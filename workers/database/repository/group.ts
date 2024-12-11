@@ -1,7 +1,4 @@
-import {
-    RepositoryHandlerMap,
-    RepositoryRequest,
-} from "$workers/database/message.ts";
+import { DbHandlerMap, DbRequest } from "$workers/database/message.ts";
 import {
     assignNoteToGroup,
     createGroup,
@@ -18,8 +15,9 @@ import {
     UpdateGroupRecord,
 } from "$backend/repository/group-repository.ts";
 
-type UserRequest<Key extends string, Request, Response> = RepositoryRequest<
+type UserRequest<Key extends string, Request, Response> = DbRequest<
     "group",
+    "repository",
     Key,
     Request,
     Response
@@ -84,7 +82,7 @@ export type GroupRepository =
     | DeleteUserGroupsByParentId
     | GetGroupById;
 
-export const group: RepositoryHandlerMap<GroupRepository> = {
+export const group: DbHandlerMap<GroupRepository> = {
     getUserGroups: ({ parent_id, user_id }) =>
         getUserGroups(parent_id, user_id),
     groupExists: ({ id, user_id }) => groupExists(id, user_id),

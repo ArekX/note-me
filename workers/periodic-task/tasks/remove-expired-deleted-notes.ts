@@ -3,14 +3,14 @@ import { PeriodicTask } from "../periodic-task-service.ts";
 import { startOfNextDay } from "../next-at.ts";
 import { sendMessageToWebsocket } from "$workers/websocket/websocket-worker-message.ts";
 import { NoteBackendMessage } from "$workers/websocket/api/notes/messages.ts";
-import { db } from "$workers/database/lib.ts";
+import { repository } from "$workers/database/lib.ts";
 
 export const removeExpiredDeletedNotes: PeriodicTask = {
     name: "remove-expired-deleted-notes",
     getNextAt: startOfNextDay,
     async trigger(): Promise<void> {
         logger.info("Removing expired deleted notes older than 30 days");
-        const notes = await db.note.removeExpiredDeletedNotes(30);
+        const notes = await repository.note.removeExpiredDeletedNotes(30);
 
         logger.info("Deleted {count} notes", {
             count: notes.length,
