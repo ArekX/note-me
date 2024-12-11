@@ -18,7 +18,7 @@ export const apiErrorHandler = async (
             });
         }
 
-        console.error(e);
+        console.error("Error:", e);
         return new Response("Server error", {
             status: 500,
         });

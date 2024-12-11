@@ -9,7 +9,7 @@ import {
 } from "$backend/repository/tree-list.repository.ts";
 
 type TreeListRequest<Key extends string, Request, Response> = RepositoryRequest<
-    "tree-list",
+    "treeList",
     Key,
     Request,
     Response

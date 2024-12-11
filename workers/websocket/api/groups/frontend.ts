@@ -11,24 +11,13 @@ import {
     UpdateGroupResponse,
 } from "./messages.ts";
 import { GroupFrontendMessage } from "./messages.ts";
-import {
-    createGroup,
-    deleteGroup,
-    deleteUserGroupsByParentId,
-    getGroupById,
-    getUserGroupIds,
-    updateGroup,
-} from "$backend/repository/group-repository.ts";
 import { requireValidSchema } from "$schemas/mod.ts";
 import {
     addGroupRequestSchema,
     updateGroupRequestSchema,
 } from "$schemas/groups.ts";
-import {
-    deleteUserNotesByParentId,
-    getUserNoteIds,
-} from "$backend/repository/note-repository.ts";
 import { DeleteNoteResponse } from "$workers/websocket/api/notes/messages.ts";
+import { db } from "$workers/database/lib.ts";
 
 const handleCreateGroupRequest: ListenerFn<CreateGroupMessage> = async (
     { message: { data }, sourceClient, respond },
@@ -37,7 +26,7 @@ const handleCreateGroupRequest: ListenerFn<CreateGroupMessage> = async (
 
     respond<CreateGroupResponse>({
         type: "createGroupResponse",
-        record: await createGroup({
+        record: await db.group.createGroup({
             ...data,
             user_id: sourceClient!.userId,
         }),
@@ -53,9 +42,12 @@ const handleUpdateGroupRequest: ListenerFn<UpdateGroupMessage> = async (
         throw new Error("Group cannot be its own parent");
     }
 
-    await updateGroup(sourceClient!.userId, {
-        ...data,
-        id,
+    await db.group.updateGroup({
+        user_id: sourceClient!.userId,
+        record: {
+            id,
+            ...data,
+        },
     });
 
     respond<UpdateGroupResponse>({
@@ -71,25 +63,25 @@ const handleDeleteGroupRequest: ListenerFn<DeleteGroupMessage> = async (
     let deletedCount = 0;
 
     const deleteChildren = async (parentId: number) => {
-        const childGroupIds = await getUserGroupIds(
-            parentId,
-            sourceClient!.userId,
-        );
+        const childGroupIds = await db.group.getUserGroupIds({
+            id: parentId,
+            user_id: sourceClient!.userId,
+        });
 
-        const userNoteIds = await getUserNoteIds(
-            parentId,
-            sourceClient!.userId,
-        );
+        const userNoteIds = await db.note.getUserNoteIds({
+            parent_id: parentId,
+            user_id: sourceClient!.userId,
+        });
 
         const [groupCount, noteCount] = await Promise.all([
-            deleteUserGroupsByParentId(
-                parentId,
-                sourceClient!.userId,
-            ),
-            deleteUserNotesByParentId(
-                parentId,
-                sourceClient!.userId,
-            ),
+            db.group.deleteUserGroupsByParentId({
+                parent_id: parentId,
+                user_id: sourceClient!.userId,
+            }),
+            db.note.deleteUserNotesByParentId({
+                parent_id: parentId,
+                user_id: sourceClient!.userId,
+            }),
         ]);
 
         for (const noteId of userNoteIds) {
@@ -121,7 +113,10 @@ const handleDeleteGroupRequest: ListenerFn<DeleteGroupMessage> = async (
     };
 
     await deleteChildren(id);
-    await deleteGroup(id, sourceClient!.userId);
+    await db.group.deleteGroup({
+        id,
+        user_id: sourceClient!.userId,
+    });
 
     respond<DeleteGroupResponse>({
         type: "deleteGroupResponse",
@@ -134,7 +129,10 @@ const handleGetSingleGroup: ListenerFn<GetSingleGroupMessage> = async (
 ) => {
     respond<GetSingleGroupResponse>({
         type: "getSingleGroupResponse",
-        record: await getGroupById(id, sourceClient!.userId),
+        record: await db.group.getGroupById({
+            id,
+            user_id: sourceClient!.userId,
+        }),
     });
 };
 

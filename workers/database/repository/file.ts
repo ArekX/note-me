@@ -22,6 +22,7 @@ import {
     UpdateMultipleFilesData,
 } from "$backend/repository/file-repository.ts";
 import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
+import { decodeBase64, encodeBase64 } from "$std/encoding/base64.ts";
 
 type FileRequest<Key extends string, Request, Response> = RepositoryRequest<
     "file",
@@ -33,7 +34,7 @@ type FileRequest<Key extends string, Request, Response> = RepositoryRequest<
 type CreateFileRecord = FileRequest<"createFileRecord", NewFileRecord, void>;
 type SetFileRecordData = FileRequest<
     "setFileRecordData",
-    { identifier: string; data: Uint8Array },
+    { identifier: string; data: string },
     void
 >;
 type FileExistsForUser = FileRequest<
@@ -57,7 +58,12 @@ type DeleteFileByUser = FileRequest<
     { identifier: string; user_id: number },
     boolean
 >;
-type GetFileData = FileRequest<"getFileData", string, FileWithData | null>;
+export type Base64FileWithData = Omit<FileWithData, "data"> & { data: string };
+type GetFileData = FileRequest<
+    "getFileData",
+    string,
+    Base64FileWithData | null
+>;
 type UpdateFileRecord = FileRequest<
     "updateFileRecord",
     { identifier: string; is_public: boolean; scope_by_user_id: number | null },
@@ -89,11 +95,10 @@ export type FileRepository =
     | UpdateMultipleFiles
     | GetUserFileCount;
 
-// TODO: make sure uint8array will be serialized correctly
 export const file: RepositoryHandlerMap<FileRepository> = {
     createFileRecord,
     setFileRecordData: ({ identifier, data }) =>
-        setFileRecordData(identifier, data),
+        setFileRecordData(identifier, decodeBase64(data)),
     fileExistsForUser: ({ identifier, user_id }) =>
         fileExistsForUser(identifier, user_id),
     getFileRecordSize,
@@ -102,7 +107,16 @@ export const file: RepositoryHandlerMap<FileRepository> = {
         findFiles(filters, user_id, page),
     deleteFileByUser: ({ identifier, user_id }) =>
         deleteFileByUser(identifier, user_id),
-    getFileData,
+    getFileData: async (identifier) => {
+        const record = await getFileData(identifier);
+        if (!record) {
+            return null;
+        }
+        return {
+            ...record,
+            data: record.data ? encodeBase64(record.data) : "",
+        };
+    },
     updateFileRecord: ({ identifier, is_public, scope_by_user_id }) =>
         updateFileRecord(identifier, is_public, scope_by_user_id),
     getFileDetailsForUser: ({ identifiers, user_id }) =>

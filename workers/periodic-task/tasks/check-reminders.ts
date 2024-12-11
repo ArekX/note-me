@@ -1,56 +1,48 @@
-import {
-    getReadyReminders,
-    resolveReminderNextOcurrence,
-} from "$backend/repository/note-reminder-repository.ts";
-import { createNotification } from "$backend/repository/notification-repository.ts";
 import { PeriodicTask } from "../periodic-task-service.ts";
 import { sendMessageToWebsocket } from "$workers/websocket/websocket-worker-message.ts";
-import { createTransaction } from "$backend/database.ts";
 import { logger } from "$backend/logger.ts";
-import { getNoteInfo } from "$backend/repository/note-repository.ts";
 import { nextMinute } from "../next-at.ts";
+import { db } from "$workers/database/lib.ts";
 
 export const checkReminders: PeriodicTask = {
     name: "check-reminders",
     getNextAt: nextMinute,
     async trigger(): Promise<void> {
-        const readyReminders = await getReadyReminders();
+        const readyReminders = await db.noteReminder.getReadyReminders();
 
         for (const reminder of readyReminders) {
             try {
-                const note = await getNoteInfo(reminder.note_id);
+                const note = await db.note.getNoteInfo(reminder.note_id);
 
                 if (!note) {
                     continue;
                 }
 
-                const transaction = await createTransaction();
-
-                await transaction.run(async () => {
-                    const record = await createNotification({
-                        data: {
-                            type: "reminder-received",
-                            payload: {
-                                id: note.id,
-                                reminder_id: reminder.id,
-                                title: note.title,
-                                is_encrypted: note.is_encrypted,
-                                user_id: note.user_id,
-                                user_name: note.user_name,
-                                type: note.user_id === reminder.user_id
-                                    ? "own"
-                                    : "shared",
-                            },
+                const record = await db.notification.createNotification({
+                    data: {
+                        type: "reminder-received",
+                        payload: {
+                            id: note.id,
+                            reminder_id: reminder.id,
+                            title: note.title,
+                            is_encrypted: note.is_encrypted,
+                            user_id: note.user_id,
+                            user_name: note.user_name,
+                            type: note.user_id === reminder.user_id
+                                ? "own"
+                                : "shared",
                         },
-                        user_id: reminder.user_id,
-                    });
+                    },
+                    user_id: reminder.user_id,
+                });
 
-                    await resolveReminderNextOcurrence(reminder.id);
+                await db.noteReminder.resolveReminderNextOcurrence(
+                    reminder.id,
+                );
 
-                    sendMessageToWebsocket("notifications", "addNotification", {
-                        data: record,
-                        toUserId: reminder.user_id,
-                    });
+                sendMessageToWebsocket("notifications", "addNotification", {
+                    data: record,
+                    toUserId: reminder.user_id,
                 });
             } catch (e: unknown) {
                 logger.error(
