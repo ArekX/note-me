@@ -1,4 +1,4 @@
-import { initializeServices } from "./workers/mod.ts";
+import { initializeServices } from "$workers/mod.ts";
 import { loadEnvironment } from "$backend/env.ts";
 import { setLoggerName } from "$backend/logger.ts";
 import { initTempLocation } from "$backend/temp.ts";
