@@ -1,4 +1,4 @@
-import { NoteReminderData } from "$backend/repository/notification-repository.ts";
+import { NotificationNoteReminderData } from "$db";
 import {
     NotificationViewProps,
 } from "$islands/notifications/NotificationItem.tsx";
@@ -8,7 +8,7 @@ import { closeAllPopovers } from "$frontend/hooks/use-single-popover.ts";
 
 export default function ReminderView({
     data,
-}: NotificationViewProps<NoteReminderData>) {
+}: NotificationViewProps<NotificationNoteReminderData>) {
     const handleOpenNote = () => {
         if (data.type === "own") {
             redirectTo.viewNote({ noteId: data.id });

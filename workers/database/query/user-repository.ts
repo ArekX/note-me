@@ -95,7 +95,13 @@ export const getUserByLogin = async (
         : null;
 };
 
-export const getUserByUsername = async (username: string) => {
+export type UserIdExistence =
+    | (Pick<UserTable, "is_deleted"> & UserId)
+    | undefined;
+
+export const getUserByUsername = async (
+    username: string,
+): Promise<UserIdExistence> => {
     return await db.selectFrom("user")
         .select([
             "id",

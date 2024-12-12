@@ -1,12 +1,5 @@
 import { ListenerFn, RegisterListenerMap } from "$workers/websocket/types.ts";
 import {
-    deleteSingleNotification,
-    deleteUserNotifications,
-    getUserNotifications,
-    markReadUserNotifications,
-    markSingleNotificationRead,
-} from "$backend/repository/notification-repository.ts";
-import {
     DeleteAllMessage,
     DeletedAllResponse,
     DeletedSingleResponse,
@@ -19,6 +12,7 @@ import {
     NotificationFrontendMessage,
     NotificationListResponse,
 } from "./messages.ts";
+import { repository } from "$db";
 
 const handleGetMyNotifications: ListenerFn<GetMyNotificationsMessage> = async (
     { sourceClient, respond },
@@ -27,7 +21,7 @@ const handleGetMyNotifications: ListenerFn<GetMyNotificationsMessage> = async (
 
     respond<NotificationListResponse>({
         type: "notificationsList",
-        records: await getUserNotifications(userId),
+        records: await repository.notification.getUserNotifications(userId),
     });
 };
 
@@ -35,7 +29,7 @@ const handleDeleteAll: ListenerFn<DeleteAllMessage> = async (
     { sourceClient, respond },
 ) => {
     const { userId } = sourceClient!;
-    await deleteUserNotifications(userId);
+    await repository.notification.deleteUserNotifications(userId);
     respond<DeletedAllResponse>({
         type: "deletedAll",
     });
@@ -45,7 +39,7 @@ const handleMarkAllRead: ListenerFn<MarkAllReadMessage> = async (
     { sourceClient, respond },
 ) => {
     const { userId } = sourceClient!;
-    await markReadUserNotifications(userId);
+    await repository.notification.markReadUserNotifications(userId);
     respond<MarkedAllReadResponse>({
         type: "markedAllRead",
     });
@@ -57,7 +51,10 @@ const handleMarkSingleRead: ListenerFn<MarkSingleReadMessage> = async ({
     respond,
 }) => {
     const { userId } = sourceClient!;
-    await markSingleNotificationRead(message.id, userId);
+    await repository.notification.markSingleNotificationRead({
+        id: message.id,
+        userId,
+    });
     respond<MarkedSingleReadResponse>({
         type: "markedSingleRead",
         id: message.id,
@@ -70,7 +67,11 @@ const handleDeleteSingle: ListenerFn<DeleteSingleMessage> = async ({
     respond,
 }) => {
     const { userId } = sourceClient!;
-    await deleteSingleNotification(message.id, userId);
+    await repository.notification.deleteSingleNotification({
+        id: message.id,
+        userId,
+    });
+
     respond<DeletedSingleResponse>({
         type: "deletedSingle",
         id: message.id,

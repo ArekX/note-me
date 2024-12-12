@@ -1,6 +1,6 @@
 import { cleanupOldTempFiles } from "$backend/temp.ts";
 import { logger } from "$backend/logger.ts";
-import { nextHour } from "$workers/periodic-task/next-at.ts";
+import { nextHour } from "../next-at.ts";
 import { PeriodicTask } from "../periodic-task-service.ts";
 
 const maxOldFileAge = 1000 * 60 * 60 * 6;

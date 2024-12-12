@@ -1,8 +1,9 @@
 import { FreshContext } from "$fresh/server.ts";
-import { getFileData } from "$backend/repository/file-repository.ts";
 import { AppState } from "$types";
 import { CanManageFiles } from "$backend/rbac/permissions.ts";
 import { hasPermission } from "$backend/rbac/authorizer.ts";
+import { repository } from "$db";
+import { decodeBase64 } from "$std/encoding/base64.ts";
 
 const ALLOWED_RENDER_MIME_TYPES = [
     "text/plain",
@@ -28,7 +29,7 @@ export const handler = async (_req: Request, ctx: FreshContext<AppState>) => {
 
     const userId = ctx.state.session?.getUserId()!;
 
-    const file = await getFileData(identifier);
+    const file = await repository.file.getFileData(identifier);
 
     if (!file) {
         throw new Deno.errors.NotFound("Requested file not found.");
@@ -58,7 +59,9 @@ export const handler = async (_req: Request, ctx: FreshContext<AppState>) => {
         disposition = "attachment";
     }
 
-    return new Response(file.data, {
+    const byteData = decodeBase64(file.data);
+
+    return new Response(byteData, {
         headers: {
             "Content-Type": mimeType,
             "Content-Disposition": `${disposition}; filename="${file.name}"`,

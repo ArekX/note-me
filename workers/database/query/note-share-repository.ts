@@ -1,8 +1,8 @@
 import { NoteShareLinkTable, RecordId } from "$types";
 import { createTransaction, db } from "$backend/database.ts";
 import { getCurrentUnixTimestamp } from "$lib/time/unix.ts";
-import { PickUserRecord } from "$backend/repository/user-repository.ts";
-import { getNoteTagsSql } from "$backend/repository/note-repository.ts";
+import { PickUserRecord } from "./user-repository.ts";
+import { getNoteTagsSql } from "./note-repository.ts";
 import { sql } from "$lib/kysely-sqlite-dialect/deps.ts";
 
 export type PublicShareData = Pick<

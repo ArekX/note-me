@@ -2,7 +2,7 @@ import { Command } from "$cli/deps.ts";
 import {
     checkIfUserExists,
     createUserRecord,
-} from "$backend/repository/user-repository.ts";
+} from "$workers/database/query/user-repository.ts";
 import { logger } from "$backend/logger.ts";
 
 export const addUser = new Command()

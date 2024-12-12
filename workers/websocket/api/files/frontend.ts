@@ -26,24 +26,14 @@ import {
     UpdateMultipleFilesMessage,
     UpdateMultipleFilesResponse,
 } from "./messages.ts";
-import {
-    createFileRecord,
-    deleteFileByUser,
-    deleteFileRecord,
-    fileExistsForUser,
-    findFiles,
-    getFileDetailsForUser,
-    getFileRecordSize,
-    setFileRecordData,
-    updateFileRecord,
-    updateMultipleFiles,
-} from "$backend/repository/file-repository.ts";
 import { requireValidSchema } from "$schemas/mod.ts";
 import {
     addFileRequestSchema,
     updateMultipleFilesSchema,
 } from "$schemas/file.ts";
 import { CanManageFiles } from "$backend/rbac/permissions.ts";
+import { repository } from "$db";
+import { encodeBase64 } from "$std/encoding/base64.ts";
 
 const MAX_FILE_SIZE = +(Deno.env.get("MAX_FILE_SIZE") ?? "52428800");
 
@@ -67,7 +57,7 @@ const handleBeginFile: ListenerFn<BeginFileMessage> = async (
 
     await requireValidSchema(addFileRequestSchema, data);
 
-    await createFileRecord({
+    await repository.file.createFileRecord({
         ...data,
         identifier: targetId,
         user_id: sourceClient!.userId,
@@ -112,13 +102,16 @@ const handleEndFile: ListenerFn<EndFileMessage> = async (
     { message: { target_id: unsafeTargetId }, respond, sourceClient },
 ) => {
     const targetId = sanitizeTargetId(unsafeTargetId);
-    const exists = await fileExistsForUser(targetId, sourceClient?.userId!);
+    const exists = await repository.file.fileExistsForUser({
+        identifier: targetId,
+        user_id: sourceClient?.userId!,
+    });
 
     if (!exists) {
         throw new Error("File not found.");
     }
 
-    const storedSize = await getFileRecordSize(targetId);
+    const storedSize = await repository.file.getFileRecordSize(targetId);
     const tempSize = await getTempFileSize(
         sourceClient?.userId.toString()!,
         targetId,
@@ -126,14 +119,16 @@ const handleEndFile: ListenerFn<EndFileMessage> = async (
 
     if (storedSize !== null && storedSize !== tempSize) {
         await removeTempFile(sourceClient?.userId.toString()!, targetId);
-        await deleteFileRecord(targetId);
+        await repository.file.deleteFileRecord(targetId);
         throw new Error("File size mismatch.");
     }
 
-    await setFileRecordData(
-        targetId,
-        await readTempFile(sourceClient?.userId.toString()!, targetId),
-    );
+    await repository.file.setFileRecordData({
+        identifier: targetId,
+        data: encodeBase64(
+            await readTempFile(sourceClient?.userId.toString()!, targetId),
+        ),
+    });
     await removeTempFile(sourceClient?.userId.toString()!, targetId);
 
     respond<EndFileResponse>({
@@ -148,11 +143,11 @@ const handleFindFiles: ListenerFn<FindFilesMessage> = async (
         filters.allFiles = false;
     }
 
-    const results = await findFiles(
+    const results = await repository.file.findFiles({
         filters,
-        sourceClient!.userId,
-        page ?? 1,
-    );
+        user_id: sourceClient!.userId,
+        page: page ?? 1,
+    });
 
     respond<FindFilesResponse>({
         records: results,
@@ -164,9 +159,12 @@ const handleDeleteFile: ListenerFn<DeleteFileMessage> = async (
     { message: { identifier }, respond, sourceClient },
 ) => {
     if (sourceClient!.auth.can(CanManageFiles.AllFiles)) {
-        await deleteFileRecord(identifier);
+        await repository.file.deleteFileRecord(identifier);
     } else {
-        await deleteFileByUser(identifier, sourceClient!.userId);
+        await repository.file.deleteFileByUser({
+            user_id: sourceClient!.userId,
+            identifier,
+        });
     }
 
     respond<DeleteFileResponse>({
@@ -182,11 +180,11 @@ const handleUpdateFile: ListenerFn<UpdateFileMessage> = async (
         ? null
         : sourceClient!.userId;
 
-    await updateFileRecord(
+    await repository.file.updateFileRecord({
         identifier,
+        scope_by_user_id: scopeByUserId,
         is_public,
-        scopeByUserId,
-    );
+    });
 
     respond<UpdateFileResponse>({
         data: { identifier, is_public },
@@ -197,10 +195,10 @@ const handleUpdateFile: ListenerFn<UpdateFileMessage> = async (
 const handleGetFileDetails: ListenerFn<GetFileDetailsMessage> = async (
     { message: { identifiers }, respond, sourceClient },
 ) => {
-    const records = await getFileDetailsForUser(
+    const records = await repository.file.getFileDetailsForUser({
         identifiers,
-        sourceClient!.userId,
-    );
+        user_id: sourceClient!.userId,
+    });
 
     respond<GetFileDetailsResponse>({
         records,
@@ -214,11 +212,11 @@ const handleUpdateMultipleFiles: ListenerFn<UpdateMultipleFilesMessage> =
     ) => {
         await requireValidSchema(updateMultipleFilesSchema, data);
 
-        await updateMultipleFiles(
-            sourceClient!.userId,
-            data.identifiers,
-            data.data,
-        );
+        await repository.file.updateMultipleFiles({
+            user_id: sourceClient!.userId,
+            identifiers: data.identifiers,
+            data: data.data,
+        });
 
         respond<UpdateMultipleFilesResponse>({
             data,

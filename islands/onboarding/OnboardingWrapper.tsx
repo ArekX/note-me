@@ -1,6 +1,6 @@
 import { JSX } from "preact";
 import Button from "$components/Button.tsx";
-import { UserOnboardingState } from "$backend/repository/user-repository.ts";
+import { UserOnboardingState } from "$db";
 import { useUser } from "$frontend/hooks/use-user.ts";
 
 export type ContentFn = (props: { onClosed?: () => void }) => JSX.Element;

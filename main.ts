@@ -7,12 +7,8 @@
 import { start } from "$fresh/server.ts";
 import manifest from "./fresh.gen.ts";
 import config from "./fresh.config.ts";
-import { initializeWorkers } from "./workers/mod.ts";
-import { initializeBackend } from "$backend/initialize.ts";
-import { loadEnvironment } from "$backend/env.ts";
+import { bootstrap } from "./bootstrap.ts";
 
-loadEnvironment();
-await initializeBackend();
-initializeWorkers();
+await bootstrap();
 
 await start(manifest, config);

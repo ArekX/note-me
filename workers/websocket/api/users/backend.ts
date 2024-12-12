@@ -5,26 +5,9 @@ import {
     NotifyUserExportFinishedMessage,
     NotifyUserExportUpdatedMessage,
 } from "$workers/websocket/api/users/messages.ts";
-import {
-    LogoutUserMessage,
-    UserBackendMessage,
-    UserForceLogoutResponse,
-} from "./messages.ts";
+import { UserBackendMessage } from "./messages.ts";
 import { ExportOwnDataPercentageUpdate } from "$workers/websocket/api/users/messages.ts";
 import { ExportOwnDataFinished } from "$workers/websocket/api/users/messages.ts";
-
-const handleLogoutUser: ListenerFn<LogoutUserMessage> = ({
-    message,
-    service,
-}) => {
-    const client = service.getClientByUserId(message.user_id);
-
-    client?.send<UserForceLogoutResponse>({
-        requestId: message.requestId,
-        namespace: "users",
-        type: "forceLogoutResponse",
-    });
-};
 
 const handleNotifyUserExportUpdated: ListenerFn<
     NotifyUserExportUpdatedMessage
@@ -77,7 +60,6 @@ const handleNotifyUserExportFailed: ListenerFn<
 };
 
 export const backendMap: RegisterListenerMap<UserBackendMessage> = {
-    logoutUser: handleLogoutUser,
     notifyUserExportUpdated: handleNotifyUserExportUpdated,
     notifyUserExportFinished: handleNotifyUserExportFinished,
     notifyUserExportFailed: handleNotifyUserExportFailed,

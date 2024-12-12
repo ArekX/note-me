@@ -11,27 +11,20 @@ import {
     UpdateTagResponse,
 } from "./messages.ts";
 import { CreateTagMessage } from "$workers/websocket/api/tags/messages.ts";
-import {
-    CreateTagData,
-    createTagRecord,
-    deleteTagRecord,
-    findTags,
-    UpdateTagData,
-    updateTagRecord,
-} from "$backend/repository/note-tags-repository.ts";
 import { requireValidSchema } from "$schemas/mod.ts";
 import { addTagSchema, updateTagSchema } from "$schemas/tags.ts";
 import { CanManageTags } from "$backend/rbac/permissions.ts";
+import { repository } from "$db";
 
 const handleCreateTagRequest: ListenerFn<CreateTagMessage> = async (
     { message: { data }, sourceClient, respond },
 ) => {
     await requireValidSchema(addTagSchema, data);
 
-    const record = await createTagRecord(
-        data as CreateTagData,
-        sourceClient?.userId!,
-    );
+    const record = await repository.noteTags.createTagRecord({
+        data,
+        user_id: sourceClient!.userId!,
+    });
 
     respond<CreateTagResponse>({
         type: "createTagResponse",
@@ -45,7 +38,12 @@ const handleUpdateTagRequest: ListenerFn<UpdateTagMessage> = async (
     await requireValidSchema(updateTagSchema, data);
     sourceClient!.auth.require(CanManageTags.Update);
 
-    await updateTagRecord(id, data as UpdateTagData);
+    if (data.name) {
+        await repository.noteTags.updateTagRecord({
+            id,
+            data: { name: data.name },
+        });
+    }
 
     respond<UpdateTagResponse>({
         type: "updateTagResponse",
@@ -57,7 +55,7 @@ const handleUpdateTagRequest: ListenerFn<UpdateTagMessage> = async (
 const handleDeleteTagRequest: ListenerFn<DeleteTagMessage> = async (
     { message: { id }, respond, sourceClient },
 ) => {
-    await deleteTagRecord(id);
+    await repository.noteTags.deleteTagRecord(id);
     sourceClient!.auth.require(CanManageTags.Update);
 
     respond<DeleteTagResponse>({
@@ -69,7 +67,7 @@ const handleDeleteTagRequest: ListenerFn<DeleteTagMessage> = async (
 const handleFindTagsRequest: ListenerFn<FindTagsMessage> = async (
     { message: { filters, page }, respond },
 ) => {
-    const records = await findTags(filters, page);
+    const records = await repository.noteTags.findTags({ filters, page });
 
     respond<FindTagsResponse>({
         type: "findTagsResponse",

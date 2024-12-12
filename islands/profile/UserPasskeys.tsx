@@ -21,7 +21,7 @@ import { useLoader } from "$frontend/hooks/use-loader.ts";
 import Loader from "$islands/Loader.tsx";
 import { addMessage } from "$frontend/toast-message.ts";
 import { usePagedData } from "$frontend/hooks/use-paged-data.ts";
-import { UserPasskeyRecord } from "$backend/repository/passkey-repository.ts";
+import { UserPasskeyRecord } from "$db";
 import { useEffect } from "preact/hooks";
 import Table from "$components/Table.tsx";
 import Pagination from "$islands/Pagination.tsx";

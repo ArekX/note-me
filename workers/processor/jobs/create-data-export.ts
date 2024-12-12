@@ -1,26 +1,16 @@
 import { JobHandler } from "$workers/processor/jobs/mod.ts";
 import { createZip, ZipFile } from "$backend/zip.ts";
-import { getUserGroups } from "$backend/repository/group-repository.ts";
-import { getTreeList } from "$backend/repository/tree-list.repository.ts";
-import { getNoteEncryptionKey } from "$backend/repository/user-repository.ts";
-import {
-    getNoteDetails,
-    getUserNoteCount,
-} from "$backend/repository/note-repository.ts";
 import { decryptNote } from "$backend/encryption.ts";
-import {
-    findFiles,
-    getFileData,
-    getUserFileCount,
-} from "$backend/repository/file-repository.ts";
 import { extname } from "$std/path/mod.ts";
-import { sendMessageToWebsocket } from "$workers/websocket/websocket-worker-message.ts";
+import { sendMessageToWebsocket } from "../../websocket/host.ts";
 import {
     NotifyUserExportFailedMessage,
     NotifyUserExportFinishedMessage,
     NotifyUserExportUpdatedMessage,
 } from "$workers/websocket/api/users/messages.ts";
 import { getExportLocation } from "$backend/export-generator.ts";
+import { repository } from "$db";
+import { decodeBase64 } from "$std/encoding/base64.ts";
 
 export interface CreateDataExportJob {
     user_id: number;
@@ -78,8 +68,12 @@ const resolveNoteContent = async ({
     user_password,
     file_map,
 }: ResolveNoteContentOptions) => {
-    const details = await getNoteDetails(note_id, user_id, {
-        include_note: true,
+    const details = await repository.note.getNoteDetails({
+        note_id,
+        user_id,
+        options: {
+            include_note: true,
+        },
     });
 
     if (!details) {
@@ -119,7 +113,11 @@ const processGroup = async (options: ProcessGroupOptions) => {
         return;
     }
 
-    const notes = await getTreeList(options.group_id, options.user_id, "note");
+    const notes = await repository.treeList.getTreeList({
+        group_id: options.group_id,
+        user_id: options.user_id,
+        type: "note",
+    });
     let doneNotes = 0;
     for (const note of notes) {
         if (options.abort_signal.aborted) {
@@ -148,7 +146,10 @@ const processGroup = async (options: ProcessGroupOptions) => {
         50 + (options.done_user_notes / options.total_user_notes) * 50,
     );
 
-    const groups = await getUserGroups(options.group_id, options.user_id);
+    const groups = await repository.group.getUserGroups({
+        parent_id: options.group_id,
+        user_id: options.user_id,
+    });
 
     for (const group of groups) {
         if (options.abort_signal.aborted) {
@@ -169,10 +170,15 @@ export const processFiles = async (
     user_id: number,
     abort_signal: AbortSignal,
 ) => {
-    const fileCount = await getUserFileCount(user_id);
+    const fileCount = await repository.file.getUserFileCount(user_id);
     let doneCount = 0;
     let page = 1;
-    let files = await findFiles({}, user_id, page);
+
+    let files = await repository.file.findFiles({
+        user_id,
+        page,
+        filters: {},
+    });
 
     const fileMap = new Map<string, string>();
 
@@ -182,7 +188,7 @@ export const processFiles = async (
                 return fileMap;
             }
 
-            const fileData = await getFileData(file.identifier);
+            const fileData = await repository.file.getFileData(file.identifier);
 
             if (!fileData || !fileData.data) {
                 continue;
@@ -192,7 +198,7 @@ export const processFiles = async (
 
             await zip.addBinaryFile(
                 `file/${file.identifier}${extension}`,
-                fileData.data,
+                decodeBase64(fileData.data),
             );
 
             fileMap.set(file.identifier, `${file.identifier}${extension}`);
@@ -204,7 +210,11 @@ export const processFiles = async (
         }
 
         page += 1;
-        files = await findFiles({}, user_id, page);
+        files = await repository.file.findFiles({
+            user_id,
+            page,
+            filters: {},
+        });
         notifyUserPercentageUpdate(
             export_id,
             user_id,
@@ -234,11 +244,15 @@ export const tryProcessJob = async (
         await Deno.remove(fileLocation);
     };
 
-    const decryptionKey = await getNoteEncryptionKey(user_id);
+    console.log("Exporting data for user", user_id);
+
+    const decryptionKey = await repository.user.getNoteEncryptionKey(user_id);
 
     if (!decryptionKey) {
         throw new Error("Failed to get decryption key for user");
     }
+
+    console.log("Got decryption key for user", user_id);
 
     const fileMap = await processFiles(
         zip,
@@ -251,7 +265,7 @@ export const tryProcessJob = async (
         return;
     }
 
-    const totalNoteCount = await getUserNoteCount(user_id);
+    const totalNoteCount = await repository.note.getUserNoteCount(user_id);
 
     await processGroup({
         zip,

@@ -1,6 +1,6 @@
 import NotificationList from "$islands/notifications/NotificationList.tsx";
 import Icon from "$components/Icon.tsx";
-import { NotificationRecord } from "$backend/repository/notification-repository.ts";
+import { NotificationRecord } from "$db";
 import LogoutButton from "$islands/sidebar/LogoutButton.tsx";
 import EncryptionLockButton from "$islands/encryption/EncryptionLockButton.tsx";
 import { useResponsiveQuery } from "$frontend/hooks/use-responsive-query.ts";

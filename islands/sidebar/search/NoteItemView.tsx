@@ -1,5 +1,5 @@
 import Icon from "$components/Icon.tsx";
-import { NoteSearchRecord } from "$backend/repository/note-search-repository.ts";
+import { NoteSearchRecord } from "$db";
 import { findHighlightedLines } from "$frontend/text-highlight.ts";
 import { useMemo } from "preact/hooks";
 import TreeItemIcon from "$islands/tree/TreeItemIcon.tsx";

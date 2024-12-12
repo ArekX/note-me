@@ -1,4 +1,4 @@
-import { ViewNoteRecord } from "$backend/repository/note-repository.ts";
+import { ViewNoteRecord } from "$db";
 import LockedContentWrapper from "$islands/encryption/LockedContentWrapper.tsx";
 import { NoteFrontendResponse } from "$workers/websocket/api/notes/messages.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";

@@ -6,7 +6,7 @@ import { useEffect } from "preact/hooks";
 import { useSearch } from "$frontend/hooks/use-search.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import { useLoadMore } from "$frontend/hooks/use-load-more.ts";
-import { DeletedNoteRecord } from "$backend/repository/note-repository.ts";
+import { DeletedNoteRecord } from "$db";
 import {
     FindDeletedNotesMessage,
     FindDeletedNotesResponse,

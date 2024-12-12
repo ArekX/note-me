@@ -5,10 +5,7 @@ import {
     ProcessorJob,
     RunningJob,
 } from "$workers/processor/jobs/mod.ts";
-import {
-    AbortJobRequest,
-    ProcessJobRequest,
-} from "$workers/processor/processor-message.ts";
+import { AbortJobRequest, ProcessJobRequest } from "./host.ts";
 
 const runningJobs = new Map<string, RunningJob>();
 

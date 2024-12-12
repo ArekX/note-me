@@ -10,7 +10,7 @@ import {
 import { useSignal } from "@preact/signals";
 import { useLoader } from "$frontend/hooks/use-loader.ts";
 import { useEffect } from "preact/hooks";
-import { FileMetaRecord } from "$backend/repository/file-repository.ts";
+import { FileMetaRecord } from "$db";
 import {
     FileFrontendResponse,
     GetFileDetailsMessage,

@@ -1,7 +1,7 @@
 import { redirectTo } from "$frontend/redirection-manager.ts";
 import TreeItemIcon from "$islands/tree/TreeItemIcon.tsx";
 import { fromTreeRecord } from "$islands/tree/hooks/record-container.ts";
-import { UserSharedNoteMeta } from "$backend/repository/note-share-repository.ts";
+import { UserSharedNoteMeta } from "$db";
 import Icon from "$components/Icon.tsx";
 import TimeAgo from "$components/TimeAgo.tsx";
 import { activeNoteId } from "$frontend/hooks/use-active-note.ts";

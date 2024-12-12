@@ -10,7 +10,7 @@ import {
     NotificationFrontendResponse,
     NotificationListResponse,
 } from "$workers/websocket/api/notifications/messages.ts";
-import { NotificationDataTypes } from "$backend/repository/notification-repository.ts";
+import { NotificationDataTypes } from "$db";
 import { GetMyNotificationsMessage } from "$workers/websocket/api/notifications/messages.ts";
 import ReminderItem from "$islands/sidebar/reminders/ReminderItem.tsx";
 

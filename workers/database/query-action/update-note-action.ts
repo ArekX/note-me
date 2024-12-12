@@ -4,11 +4,11 @@ import {
     noteExists,
     updateNote,
     updateNoteParent,
-} from "$backend/repository/note-repository.ts";
+} from "../query/note-repository.ts";
 import { createTransaction } from "$backend/database.ts";
-import { addHistory } from "$backend/repository/note-history-repository.ts";
+import { addHistory } from "../query/note-history-repository.ts";
 import { when } from "$backend/promise.ts";
-import { linkNoteWithTags } from "$backend/repository/note-tags-repository.ts";
+import { linkNoteWithTags } from "../query/note-tags-repository.ts";
 
 export interface UpdateNoteData {
     title?: string;

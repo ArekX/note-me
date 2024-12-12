@@ -5,9 +5,7 @@ import {
     NoteFrontendResponse,
 } from "$workers/websocket/api/notes/messages.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
-import {
-    UserSharedNoteMeta,
-} from "$backend/repository/note-share-repository.ts";
+import { UserSharedNoteMeta } from "$db";
 import Loader from "$islands/Loader.tsx";
 import { useEffect } from "preact/hooks";
 import { useSearch } from "$frontend/hooks/use-search.ts";

@@ -10,7 +10,7 @@ import Loader from "$islands/Loader.tsx";
 import { useEffect } from "preact/hooks";
 import Icon from "$components/Icon.tsx";
 import Button from "$components/Button.tsx";
-import { ReminderNoteRecord } from "$backend/repository/note-reminder-repository.ts";
+import { ReminderNoteRecord } from "$db";
 import ReminderItem from "$islands/sidebar/reminders/ReminderItem.tsx";
 import { NotificationFrontendResponse } from "$workers/websocket/api/notifications/messages.ts";
 

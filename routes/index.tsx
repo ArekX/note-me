@@ -6,11 +6,7 @@ import {
 } from "$backend/session/mod.ts";
 import { AppSessionData, AppState } from "$types";
 import Alert from "$components/Alert.tsx";
-import {
-    getUserById,
-    getUserByLogin,
-    UserLoginRecord,
-} from "$backend/repository/user-repository.ts";
+import { repository, UserLoginRecord } from "$db";
 import Input from "$components/Input.tsx";
 import InvalidateData from "$islands/InvalidateData.tsx";
 import { checkLoginAttempt } from "$backend/bruteforce-login-protector.ts";
@@ -81,12 +77,12 @@ export const handler: Handlers<LoginResult> = {
                 );
             }
 
-            user = await getUserById(result.user_id!);
+            user = await repository.user.getUserById(result.user_id!);
         } else {
-            user = await getUserByLogin(
-                form.get("username")?.toString() ?? "",
-                form.get("password")?.toString() ?? "",
-            );
+            user = await repository.user.getUserByLogin({
+                username: form.get("username")?.toString() ?? "",
+                password: form.get("password")?.toString() ?? "",
+            });
         }
 
         if (!user) {

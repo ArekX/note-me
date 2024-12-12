@@ -46,78 +46,24 @@ import {
     UpdateNoteResponse,
 } from "./messages.ts";
 import { CreateNoteMessage } from "$workers/websocket/api/notes/messages.ts";
-import {
-    createNote,
-    deleteNote,
-    findDeletedNotes,
-    findRecentlyOpenedNotes,
-    fullyDeleteNotes,
-    getNote,
-    getNoteDetails,
-    getNoteInfo,
-    noteExists,
-} from "$backend/repository/note-repository.ts";
-import { createTransaction } from "$backend/database.ts";
-import { linkNoteWithTags } from "$backend/repository/note-tags-repository.ts";
-import { assignNoteToGroup } from "$backend/repository/group-repository.ts";
 import { requireValidSchema } from "$schemas/mod.ts";
 import {
     addNoteRequestSchema,
     SetReminderRequest,
     setReminderSchema,
 } from "$schemas/notes.ts";
-import {
-    deleteHistoryRecord,
-    findHistory,
-    getHistoryRecordData,
-} from "$backend/repository/note-history-repository.ts";
-import { runUpdateNoteAction } from "$backend/actions/update-note-action.ts";
 import { GetNoteDetailsMessage } from "$workers/websocket/api/notes/messages.ts";
-import {
-    createPublicShare,
-    findUserSharedNotes,
-    getNoteShareData,
-    removePublicShare,
-    setUserShare,
-    sharedNoteWithUser,
-} from "$backend/repository/note-share-repository.ts";
 import { runSendNotificationAction } from "$backend/actions/send-notification-action.ts";
-import {
-    findUserReminderNotes,
-    getNoteReminderData,
-    removeReminder,
-    setReminder,
-} from "$backend/repository/note-reminder-repository.ts";
-import {
-    NoteSearchResult,
-    searchDeletedNotes,
-    searchGeneral,
-    searchReminderNotes,
-    searchSharedNotes,
-} from "$backend/repository/note-search-repository.ts";
-import { restoreDeletedNote } from "$backend/repository/note-repository.ts";
+import { action, NoteSearchResult, repository } from "$db";
 
 const handleCreateNote: ListenerFn<CreateNoteMessage> = async (
     { message: { data }, sourceClient, respond },
 ) => {
     await requireValidSchema(addNoteRequestSchema, data);
 
-    const transaction = await createTransaction();
-
-    const record = await transaction.run(async () => {
-        const record = await createNote({
-            title: data.title,
-            note: data.text,
-            is_encrypted: data.is_encrypted,
-            user_id: sourceClient!.userId,
-        });
-
-        await Promise.all([
-            linkNoteWithTags(record.id, sourceClient!.userId, data.tags),
-            assignNoteToGroup(data.group_id, record.id, sourceClient!.userId),
-        ]);
-
-        return record;
+    const record = await action.note.createNote({
+        data,
+        user_id: sourceClient!.userId,
     });
 
     respond<CreateNoteResponse>({
@@ -130,11 +76,12 @@ const handleCreateNote: ListenerFn<CreateNoteMessage> = async (
 const handleUpdateNote: ListenerFn<UpdateNoteMessage> = async (
     { message: { id, data }, sourceClient, respond },
 ) => {
-    await runUpdateNoteAction({
-        ...data,
-    }, {
-        noteId: id,
-        userId: sourceClient!.userId,
+    await action.note.updateNote({
+        data,
+        backend_data: {
+            noteId: id,
+            userId: sourceClient!.userId,
+        },
     });
 
     respond<UpdateNoteResponse>({
@@ -147,12 +94,23 @@ const handleUpdateNote: ListenerFn<UpdateNoteMessage> = async (
 const handleDeleteNote: ListenerFn<DeleteNoteMessage> = async (
     { message: { id }, sourceClient, respond },
 ) => {
-    if (!await noteExists(id, sourceClient!.userId)) {
+    if (
+        !await repository.note.noteExists({
+            note_id: id,
+            user_id: sourceClient!.userId,
+        })
+    ) {
         throw new Error("Note does not exist.");
     }
 
-    await removeReminder(id, sourceClient!.userId);
-    await deleteNote(id, sourceClient!.userId);
+    await repository.noteReminder.removeReminder({
+        note_id: id,
+        user_id: sourceClient!.userId,
+    });
+    await repository.note.deleteNote({
+        note_id: id,
+        user_id: sourceClient!.userId,
+    });
 
     respond<DeleteNoteResponse>({
         type: "deleteNoteResponse",
@@ -163,7 +121,11 @@ const handleDeleteNote: ListenerFn<DeleteNoteMessage> = async (
 const handleGetNoteDetails: ListenerFn<GetNoteDetailsMessage> = async (
     { message: { id, options }, sourceClient, respond },
 ) => {
-    const record = await getNoteDetails(id, sourceClient!.userId, options);
+    const record = await repository.note.getNoteDetails({
+        note_id: id,
+        user_id: sourceClient!.userId,
+        options,
+    });
 
     if (!record) {
         throw new Error("Note does not exist.");
@@ -182,11 +144,20 @@ const handleFindNoteHistory: ListenerFn<FindNoteHistoryMessage> = async (
         respond,
     },
 ) => {
-    if (!await noteExists(note_id, sourceClient!.userId)) {
+    if (
+        !await repository.note.noteExists({
+            note_id,
+            user_id: sourceClient!.userId,
+        })
+    ) {
         throw new Error("Note does not exist.");
     }
 
-    const records = await findHistory(note_id, sourceClient!.userId, page);
+    const records = await repository.noteHistory.findHistory({
+        note_id,
+        user_id: sourceClient!.userId,
+        page,
+    });
 
     respond<FindNoteHistoryResponse>({
         type: "findNoteHistoryResponse",
@@ -201,10 +172,10 @@ const handleGetNoteHistoryData: ListenerFn<GetNoteHistoryDataMessage> = async (
         respond,
     },
 ) => {
-    const data = await getHistoryRecordData(
+    const data = await repository.noteHistory.getHistoryRecordData({
         id,
-        sourceClient!.userId,
-    );
+        user_id: sourceClient!.userId,
+    });
 
     if (!data) {
         throw new Error("Note history data does not exist.");
@@ -218,24 +189,27 @@ const handleGetNoteHistoryData: ListenerFn<GetNoteHistoryDataMessage> = async (
 
 const handleRevertNoteToHistory: ListenerFn<RevertNoteToHistoryMessage> =
     async ({ message: { note_id, to_history_id }, sourceClient, respond }) => {
-        const data = await getHistoryRecordData(
-            to_history_id,
-            sourceClient!.userId,
-        );
+        const data = await repository.noteHistory.getHistoryRecordData({
+            id: to_history_id,
+            user_id: sourceClient!.userId,
+        });
 
         if (!data) {
             throw new Error("Note history data does not exist.");
         }
 
-        await runUpdateNoteAction({
-            title: data.title,
-            text: data.note,
-            tags: data.tags ? data.tags.split(",") : [],
-            is_encrypted: !!data.is_encrypted,
-        }, {
-            noteId: note_id,
-            userId: sourceClient!.userId,
-            isHistoryReversal: true,
+        await action.note.updateNote({
+            data: {
+                title: data.title,
+                text: data.note,
+                tags: data.tags ? data.tags.split(",") : [],
+                is_encrypted: !!data.is_encrypted,
+            },
+            backend_data: {
+                noteId: note_id,
+                userId: sourceClient!.userId,
+                isHistoryReversal: true,
+            },
         });
 
         respond<RevertNoteToHistoryResponse>({
@@ -254,11 +228,19 @@ const handleDeleteHistoryRecord: ListenerFn<DeleteHistoryRecordMessage> =
         sourceClient,
         respond,
     }) => {
-        if (!await noteExists(note_id, sourceClient!.userId)) {
+        if (
+            !await repository.note.noteExists({
+                note_id,
+                user_id: sourceClient!.userId,
+            })
+        ) {
             throw new Error("Note does not exist.");
         }
 
-        await deleteHistoryRecord(id, note_id);
+        await repository.noteHistory.deleteHistoryRecord({
+            id,
+            note_id,
+        });
 
         respond<DeleteHistoryRecordResponse>({
             type: "deleteHistoryRecordResponse",
@@ -269,11 +251,19 @@ const handleDeleteHistoryRecord: ListenerFn<DeleteHistoryRecordMessage> =
 const handleCreatePublicShare: ListenerFn<CreatePublicShareMessage> = async (
     { message: { note_id, expires_at }, sourceClient, respond },
 ) => {
-    if (!await noteExists(note_id, sourceClient!.userId)) {
+    if (
+        !await repository.note.noteExists({
+            note_id,
+            user_id: sourceClient!.userId,
+        })
+    ) {
         throw new Error("Note does not exist.");
     }
 
-    const record = await createPublicShare({ note_id, expires_at });
+    const record = await repository.noteShare.createPublicShare({
+        note_id,
+        expires_at,
+    });
 
     respond<CreatePublicShareResponse>({
         type: "createPublicShareResponse",
@@ -284,11 +274,19 @@ const handleCreatePublicShare: ListenerFn<CreatePublicShareMessage> = async (
 const handleShareToUsers: ListenerFn<ShareToUsersMessage> = async (
     { message: { note_id, user_ids }, sourceClient, respond },
 ) => {
-    if (!await noteExists(note_id, sourceClient!.userId)) {
+    if (
+        !await repository.note.noteExists({
+            note_id,
+            user_id: sourceClient!.userId,
+        })
+    ) {
         throw new Error("Note does not exist.");
     }
 
-    const { shared_to_user_ids } = await setUserShare({ note_id, user_ids });
+    const { shared_to_user_ids } = await repository.noteShare.setUserShare({
+        note_id,
+        user_ids,
+    });
 
     respond<ShareToUsersResponse>({
         type: "shareToUsersResponse",
@@ -298,7 +296,7 @@ const handleShareToUsers: ListenerFn<ShareToUsersMessage> = async (
         return;
     }
 
-    const note = await getNoteInfo(note_id);
+    const note = await repository.note.getNoteInfo(note_id);
 
     const notifications = [];
     for (const userId of shared_to_user_ids) {
@@ -318,11 +316,16 @@ const handleShareToUsers: ListenerFn<ShareToUsersMessage> = async (
 const handleGetNoteShareData: ListenerFn<GetNoteShareDataMessage> = async (
     { message: { note_id }, sourceClient, respond },
 ) => {
-    if (!await noteExists(note_id, sourceClient!.userId)) {
+    if (
+        !await repository.note.noteExists({
+            note_id,
+            user_id: sourceClient!.userId,
+        })
+    ) {
         throw new Error("Note does not exist.");
     }
 
-    const data = await getNoteShareData(note_id);
+    const data = await repository.noteShare.getNoteShareData(note_id);
 
     respond<GetNoteShareDataResponse>({
         type: "getNoteShareDataResponse",
@@ -333,11 +336,16 @@ const handleGetNoteShareData: ListenerFn<GetNoteShareDataMessage> = async (
 const handleRemovePublicShare: ListenerFn<RemovePublicShareMessage> = async (
     { message: { note_id, id }, sourceClient, respond },
 ) => {
-    if (!await noteExists(note_id, sourceClient!.userId)) {
+    if (
+        !await repository.note.noteExists({
+            note_id,
+            user_id: sourceClient!.userId,
+        })
+    ) {
         throw new Error("Note does not exist.");
     }
 
-    await removePublicShare(id);
+    await repository.noteShare.removePublicShare(id);
 
     respond<RemovePublicShareResponse>({
         type: "removePublicShareResponse",
@@ -348,10 +356,10 @@ const handleRemovePublicShare: ListenerFn<RemovePublicShareMessage> = async (
 const handleFindSharedNotes: ListenerFn<FindSharedNotesMessage> = async (
     { message: { filters }, sourceClient, respond },
 ) => {
-    const records = await findUserSharedNotes(
+    const records = await repository.noteShare.findUserSharedNotes({
         filters,
-        sourceClient!.userId,
-    );
+        user_id: sourceClient!.userId,
+    });
 
     respond<FindSharedNotesResponse>({
         type: "findSharedNotesResponse",
@@ -366,16 +374,16 @@ const handleSetReminder: ListenerFn<SetReminderMessage> = async (
         respond,
     },
 ) => {
-    const ownNote = await noteExists(
-        reminderData.note_id,
-        sourceClient!.userId,
-    );
+    const ownNote = await repository.note.noteExists({
+        note_id: reminderData.note_id,
+        user_id: sourceClient!.userId,
+    });
 
     if (!ownNote) {
-        const sharedNote = await sharedNoteWithUser(
-            reminderData.note_id,
-            sourceClient!.userId,
-        );
+        const sharedNote = await repository.noteShare.sharedNoteWithUser({
+            note_id: reminderData.note_id,
+            user_id: sourceClient!.userId,
+        });
 
         if (!sharedNote) {
             throw new Error(
@@ -389,7 +397,7 @@ const handleSetReminder: ListenerFn<SetReminderMessage> = async (
         reminderData,
     );
 
-    const result = await setReminder({
+    const result = await repository.noteReminder.setReminder({
         ...reminderData,
         user_id: sourceClient?.userId!,
     });
@@ -404,7 +412,10 @@ const handleSetReminder: ListenerFn<SetReminderMessage> = async (
 const handleRemoveReminder: ListenerFn<RemoveReminderMessage> = async (
     { message: { note_id }, sourceClient, respond },
 ) => {
-    await removeReminder(note_id, sourceClient!.userId);
+    await repository.noteReminder.removeReminder({
+        note_id,
+        user_id: sourceClient!.userId,
+    });
 
     respond<RemoveReminderResponse>({
         type: "removeReminderResponse",
@@ -415,10 +426,10 @@ const handleRemoveReminder: ListenerFn<RemoveReminderMessage> = async (
 const handleFindNoteReminders: ListenerFn<FindNoteRemindersMessage> = async (
     { message: { filters }, sourceClient, respond },
 ) => {
-    const records = await findUserReminderNotes(
+    const records = await repository.noteReminder.findUserReminderNotes({
         filters,
-        sourceClient!.userId,
-    );
+        user_id: sourceClient!.userId,
+    });
 
     respond<FindNoteRemindersResponse>({
         type: "findNoteRemindersResponse",
@@ -432,7 +443,10 @@ const handleGetNoteReminderData: ListenerFn<GetNoteReminderDataMessage> =
     ) => {
         respond<GetNoteReminderDataResponse>({
             type: "getNoteReminderDataResponse",
-            data: await getNoteReminderData(note_id, sourceClient!.userId),
+            data: await repository.noteReminder.getNoteReminderData({
+                note_id,
+                user_id: sourceClient!.userId,
+            }),
         });
     };
 
@@ -443,28 +457,28 @@ const handleSearchNote: ListenerFn<SearchNoteMessage> = async (
 
     switch (filters.type) {
         case "general":
-            results = await searchGeneral(
+            results = await repository.noteSearch.searchGeneral({
                 filters,
-                sourceClient!.userId,
-            );
+                user_id: sourceClient!.userId,
+            });
             break;
         case "shared":
-            results = await searchSharedNotes(
+            results = await repository.noteSearch.searchSharedNotes({
                 filters,
-                sourceClient!.userId,
-            );
+                user_id: sourceClient!.userId,
+            });
             break;
         case "reminders":
-            results = await searchReminderNotes(
+            results = await repository.noteSearch.searchReminderNotes({
                 filters,
-                sourceClient!.userId,
-            );
+                user_id: sourceClient!.userId,
+            });
             break;
         case "recycleBin":
-            results = await searchDeletedNotes(
+            results = await repository.noteSearch.searchDeletedNotes({
                 filters,
-                sourceClient!.userId,
-            );
+                user_id: sourceClient!.userId,
+            });
             break;
     }
 
@@ -478,7 +492,7 @@ const handleGetRecentlyOpenedNotes: ListenerFn<GetRecentlyOpenedNotesMessage> =
     async (
         { sourceClient, respond },
     ) => {
-        const records = await findRecentlyOpenedNotes(
+        const records = await repository.note.findRecentlyOpenedNotes(
             sourceClient!.userId,
         );
 
@@ -491,10 +505,10 @@ const handleGetRecentlyOpenedNotes: ListenerFn<GetRecentlyOpenedNotesMessage> =
 const handleFindDeletedNotes: ListenerFn<FindDeletedNotesMessage> = async (
     { message: { filters }, sourceClient, respond },
 ) => {
-    const records = await findDeletedNotes(
+    const records = await repository.note.findDeletedNotes({
         filters,
-        sourceClient!.userId,
-    );
+        user_id: sourceClient!.userId,
+    });
 
     respond<FindDeletedNotesResponse>({
         type: "findDeletedNotesResponse",
@@ -505,22 +519,34 @@ const handleFindDeletedNotes: ListenerFn<FindDeletedNotesMessage> = async (
 const handleRestoreDeletedNote: ListenerFn<RestoreDeletedNoteMessage> = async (
     { message: { id }, sourceClient, respond },
 ) => {
-    await restoreDeletedNote(id, sourceClient!.userId);
+    await repository.note.restoreDeletedNote({
+        note_id: id,
+        user_id: sourceClient!.userId,
+    });
 
     respond<RestoreDeletedNoteResponse>({
         type: "restoreDeletedNoteResponse",
-        restored_note: await getNote(id, sourceClient!.userId),
+        restored_note: await repository.note.getNote({
+            id,
+            user_id: sourceClient!.userId,
+        }),
     });
 };
 
 const handleFullyDeleteNote: ListenerFn<FullyDeleteNoteMessage> = async (
     { message: { id }, sourceClient, respond },
 ) => {
-    if (!await noteExists(id, sourceClient!.userId, true)) {
+    if (
+        !await repository.note.noteExists({
+            note_id: id,
+            user_id: sourceClient!.userId,
+            is_deleted: true,
+        })
+    ) {
         throw new Error("Note does not exist.");
     }
 
-    await fullyDeleteNotes([id]);
+    await repository.note.fullyDeleteNotes([id]);
 
     respond<FullyDeleteNoteResponse>({
         type: "fullyDeleteNoteResponse",

@@ -11,13 +11,13 @@ import {
     PickUserRecord,
     UserId,
     UserOnboardingState,
+    UserPasskeyRecord,
     UserRecord,
-} from "$backend/repository/user-repository.ts";
+} from "$db";
 import {
     PublicKeyCredentialCreationOptionsJSON,
     RegistrationResponseJSON,
 } from "$backend/deps.ts";
-import { UserPasskeyRecord } from "$backend/repository/passkey-repository.ts";
 import { RegistrationResult } from "$backend/passkeys.ts";
 
 type UserMessage<Type, Data = unknown> = Message<
@@ -260,11 +260,6 @@ export type UserFrontendMessage =
     | DeleteOwnPasskeyMessage
     | UpdateOwnPasskeyMessage;
 
-export type LogoutUserMessage = UserMessage<
-    "logoutUser",
-    { user_id: number }
->;
-
 export type NotifyUserExportUpdatedMessage = UserMessage<
     "notifyUserExportUpdated",
     { export_id: string; user_id: number; percentage: number }
@@ -281,7 +276,6 @@ export type NotifyUserExportFailedMessage = UserMessage<
 >;
 
 export type UserBackendMessage =
-    | LogoutUserMessage
     | NotifyUserExportUpdatedMessage
     | NotifyUserExportFinishedMessage
     | NotifyUserExportFailedMessage;

@@ -1,4 +1,4 @@
-import { ViewNoteRecord } from "$backend/repository/note-repository.ts";
+import { ViewNoteRecord } from "$db";
 import NoteEditor from "$islands/notes/NoteEditor.tsx";
 import NotePage from "$islands/notes/pages/NotePage.tsx";
 import EditNoteIntroduction from "$islands/onboarding/content/EditNoteIntroduction.tsx";

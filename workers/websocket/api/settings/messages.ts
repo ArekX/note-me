@@ -1,9 +1,6 @@
 import { Message } from "$workers/websocket/types.ts";
-import { PeriodicTaskRecord } from "$backend/repository/periodic-task-repository.ts";
+import { BackupTargetRecord, PeriodicTaskRecord } from "$db";
 import { BackupIdentifier, BackupItem } from "$lib/backup-handler/mod.ts";
-import {
-    BackupTargetRecord,
-} from "$backend/repository/backup-target-repository.ts";
 import { BackupTargetRequest } from "$schemas/settings.ts";
 
 type SettingsMessage<Type, Data = unknown> = Message<

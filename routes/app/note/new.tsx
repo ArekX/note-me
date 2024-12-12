@@ -1,10 +1,7 @@
 import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
 import { AppState } from "$types";
 import { parseQueryParams } from "$backend/parse-query-params.ts";
-import {
-    getSingleUserGroup,
-    GroupRecord,
-} from "$backend/repository/group-repository.ts";
+import { GroupRecord, repository } from "$db";
 import EditNotePage from "$islands/notes/pages/EditNotePage.tsx";
 
 interface PageData {
@@ -21,10 +18,10 @@ export const handler: Handlers<PageData> = {
             group_id: { type: "number", optional: true },
         });
 
-        const group = await getSingleUserGroup(
-            noteParams.group_id ?? 0,
-            ctx.state.session?.getUserId() ?? 0,
-        );
+        const group = await repository.group.getSingleUserGroup({
+            id: noteParams.group_id ?? 0,
+            user_id: ctx.state.session?.getUserId() ?? 0,
+        });
 
         if (!group && noteParams.group_id) {
             throw new Deno.errors.NotFound("Requested group not found.");

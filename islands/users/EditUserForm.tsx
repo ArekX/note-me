@@ -3,7 +3,7 @@ import Dialog from "$islands/Dialog.tsx";
 import Input from "$components/Input.tsx";
 import Button from "$components/Button.tsx";
 import { useEffect } from "preact/hooks";
-import { UserRecord } from "$backend/repository/user-repository.ts";
+import { UserRecord } from "$db";
 import DropdownList from "$components/DropdownList.tsx";
 import { roleDropDownList } from "$backend/rbac/role-definitions.ts";
 import { supportedTimezoneList } from "$lib/time/time-zone.ts";

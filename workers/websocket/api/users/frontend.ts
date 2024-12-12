@@ -20,7 +20,6 @@ import {
     GetOwnPasskeysResponse,
     GetPasskeyRegistrationMessage,
     GetPasskeyRegistrationResponse,
-    LogoutUserMessage,
     UpdateOnboardingStateMessage,
     UpdateOnboardingStateResponse,
     UpdateOwnPasskeyMessage,
@@ -29,6 +28,7 @@ import {
     UpdateProfileResponse,
     UpdateUserMessage,
     UpdateUserResponse,
+    UserForceLogoutResponse,
     UserFrontendMessage,
     VerifyOwnPasswordMessage,
     VerifyOwnPasswordResponse,
@@ -36,22 +36,7 @@ import {
     VerifyPasskeyRegistrationResponse,
 } from "./messages.ts";
 import { CreateUserMessage } from "$workers/websocket/api/users/messages.ts";
-import {
-    CreateUserData,
-    createUserRecord,
-    deleteUserRecord,
-    findPickerUsers,
-    findUsers,
-    getNoteEncryptionKey,
-    getUserById,
-    getUserByUsername,
-    updateOnboardingState,
-    UpdateUserData,
-    updateUserProfile,
-    updateUserRecord,
-    UserId,
-    validateUserPassword,
-} from "$backend/repository/user-repository.ts";
+import { CreateUserData, repository, UserId } from "$db";
 import {
     destroySession,
     loadSessionStateByUserId,
@@ -66,22 +51,15 @@ import { CanManageUsers } from "$backend/rbac/permissions.ts";
 import { decryptNote, encryptNote } from "$backend/encryption.ts";
 import { DecryptTextMessage } from "$workers/websocket/api/users/messages.ts";
 import { DecryptTextResponse } from "$workers/websocket/api/users/messages.ts";
-import { workerSendMesage } from "$workers/services/worker-bus.ts";
-import { createBackendMessage } from "$workers/websocket/websocket-backend.ts";
 import {
     sendAbortRequest,
     sendProcessorRequest,
-} from "$workers/processor/processor-message.ts";
+} from "$workers/processor/host.ts";
 import { createInitialExportFile } from "$backend/export-generator.ts";
 import {
     finalizePasskeyRegistration,
     initializePasskeyRegistration,
 } from "$backend/passkeys.ts";
-import {
-    deletePasskey,
-    findUserPasskeys,
-    updatePasskey,
-} from "$backend/repository/passkey-repository.ts";
 
 const handleCreateUser: ListenerFn<CreateUserMessage> = async (
     { message: { data }, respond, sourceClient },
@@ -89,18 +67,21 @@ const handleCreateUser: ListenerFn<CreateUserMessage> = async (
     await requireValidSchema(addUserSchema, data);
     sourceClient!.auth.require(CanManageUsers.Update);
 
-    const existingUser = await getUserByUsername(data.username);
+    const existingUser = await repository.user.getUserByUsername(data.username);
 
     let createRecord: UserId | null = null;
     if (!existingUser) {
-        createRecord = await createUserRecord(
+        createRecord = await repository.user.createUserRecord(
             data as CreateUserData,
         );
     } else if (existingUser.is_deleted) {
-        await updateUserRecord(existingUser.id, {
-            is_deleted: false,
-            ...data,
-        } as UpdateUserData);
+        await repository.user.updateUserRecord({
+            user_id: existingUser.id,
+            user: {
+                is_deleted: false,
+                ...data,
+            },
+        });
 
         createRecord = { id: existingUser.id };
     } else {
@@ -119,7 +100,10 @@ const handleUpdateUser: ListenerFn<UpdateUserMessage> = async (
     await requireValidSchema(updateUserSchema, data);
     sourceClient!.auth.require(CanManageUsers.Update);
 
-    await updateUserRecord(id, data as UpdateUserData);
+    await repository.user.updateUserRecord({
+        user_id: id,
+        user: data,
+    });
 
     respond<UpdateUserResponse>({
         type: "updateUserResponse",
@@ -129,22 +113,23 @@ const handleUpdateUser: ListenerFn<UpdateUserMessage> = async (
 };
 
 const handleDeleteUser: ListenerFn<DeleteUserMessage> = async (
-    { message: { id }, sourceClient, respond },
+    { message: { id, requestId }, sourceClient, respond, service },
 ) => {
     sourceClient!.auth.require(CanManageUsers.Update);
     if (id === sourceClient?.userId) {
         throw new Deno.errors.InvalidData("You cannot delete your own user.");
     }
 
-    await deleteUserRecord(id);
+    await repository.user.deleteUserRecord(id);
     await destroySession(id);
 
-    workerSendMesage(
-        "websocket",
-        createBackendMessage<LogoutUserMessage>("users", "logoutUser", {
-            user_id: id,
-        }),
-    );
+    const client = service.getClientByUserId(id);
+
+    client?.send<UserForceLogoutResponse>({
+        requestId,
+        namespace: "users",
+        type: "forceLogoutResponse",
+    });
 
     respond<DeleteUserResponse>({
         type: "deleteUserResponse",
@@ -157,7 +142,7 @@ const handleFindUsers: ListenerFn<FindUsersMessage> = async (
 ) => {
     sourceClient!.auth.require(CanManageUsers.Update);
 
-    const records = await findUsers(filters, page);
+    const records = await repository.user.findUsers({ filters, page });
 
     respond<FindUsersResponse>({
         type: "findUsersResponse",
@@ -176,14 +161,17 @@ const handleUpdateProfile: ListenerFn<UpdateProfileMessage> = async (
         );
     }
 
-    const result = await updateUserProfile(sourceClient?.userId!, data);
+    const result = await repository.user.updateUserProfile({
+        data,
+        profile_user_id: sourceClient?.userId!,
+    });
 
     if (result) {
         const session = await loadSessionStateByUserId(sourceClient?.userId!);
 
         if (session) {
             await session.patch({
-                user: await getUserById(sourceClient?.userId!),
+                user: await repository.user.getUserById(sourceClient?.userId!),
             });
         }
     }
@@ -197,7 +185,7 @@ const handleUpdateProfile: ListenerFn<UpdateProfileMessage> = async (
 const handleFindPickUsers: ListenerFn<FindPickUsersMessage> = async (
     { message: { filters, page }, respond },
 ) => {
-    const records = await findPickerUsers(filters, page);
+    const records = await repository.user.findPickerUsers({ filters, page });
 
     respond<FindPickUsersResponse>({
         type: "findPickUsersResponse",
@@ -208,17 +196,17 @@ const handleFindPickUsers: ListenerFn<FindPickUsersMessage> = async (
 const handleUpdateOnboarding: ListenerFn<UpdateOnboardingStateMessage> = async (
     { message: { onboarding_state }, sourceClient, respond },
 ) => {
-    const result = await updateOnboardingState(
-        sourceClient?.userId!,
-        onboarding_state,
-    );
+    const result = await repository.user.updateOnboardingState({
+        state: onboarding_state,
+        user_id: sourceClient?.userId!,
+    });
 
     if (result) {
         const session = await loadSessionStateByUserId(sourceClient?.userId!);
 
         if (session) {
             await session.patch({
-                user: await getUserById(sourceClient?.userId!),
+                user: await repository.user.getUserById(sourceClient?.userId!),
             });
         }
     }
@@ -232,10 +220,10 @@ const handleUpdateOnboarding: ListenerFn<UpdateOnboardingStateMessage> = async (
 const handleVerifyOwnPassword: ListenerFn<VerifyOwnPasswordMessage> = async (
     { message: { password }, sourceClient, respond },
 ) => {
-    const verified = await validateUserPassword(
-        sourceClient?.userId!,
+    const verified = await repository.user.validateUserPassword({
         password,
-    );
+        user_id: sourceClient?.userId!,
+    });
 
     respond<VerifyOwnPasswordResponse>({
         type: "verifyOwnPasswordResponse",
@@ -247,7 +235,7 @@ const handleEncryptText: ListenerFn<EncryptTextMessage> = async (
     { message: { text, password }, respond, sourceClient },
 ) => {
     const noteEncryptionKey =
-        (await getNoteEncryptionKey(sourceClient?.userId!))!;
+        (await repository.user.getNoteEncryptionKey(sourceClient?.userId!))!;
 
     const encrypted = await encryptNote(
         text,
@@ -265,7 +253,7 @@ const handleDecryptText: ListenerFn<DecryptTextMessage> = async (
     { message: { encrypted, password }, respond, sourceClient },
 ) => {
     const noteEncryptionKey =
-        (await getNoteEncryptionKey(sourceClient?.userId!))!;
+        (await repository.user.getNoteEncryptionKey(sourceClient?.userId!))!;
 
     const text = await decryptNote(
         encrypted,
@@ -341,7 +329,10 @@ const handleVerifyPasskeyRegistration: ListenerFn<
 const handleGetOwnPasskeys: ListenerFn<GetOwnPasskeysMessage> = async (
     { message: { page }, respond, sourceClient },
 ) => {
-    const passkeys = await findUserPasskeys(sourceClient!.userId, page);
+    const passkeys = await repository.passkey.findUserPasskeys({
+        user_id: sourceClient!.userId,
+        page,
+    });
 
     respond<GetOwnPasskeysResponse>({
         type: "getOwnPasskeysResponse",
@@ -352,7 +343,10 @@ const handleGetOwnPasskeys: ListenerFn<GetOwnPasskeysMessage> = async (
 const handleDeleteOwnPasskey: ListenerFn<DeleteOwnPasskeyMessage> = async (
     { message: { id }, respond, sourceClient },
 ) => {
-    await deletePasskey(sourceClient!.userId, id);
+    await repository.passkey.deletePasskey({
+        user_id: sourceClient!.userId,
+        passkey_id: id,
+    });
 
     respond<DeleteOwnPasskeyResponse>({
         type: "deleteOwnPasskeyResponse",
@@ -361,14 +355,18 @@ const handleDeleteOwnPasskey: ListenerFn<DeleteOwnPasskeyMessage> = async (
 };
 
 const handleUpdateOwnPasskey: ListenerFn<UpdateOwnPasskeyMessage> = async (
-    { message, respond, sourceClient },
+    { message: { id, name }, respond, sourceClient },
 ) => {
-    await updatePasskey(message.id, sourceClient!.userId, message.name);
+    await repository.passkey.updatePasskey({
+        id,
+        user_id: sourceClient!.userId,
+        name,
+    });
 
     respond<UpdateOwnPasskeyResponse>({
         type: "updateOwnPasskeyResponse",
-        id: message.id,
-        name: message.name,
+        id: id,
+        name: name,
     });
 };
 

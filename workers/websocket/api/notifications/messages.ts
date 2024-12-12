@@ -1,4 +1,4 @@
-import { NotificationRecord } from "$backend/repository/notification-repository.ts";
+import { NotificationRecord } from "$db";
 import { Message } from "$workers/websocket/types.ts";
 
 type NotificationMessage<Type, Data = unknown> = Message<

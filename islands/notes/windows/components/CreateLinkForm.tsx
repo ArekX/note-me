@@ -10,7 +10,7 @@ import {
     CreatePublicShareResponse,
 } from "$workers/websocket/api/notes/messages.ts";
 import { inputDateToUnix } from "$lib/time/unix.ts";
-import { PublicNoteShareRecord } from "$backend/repository/note-share-repository.ts";
+import { PublicNoteShareRecord } from "$db";
 import { addDays } from "$lib/time/modifiers.ts";
 import { dateToYmd } from "$lib/time/iso-date.ts";
 

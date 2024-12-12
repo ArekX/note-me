@@ -1,5 +1,11 @@
 import { logger } from "$backend/logger.ts";
 import { services } from "./services/mod.ts";
+import { connectHostChannelForDatabase } from "$db";
+import {
+    createRoutingChannel,
+    createServiceChannel,
+} from "./services/channel.ts";
+import { connectHostChannelForProcessor } from "$workers/processor/host.ts";
 
 const checkServiceDisabled = (serviceName: string): boolean => {
     const serviceDisabledEnvName = "DISABLE_SERVICE_" +
@@ -31,16 +37,42 @@ const checkServiceDisabled = (serviceName: string): boolean => {
     return false;
 };
 
-export const initializeWorkers = (): void => {
+const initializeDatabaseService = async () => {
+    logger.info("Starting database service.");
+    await services.database.start();
+
+    connectHostChannelForDatabase(createServiceChannel(services.database));
+
+    logger.info("Database service started successfully.");
+};
+
+export const initializeServices = async (): Promise<void> => {
+    await initializeDatabaseService();
+
+    const routingChannel = createRoutingChannel("host");
+    connectHostChannelForProcessor(routingChannel);
+
     for (const [serviceName, service] of Object.entries(services)) {
+        if (service.isStarted) {
+            const serviceChannel = createServiceChannel(service);
+            routingChannel.connectChannel(serviceChannel);
+            serviceChannel.connectReceiver(routingChannel);
+            continue;
+        }
+
         if (!service.options.required && checkServiceDisabled(serviceName)) {
             continue;
         }
 
-        logger.info(`Starting background service: ${serviceName}`);
-        service.start();
+        logger.info("Starting service: {serviceName}", { serviceName });
+        await service.start();
+        const serviceChannel = createServiceChannel(service);
+        routingChannel.connectChannel(serviceChannel);
+        serviceChannel.connectReceiver(routingChannel);
 
-        logger.debug("Background service started.");
+        logger.debug(`Service '{serviceName}' started successfully.`, {
+            serviceName,
+        });
     }
-    logger.debug("All background services started");
+    logger.info("All services started successfully.");
 };

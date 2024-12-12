@@ -3,7 +3,7 @@ import {
     InsertComponentProps,
 } from "$islands/notes/InsertDialog.tsx";
 import GroupPicker from "../../groups/GroupPicker.tsx";
-import { TreeRecord } from "$backend/repository/tree-list.repository.ts";
+import { TreeRecord } from "$db";
 import { useSignal } from "@preact/signals";
 import NoteList from "$islands/notes/blocks/NoteList.tsx";
 

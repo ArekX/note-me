@@ -1,33 +1,28 @@
-import {
-    getReadyReminders,
-    resolveReminderNextOcurrence,
-} from "$backend/repository/note-reminder-repository.ts";
-import { createNotification } from "$backend/repository/notification-repository.ts";
 import { PeriodicTask } from "../periodic-task-service.ts";
-import { sendMessageToWebsocket } from "$workers/websocket/websocket-worker-message.ts";
-import { createTransaction } from "$backend/database.ts";
+import { sendMessageToWebsocket } from "../../websocket/host.ts";
 import { logger } from "$backend/logger.ts";
-import { getNoteInfo } from "$backend/repository/note-repository.ts";
-import { nextMinute } from "$workers/periodic-task/next-at.ts";
+import { nextMinute } from "../next-at.ts";
+import { repository } from "$db";
 
 export const checkReminders: PeriodicTask = {
     name: "check-reminders",
     getNextAt: nextMinute,
     async trigger(): Promise<void> {
-        const readyReminders = await getReadyReminders();
+        const readyReminders = await repository.noteReminder
+            .getReadyReminders();
 
         for (const reminder of readyReminders) {
             try {
-                const note = await getNoteInfo(reminder.note_id);
+                const note = await repository.note.getNoteInfo(
+                    reminder.note_id,
+                );
 
                 if (!note) {
                     continue;
                 }
 
-                const transaction = await createTransaction();
-
-                await transaction.run(async () => {
-                    const record = await createNotification({
+                const record = await repository.notification.createNotification(
+                    {
                         data: {
                             type: "reminder-received",
                             payload: {
@@ -43,14 +38,16 @@ export const checkReminders: PeriodicTask = {
                             },
                         },
                         user_id: reminder.user_id,
-                    });
+                    },
+                );
 
-                    await resolveReminderNextOcurrence(reminder.id);
+                await repository.noteReminder.resolveReminderNextOcurrence(
+                    reminder.id,
+                );
 
-                    sendMessageToWebsocket("notifications", "addNotification", {
-                        data: record,
-                        toUserId: reminder.user_id,
-                    });
+                sendMessageToWebsocket("notifications", "addNotification", {
+                    data: record,
+                    toUserId: reminder.user_id,
                 });
             } catch (e: unknown) {
                 logger.error(
