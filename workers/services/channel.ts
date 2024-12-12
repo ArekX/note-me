@@ -26,40 +26,6 @@ export interface Channel<Name extends string = string, T = unknown> {
     onReceive: (listener: Listener<T>) => void;
 }
 
-interface AppChannel extends Channel {
-    connectChannel: (channel: Channel) => void;
-}
-
-export const createAppChannel = (): AppChannel => {
-    const listeners = new Set<Listener>();
-    const connectedChannels = new Set<Channel>();
-
-    const receive = <T, Name extends string>(
-        message: ChannelMessage<T, Name>,
-    ) => {
-        for (const listener of listeners) {
-            listener(message);
-        }
-    };
-
-    return {
-        name: "app",
-        connectChannel: (channel) => {
-            connectedChannels.add(channel);
-            channel.onReceive(receive);
-        },
-        send: (message) => {
-            for (const channel of connectedChannels) {
-                channel.receive(message);
-            }
-        },
-        receive,
-        onReceive: (listener) => {
-            listeners.add(listener as Listener);
-        },
-    };
-};
-
 interface RoutingChannel extends Channel {
     connectChannel: (channel: Channel) => void;
 }
