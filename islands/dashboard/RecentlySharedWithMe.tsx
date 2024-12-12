@@ -9,7 +9,7 @@ import Loader from "$islands/Loader.tsx";
 import { useEffect } from "preact/hooks";
 import Icon from "$components/Icon.tsx";
 import Button from "$components/Button.tsx";
-import { UserSharedNoteMeta } from "../../workers/database/query/note-share-repository.ts";
+import { UserSharedNoteMeta } from "$db";
 import SharedNoteItem from "$islands/sidebar/shared/SharedNoteItem.tsx";
 
 export default function RecentlySharedWithMe() {

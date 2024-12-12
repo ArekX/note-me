@@ -54,10 +54,7 @@ import {
 } from "$schemas/notes.ts";
 import { GetNoteDetailsMessage } from "$workers/websocket/api/notes/messages.ts";
 import { runSendNotificationAction } from "$backend/actions/send-notification-action.ts";
-import {
-    NoteSearchResult,
-} from "../../../database/query/note-search-repository.ts";
-import { action, repository } from "$workers/database/lib.ts";
+import { action, NoteSearchResult, repository } from "$db";
 
 const handleCreateNote: ListenerFn<CreateNoteMessage> = async (
     { message: { data }, sourceClient, respond },

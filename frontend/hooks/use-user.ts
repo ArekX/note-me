@@ -1,8 +1,5 @@
 import { signal } from "@preact/signals";
-import {
-    UserOnboardingState,
-    UserRecord,
-} from "../../workers/database/query/user-repository.ts";
+import { UserOnboardingState, UserRecord } from "$db";
 import { AppPermissions } from "$backend/rbac/permissions.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import {

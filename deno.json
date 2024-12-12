@@ -39,7 +39,8 @@
         "$cli/": "./cli/",
         "$lib/": "./lib/",
         "$types": "./types/mod.ts",
-        "$tests/": "./tests/"
+        "$tests/": "./tests/",
+        "$db": "./workers/database/lib.ts"
     },
     "compilerOptions": { "jsx": "react-jsx", "jsxImportSource": "preact" },
     "nodeModulesDir": "auto"

@@ -36,10 +36,7 @@ import {
     VerifyPasskeyRegistrationResponse,
 } from "./messages.ts";
 import { CreateUserMessage } from "$workers/websocket/api/users/messages.ts";
-import {
-    CreateUserData,
-    UserId,
-} from "../../../database/query/user-repository.ts";
+import { CreateUserData, repository, UserId } from "$db";
 import {
     destroySession,
     loadSessionStateByUserId,
@@ -57,13 +54,12 @@ import { DecryptTextResponse } from "$workers/websocket/api/users/messages.ts";
 import {
     sendAbortRequest,
     sendProcessorRequest,
-} from "../../../processor/host.ts";
+} from "$workers/processor/host.ts";
 import { createInitialExportFile } from "$backend/export-generator.ts";
 import {
     finalizePasskeyRegistration,
     initializePasskeyRegistration,
 } from "$backend/passkeys.ts";
-import { repository } from "$workers/database/lib.ts";
 
 const handleCreateUser: ListenerFn<CreateUserMessage> = async (
     { message: { data }, respond, sourceClient },

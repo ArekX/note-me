@@ -2,6 +2,10 @@ import { RepositoryData } from "$workers/database/repository/mod.ts";
 import { ActionData } from "$workers/database/actions/mod.ts";
 import { requestFromDb } from "./host.ts";
 
+export * from "./types.ts";
+
+export * from "./host.ts";
+
 export type DatabaseData = RepositoryData | ActionData;
 
 type Data<Repo, Key> = Extract<DatabaseData, { name: Repo; key: Key }>["data"];

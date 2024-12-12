@@ -8,7 +8,7 @@ import {
     BackendData,
     runUpdateNoteAction,
     UpdateNoteData,
-} from "$backend/actions/update-note-action.ts";
+} from "../query-action/update-note-action.ts";
 
 type NoteRequest<Key extends string, Request, Response> = DbRequest<
     "note",

@@ -8,7 +8,7 @@ import {
 } from "$lib/backup-handler/mod.ts";
 import { TargetType } from "$lib/backup-handler/handlers.ts";
 import { createBackupInputRecord } from "$backend/backups.ts";
-import { repository } from "$workers/database/lib.ts";
+import { repository } from "$db";
 
 const removeBackupsOverLimit = async (
     handler: BackupTargetHandler<TargetType>,

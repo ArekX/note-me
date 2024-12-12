@@ -9,7 +9,7 @@ import {
     NotifyUserExportUpdatedMessage,
 } from "$workers/websocket/api/users/messages.ts";
 import { getExportLocation } from "$backend/export-generator.ts";
-import { repository } from "$workers/database/lib.ts";
+import { repository } from "$db";
 import { decodeBase64 } from "$std/encoding/base64.ts";
 
 export interface CreateDataExportJob {

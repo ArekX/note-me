@@ -11,7 +11,7 @@ import {
 import { useSignal } from "@preact/signals";
 import Input from "$components/Input.tsx";
 import { useDebouncedCallback } from "$frontend/hooks/use-debounced-callback.ts";
-import { NoteSearchRecord } from "../../../workers/database/query/note-search-repository.ts";
+import { NoteSearchRecord } from "$db";
 import LoadMoreWrapper from "$islands/LoadMoreWrapper.tsx";
 import Loader from "$islands/Loader.tsx";
 import { useEffect } from "preact/hooks";

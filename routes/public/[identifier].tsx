@@ -1,8 +1,7 @@
 import { FreshContext, PageProps } from "$fresh/server.ts";
-import { PublicSharedNote } from "../../workers/database/query/note-share-repository.ts";
+import { PublicSharedNote, repository } from "$db";
 import { AppState } from "$types";
 import ViewNote from "$islands/notes/ViewNote.tsx";
-import { repository } from "$workers/database/lib.ts";
 
 export const handler = async (_req: Request, ctx: FreshContext<AppState>) => {
     const identifier: string = ctx.params.identifier ?? "";

@@ -1,4 +1,4 @@
-import { NotificationRecord } from "../../workers/database/query/notification-repository.ts";
+import { NotificationRecord } from "$db";
 import Button from "$components/Button.tsx";
 import Icon from "$components/Icon.tsx";
 import NotificationItem from "$islands/notifications/NotificationItem.tsx";

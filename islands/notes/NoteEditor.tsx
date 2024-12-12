@@ -1,5 +1,5 @@
 import { Signal, useSignal } from "@preact/signals";
-import { NoteRecord } from "../../workers/database/query/note-repository.ts";
+import { NoteRecord } from "$db";
 import Button from "$components/Button.tsx";
 import Icon from "$components/Icon.tsx";
 import MoreMenu from "$islands/notes/MoreMenu.tsx";

@@ -1,5 +1,5 @@
 import { createWorkerChannel } from "$workers/channel/mod.ts";
-import { connectHostChannelForDatabase } from "../database/host.ts";
+import { connectHostChannelForDatabase } from "$db";
 import { workerNotifyReady } from "$workers/services/worker-helper.ts";
 import { websocketService } from "$workers/websocket/websocket-service.ts";
 import { Message } from "$workers/websocket/types.ts";

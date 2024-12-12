@@ -17,7 +17,7 @@ import {
     updateGroupRequestSchema,
 } from "$schemas/groups.ts";
 import { DeleteNoteResponse } from "$workers/websocket/api/notes/messages.ts";
-import { repository } from "$workers/database/lib.ts";
+import { repository } from "$db";
 
 const handleCreateGroupRequest: ListenerFn<CreateGroupMessage> = async (
     { message: { data }, sourceClient, respond },

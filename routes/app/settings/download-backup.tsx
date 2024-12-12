@@ -6,7 +6,7 @@ import { parseQueryParams } from "$backend/parse-query-params.ts";
 import { requireValidSchema } from "$schemas/mod.ts";
 import { backupNameSchema } from "$schemas/settings.ts";
 import { createBackupHandler } from "$lib/backup-handler/mod.ts";
-import { repository } from "$workers/database/lib.ts";
+import { repository } from "$db";
 
 export const handler = async (req: Request, ctx: FreshContext<AppState>) => {
     requirePemission(CanManageBackups.Update, ctx.state);

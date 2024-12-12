@@ -2,7 +2,7 @@ import { PeriodicTask } from "../periodic-task-service.ts";
 import { sendMessageToWebsocket } from "../../websocket/host.ts";
 import { logger } from "$backend/logger.ts";
 import { nextMinute } from "../next-at.ts";
-import { repository } from "$workers/database/lib.ts";
+import { repository } from "$db";
 
 export const checkReminders: PeriodicTask = {
     name: "check-reminders",

@@ -11,13 +11,13 @@ import {
     PickUserRecord,
     UserId,
     UserOnboardingState,
+    UserPasskeyRecord,
     UserRecord,
-} from "../../../database/query/user-repository.ts";
+} from "$db";
 import {
     PublicKeyCredentialCreationOptionsJSON,
     RegistrationResponseJSON,
 } from "$backend/deps.ts";
-import { UserPasskeyRecord } from "../../../database/query/passkey-repository.ts";
 import { RegistrationResult } from "$backend/passkeys.ts";
 
 type UserMessage<Type, Data = unknown> = Message<

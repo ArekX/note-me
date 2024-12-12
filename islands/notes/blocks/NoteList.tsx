@@ -1,4 +1,4 @@
-import { TreeRecord } from "../../../workers/database/query/tree-list.repository.ts";
+import { TreeRecord } from "$db";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import { useSignal } from "@preact/signals";
 import { useLoader } from "$frontend/hooks/use-loader.ts";

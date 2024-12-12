@@ -1,8 +1,5 @@
 import { Message } from "$workers/websocket/types.ts";
-import {
-    ItemType,
-    TreeRecord,
-} from "../../../database/query/tree-list.repository.ts";
+import { ItemType, TreeRecord } from "$db";
 
 type TreeMessage<Type, Data = unknown> = Message<
     "tree",

@@ -1,18 +1,19 @@
 import { computed, signal } from "@preact/signals";
 import {
+    DeletedNoteRecord,
     NoteSearchRecord,
+    ReminderNoteRecord,
     SearchNoteFilters,
-} from "../../workers/database/query/note-search-repository.ts";
-import { TreeRecord } from "../../workers/database/query/tree-list.repository.ts";
+    TreeRecord,
+    UserSharedNoteMeta,
+} from "$db";
 import {
     NoteFrontendResponse,
     SearchNoteMessage,
     SearchNoteResponse,
 } from "$workers/websocket/api/notes/messages.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
-import { ReminderNoteRecord } from "../../workers/database/query/note-reminder-repository.ts";
-import { UserSharedNoteMeta } from "../../workers/database/query/note-share-repository.ts";
-import { DeletedNoteRecord } from "../../workers/database/query/note-repository.ts";
+
 import { useMobileMenu } from "$frontend/hooks/use-mobile-menu.ts";
 import { useResponsiveQuery } from "$frontend/hooks/use-responsive-query.ts";
 

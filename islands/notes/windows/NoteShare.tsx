@@ -15,8 +15,7 @@ import { useEffect } from "preact/hooks";
 import Loader from "$islands/Loader.tsx";
 import ShareToUsers from "$islands/notes/windows/components/ShareToUsers.tsx";
 import ShareLinks from "$islands/notes/windows/components/ShareLinks.tsx";
-import { PublicNoteShareRecord } from "../../../workers/database/query/note-share-repository.ts";
-import { PickUserRecord } from "../../../workers/database/query/user-repository.ts";
+import { PickUserRecord, PublicNoteShareRecord } from "$db";
 
 export default function NoteShare({
     noteId,

@@ -1,6 +1,6 @@
 import { useLoader } from "$frontend/hooks/use-loader.ts";
 import { useSignal } from "@preact/signals";
-import { RecentNoteRecord } from "../../workers/database/query/note-repository.ts";
+import { RecentNoteRecord } from "$db";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import {
     GetRecentlyOpenedNotesMessage,

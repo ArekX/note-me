@@ -1,5 +1,5 @@
 import Button from "$components/Button.tsx";
-import { PublicNoteShareRecord } from "../../../../workers/database/query/note-share-repository.ts";
+import { PublicNoteShareRecord } from "$db";
 import CreateLinkForm from "$islands/notes/windows/components/CreateLinkForm.tsx";
 import { useSignal } from "@preact/signals";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";

@@ -1,8 +1,7 @@
 import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
 import { AppState } from "$types";
-import { ViewNoteRecord } from "../../../workers/database/query/note-repository.ts";
+import { repository, ViewNoteRecord } from "$db";
 import ViewNotePage from "$islands/notes/pages/ViewNotePage.tsx";
-import { repository } from "$workers/database/lib.ts";
 
 export interface PageData {
     note: ViewNoteRecord;

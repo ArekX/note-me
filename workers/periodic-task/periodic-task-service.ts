@@ -1,7 +1,7 @@
 import { logger } from "$backend/logger.ts";
 import { getCurrentUnixTimestamp, unixToDate } from "$lib/time/unix.ts";
 
-import { repository } from "$workers/database/lib.ts";
+import { repository } from "$db";
 import { waitUntilChannelReady } from "$workers/periodic-task/channel.ts";
 
 export interface PeriodicTask {

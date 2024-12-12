@@ -7,13 +7,15 @@ import Icon from "$components/Icon.tsx";
 import { useSearch } from "$frontend/hooks/use-search.ts";
 import { redirectTo } from "$frontend/redirection-manager.ts";
 import Picker from "$components/Picker.tsx";
-import { NoteSearchRecord } from "../../workers/database/query/note-search-repository.ts";
+import {
+    DeletedNoteRecord,
+    NoteSearchRecord,
+    ReminderNoteRecord,
+    UserSharedNoteMeta,
+} from "$db";
 import ReminderItem from "$islands/sidebar/reminders/ReminderItem.tsx";
-import { ReminderNoteRecord } from "../../workers/database/query/note-reminder-repository.ts";
 import RecycleBinItem from "$islands/sidebar/recycle-bin/RecycleBinItem.tsx";
-import { DeletedNoteRecord } from "../../workers/database/query/note-repository.ts";
 import SharedNoteItem from "$islands/sidebar/shared/SharedNoteItem.tsx";
-import { UserSharedNoteMeta } from "../../workers/database/query/note-share-repository.ts";
 import SwitcherContainer from "$islands/sidebar/SwitcherContainer.tsx";
 import SidebarPanelContents from "$islands/sidebar/SidebarPanelContents.tsx";
 

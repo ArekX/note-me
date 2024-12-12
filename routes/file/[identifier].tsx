@@ -2,7 +2,7 @@ import { FreshContext } from "$fresh/server.ts";
 import { AppState } from "$types";
 import { CanManageFiles } from "$backend/rbac/permissions.ts";
 import { hasPermission } from "$backend/rbac/authorizer.ts";
-import { repository } from "$workers/database/lib.ts";
+import { repository } from "$db";
 import { decodeBase64 } from "$std/encoding/base64.ts";
 
 const ALLOWED_RENDER_MIME_TYPES = [

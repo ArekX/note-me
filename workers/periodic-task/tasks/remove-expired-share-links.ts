@@ -1,7 +1,7 @@
 import { logger } from "$backend/logger.ts";
 import { PeriodicTask } from "../periodic-task-service.ts";
 import { startOfNextDay } from "../next-at.ts";
-import { repository } from "$workers/database/lib.ts";
+import { repository } from "$db";
 
 export const removeExpiredShareLinks: PeriodicTask = {
     name: "remove-expired-share-links",

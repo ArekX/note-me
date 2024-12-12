@@ -7,7 +7,7 @@ import { Partial } from "$fresh/runtime.ts";
 import EncryptionLockWindow from "$islands/encryption/EncryptionLockWindow.tsx";
 import { getSocketHostname } from "$backend/env.ts";
 import HelpWindow from "$islands/help/HelpWindow.tsx";
-import { repository } from "$workers/database/lib.ts";
+import { repository } from "$db";
 
 export default async function Layout(
     req: Request,

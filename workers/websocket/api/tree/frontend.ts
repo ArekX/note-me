@@ -4,7 +4,7 @@ import {
     GetTreeResponse,
     TreeFrontendMessage,
 } from "./messages.ts";
-import { repository } from "$workers/database/lib.ts";
+import { repository } from "$db";
 
 const handleGetTree: ListenerFn<GetTreeMessage> = async (
     { message, sourceClient, respond },

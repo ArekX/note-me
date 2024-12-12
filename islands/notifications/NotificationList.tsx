@@ -1,7 +1,7 @@
 import { useSignal } from "@preact/signals";
 import Icon from "$components/Icon.tsx";
 
-import { NotificationRecord } from "../../workers/database/query/notification-repository.ts";
+import { NotificationRecord } from "$db";
 import { createRef } from "preact";
 import { useSinglePopover } from "$frontend/hooks/use-single-popover.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";

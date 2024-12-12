@@ -1,9 +1,8 @@
 import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
 import { AppState } from "$types";
 import { parseQueryParams } from "$backend/parse-query-params.ts";
-import { GroupRecord } from "../../../workers/database/query/group-repository.ts";
+import { GroupRecord, repository } from "$db";
 import EditNotePage from "$islands/notes/pages/EditNotePage.tsx";
-import { repository } from "$workers/database/lib.ts";
 
 interface PageData {
     group: GroupRecord | null;

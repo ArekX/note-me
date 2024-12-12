@@ -1,8 +1,8 @@
 import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
 import { AppState } from "$types";
 import ViewNote from "$islands/notes/ViewNote.tsx";
-import { PublicSharedNote } from "../../../workers/database/query/note-share-repository.ts";
-import { repository } from "$workers/database/lib.ts";
+import { PublicSharedNote } from "$db";
+import { repository } from "$db";
 
 export const handler: Handlers<PageData> = {
     async GET(_req, ctx: FreshContext<AppState, PageData>) {

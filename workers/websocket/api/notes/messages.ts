@@ -7,33 +7,25 @@ import {
 import {
     DeletedNoteRecord,
     DeletedNotesFilter,
+    FindUserSharedNotesFilters,
     NoteDetailsOptions,
     NoteDetailsRecord,
-    NoteRecord,
-    RecentNoteRecord,
-    ViewNoteRecord,
-} from "../../../database/query/note-repository.ts";
-import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
-import {
     NoteHistoryDataRecord,
     NoteHistoryMetaRecord,
-} from "../../../database/query/note-history-repository.ts";
-import {
-    FindUserSharedNotesFilters,
+    NoteRecord,
+    NoteReminderData,
+    NoteSearchResult,
     NoteShareData,
     PublicNoteShareRecord,
-    UserSharedNoteMeta,
-} from "../../../database/query/note-share-repository.ts";
-import {
-    NoteReminderData,
+    RecentNoteRecord,
     ReminderNoteRecord,
+    SearchNoteFilters,
     SetReminderResult,
     UserReminderNotesFilters,
-} from "../../../database/query/note-reminder-repository.ts";
-import {
-    NoteSearchResult,
-    SearchNoteFilters,
-} from "../../../database/query/note-search-repository.ts";
+    UserSharedNoteMeta,
+    ViewNoteRecord,
+} from "$db";
+import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
 
 type NoteMessage<Type, Data = unknown> = Message<
     "notes",

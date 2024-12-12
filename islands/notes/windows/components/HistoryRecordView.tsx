@@ -1,7 +1,4 @@
-import {
-    NoteHistoryDataRecord,
-    NoteHistoryMetaRecord,
-} from "../../../../workers/database/query/note-history-repository.ts";
+import { NoteHistoryDataRecord, NoteHistoryMetaRecord } from "$db";
 import { NoteRecord } from "$islands/notes/NoteWindow.tsx";
 import { useSignal } from "@preact/signals";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";

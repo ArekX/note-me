@@ -1,8 +1,5 @@
 import Dialog from "$islands/Dialog.tsx";
-import {
-    ItemType,
-    TreeRecord,
-} from "../../workers/database/query/tree-list.repository.ts";
+import { ItemType, TreeRecord } from "$db";
 import Button from "$components/Button.tsx";
 import GroupPicker from "./GroupPicker.tsx";
 import { useSignal } from "@preact/signals";

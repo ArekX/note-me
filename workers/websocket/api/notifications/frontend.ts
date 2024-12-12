@@ -12,7 +12,7 @@ import {
     NotificationFrontendMessage,
     NotificationListResponse,
 } from "./messages.ts";
-import { repository } from "$workers/database/lib.ts";
+import { repository } from "$db";
 
 const handleGetMyNotifications: ListenerFn<GetMyNotificationsMessage> = async (
     { sourceClient, respond },

@@ -6,7 +6,7 @@ import {
 } from "$backend/session/mod.ts";
 import { AppSessionData, AppState } from "$types";
 import Alert from "$components/Alert.tsx";
-import { UserLoginRecord } from "../workers/database/query/user-repository.ts";
+import { repository, UserLoginRecord } from "$db";
 import Input from "$components/Input.tsx";
 import InvalidateData from "$islands/InvalidateData.tsx";
 import { checkLoginAttempt } from "$backend/bruteforce-login-protector.ts";
@@ -17,7 +17,6 @@ import {
     initializePasskeyAuthentication,
     PasskeyAuthenticationRequestData,
 } from "$backend/passkeys.ts";
-import { repository } from "$workers/database/lib.ts";
 
 interface LoginResult {
     username: string;

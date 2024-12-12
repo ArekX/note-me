@@ -1,7 +1,6 @@
-import { NotificationDataTypes } from "../../workers/database/query/notification-repository.ts";
+import { NotificationDataTypes, repository } from "$db";
 import { websocketService } from "$workers/websocket/websocket-service.ts";
 import { NotificationAddedResponse } from "$workers/websocket/api/notifications/messages.ts";
-import { repository } from "$workers/database/lib.ts";
 
 export const runSendNotificationAction = async (
     notification: NotificationDataTypes,

@@ -4,7 +4,7 @@ import Dialog from "$islands/Dialog.tsx";
 import { useSignal } from "@preact/signals";
 import GroupPicker from "$islands/groups/GroupPicker.tsx";
 import { useSelected } from "$frontend/hooks/use-selected.ts";
-import { TreeRecord } from "../../workers/database/query/tree-list.repository.ts";
+import { TreeRecord } from "$db";
 import FileUpload from "$islands/files/FileUpload.tsx";
 import {
     CreateNoteMessage,

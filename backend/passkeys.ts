@@ -13,7 +13,7 @@ import { loadSessionStateByUserId } from "$backend/session/session.ts";
 import { AppSessionData } from "$types";
 import { getAppUrl } from "$backend/env.ts";
 import { logger } from "$backend/logger.ts";
-import { repository } from "$workers/database/lib.ts";
+import { repository } from "$db";
 
 export const getRelyingPartyId = () => getAppUrl().hostname;
 export const getRelyingPartyOrigin = () => getAppUrl().origin;

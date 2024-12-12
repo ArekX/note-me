@@ -1,6 +1,6 @@
 import { logger } from "$backend/logger.ts";
 import { services } from "./services/mod.ts";
-import { connectHostChannelForDatabase } from "./database/host.ts";
+import { connectHostChannelForDatabase } from "$db";
 import {
     createRoutingChannel,
     createServiceChannel,

@@ -26,7 +26,7 @@ import { createBackupInputRecord } from "$backend/backups.ts";
 import { requireValidSchema } from "$schemas/mod.ts";
 import { backupNameSchema, backupTargetSchema } from "$schemas/settings.ts";
 import { createBackupHandler } from "$lib/backup-handler/mod.ts";
-import { repository } from "$workers/database/lib.ts";
+import { repository } from "$db";
 
 const handleGetPeriodicTasks: ListenerFn<GetPeriodicTasksMessage> = async (
     { respond, sourceClient },

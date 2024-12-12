@@ -1,5 +1,5 @@
 import { useLoader } from "$frontend/hooks/use-loader.ts";
-import { PeriodicTaskRecord } from "../../workers/database/query/periodic-task-repository.ts";
+import { PeriodicTaskRecord } from "$db";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import Table from "$components/Table.tsx";
 import {

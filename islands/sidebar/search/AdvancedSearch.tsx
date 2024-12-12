@@ -3,11 +3,10 @@ import Button from "$components/Button.tsx";
 import { useSignal } from "@preact/signals";
 import GroupPicker from "../../groups/GroupPicker.tsx";
 import Checkbox from "$islands/Checkbox.tsx";
-import { TreeRecord } from "../../../workers/database/query/tree-list.repository.ts";
+import { SearchType, TreeRecord } from "$db";
 import Input from "$components/Input.tsx";
 import TagInput from "$islands/notes/TagInput.tsx";
 import { useSearch } from "$frontend/hooks/use-search.ts";
-import { SearchType } from "../../../workers/database/query/note-search-repository.ts";
 
 interface AdvancedSearchProps {
     onClose: () => void;

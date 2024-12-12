@@ -14,7 +14,7 @@ import { CreateTagMessage } from "$workers/websocket/api/tags/messages.ts";
 import { requireValidSchema } from "$schemas/mod.ts";
 import { addTagSchema, updateTagSchema } from "$schemas/tags.ts";
 import { CanManageTags } from "$backend/rbac/permissions.ts";
-import { repository } from "$workers/database/lib.ts";
+import { repository } from "$db";
 
 const handleCreateTagRequest: ListenerFn<CreateTagMessage> = async (
     { message: { data }, sourceClient, respond },

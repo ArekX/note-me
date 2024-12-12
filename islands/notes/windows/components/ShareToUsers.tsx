@@ -1,4 +1,4 @@
-import { PickUserRecord } from "../../../../workers/database/query/user-repository.ts";
+import { PickUserRecord } from "$db";
 import { useSignal } from "@preact/signals";
 import {
     ShareToUsersMessage,

@@ -3,7 +3,7 @@ import { PeriodicTask } from "../periodic-task-service.ts";
 import { startOfNextDay } from "../next-at.ts";
 import { sendMessageToWebsocket } from "../../websocket/host.ts";
 import { NoteBackendMessage } from "$workers/websocket/api/notes/messages.ts";
-import { repository } from "$workers/database/lib.ts";
+import { repository } from "$db";
 
 export const removeExpiredDeletedNotes: PeriodicTask = {
     name: "remove-expired-deleted-notes",

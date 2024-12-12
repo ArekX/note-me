@@ -1,4 +1,4 @@
-import { NoteSharedData } from "../../../workers/database/query/notification-repository.ts";
+import { NoteSharedData } from "$db";
 import {
     NotificationViewProps,
 } from "$islands/notifications/NotificationItem.tsx";

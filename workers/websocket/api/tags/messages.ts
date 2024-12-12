@@ -1,9 +1,6 @@
 import { Message } from "$workers/websocket/types.ts";
 import { AddTagRequest, UpdateTagRequest } from "$schemas/tags.ts";
-import {
-    FindTagFilters,
-    TagRecord,
-} from "../../../database/query/note-tags-repository.ts";
+import { FindTagFilters, TagRecord } from "$db";
 import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
 
 type TagMessage<Type, Data = unknown> = Message<

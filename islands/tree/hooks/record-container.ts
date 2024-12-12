@@ -1,4 +1,4 @@
-import { TreeRecord } from "../../../workers/database/query/tree-list.repository.ts";
+import { TreeRecord } from "$db";
 
 export type DisplayMode = "view" | "edit";
 
