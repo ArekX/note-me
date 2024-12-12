@@ -1,14 +1,16 @@
 import { createWorkerChannel } from "$workers/channel/mod.ts";
-import { connectHostChannel } from "$workers/database/request.ts";
+import { connectHostChannelForDatabase } from "../database/host.ts";
 import { workerNotifyReady } from "$workers/services/worker-helper.ts";
 import { websocketService } from "$workers/websocket/websocket-service.ts";
 import { Message } from "$workers/websocket/types.ts";
+import { connectHostChannelForProcessor } from "$workers/processor/host.ts";
 
 declare const self: DedicatedWorkerGlobalScope;
 
 const workerChannel = createWorkerChannel("websocket", self);
 
-connectHostChannel(workerChannel);
+connectHostChannelForDatabase(workerChannel);
+connectHostChannelForProcessor(workerChannel);
 
 workerChannel.listen<Message>("backendRequest", ({ message }) => {
     websocketService.handleBackendRequest(message);

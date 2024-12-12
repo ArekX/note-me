@@ -1,4 +1,4 @@
-import { PickUserRecord } from "$backend/repository/user-repository.ts";
+import { PickUserRecord } from "../workers/database/query/user-repository.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import Input from "$components/Input.tsx";
 import Loader from "$islands/Loader.tsx";

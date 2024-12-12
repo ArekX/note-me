@@ -9,7 +9,7 @@ import {
     GetSingleGroupMessage,
     GetSingleGroupResponse,
 } from "$workers/websocket/api/groups/messages.ts";
-import { GroupRecord } from "$backend/repository/group-repository.ts";
+import { GroupRecord } from "../../workers/database/query/group-repository.ts";
 import TimeAgo from "$components/TimeAgo.tsx";
 
 interface GroupDetailsProps {

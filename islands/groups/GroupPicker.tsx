@@ -5,7 +5,7 @@ import {
     GetTreeResponse,
 } from "$workers/websocket/api/tree/messages.ts";
 import { useEffect } from "preact/hooks";
-import { TreeRecord } from "$backend/repository/tree-list.repository.ts";
+import { TreeRecord } from "../../workers/database/query/tree-list.repository.ts";
 import { useSignal } from "@preact/signals";
 import Icon from "$components/Icon.tsx";
 import Loader from "$islands/Loader.tsx";

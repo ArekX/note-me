@@ -3,7 +3,7 @@ import {
     InsertComponentProps,
 } from "$islands/notes/InsertDialog.tsx";
 import FilePicker from "$islands/files/FilePicker.tsx";
-import { FileMetaRecord } from "$backend/repository/file-repository.ts";
+import { FileMetaRecord } from "../../../workers/database/query/file-repository.ts";
 import {
     getFileDownloadUrl,
     getFileViewUrl,

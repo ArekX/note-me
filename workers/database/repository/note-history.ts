@@ -6,7 +6,7 @@ import {
     getHistoryRecordData,
     NoteHistoryDataRecord,
     NoteHistoryMetaRecord,
-} from "$backend/repository/note-history-repository.ts";
+} from "../query/note-history-repository.ts";
 import { DbHandlerMap, DbRequest } from "$workers/database/message.ts";
 import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
 

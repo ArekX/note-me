@@ -23,7 +23,7 @@ import {
     UserProfileData,
     UserRecord,
     validateUserPassword,
-} from "$backend/repository/user-repository.ts";
+} from "../query/user-repository.ts";
 import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
 
 type UserRequest<Key extends string, Request, Response> = DbRequest<

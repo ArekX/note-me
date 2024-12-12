@@ -3,7 +3,7 @@ import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
 import {
     FileMetaRecord,
     FindFileFilters,
-} from "$backend/repository/file-repository.ts";
+} from "../../../database/query/file-repository.ts";
 import { UpdateMultipleFilesRequest } from "$schemas/file.ts";
 
 type FileMessage<Type, Data = unknown> = Message<

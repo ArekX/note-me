@@ -1,4 +1,4 @@
-import { ReminderNoteRecord } from "$backend/repository/note-reminder-repository.ts";
+import { ReminderNoteRecord } from "../../../workers/database/query/note-reminder-repository.ts";
 import { redirectTo } from "$frontend/redirection-manager.ts";
 import { useUser } from "$frontend/hooks/use-user.ts";
 import TreeItemIcon from "$islands/tree/TreeItemIcon.tsx";

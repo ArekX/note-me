@@ -1,10 +1,11 @@
 import { logger } from "$backend/logger.ts";
 import { services } from "./services/mod.ts";
-import { connectHostChannel } from "$workers/database/request.ts";
+import { connectHostChannelForDatabase } from "./database/host.ts";
 import {
     createRoutingChannel,
     createServiceChannel,
 } from "$workers/channel/mod.ts";
+import { connectHostChannelForProcessor } from "$workers/processor/host.ts";
 
 const checkServiceDisabled = (serviceName: string): boolean => {
     const serviceDisabledEnvName = "DISABLE_SERVICE_" +
@@ -40,7 +41,7 @@ const initializeDatabaseService = async () => {
     logger.info("Starting database service.");
     await services.database.start();
 
-    connectHostChannel(createServiceChannel(services.database));
+    connectHostChannelForDatabase(createServiceChannel(services.database));
 
     logger.info("Database service started successfully.");
 };
@@ -49,10 +50,10 @@ export const initializeServices = async (): Promise<void> => {
     await initializeDatabaseService();
 
     const routingChannel = createRoutingChannel("host");
+    connectHostChannelForProcessor(routingChannel);
 
     for (const [serviceName, service] of Object.entries(services)) {
         if (service.isStarted) {
-            // TODO: Router needs to be here
             const serviceChannel = createServiceChannel(service);
             routingChannel.connectChannel(serviceChannel);
             serviceChannel.connectReceiver(routingChannel);

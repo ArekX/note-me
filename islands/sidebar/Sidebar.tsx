@@ -1,4 +1,4 @@
-import { NotificationRecord } from "$backend/repository/notification-repository.ts";
+import { NotificationRecord } from "../../workers/database/query/notification-repository.ts";
 import SideBarPanel from "$islands/sidebar/SideBarPanel.tsx";
 import { getCurrentMonthWallpaper } from "$frontend/wallpaper.ts";
 import SidebarMenu from "$islands/sidebar/SidebarMenu.tsx";

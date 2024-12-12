@@ -2,7 +2,7 @@ import { JobHandler } from "$workers/processor/jobs/mod.ts";
 import { createZip, ZipFile } from "$backend/zip.ts";
 import { decryptNote } from "$backend/encryption.ts";
 import { extname } from "$std/path/mod.ts";
-import { sendMessageToWebsocket } from "$workers/websocket/websocket-worker-message.ts";
+import { sendMessageToWebsocket } from "../../websocket/host.ts";
 import {
     NotifyUserExportFailedMessage,
     NotifyUserExportFinishedMessage,
@@ -244,11 +244,15 @@ export const tryProcessJob = async (
         await Deno.remove(fileLocation);
     };
 
+    console.log("Exporting data for user", user_id);
+
     const decryptionKey = await repository.user.getNoteEncryptionKey(user_id);
 
     if (!decryptionKey) {
         throw new Error("Failed to get decryption key for user");
     }
+
+    console.log("Got decryption key for user", user_id);
 
     const fileMap = await processFiles(
         zip,

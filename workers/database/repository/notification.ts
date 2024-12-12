@@ -8,7 +8,7 @@ import {
     markSingleNotificationRead,
     NewNotification,
     NotificationRecord,
-} from "$backend/repository/notification-repository.ts";
+} from "../query/notification-repository.ts";
 
 type NotificationRequest<Key extends string, Request, Response> = DbRequest<
     "notification",

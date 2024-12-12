@@ -6,7 +6,7 @@ import {
     getScheduledTasks,
     PeriodicTaskRecord,
     savePeriodicTaskRun,
-} from "$backend/repository/periodic-task-repository.ts";
+} from "../query/periodic-task-repository.ts";
 
 type PeriodicTaskRequest<Key extends string, Request, Response> = DbRequest<
     "periodicTask",

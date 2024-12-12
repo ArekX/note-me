@@ -1,6 +1,6 @@
 import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
 import { AppState } from "$types";
-import { UserLoginRecord } from "$backend/repository/user-repository.ts";
+import { UserLoginRecord } from "../../workers/database/query/user-repository.ts";
 import ResetUserPassword from "$islands/profile/ResetUserPassword.tsx";
 
 interface PasswordResetData {

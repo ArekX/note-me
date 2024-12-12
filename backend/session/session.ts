@@ -1,5 +1,5 @@
 import { SessionState } from "$backend/session/mod.ts";
-import { TypedSession } from "$backend/repository/session-repository.ts";
+import { TypedSession } from "../../workers/database/query/session-repository.ts";
 import { repository } from "$workers/database/lib.ts";
 
 export const loadSessionState = async <T>(

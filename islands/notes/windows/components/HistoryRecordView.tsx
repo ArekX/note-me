@@ -1,7 +1,7 @@
 import {
     NoteHistoryDataRecord,
     NoteHistoryMetaRecord,
-} from "$backend/repository/note-history-repository.ts";
+} from "../../../../workers/database/query/note-history-repository.ts";
 import { NoteRecord } from "$islands/notes/NoteWindow.tsx";
 import { useSignal } from "@preact/signals";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";

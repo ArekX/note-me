@@ -1,11 +1,15 @@
-import { DbRequest } from "./request.ts";
-import { repositories } from "$workers/database/repository/mod.ts";
+import { DbRequest } from "./host.ts";
+import {
+    repositories,
+    RepositoryData,
+} from "$workers/database/repository/mod.ts";
 import { logger } from "$backend/logger.ts";
 import {
     Channel,
     createMessageTypeListener,
     Listener,
 } from "$workers/channel/mod.ts";
+import { ActionData, actions } from "$workers/database/actions/mod.ts";
 
 let channel: Channel | null = null;
 
@@ -43,36 +47,75 @@ const respondFromDb = <T>(
     });
 };
 
+const handleRepositoryKind = async (request: DbRequest<RepositoryData>) => {
+    if (!(request.data.name in repositories)) {
+        throw new Error(
+            `Repository ${request.data.name} not found in library.`,
+        );
+    }
+
+    const repo = repositories[request.data.name as keyof typeof repositories];
+
+    if (!(request.data.key in repo)) {
+        throw new Error(
+            `Key ${request.data.key} not found in repository ${request.data.name}`,
+        );
+    }
+
+    const method = repo[request.data.key as keyof typeof repo] as (
+        data: unknown,
+    ) => Promise<unknown>;
+
+    respondFromDb(request, await method(request.data.data));
+};
+
+const handleActionKind = async (request: DbRequest<ActionData>) => {
+    if (!(request.data.name in actions)) {
+        throw new Error(
+            `Action ${request.data.name} not found in library.`,
+        );
+    }
+
+    const action = actions[request.data.name as keyof typeof actions];
+
+    if (!(request.data.key in action)) {
+        throw new Error(
+            `Key ${request.data.key} not found in action ${request.data.name}`,
+        );
+    }
+
+    const method = action[request.data.key as keyof typeof action] as (
+        data: unknown,
+    ) => Promise<unknown>;
+
+    respondFromDb(request, await method(request.data.data));
+};
+
 export const handleMesage = async (request: DbRequest) => {
     try {
-        if (!(request.data.name in repositories)) {
-            throw new Error(
-                `Repository ${request.data.name} not found in database library.`,
-            );
+        switch (request.data.kind) {
+            case "repository":
+                await handleRepositoryKind(
+                    request as DbRequest<RepositoryData>,
+                );
+                break;
+            case "action":
+                await handleActionKind(request as DbRequest<ActionData>);
+                break;
+            default:
+                throw new Error(`Unknown kind`);
         }
-
-        const repo =
-            repositories[request.data.name as keyof typeof repositories];
-
-        if (!(request.data.key in repo)) {
-            throw new Error(
-                `Key ${request.data.key} not found in repository ${request.data.name}`,
-            );
-        }
-
-        const method = repo[request.data.key as keyof typeof repo] as (
-            data: unknown,
-        ) => Promise<unknown>;
-
-        const response = await method(request.data.data);
-
-        respondFromDb(request, response);
     } catch (error) {
         respondFromDb(
             request,
             null,
             error instanceof Error ? error.message : "Unknown error",
         );
-        logger.error(error);
+        logger.error("Error running request {kind}.{name}.{key}: {message}", {
+            kind: request.data.kind,
+            key: request.data.key,
+            name: request.data.name,
+            message: error instanceof Error ? error.message : "Unknown error",
+        });
     }
 };

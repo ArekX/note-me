@@ -2,7 +2,7 @@ import Dialog from "$islands/Dialog.tsx";
 import { useSignal } from "@preact/signals";
 import { useLoader } from "$frontend/hooks/use-loader.ts";
 import Loader from "$islands/Loader.tsx";
-import { NoteDetailsRecord } from "$backend/repository/note-repository.ts";
+import { NoteDetailsRecord } from "../../../workers/database/query/note-repository.ts";
 import Button from "$components/Button.tsx";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import {

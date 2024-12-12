@@ -8,9 +8,9 @@ import {
     registerPassKey,
     updatePasskey,
     updatePasskeyLastUsedAt,
-} from "$backend/repository/passkey-repository.ts";
+} from "../query/passkey-repository.ts";
 import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
-import { UserPasskeyRecord } from "$backend/repository/passkey-repository.ts";
+import { UserPasskeyRecord } from "../query/passkey-repository.ts";
 import { DbHandlerMap, DbRequest } from "$workers/database/message.ts";
 import {
     PublicKeyCredentialCreationOptionsJSON,

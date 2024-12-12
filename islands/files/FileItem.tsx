@@ -1,4 +1,4 @@
-import { FileMetaRecord } from "$backend/repository/file-repository.ts";
+import { FileMetaRecord } from "../../workers/database/query/file-repository.ts";
 import Button from "$components/Button.tsx";
 import Icon from "$components/Icon.tsx";
 import FileSize from "$components/FileSize.tsx";

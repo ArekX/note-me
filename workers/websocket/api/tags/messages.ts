@@ -3,7 +3,7 @@ import { AddTagRequest, UpdateTagRequest } from "$schemas/tags.ts";
 import {
     FindTagFilters,
     TagRecord,
-} from "$backend/repository/note-tags-repository.ts";
+} from "../../../database/query/note-tags-repository.ts";
 import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
 
 type TagMessage<Type, Data = unknown> = Message<

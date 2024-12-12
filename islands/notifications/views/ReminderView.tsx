@@ -1,4 +1,4 @@
-import { NoteReminderData } from "$backend/repository/notification-repository.ts";
+import { NoteReminderData } from "../../../workers/database/query/notification-repository.ts";
 import {
     NotificationViewProps,
 } from "$islands/notifications/NotificationItem.tsx";

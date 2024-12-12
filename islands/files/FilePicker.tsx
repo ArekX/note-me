@@ -1,6 +1,6 @@
 import FileUpload from "$islands/files/FileUpload.tsx";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
-import { FileMetaRecord } from "$backend/repository/file-repository.ts";
+import { FileMetaRecord } from "../../workers/database/query/file-repository.ts";
 import {
     FileFrontendResponse,
     FindFilesMessage,

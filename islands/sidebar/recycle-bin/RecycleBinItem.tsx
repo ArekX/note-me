@@ -2,7 +2,7 @@ import TreeItemIcon from "$islands/tree/TreeItemIcon.tsx";
 import { fromTreeRecord } from "$islands/tree/hooks/record-container.ts";
 import Button from "$components/Button.tsx";
 import Icon from "$components/Icon.tsx";
-import { DeletedNoteRecord } from "$backend/repository/note-repository.ts";
+import { DeletedNoteRecord } from "../../../workers/database/query/note-repository.ts";
 import TimeAgo from "$components/TimeAgo.tsx";
 import ConfirmDialog from "$islands/ConfirmDialog.tsx";
 import { useSignal } from "@preact/signals";

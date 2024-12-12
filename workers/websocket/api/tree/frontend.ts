@@ -4,7 +4,7 @@ import {
     GetTreeResponse,
     TreeFrontendMessage,
 } from "./messages.ts";
-import { getTreeList } from "$backend/repository/tree-list.repository.ts";
+import { repository } from "$workers/database/lib.ts";
 
 const handleGetTree: ListenerFn<GetTreeMessage> = async (
     { message, sourceClient, respond },
@@ -12,11 +12,11 @@ const handleGetTree: ListenerFn<GetTreeMessage> = async (
     respond<GetTreeResponse>({
         type: "getTreeResponse",
         parent_id: message.parent_id,
-        records: await getTreeList(
-            message.parent_id ?? null,
-            sourceClient!.userId,
-            message.item_type,
-        ),
+        records: await repository.treeList.getTreeList({
+            group_id: message.parent_id ?? null,
+            user_id: sourceClient!.userId,
+            type: message.item_type,
+        }),
     });
 };
 

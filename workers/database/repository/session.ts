@@ -9,7 +9,7 @@ import {
     sessionExists,
     TypedSession,
     updateSessionData,
-} from "$backend/repository/session-repository.ts";
+} from "../query/session-repository.ts";
 
 type SessionRequest<Key extends string, Request, Response> = DbRequest<
     "session",

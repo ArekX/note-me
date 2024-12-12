@@ -1,7 +1,7 @@
 import { logger } from "$backend/logger.ts";
 import { PeriodicTask } from "../periodic-task-service.ts";
 import { startOfNextDay } from "../next-at.ts";
-import { sendMessageToWebsocket } from "$workers/websocket/websocket-worker-message.ts";
+import { sendMessageToWebsocket } from "../../websocket/host.ts";
 import { NoteBackendMessage } from "$workers/websocket/api/notes/messages.ts";
 import { repository } from "$workers/database/lib.ts";
 

@@ -6,7 +6,7 @@ import {
 } from "$backend/session/mod.ts";
 import { AppSessionData, AppState } from "$types";
 import Alert from "$components/Alert.tsx";
-import { UserLoginRecord } from "$backend/repository/user-repository.ts";
+import { UserLoginRecord } from "../workers/database/query/user-repository.ts";
 import Input from "$components/Input.tsx";
 import InvalidateData from "$islands/InvalidateData.tsx";
 import { checkLoginAttempt } from "$backend/bruteforce-login-protector.ts";

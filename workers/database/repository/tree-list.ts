@@ -3,7 +3,7 @@ import {
     getTreeList,
     ItemType,
     TreeRecord,
-} from "$backend/repository/tree-list.repository.ts";
+} from "../query/tree-list.repository.ts";
 
 type TreeListRequest<Key extends string, Request, Response> = DbRequest<
     "treeList",

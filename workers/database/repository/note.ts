@@ -28,7 +28,7 @@ import {
     updateNote,
     updateNoteParent,
     ViewNoteRecord,
-} from "$backend/repository/note-repository.ts";
+} from "../query/note-repository.ts";
 
 type NoteRequest<Key extends string, Request, Response> = DbRequest<
     "note",

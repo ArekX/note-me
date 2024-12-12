@@ -6,10 +6,10 @@ import {
     SearchNoteFilters,
     searchReminderNotes,
     searchSharedNotes,
-} from "$backend/repository/note-search-repository.ts";
-import { DeletedNoteRecord } from "$backend/repository/note-repository.ts";
-import { ReminderNoteRecord } from "$backend/repository/note-reminder-repository.ts";
-import { UserSharedNoteMeta } from "$backend/repository/note-share-repository.ts";
+} from "../query/note-search-repository.ts";
+import { DeletedNoteRecord } from "../query/note-repository.ts";
+import { ReminderNoteRecord } from "../query/note-reminder-repository.ts";
+import { UserSharedNoteMeta } from "../query/note-share-repository.ts";
 
 type NoteSearchRequest<Key extends string, Request, Response> = DbRequest<
     "noteSearch",

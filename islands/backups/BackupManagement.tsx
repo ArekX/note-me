@@ -13,7 +13,7 @@ import Table from "$components/Table.tsx";
 import TimeAgo from "$components/TimeAgo.tsx";
 import { useSelected } from "$frontend/hooks/use-selected.ts";
 import { useEffect } from "preact/hooks";
-import { BackupTargetRecord } from "$backend/repository/backup-target-repository.ts";
+import { BackupTargetRecord } from "../../workers/database/query/backup-target-repository.ts";
 import { getCurrentUnixTimestamp } from "$lib/time/unix.ts";
 import { EditTargetBackupRecord } from "./ManageBackupTargetDialog.tsx";
 import ManageBackupTargetDialog from "./ManageBackupTargetDialog.tsx";

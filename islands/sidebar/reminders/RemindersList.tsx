@@ -1,6 +1,6 @@
 import { ComponentChild } from "preact";
 import { useLoadMore } from "$frontend/hooks/use-load-more.ts";
-import { ReminderNoteRecord } from "$backend/repository/note-reminder-repository.ts";
+import { ReminderNoteRecord } from "../../../workers/database/query/note-reminder-repository.ts";
 import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
 import {
     FindNoteRemindersMessage,

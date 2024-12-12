@@ -10,7 +10,7 @@ import {
     TagRecord,
     UpdateTagData,
     updateTagRecord,
-} from "$backend/repository/note-tags-repository.ts";
+} from "../query/note-tags-repository.ts";
 import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
 
 type NoteTagsRequest<Key extends string, Request, Response> = DbRequest<

@@ -1,6 +1,6 @@
 import { RepositoryData } from "$workers/database/repository/mod.ts";
 import { ActionData } from "$workers/database/actions/mod.ts";
-import { requestFromDb } from "./request.ts";
+import { requestFromDb } from "./host.ts";
 
 export type DatabaseData = RepositoryData | ActionData;
 

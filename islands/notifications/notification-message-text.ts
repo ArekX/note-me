@@ -1,6 +1,6 @@
 import {
     NotificationRecord,
-} from "$backend/repository/notification-repository.ts";
+} from "../../workers/database/query/notification-repository.ts";
 
 export const getNotificationMessageText = (record: NotificationRecord) => {
     switch (record.data.type) {

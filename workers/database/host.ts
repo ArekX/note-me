@@ -28,7 +28,7 @@ const pendingRequests: { [key: string]: PendingResolver } = {};
 
 let connectedChannel: Channel | null = null;
 
-export const connectHostChannel = (channel: Channel) => {
+export const connectHostChannelForDatabase = (channel: Channel) => {
     channel.onReceive(
         createMessageTypeListener<DatabaseResponse>(
             "workerResponse",
@@ -69,7 +69,6 @@ export const requestFromDb = <Request extends DatabaseData, Response>(
             data,
         } as Request,
     };
-
     return new Promise<DatabaseResponse<Response>>((resolve, reject) => {
         pendingRequests[message.requestId] = {
             resolve,

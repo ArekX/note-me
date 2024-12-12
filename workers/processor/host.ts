@@ -1,5 +1,5 @@
 import { JobDefinition, JobNames } from "$workers/processor/jobs/mod.ts";
-import { workerSendMesage } from "$workers/services/worker-bus.ts";
+import { Channel, ChannelMessage } from "$workers/channel/mod.ts";
 
 export interface ProcessJobRequest<T extends keyof JobDefinition = JobNames> {
     type: "process";
@@ -17,33 +17,46 @@ export type ProcessorRequestMessage = ProcessJobRequest | AbortJobRequest;
 
 export type ProcessorMessageKey = ProcessorRequestMessage["type"];
 
+let connectedChannel: Channel | null = null;
+
+export const connectHostChannelForProcessor = (channel: Channel) => {
+    connectedChannel = channel;
+};
+
+const sendToProcessor = <T extends ProcessorRequestMessage>(
+    message: T,
+) => {
+    connectedChannel!.send({
+        from: "app",
+        message,
+        to: "processor",
+        type: message.type,
+    } as ChannelMessage<
+        T,
+        "app" | "processor",
+        ProcessorMessageKey
+    >);
+};
+
 export const sendProcessorRequest = <T extends JobNames>(
     name: T,
     job: Parameters<JobDefinition[T]>["0"],
 ) => {
     const jobId = crypto.randomUUID();
 
-    workerSendMesage<ProcessorRequestMessage, ProcessorMessageKey>(
-        "processor",
-        "process",
-        {
-            type: "process",
-            jobId,
-            name,
-            job,
-        },
-    );
+    sendToProcessor({
+        type: "process",
+        jobId,
+        name,
+        job,
+    });
 
     return jobId;
 };
 
 export const sendAbortRequest = (jobId: string) => {
-    workerSendMesage<ProcessorRequestMessage, ProcessorMessageKey>(
-        "processor",
-        "abort",
-        {
-            type: "abort",
-            jobId,
-        },
-    );
+    sendToProcessor({
+        type: "abort",
+        jobId,
+    });
 };

@@ -1,4 +1,4 @@
-import { NotificationDataTypes } from "$backend/repository/notification-repository.ts";
+import { NotificationDataTypes } from "../../workers/database/query/notification-repository.ts";
 import { websocketService } from "$workers/websocket/websocket-service.ts";
 import { NotificationAddedResponse } from "$workers/websocket/api/notifications/messages.ts";
 import { repository } from "$workers/database/lib.ts";

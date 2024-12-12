@@ -12,7 +12,7 @@ import {
     SetReminderData,
     SetReminderResult,
     UserReminderNotesFilters,
-} from "$backend/repository/note-reminder-repository.ts";
+} from "../query/note-reminder-repository.ts";
 
 type NoteReminderRequest<Key extends string, Request, Response> = DbRequest<
     "noteReminder",

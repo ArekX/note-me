@@ -2,7 +2,7 @@ import Dialog from "$islands/Dialog.tsx";
 import { NoteWindowComponentProps } from "$islands/notes/NoteWindow.tsx";
 import SideTabPanel, { PanelItem } from "$islands/SideTabPanel.tsx";
 import { useSignal } from "@preact/signals";
-import { NoteHistoryMetaRecord } from "$backend/repository/note-history-repository.ts";
+import { NoteHistoryMetaRecord } from "../../../workers/database/query/note-history-repository.ts";
 import { useLoader } from "$frontend/hooks/use-loader.ts";
 import Loader from "$islands/Loader.tsx";
 import NoItemMessage from "$islands/sidebar/NoItemMessage.tsx";

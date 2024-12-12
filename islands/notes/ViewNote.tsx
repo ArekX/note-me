@@ -1,4 +1,4 @@
-import { ViewNoteRecord } from "$backend/repository/note-repository.ts";
+import { ViewNoteRecord } from "../../workers/database/query/note-repository.ts";
 import Button from "$components/Button.tsx";
 import Icon from "$components/Icon.tsx";
 import MoreMenu, { MenuItemActions } from "$islands/notes/MoreMenu.tsx";

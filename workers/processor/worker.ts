@@ -22,4 +22,5 @@ self.onerror = (event) => {
 if (import.meta.main) {
     logger.info("Processor service started.");
     await waitUntilChannelReady();
+    logger.info("Processor service ready.");
 }

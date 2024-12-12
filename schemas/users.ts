@@ -1,5 +1,5 @@
 import { zod } from "./deps.ts";
-import { roleNames } from "$backend/rbac/role-definitions.ts";
+import { roleNames, Roles } from "$backend/rbac/role-definitions.ts";
 import { supportedTimezones } from "$lib/time/time-zone.ts";
 
 const userSchema = zod.object({
@@ -71,16 +71,18 @@ export const addUserSchema = zod.object({
     timezone: userSchema.shape.timezone,
 }).strict();
 
-export type AddUserRequest = zod.infer<typeof addUserSchema>;
+export type AddUserRequest = zod.infer<typeof addUserSchema> & { role: Roles };
 
 export const updateUserSchema = zod.object({
-    name: userSchema.shape.name.optional(),
+    name: userSchema.shape.name,
     new_password: userSchema.shape.password.optional(),
-    role: userSchema.shape.role.optional(),
-    timezone: userSchema.shape.timezone.optional(),
+    role: userSchema.shape.role,
+    timezone: userSchema.shape.timezone,
 }).strict();
 
-export type UpdateUserRequest = zod.infer<typeof updateUserSchema>;
+export type UpdateUserRequest = zod.infer<typeof updateUserSchema> & {
+    role: Roles;
+};
 
 export const changeUserPasswordSchema = addPasswordRefinement(
     zod.object({

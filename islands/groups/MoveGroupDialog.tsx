@@ -2,7 +2,7 @@ import Dialog from "$islands/Dialog.tsx";
 import {
     ItemType,
     TreeRecord,
-} from "$backend/repository/tree-list.repository.ts";
+} from "../../workers/database/query/tree-list.repository.ts";
 import Button from "$components/Button.tsx";
 import GroupPicker from "./GroupPicker.tsx";
 import { useSignal } from "@preact/signals";

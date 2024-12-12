@@ -13,7 +13,7 @@ import {
     NewGroupRecord,
     updateGroup,
     UpdateGroupRecord,
-} from "$backend/repository/group-repository.ts";
+} from "../query/group-repository.ts";
 
 type UserRequest<Key extends string, Request, Response> = DbRequest<
     "group",

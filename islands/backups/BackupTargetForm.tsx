@@ -1,4 +1,4 @@
-import { BackupTargetRecord } from "$backend/repository/backup-target-repository.ts";
+import { BackupTargetRecord } from "../../workers/database/query/backup-target-repository.ts";
 import { useSignal } from "@preact/signals";
 import { SettingsMap, TargetType } from "$lib/backup-handler/handlers.ts";
 import Input from "$components/Input.tsx";

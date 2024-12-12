@@ -1,4 +1,4 @@
-import { UserOnboardingState } from "$backend/repository/user-repository.ts";
+import { UserOnboardingState } from "../../workers/database/query/user-repository.ts";
 import { useUser } from "$frontend/hooks/use-user.ts";
 import Dialog from "$islands/Dialog.tsx";
 import OnboardingWrapper, {

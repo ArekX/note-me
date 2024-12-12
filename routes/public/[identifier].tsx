@@ -1,15 +1,15 @@
 import { FreshContext, PageProps } from "$fresh/server.ts";
-import {
-    getPublicShareNote,
-    PublicSharedNote,
-} from "$backend/repository/note-share-repository.ts";
+import { PublicSharedNote } from "../../workers/database/query/note-share-repository.ts";
 import { AppState } from "$types";
 import ViewNote from "$islands/notes/ViewNote.tsx";
+import { repository } from "$workers/database/lib.ts";
 
 export const handler = async (_req: Request, ctx: FreshContext<AppState>) => {
     const identifier: string = ctx.params.identifier ?? "";
 
-    const sharedNote = await getPublicShareNote(identifier);
+    const sharedNote = await repository.noteShare.getPublicShareNote(
+        identifier,
+    );
 
     if (!sharedNote) {
         throw new Deno.errors.NotFound("Note not found.");

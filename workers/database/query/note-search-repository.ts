@@ -1,9 +1,9 @@
 import { db } from "$backend/database.ts";
 import { sql } from "$lib/kysely-sqlite-dialect/deps.ts";
 import { applyFilters } from "$lib/kysely-sqlite-dialect/filters.ts";
-import { DeletedNoteRecord } from "$backend/repository/note-repository.ts";
-import { ReminderNoteRecord } from "$backend/repository/note-reminder-repository.ts";
-import { UserSharedNoteMeta } from "$backend/repository/note-share-repository.ts";
+import { DeletedNoteRecord } from "./note-repository.ts";
+import { ReminderNoteRecord } from "./note-reminder-repository.ts";
+import { UserSharedNoteMeta } from "./note-share-repository.ts";
 
 export type SearchType = "general" | "shared" | "reminders" | "recycleBin";
 

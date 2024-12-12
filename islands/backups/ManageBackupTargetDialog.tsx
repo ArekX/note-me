@@ -1,4 +1,4 @@
-import { BackupTargetRecord } from "$backend/repository/backup-target-repository.ts";
+import { BackupTargetRecord } from "../../workers/database/query/backup-target-repository.ts";
 import Dialog from "$islands/Dialog.tsx";
 import Button from "$components/Button.tsx";
 import Picker from "$components/Picker.tsx";

@@ -1,5 +1,5 @@
 import { Message } from "$workers/websocket/types.ts";
-import { GroupRecord } from "$backend/repository/group-repository.ts";
+import { GroupRecord } from "../../../database/query/group-repository.ts";
 import { AddGroupRequest, UpdateGroupRequest } from "$schemas/groups.ts";
 
 type GroupMessage<Type, Data = unknown> = Message<

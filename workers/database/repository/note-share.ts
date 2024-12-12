@@ -13,8 +13,8 @@ import {
     setUserShare,
     sharedNoteWithUser,
     UserSharedNoteMeta,
-} from "$backend/repository/note-share-repository.ts";
-import { PickUserRecord } from "$backend/repository/user-repository.ts";
+} from "../query/note-share-repository.ts";
+import { PickUserRecord } from "../query/user-repository.ts";
 
 type NoteShareRequest<Key extends string, Request, Response> = DbRequest<
     "noteShare",

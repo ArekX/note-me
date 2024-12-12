@@ -1,6 +1,6 @@
 import { logger } from "$backend/logger.ts";
 import { migrator } from "$backend/migration-manager.ts";
-import { createUserRecord } from "$backend/repository/user-repository.ts";
+import { createUserRecord } from "./query/user-repository.ts";
 
 const initializeFirstRun = async () => {
     logger.info("Creating administrator user...");

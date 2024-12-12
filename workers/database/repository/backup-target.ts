@@ -11,7 +11,7 @@ import {
     updateBackupInProgress,
     updateBackupTarget,
     updateLastBackupAt,
-} from "$backend/repository/backup-target-repository.ts";
+} from "../query/backup-target-repository.ts";
 import { BackupTargetRequest } from "$schemas/settings.ts";
 
 type BackupRequest<Key extends string, Request, Response> = DbRequest<

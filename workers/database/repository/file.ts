@@ -17,7 +17,7 @@ import {
     updateFileRecord,
     updateMultipleFiles,
     UpdateMultipleFilesData,
-} from "$backend/repository/file-repository.ts";
+} from "../query/file-repository.ts";
 import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
 import { decodeBase64, encodeBase64 } from "$std/encoding/base64.ts";
 
