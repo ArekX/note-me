@@ -7,7 +7,7 @@ import { logger, setLoggerName } from "$backend/logger.ts";
 import { loadEnvironment } from "$backend/env.ts";
 import { connectWorkerChannel } from "./message-handler.ts";
 import { bootstrap } from "$workers/database/bootstrap.ts";
-import { createWorkerChannel } from "$workers/channel/mod.ts";
+import { createWorkerChannel } from "../services/channel.ts";
 import { workerNotifyReady } from "$workers/services/worker-helper.ts";
 
 loadEnvironment();

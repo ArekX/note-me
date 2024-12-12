@@ -2,7 +2,7 @@ import {
     Channel,
     createMessageTypeListener,
     Listener,
-} from "$workers/channel/mod.ts";
+} from "../services/channel.ts";
 import { DatabaseData } from "$workers/database/lib.ts";
 
 export interface DatabaseResponse<T = unknown> {

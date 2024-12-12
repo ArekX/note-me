@@ -1,20 +1,5 @@
 import { BackgroundService } from "$workers/services/background-service.ts";
 
-/*
-create app channel
-connect db service channel to app channel
-
-in worker:
-create worker channel
-
-in service processing:
-create broadcast channel
-connect each service to broadcast channel
-
-implement function in db connectToChannel(channel: Channel)
-it will connect to ohReceive of the channel and check if the message is for it by checking the type
-*/
-
 export type Listener<
     T = unknown,
     Name extends string = string,

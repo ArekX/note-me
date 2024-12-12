@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 
-import { ChannelMessage, WorkerChannel } from "$workers/channel/mod.ts";
+import { ChannelMessage, WorkerChannel } from "./channel.ts";
 
 export type ServiceReadyMessage = ChannelMessage<
     "ready" | "ready-ack",

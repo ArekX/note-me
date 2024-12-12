@@ -8,7 +8,7 @@ import {
     Channel,
     createMessageTypeListener,
     Listener,
-} from "$workers/channel/mod.ts";
+} from "../services/channel.ts";
 import { ActionData, actions } from "$workers/database/actions/mod.ts";
 
 let channel: Channel | null = null;

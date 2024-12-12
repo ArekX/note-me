@@ -2,7 +2,7 @@ import {
     BackendMessage,
     createBackendMessage,
 } from "$workers/websocket/websocket-backend.ts";
-import { Channel } from "$workers/channel/mod.ts";
+import { Channel } from "../services/channel.ts";
 
 export type WebsocketMessageKey = "backendRequest";
 

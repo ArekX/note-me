@@ -4,7 +4,7 @@ import { connectHostChannelForDatabase } from "$db";
 import {
     createRoutingChannel,
     createServiceChannel,
-} from "$workers/channel/mod.ts";
+} from "./services/channel.ts";
 import { connectHostChannelForProcessor } from "$workers/processor/host.ts";
 
 const checkServiceDisabled = (serviceName: string): boolean => {

@@ -1,5 +1,5 @@
 import { JobDefinition, JobNames } from "$workers/processor/jobs/mod.ts";
-import { Channel, ChannelMessage } from "$workers/channel/mod.ts";
+import { Channel, ChannelMessage } from "../services/channel.ts";
 
 export interface ProcessJobRequest<T extends keyof JobDefinition = JobNames> {
     type: "process";
