@@ -5,6 +5,7 @@ import {
     getRegisteredUserPasskeys,
     PasskeyByIdRecord,
     passkeyExists,
+    PasskeyRegistrationInfo,
     registerPassKey,
     updatePasskey,
     updatePasskeyLastUsedAt,
@@ -12,11 +13,9 @@ import {
 import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
 import { UserPasskeyRecord } from "../query/passkey-repository.ts";
 import { DbHandlerMap, DbRequest } from "$workers/database/message.ts";
-import {
-    PublicKeyCredentialCreationOptionsJSON,
-    VerifiedRegistrationResponse,
-} from "$backend/deps.ts";
+import { PublicKeyCredentialCreationOptionsJSON } from "$backend/deps.ts";
 import { UserPasskeyTable } from "$types";
+import { decodeBase64, encodeBase64 } from "$std/encoding/base64.ts";
 
 type PasskeyRequest<Key extends string, Request, Response> = DbRequest<
     "passkey",
@@ -26,13 +25,16 @@ type PasskeyRequest<Key extends string, Request, Response> = DbRequest<
     Response
 >;
 
+type TransferRegistrationInfo =
+    & Omit<PasskeyRegistrationInfo, "credentialPublicKey">
+    & {
+        credentialPublicKey: string;
+    };
 type RegisterPassKey = PasskeyRequest<"registerPassKey", {
     noteme_user_id: number;
     name: string;
     webauthn_user: PublicKeyCredentialCreationOptionsJSON["user"];
-    registration_info: NonNullable<
-        VerifiedRegistrationResponse["registrationInfo"]
-    >;
+    registration_info: TransferRegistrationInfo;
     transports: string[];
 }, void>;
 
@@ -44,10 +46,13 @@ type GetRegisteredUserPasskeys = PasskeyRequest<
 
 type PasskeyExists = PasskeyRequest<"passkeyExists", string, boolean>;
 
+type PasskeyIdRecordTransfer = Omit<PasskeyByIdRecord, "public_key"> & {
+    public_key: string;
+};
 type GetPasskeyById = PasskeyRequest<
     "getPasskeyById",
     string,
-    PasskeyByIdRecord | undefined
+    PasskeyIdRecordTransfer | undefined
 >;
 
 type UpdatePasskeyLastUsedAt = PasskeyRequest<
@@ -83,10 +88,38 @@ export type PasskeyRepository =
     | DeletePasskey;
 
 export const passkey: DbHandlerMap<PasskeyRepository> = {
-    registerPassKey,
+    registerPassKey: ({
+        noteme_user_id,
+        name,
+        webauthn_user,
+        registration_info,
+        transports,
+    }) => {
+        return registerPassKey({
+            noteme_user_id,
+            name,
+            webauthn_user,
+            registration_info: {
+                ...registration_info,
+                credentialPublicKey: decodeBase64(
+                    registration_info.credentialPublicKey,
+                ),
+            },
+            transports,
+        });
+    },
     getRegisteredUserPasskeys,
     passkeyExists,
-    getPasskeyById,
+    getPasskeyById: async (passkeyId) => {
+        const record = await getPasskeyById(passkeyId);
+        if (!record) {
+            return undefined;
+        }
+        return {
+            ...record,
+            public_key: encodeBase64(record.public_key),
+        };
+    },
     updatePasskeyLastUsedAt,
     updatePasskey: ({ id, user_id, name }) => updatePasskey(id, user_id, name),
     findUserPasskeys: ({ user_id, page }) => findUserPasskeys(user_id, page),

@@ -5,6 +5,7 @@ export {
 
 export {
     type PasskeyByIdRecord,
+    type PasskeyRegistrationInfo,
     type UserPasskeyRecord,
 } from "./query/passkey-repository.ts";
 
