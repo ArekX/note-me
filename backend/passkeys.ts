@@ -135,7 +135,6 @@ export const finalizePasskeyRegistration = async (
             };
         }
 
-        // problem,,,,
         await repository.passkey.registerPassKey({
             noteme_user_id: user_id,
             name: getDefaultPasskeyName(
