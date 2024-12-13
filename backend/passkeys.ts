@@ -1,6 +1,7 @@
 import {
     AuthenticationResponseJSON,
     AuthenticatorTransportFuture,
+    decodeBase64,
     generateAuthenticationOptions,
     generateRegistrationOptions,
     PublicKeyCredentialCreationOptionsJSON,
@@ -13,7 +14,8 @@ import { loadSessionStateByUserId } from "$backend/session/session.ts";
 import { AppSessionData } from "$types";
 import { getAppUrl } from "$backend/env.ts";
 import { logger } from "$backend/logger.ts";
-import { repository } from "$db";
+import { encodeBase64 } from "$std/encoding/base64.ts";
+import { repository } from "$workers/database/lib.ts";
 
 export const getRelyingPartyId = () => getAppUrl().hostname;
 export const getRelyingPartyOrigin = () => getAppUrl().origin;
@@ -133,13 +135,19 @@ export const finalizePasskeyRegistration = async (
             };
         }
 
+        // problem,,,,
         await repository.passkey.registerPassKey({
             noteme_user_id: user_id,
             name: getDefaultPasskeyName(
                 registrationResponse.response.transports ?? [],
             ),
             webauthn_user: options.user,
-            registration_info: verification.registrationInfo!,
+            registration_info: {
+                ...verification.registrationInfo,
+                credentialPublicKey: encodeBase64(
+                    verification.registrationInfo.credentialPublicKey,
+                ),
+            },
             transports: registrationResponse.response.transports ?? [],
         });
 
@@ -239,7 +247,7 @@ export const finalizePasskeyAuthentication = async (
             expectedRPID: getRelyingPartyId(),
             authenticator: {
                 credentialID: passkey.credential_identifier,
-                credentialPublicKey: passkey.public_key,
+                credentialPublicKey: decodeBase64(passkey.public_key),
                 counter: passkey.counter,
                 transports: passkey.transports.split(
                     ",",

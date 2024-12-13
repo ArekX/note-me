@@ -8,13 +8,18 @@ import { RecordId, UserPasskeyTable } from "$types";
 import { Paged, pageResults } from "$lib/kysely-sqlite-dialect/pagination.ts";
 import { sql } from "$lib/kysely-sqlite-dialect/deps.ts";
 
+export type PasskeyRegistrationInfo = Pick<
+    NonNullable<
+        VerifiedRegistrationResponse["registrationInfo"]
+    >,
+    "credentialID" | "credentialPublicKey" | "counter" | "credentialBackedUp"
+>;
+
 interface RegisterPassKeyOptions {
     noteme_user_id: number;
     name: string;
     webauthn_user: PublicKeyCredentialCreationOptionsJSON["user"];
-    registration_info: NonNullable<
-        VerifiedRegistrationResponse["registrationInfo"]
-    >;
+    registration_info: PasskeyRegistrationInfo;
     transports: string[];
 }
 
