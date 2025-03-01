@@ -6,7 +6,7 @@ import {
     getLinkMarkdown,
 } from "$islands/notes/helpers/markdown.ts";
 
-const listItemLineRegex = /^(\s*)(-|\*|\d+\.)\s/;
+const listItemLineRegex = /^(\s*)(-|\*|\d+\.)\s+(\[[x ]\]\s)?/;
 
 const tabIndent = "    ";
 
@@ -46,6 +46,7 @@ const determineListLine = (
     return {
         indent: result[1],
         listChar: result[2],
+        hasCheckbox: !!result[3],
         lineStart,
         lineEnd,
         line,
@@ -105,7 +106,10 @@ export const useTextareaShortcuts = ({
             return;
         }
 
-        const { indent, listChar, line, lineStart, lineEnd } = listLine;
+        const { indent, listChar, line, lineStart, lineEnd, hasCheckbox } =
+            listLine;
+
+        const toInsert = ` ${hasCheckbox ? "[ ] " : ""}`;
 
         if (line.trim() === listChar) {
             setFieldText(
@@ -121,7 +125,7 @@ export const useTextareaShortcuts = ({
         if (listChar === "*" || listChar === "-") {
             insertTextIntoField(
                 textAreaRef.current,
-                `\n${indent}${listChar} `,
+                `\n${indent}${listChar}${toInsert}`,
             );
             e.preventDefault();
             return;
@@ -132,7 +136,7 @@ export const useTextareaShortcuts = ({
         if (Number.isFinite(number)) {
             insertTextIntoField(
                 textAreaRef.current,
-                `\n${indent}${number + 1}. `,
+                `\n${indent}${number + 1}.${toInsert}`,
             );
             e.preventDefault();
             return;
