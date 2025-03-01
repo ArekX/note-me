@@ -21,8 +21,7 @@
         "rules": {
             "tags": ["fresh", "recommended"],
             "exclude": [
-                "jsx-curly-braces",
-                "react-rules-of-hooks"
+                "jsx-curly-braces"
             ]
         }
     },

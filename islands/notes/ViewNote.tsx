@@ -38,15 +38,16 @@ export default function ViewNote(
     const recordData = useSignal<ViewNoteRecord>({
         ...record,
     });
-    const search = disableTagLinks ? null : useSearch();
+    const search = useSearch();
 
     const help = useHelp();
 
     const query = useResponsiveQuery();
 
-    if (!historyMode) {
-        useActiveNoteEffect(recordData.value.id);
-    }
+    useActiveNoteEffect({
+        noteId: recordData.value.id,
+        historyMode,
+    });
 
     useEffect(() => {
         recordData.value = {
@@ -107,7 +108,7 @@ export default function ViewNote(
             return;
         }
 
-        search?.setTags([tag]);
+        search.setTags([tag]);
     };
 
     return (

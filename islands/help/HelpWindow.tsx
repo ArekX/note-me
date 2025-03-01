@@ -146,15 +146,15 @@ export default function NoteHelp() {
         }
     };
 
-    if (!help.isOpen.value) {
-        return null;
-    }
-
     useEffect(() => {
         if (help.isOpen.value && help.initialAction.value) {
             handleTopicAction(help.initialAction.value);
         }
     }, [help.isOpen.value]);
+
+    if (!help.isOpen.value) {
+        return null;
+    }
 
     return (
         <Dialog

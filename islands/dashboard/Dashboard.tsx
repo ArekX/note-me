@@ -7,11 +7,11 @@ import DashboardIntroduction from "$islands/onboarding/content/DashboardIntroduc
 import { IS_BROWSER } from "$fresh/runtime.ts";
 
 export default function Dashboard() {
+    const user = useUser();
+
     if (!IS_BROWSER) {
         return null;
     }
-
-    const user = useUser();
 
     return (
         <>

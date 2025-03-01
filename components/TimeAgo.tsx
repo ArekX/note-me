@@ -8,11 +8,11 @@ interface TimeAgoProps {
 }
 
 export default function TimeAgo({ time, emptyText = "N/A" }: TimeAgoProps) {
+    const formatter = useTimeFormat();
+
     if (!time) {
         return <span>{emptyText ?? null}</span>;
     }
-
-    const formatter = useTimeFormat();
 
     return <span title={formatter.formatDateTime(time)}>{timeAgo(time)}</span>;
 }

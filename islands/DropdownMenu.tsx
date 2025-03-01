@@ -98,10 +98,6 @@ export default function DropdownMenu(
         addButtonClass = "",
     }: DropdownMenuProps,
 ) {
-    if (items.length === 0) {
-        return null;
-    }
-
     const menuRef = createRef<HTMLDivElement>();
     const buttonRef = createRef<HTMLDivElement>();
 
@@ -164,6 +160,10 @@ export default function DropdownMenu(
             onClick={handleItemClick}
         />
     );
+
+    if (items.length === 0) {
+        return null;
+    }
 
     return (
         <div class={`relative ${addButtonClass}`}>

@@ -126,25 +126,27 @@ const runRequestResponse = <Response extends Message>(
 export const useWebsocketService = <T extends Message>(
     options?: WebSocketEventOptions<T>,
 ) => {
-    if (options?.eventMap) {
-        useEffect(() => {
-            const handleWebsocketMessage = (data: T) => {
-                options.eventMap![data.namespace as T["namespace"]]
-                    ?.[data.type as T["type"]]?.(
-                        data as Extract<
-                            Extract<T, { namespace: T["namespace"] }>,
-                            { type: T["type"] }
-                        >,
-                    );
-            };
+    useEffect(() => {
+        if (!options?.eventMap) {
+            return;
+        }
 
-            addListener(handleWebsocketMessage);
+        const handleWebsocketMessage = (data: T) => {
+            options.eventMap![data.namespace as T["namespace"]]
+                ?.[data.type as T["type"]]?.(
+                    data as Extract<
+                        Extract<T, { namespace: T["namespace"] }>,
+                        { type: T["type"] }
+                    >,
+                );
+        };
 
-            return () => {
-                removeListener(handleWebsocketMessage);
-            };
-        }, [options?.eventMap]);
-    }
+        addListener(handleWebsocketMessage);
+
+        return () => {
+            removeListener(handleWebsocketMessage);
+        };
+    }, [options?.eventMap]);
 
     const dispatchMessage = <T extends Message>(
         namespace: T["namespace"],
