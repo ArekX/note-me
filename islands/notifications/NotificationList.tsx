@@ -186,7 +186,7 @@ export default function Notifications(props: NotificationsProps) {
                 )
                 : query.isMobile() && isDialogOpen.value && (
                     <Dialog
-                        visible={true}
+                        visible
                         props={{
                             class: "w-full p-0 py-2",
                         }}

@@ -210,7 +210,7 @@ export default function NoteReminder({
 
     return (
         <Dialog
-            canCancel={true}
+            canCancel
             onCancel={onClose}
             title="Note Reminder"
             props={{ "class": "md:w-3/4 lg:w-2/4 max-md:w-full" }}

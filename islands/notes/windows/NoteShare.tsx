@@ -98,9 +98,9 @@ export default function NoteShare({
 
     return (
         <Dialog
-            visible={true}
+            visible
             onCancel={onClose}
-            canCancel={true}
+            canCancel
             props={{ "class": "md:w-3/4 lg:w-2/4 max-md:w-full" }}
             title="Share"
         >

@@ -62,8 +62,8 @@ export default function NoteDetails(
             {};
     return (
         <Dialog
-            visible={true}
-            canCancel={true}
+            visible
+            canCancel
             onCancel={onClose}
             title="Details"
         >
@@ -109,7 +109,7 @@ export default function NoteDetails(
                                         <div class="markdown-viewer">
                                             <TableOfContents
                                                 text={noteData.value!.note}
-                                                disableLinks={true}
+                                                disableLinks
                                                 noTocMessage="No table of contents found, ToC is generated from markdown headings."
                                             />
                                         </div>

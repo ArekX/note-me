@@ -4,7 +4,7 @@ export {
     tokens,
 } from "https://deno.land/x/rusty_markdown@v0.4.1/mod.ts";
 export { default as autosize } from "npm:autosize@6.0.1";
-export { insertTextIntoField } from "npm:text-field-edit@4.1.1";
+export { insertTextIntoField, setFieldText } from "npm:text-field-edit@4.1.1";
 export { diff } from "jsr:@opentf/obj-diff";
 export { decodeBase64, encodeBase64 } from "$std/encoding/base64.ts";
 export {

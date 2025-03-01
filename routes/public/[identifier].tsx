@@ -35,9 +35,9 @@ export default function Page(props: PageProps<PageData, AppState>) {
     return (
         <div class="text-white lg:max-xl:w-3/4 xl:w-1/2 max-lg:px-5 ml-auto mr-auto pt-8 pb-10">
             <ViewNote
-                readonly={true}
+                readonly
                 shareMode="everyone"
-                disableTagLinks={true}
+                disableTagLinks
                 author={props.data.note.user_name}
                 record={{
                     ...props.data.note,

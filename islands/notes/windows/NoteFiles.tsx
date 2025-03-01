@@ -109,8 +109,8 @@ export default function NoteFiles(
 
     return (
         <Dialog
-            visible={true}
-            canCancel={true}
+            visible
+            canCancel
             onCancel={onClose}
             props={{
                 class: "w-1/2 max-md:w-full",

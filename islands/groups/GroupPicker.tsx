@@ -152,7 +152,7 @@ export default function GroupPicker({
                     )}
                     {allowRoot && (
                         <GroupPickerItem
-                            isRoot={true}
+                            isRoot
                             record={{
                                 id: 0,
                                 type: "group",

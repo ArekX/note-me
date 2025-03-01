@@ -31,7 +31,7 @@ const Component = ({
             <div class="markdown-viewer">
                 <TableOfContents
                     text={noteText}
-                    disableLinks={true}
+                    disableLinks
                     noTocMessage="No headings found in this note to create table of contents, pleaase add headings to see the ToC here."
                 />
             </div>

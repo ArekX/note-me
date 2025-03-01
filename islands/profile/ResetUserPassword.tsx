@@ -72,8 +72,7 @@ export default function ResetUserPassword({
     return (
         <div class="text-white w-full lg:w-1/2 m-auto p-5">
             <h1 class="text-3xl font-semibold">
-                <Logo white={true} height={40} width={40} /> Welcome to NoteMe,
-                {" "}
+                <Logo white height={40} width={40} /> Welcome to NoteMe,{" "}
                 {user.getName()}!
             </h1>
 

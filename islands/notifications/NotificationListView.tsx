@@ -81,7 +81,7 @@ export default function NotificationListView(
                 <div class="h-full flex justify-center items-center">
                     <NoItemMessage
                         icon="smile"
-                        removePadding={true}
+                        removePadding
                         message="No notifications. All clear!"
                     />
                 </div>

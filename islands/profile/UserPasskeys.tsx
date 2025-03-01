@@ -66,7 +66,7 @@ const PasskeyRenameDialog = ({
     return (
         <Dialog
             onCancel={onCancel}
-            canCancel={true}
+            canCancel
         >
             {processorLoader.running
                 ? <Loader color="white">Saving...</Loader>
@@ -325,7 +325,7 @@ export default function UserPasskeys() {
                     prompt="Are you sure you want to delete this passkey? You will no longer be able to use it to log in."
                     confirmText="Delete passkey"
                     confirmColor="danger"
-                    visible={true}
+                    visible
                     onCancel={() => passkeyToDelete.unselect()}
                     onConfirm={() => deleteSelectedPasskey()}
                 />

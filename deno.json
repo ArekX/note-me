@@ -17,7 +17,15 @@
         "preview": "deno run -A main.ts",
         "build": "deno run -A dev.ts build"
     },
-    "lint": { "rules": { "tags": ["fresh", "recommended"] } },
+    "lint": {
+        "rules": {
+            "tags": ["fresh", "recommended"],
+            "exclude": [
+                "jsx-curly-braces",
+                "react-rules-of-hooks"
+            ]
+        }
+    },
     "exclude": ["**/_fresh/*"],
     "fmt": { "indentWidth": 4 },
     "imports": {

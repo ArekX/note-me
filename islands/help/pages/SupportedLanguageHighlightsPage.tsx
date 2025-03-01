@@ -207,6 +207,8 @@ const languages = [
     { name: "Zephir", alias: ["zephir", "zep"] },
 ];
 
+const orText = " OR ";
+
 export default function SupportedLanguageHighlights() {
     return (
         <div class="p-2">
@@ -237,7 +239,7 @@ export default function SupportedLanguageHighlights() {
                                     <>
                                         <pre class="inline">{alias}</pre>
                                         {index !== language.alias.length - 1
-                                            ? <strong>{" "}OR{" "}</strong>
+                                            ? <strong>{orText}</strong>
                                             : ""}
                                     </>
                                 ))}

@@ -17,6 +17,7 @@ import { InsertTableDef } from "$islands/notes/insert-components/InsertTable.tsx
 import { InsertHeadingDef } from "$islands/notes/insert-components/InsertHeading.tsx";
 import { HotkeySet } from "$frontend/hotkeys.ts";
 import { useResponsiveQuery } from "$frontend/hooks/use-responsive-query.ts";
+import { useHotkeys } from "$frontend/hooks/use-hotkeys.ts";
 
 export const insertDialogHotkeySet: HotkeySet<
     "insertDialog",
@@ -26,8 +27,8 @@ export const insertDialogHotkeySet: HotkeySet<
     items: [
         {
             identifier: "openInsertDialog",
-            metaKeys: ["ctrl"],
-            key: "q",
+            metaKeys: ["alt"],
+            key: "i",
             description: "Open insert dialog",
         },
     ],
@@ -132,6 +133,7 @@ export default function InsertDialog({
     noteText,
     onInsert,
 }: InsertDialogProps) {
+    const { resolveHotkey } = useHotkeys("insertDialog");
     const insertData = useSignal<object | null>(null);
     const showDialog = useSignal(false);
 
@@ -173,9 +175,12 @@ export default function InsertDialog({
 
     useEffect(() => {
         const handleHotkeys = (e: KeyboardEvent) => {
-            if (e.ctrlKey && e.key === "q") {
-                handleOpenInsertDialog();
-                e.preventDefault();
+            const hotkey = resolveHotkey(e);
+
+            if (hotkey) {
+                if (hotkey === "openInsertDialog") {
+                    handleOpenInsertDialog();
+                }
             }
         };
 
@@ -197,8 +202,8 @@ export default function InsertDialog({
             </Button>
             {showDialog.value && (
                 <Dialog
-                    visible={true}
-                    canCancel={true}
+                    visible
+                    canCancel
                     onCancel={handleCancel}
                     props={{
                         class: "w-full xl:w-4/5 2xl:w-3/5",

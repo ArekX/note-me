@@ -120,7 +120,7 @@ export default function ImportNotes() {
                             <div class="py-4">
                                 <p class="text-xl">Group to import into</p>
                                 <GroupPicker
-                                    allowRoot={true}
+                                    allowRoot
                                     selectedId={selectedGroup.selected.value
                                         ?.id ??
                                         0}

@@ -11,7 +11,7 @@ type SocketHandler = (message: unknown) => void;
 let socket: WebSocket | null = null;
 
 let pendingRequestsPropagationTicket: TicketId | null = null;
-let pendingRequests: (string | ArrayBuffer)[] = [];
+let pendingRequests: (string | Uint8Array)[] = [];
 
 const handlers: Set<SocketHandler> = new Set();
 let isReconnecting = false;
@@ -114,7 +114,7 @@ const processHandlers = (message: string) => {
     });
 };
 
-const pushToPendingRequests = (message: string | ArrayBuffer) => {
+const pushToPendingRequests = (message: string | Uint8Array) => {
     pendingRequests.push(message);
     if (!pendingRequestsPropagationTicket) {
         pendingRequestsPropagationTicket = createPropagationTicket();
@@ -131,7 +131,7 @@ export const send = <T>(message: T) => {
     socket?.send(jsonMessage);
 };
 
-export const sendBinary = (data: ArrayBuffer) => {
+export const sendBinary = (data: Uint8Array) => {
     if (!socket || socket.readyState !== WebSocket.OPEN || isReconnecting) {
         pushToPendingRequests(data);
         return;

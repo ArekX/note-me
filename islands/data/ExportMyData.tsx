@@ -181,7 +181,7 @@ export default function ExportMyData() {
             />
             {processingLoader.running && (
                 <Dialog
-                    visible={true}
+                    visible
                     canCancel={false}
                 >
                     <p class="py-4 text-xl">Exporting your data</p>
@@ -213,7 +213,7 @@ export default function ExportMyData() {
             )}
             {!processingLoader.running && exportId.value && (
                 <Dialog
-                    visible={true}
+                    visible
                     canCancel={false}
                 >
                     <div>

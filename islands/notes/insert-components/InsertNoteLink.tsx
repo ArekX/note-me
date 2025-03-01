@@ -119,7 +119,7 @@ const Component = ({
                         {results.value.map((i) => (
                             <NoteItemView
                                 record={i}
-                                hideActiveNote={true}
+                                hideActiveNote
                                 addClass={selectedNoteId.value === i.id
                                     ? "bg-gray-600"
                                     : ""}

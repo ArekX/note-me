@@ -126,7 +126,7 @@ export default function PassedReminders() {
                             <ReminderItem
                                 addClass="rounded-lg"
                                 key={record.id}
-                                hideReminderButton={true}
+                                hideReminderButton
                                 buttons={
                                     <>
                                         <Button

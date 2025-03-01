@@ -24,23 +24,7 @@ interface BackupManagementProps {
     maxBackupCount: number;
 }
 
-export default function BackupManagement({
-    maxBackupCount,
-}: BackupManagementProps) {
-    if (maxBackupCount === 0) {
-        return (
-            <div>
-                <h1 class="text-xl mb-4 font-semibold">Backup Management</h1>
-                <p>
-                    Backups are disabled by MAX_ALLOWED_BACKUP_COUNT environment
-                    variable. To use this page, enable backups from the
-                    environment variables by setting it to a value greater than
-                    0.
-                </p>
-            </div>
-        );
-    }
-
+const BackupManagement = () => {
     const backupTargets = useSignal<BackupTargetRecord[]>([]);
     const backupTargetLoader = useLoader(true);
     const deleteTargetLoader = useLoader();
@@ -254,7 +238,7 @@ export default function BackupManagement({
                 <ConfirmDialog
                     prompt="Are you sure you want to delete this backup target?"
                     isProcessing={deleteTargetLoader.running}
-                    visible={true}
+                    visible
                     confirmColor="danger"
                     onConfirm={handleDeleteSelected}
                     onCancel={() => backupToDelete.unselect()}
@@ -262,4 +246,24 @@ export default function BackupManagement({
             )}
         </div>
     );
+};
+
+export default function BackupManagementContainer({
+    maxBackupCount,
+}: BackupManagementProps) {
+    if (maxBackupCount === 0) {
+        return (
+            <div>
+                <h1 class="text-xl mb-4 font-semibold">Backup Management</h1>
+                <p>
+                    Backups are disabled by MAX_ALLOWED_BACKUP_COUNT environment
+                    variable. To use this page, enable backups from the
+                    environment variables by setting it to a value greater than
+                    0.
+                </p>
+            </div>
+        );
+    }
+
+    return <BackupManagement />;
 }

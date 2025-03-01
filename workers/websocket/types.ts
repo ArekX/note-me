@@ -34,7 +34,7 @@ export type BinaryMessage<Namespace = string, Type = string, Data = unknown> =
     & MessageHeader<Namespace, Type>
     & Data
     & {
-        binaryData: ArrayBuffer;
+        binaryData: Uint8Array;
     };
 
 export type SocketMessage = BinaryMessage | Message;

@@ -92,7 +92,7 @@ export function OneTimeReminder({
 
             {errors.value.length > 0 && (
                 <div class="text-sm text-red-400">
-                    {errors.value.map((e) => <div>{e}</div>)}
+                    {errors.value.map((e, index) => <div key={index}>{e}</div>)}
                 </div>
             )}
         </>

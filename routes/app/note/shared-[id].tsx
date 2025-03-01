@@ -36,7 +36,7 @@ export interface PageData {
 export default function Page(props: PageProps<PageData, AppState>) {
     return (
         <ViewNote
-            readonly={true}
+            readonly
             author={props.data.note.user_name}
             shareMode="users"
             record={{

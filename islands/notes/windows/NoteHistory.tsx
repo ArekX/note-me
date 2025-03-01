@@ -127,8 +127,8 @@ export default function NoteHistory(
 
     return (
         <Dialog
-            visible={true}
-            canCancel={true}
+            visible
+            canCancel
             onCancel={onClose}
             props={{
                 class: "w-5/6 max-md:w-full",

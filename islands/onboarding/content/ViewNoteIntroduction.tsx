@@ -64,7 +64,7 @@ export default function ViewNoteIntroduction() {
 
                     <p>
                         For more help, click on the{" "}
-                        <HelpAction onOpened={onClosed} disableUnderline={true}>
+                        <HelpAction onOpened={onClosed} disableUnderline>
                             <Icon name="help-circle" />
                         </HelpAction>{" "}
                         in the left sidebar menu.

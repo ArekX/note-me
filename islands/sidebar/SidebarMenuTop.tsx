@@ -38,7 +38,7 @@ export default function SidebarMenuTop(
                 class="block flex-grow text-center pt-1 cursor-pointer"
             >
                 <Logo
-                    white={true}
+                    white
                     height={20}
                     width={20}
                 />

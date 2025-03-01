@@ -67,7 +67,7 @@ export default function EncryptionLockWindow() {
         <Dialog
             props={{ class: "w-2/5 max-md:w-full" }}
             visible={lock.isUnlockRequested.value}
-            canCancel={true}
+            canCancel
             onCancel={handleCancelLockWindow}
         >
             <div class="p-4 text-left">

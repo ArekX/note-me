@@ -47,7 +47,7 @@ export default function NoteDelete({ noteId, onClose }: NoteDeleteProps) {
             isProcessing={deleteLoader.running}
             confirmText="Delete note"
             confirmColor="danger"
-            visible={true}
+            visible
             onCancel={onClose}
             onConfirm={handleConfirmedDelete}
         />

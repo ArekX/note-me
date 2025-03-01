@@ -158,8 +158,8 @@ export default function NoteHelp() {
 
     return (
         <Dialog
-            visible={true}
-            canCancel={true}
+            visible
+            canCancel
             onCancel={() => help.close()}
             title="Help"
             props={{

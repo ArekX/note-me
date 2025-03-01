@@ -34,7 +34,7 @@ const ProtectionLoader = ({ isDialogMode }: ProtectionLoaderProps) => {
 
     if (isDialogMode) {
         return (
-            <Dialog visible={true}>
+            <Dialog visible>
                 {loader}
             </Dialog>
         );
@@ -51,10 +51,6 @@ export default function LockedContentWrapper<T extends object>({
     unlockRender: UnlockedRenderComponent,
     onUnlockFail,
 }: LockedContentWrapperProps<T>) {
-    if (!IS_BROWSER) {
-        return null;
-    }
-
     const hasProtectedInputRecords = () => {
         for (const record of inputRecords) {
             if (record?.[isLockedKey]) {
@@ -117,6 +113,10 @@ export default function LockedContentWrapper<T extends object>({
     };
 
     useEffect(() => {
+        if (!IS_BROWSER) {
+            return;
+        }
+
         if (!inputRecords.some((r) => !records.value.includes(r))) {
             return;
         }
@@ -134,6 +134,10 @@ export default function LockedContentWrapper<T extends object>({
     }, [inputRecords]);
 
     useEffect(() => {
+        if (!IS_BROWSER) {
+            return;
+        }
+
         if (
             hasProtectedInputRecords() && protectionLock.isLocked.value &&
             !loader.running
@@ -148,6 +152,10 @@ export default function LockedContentWrapper<T extends object>({
             }
         }
     }, [protectionLock.isLocked.value]);
+
+    if (!IS_BROWSER) {
+        return null;
+    }
 
     return (
         <div>

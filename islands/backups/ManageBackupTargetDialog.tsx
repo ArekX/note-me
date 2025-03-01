@@ -36,8 +36,8 @@ export default function ManageBackupTargetDialog({
 
     return (
         <Dialog
-            visible={true}
-            canCancel={true}
+            visible
+            canCancel
             onCancel={onClose}
             props={{
                 class: selected.value === "backups"

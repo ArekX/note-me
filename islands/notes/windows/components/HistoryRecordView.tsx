@@ -163,6 +163,7 @@ export default function HistoryRecordView(
                                             ) => [
                                                 key,
                                                 <Icon
+                                                    key={key}
                                                     name={value.icon}
                                                     size="sm"
                                                 />,
@@ -245,7 +246,7 @@ export default function HistoryRecordView(
                         <LockedContentWrapper
                             inputRecords={[historyRecord.value]}
                             protectedKeys={["note"]}
-                            isLockedKey={"is_encrypted"}
+                            isLockedKey="is_encrypted"
                             unlockRender={(
                                 { unlockedRecords: [unlockedRecord] },
                             ) => {
@@ -292,9 +293,9 @@ export default function HistoryRecordView(
                                             group_name: "",
                                             is_encrypted: false,
                                         }}
-                                        disableTagLinks={true}
-                                        readonly={true}
-                                        historyMode={true}
+                                        disableTagLinks
+                                        readonly
+                                        historyMode
                                     />
                                 );
                             }}
@@ -304,7 +305,7 @@ export default function HistoryRecordView(
             </div>
             {confirmRevert.value && (
                 <ConfirmDialog
-                    visible={true}
+                    visible
                     prompt="Are you sure that you want to revert to this version? Current note will be saved as another version."
                     onConfirm={handlePerformRevert}
                     confirmText="Revert to this version"
@@ -314,7 +315,7 @@ export default function HistoryRecordView(
             )}
             {confirmDelete.value && (
                 <ConfirmDialog
-                    visible={true}
+                    visible
                     prompt="Are you sure that you want to delete this version? This action cannot be undone."
                     onConfirm={handlePerformDelete}
                     confirmText="Delete this version"

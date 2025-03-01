@@ -38,7 +38,7 @@ export default function TreeWindow({
                     prompt="Are you sure you want to delete this group?"
                     confirmText="Delete group"
                     confirmColor="danger"
-                    visible={true}
+                    visible
                     onConfirm={() => onAction("confirmed-delete")}
                     onCancel={() => onAction("closed")}
                 />

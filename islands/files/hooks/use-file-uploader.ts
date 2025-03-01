@@ -76,7 +76,7 @@ export const useFileUploader = (): FileUploaderHook => {
                 "sendFileData",
                 {
                     data: {
-                        binaryData: chunk,
+                        binaryData: chunk as unknown as Uint8Array,
                         target_id: targetId,
                     },
                     expect: "sendFileDataResponse",

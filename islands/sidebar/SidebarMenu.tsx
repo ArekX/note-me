@@ -65,7 +65,7 @@ const DesktopSidebarMenu = (
             <div class="flex-grow text-left hidden lg:block">
                 <a onClick={() => redirectTo.root()} class="cursor-pointer">
                     <Logo
-                        white={true}
+                        white
                         height={logoSize}
                         width={logoSize}
                     />
@@ -82,7 +82,7 @@ const DesktopSidebarMenu = (
                         title="Home"
                     >
                         <Logo
-                            white={true}
+                            white
                             height={16}
                             width={16}
                         />{" "}

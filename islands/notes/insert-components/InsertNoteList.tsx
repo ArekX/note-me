@@ -31,7 +31,7 @@ const Component = ({
                 <div class="basis-1/4 max-md:basis-full">
                     <div class="py-2 font-semibold">Group</div>
                     <GroupPicker
-                        allowRoot={true}
+                        allowRoot
                         selectedId={selectedGroup.value?.id}
                         onPick={handleSelectGroup}
                     />

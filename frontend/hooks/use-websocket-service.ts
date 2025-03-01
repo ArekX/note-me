@@ -51,7 +51,7 @@ const textEncoder = new TextEncoder();
 
 const createBinaryMessage = <T extends BinaryMessage>(
     request: Omit<T, "binaryData">,
-    data: ArrayBuffer,
+    data: Uint8Array,
 ): Uint8Array => {
     const headers = JSON.stringify({
         ...request,
@@ -188,7 +188,7 @@ export const useWebsocketService = <T extends Message>(
         namespace: string,
         type: string,
         request: Omit<T, "requestId" | "namespace" | "type" | "binaryData">,
-        data: ArrayBuffer,
+        data: Uint8Array,
     ) => {
         sendBinary(createBinaryMessage({
             ...request,

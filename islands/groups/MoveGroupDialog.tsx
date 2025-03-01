@@ -79,7 +79,7 @@ export default function MoveGroupDialog({
 
     return (
         <Dialog
-            canCancel={true}
+            canCancel
             onCancel={onClose}
             title="Move to new group"
         >
@@ -97,7 +97,7 @@ export default function MoveGroupDialog({
                         </div>
                         <div class="py-5">
                             <GroupPicker
-                                allowRoot={true}
+                                allowRoot
                                 onPick={(group) => selectedGroup.value = group}
                                 selectedId={selectedGroup.value?.id}
                             />

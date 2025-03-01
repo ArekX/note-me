@@ -241,7 +241,7 @@ export default function BackupTargetList({
                 <ConfirmDialog
                     prompt="Are you sure you want to delete this backup? This action cannot be undone."
                     isProcessing={deleteLoader.running}
-                    visible={true}
+                    visible
                     confirmColor="danger"
                     onConfirm={handleDeleteSelected}
                     onCancel={() => backupToDelete.unselect()}

@@ -13,7 +13,7 @@ export default function Page() {
                 <br />If a file is made private, it will only be available to
                 the user who uploaded it.
             </div>
-            <FilePicker adminMode={true} />
+            <FilePicker adminMode />
         </div>
     );
 }

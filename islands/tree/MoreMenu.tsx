@@ -103,7 +103,7 @@ export default function MoreMenu(
             popoverId={`${container.type.toString()}-${container.id ?? -1}`}
             showDirection={query.max("md") ? "left" : "right"}
             displayType="portal"
-            iconOnly={true}
+            iconOnly
             icon="dots-horizontal-rounded"
             items={menu.map((item) => ({
                 name: item.name,

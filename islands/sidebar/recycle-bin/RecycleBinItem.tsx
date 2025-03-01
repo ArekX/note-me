@@ -157,7 +157,7 @@ export default function RecycleBinItem({ record }: RecycleBinItemProps) {
                     cancelColor={action.value === "restore"
                         ? "danger"
                         : "success"}
-                    visible={true}
+                    visible
                     onCancel={() => action.value = null}
                     onConfirm={handleConfirmedRestore}
                 />

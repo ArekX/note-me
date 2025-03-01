@@ -32,7 +32,7 @@ export default function OnboardingDialog(
 
     return (
         <Dialog
-            visible={true}
+            visible
             props={{
                 class: widthClass,
             }}
@@ -41,7 +41,7 @@ export default function OnboardingDialog(
             <OnboardingWrapper
                 onboardingKey={onboardingKey}
                 className={onboardingClassName}
-                allowClose={true}
+                allowClose
                 content={content}
                 onClosed={() => isVisible.value = false}
             />

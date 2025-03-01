@@ -1,7 +1,7 @@
 import { useSignal } from "@preact/signals";
 import { createRef } from "preact";
 import { useEffect } from "preact/hooks";
-import { autosize, insertTextIntoField } from "$frontend/deps.ts";
+import { autosize } from "$frontend/deps.ts";
 import InsertDialog from "$islands/notes/InsertDialog.tsx";
 import { useFileUploader } from "$islands/files/hooks/use-file-uploader.ts";
 import { UploadProgressDialog } from "$islands/files/UploadProgressDialog.tsx";
@@ -13,7 +13,7 @@ import {
 } from "$islands/notes/helpers/markdown.ts";
 import { FileDropWrapper } from "$islands/files/FileDropWrapper.tsx";
 import { HotkeySet } from "$frontend/hotkeys.ts";
-import { useHotkeys } from "$frontend/hooks/use-hotkeys.ts";
+import { useTextareaShortcuts } from "$islands/notes/hooks/use-textarea-shortcuts.ts";
 
 export const noteTextAreaHotkeySet: HotkeySet<
     "noteTextArea",
@@ -22,6 +22,8 @@ export const noteTextAreaHotkeySet: HotkeySet<
     | "insertLink"
     | "insertImage"
     | "insertHorizontalRule"
+    | "indentRight"
+    | "indentLeft"
 > = {
     context: "noteTextArea",
     items: [
@@ -55,6 +57,18 @@ export const noteTextAreaHotkeySet: HotkeySet<
             key: "h",
             description: "Insert horizontal rule",
         },
+        {
+            identifier: "indentRight",
+            metaKeys: ["ctrl"],
+            key: "]",
+            description: "Indent right",
+        },
+        {
+            identifier: "indentLeft",
+            metaKeys: ["ctrl"],
+            key: "[",
+            description: "Indent left",
+        },
     ],
 };
 
@@ -74,7 +88,11 @@ export default function NoteTextArea({
     const textAreaRef = createRef<HTMLTextAreaElement>();
     const fileUploader = useFileUploader();
 
-    const { resolveHotkey } = useHotkeys("noteTextArea");
+    const { keyDownHandler } = useTextareaShortcuts({
+        textAreaRef,
+        lastCursorPosition,
+        text,
+    });
 
     const handleTextInput = (event: Event) => {
         text.value = (event.target as HTMLInputElement).value;
@@ -87,49 +105,6 @@ export default function NoteTextArea({
         }
 
         lastCursorPosition.value = textAreaRef.current.selectionStart || 0;
-    };
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-        if (!textAreaRef.current) {
-            return;
-        }
-
-        lastCursorPosition.value = textAreaRef.current.selectionStart || 0;
-
-        if (e.key === "Tab") {
-            insertTextIntoField(textAreaRef.current, "    ");
-            e.preventDefault();
-        }
-
-        const hotkey = resolveHotkey(e);
-
-        if (hotkey) {
-            const selectionStart = textAreaRef.current.selectionStart;
-            const selectionEnd = textAreaRef.current.selectionEnd;
-            const selectedText = text.value.slice(selectionStart, selectionEnd);
-
-            if (hotkey === "boldText") {
-                insertTextIntoField(textAreaRef.current, `**${selectedText}**`);
-                textAreaRef.current.selectionStart -= 2;
-                textAreaRef.current.selectionEnd -= 2;
-            } else if (hotkey === "italicText") {
-                insertTextIntoField(textAreaRef.current, `*${selectedText}*`);
-                textAreaRef.current.selectionStart -= 1;
-                textAreaRef.current.selectionEnd -= 1;
-            } else if (hotkey === "insertLink") {
-                insertTextIntoField(
-                    textAreaRef.current,
-                    getLinkMarkdown("", ""),
-                );
-            } else if (hotkey === "insertImage") {
-                insertTextIntoField(
-                    textAreaRef.current,
-                    getImageMarkdown("", ""),
-                );
-            } else if (hotkey === "insertHorizontalRule") {
-                insertTextIntoField(textAreaRef.current, "\n---\n");
-            }
-        }
     };
 
     const handleDialogInsert = (insertedText: string) => {
@@ -221,7 +196,7 @@ export default function NoteTextArea({
                     tabIndex={3}
                     disabled={isSaving}
                     onMouseUp={recordLastCursorPosition}
-                    onKeyDown={handleKeyDown}
+                    onKeyDown={keyDownHandler}
                     onKeyUp={recordLastCursorPosition}
                     onInput={handleTextInput}
                     onPaste={handlePaste}

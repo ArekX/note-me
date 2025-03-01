@@ -29,7 +29,7 @@ export default function ConfirmDialog({
     return (
         <Dialog
             visible={visible}
-            canCancel={true}
+            canCancel
             onCancel={onCancel}
             props={{ "class": "select-none" }}
         >
@@ -40,7 +40,7 @@ export default function ConfirmDialog({
                     <div class="flex flex-wrap items-center justify-center p-2">
                         <Button
                             color={confirmColor}
-                            setAsDefault={true}
+                            setAsDefault
                             onClick={onConfirm}
                             addClass="max-md:basis-3/4"
                         >

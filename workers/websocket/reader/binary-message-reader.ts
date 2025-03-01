@@ -26,6 +26,10 @@ export const readBinaryMessage = (
 
     return {
         ...parsedHeader,
-        binaryData: new Uint8Array(buffer, 6 + headerSize, dataSize),
+        binaryData: new Uint8Array(
+            buffer,
+            6 + headerSize,
+            dataSize,
+        ),
     };
 };

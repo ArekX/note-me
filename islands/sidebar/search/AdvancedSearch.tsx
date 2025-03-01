@@ -48,8 +48,8 @@ export default function AdvancedSearch(
 
     return (
         <Dialog
-            visible={true}
-            canCancel={true}
+            visible
+            canCancel
             onCancel={onClose}
             title={`Advanced Search - ${
                 typeDisplayMap[search.type.value] ?? ""
@@ -63,7 +63,7 @@ export default function AdvancedSearch(
                     <Input
                         label="Search"
                         placeholder="Search..."
-                        disableAutocomplete={true}
+                        disableAutocomplete
                         value={searchQuery.value}
                         onInput={(v) => searchQuery.value = v}
                         onKeydown={handleSearchKeyDown}
@@ -109,7 +109,7 @@ export default function AdvancedSearch(
                                 <TagInput
                                     initialTags={tags.value}
                                     addClass="bg-gray-700/50 border border-b-0 border-gray-600/50 rounded-lg p-2 focus:border-gray-600 "
-                                    noTransparentBackground={true}
+                                    noTransparentBackground
                                     placeholder="Enter tags to filter by"
                                     onChange={(newTags) => tags.value = newTags}
                                     onEnterPressed={performSearch}

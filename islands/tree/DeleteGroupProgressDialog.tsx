@@ -17,7 +17,7 @@ export function DeleteGroupProgressDialog() {
     });
 
     return (
-        <Dialog canCancel={false} visible={true}>
+        <Dialog canCancel={false} visible>
             <div class="flex flex-col items-center p-4">
                 <div class="text-lg font-bold">
                     {deletedCount.value === null

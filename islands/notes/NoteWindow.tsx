@@ -114,7 +114,7 @@ export default function NoteWindow({
 
     if (inputDataLoader.running) {
         return (
-            <Dialog visible={true}>
+            <Dialog visible>
                 <Loader color="white" />
             </Dialog>
         );
@@ -124,7 +124,7 @@ export default function NoteWindow({
         <LockedContentWrapper
             inputRecords={[noteRecord.value]}
             protectedKeys={["text"]}
-            dialogMode={true}
+            dialogMode
             isLockedKey={"is_encrypted"}
             onUnlockFail={handleUnlockFail}
             unlockRender={({ unlockedRecords: [record] }) => {

@@ -47,7 +47,7 @@ export default function GroupDetails(
     const { name, created_at, has_subgroups, has_notes } = groupData.value ??
         {};
     return (
-        <Dialog visible={true} canCancel={true} onCancel={onClose}>
+        <Dialog visible canCancel onCancel={onClose}>
             {groupLoader.running
                 ? <Loader color="white" />
                 : groupData.value && (
