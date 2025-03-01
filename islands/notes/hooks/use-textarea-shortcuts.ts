@@ -99,13 +99,15 @@ export const useTextareaShortcuts = ({
             return;
         }
 
-        const { indent, listChar, line, lineStart } = listLine;
+        const { indent, listChar, line, lineStart, lineEnd } = listLine;
 
         if (line.trim() === listChar) {
             setFieldText(
                 textAreaRef.current,
-                text.value.slice(0, lineStart),
+                text.value.slice(0, lineStart) + text.value.slice(lineEnd),
             );
+            textAreaRef.current.selectionStart = lineStart;
+            textAreaRef.current.selectionEnd = lineStart;
             e.preventDefault();
             return;
         }
