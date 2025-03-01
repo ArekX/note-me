@@ -10,6 +10,8 @@ const listItemLineRegex = /^(\s*)(-|\*|\d+\.)\s/;
 
 const tabIndent = "    ";
 
+const linkStartRegex = /\s*(\w+:\/\/|\/file\/)/;
+
 const determineLineStartEnd = (
     textValue: string,
     textArea: HTMLTextAreaElement,
@@ -149,40 +151,79 @@ export const useTextareaShortcuts = ({
         textAreaRef.current.selectionEnd -= 1;
     };
 
-    const handleInsertLink = (selectedText: string) => {
+    const handleInsertLink = (selectedText: string, selectionStart: number) => {
         if (!textAreaRef.current) {
             return;
         }
 
-        if (selectedText) {
-            insertTextIntoField(
-                textAreaRef.current,
-                getLinkMarkdown(selectedText, selectedText),
-            );
-        } else {
+        if (!selectedText) {
             insertTextIntoField(
                 textAreaRef.current,
                 getLinkMarkdown("", ""),
             );
+            return;
         }
+
+        if (linkStartRegex.test(selectedText)) {
+            const linkMarkdown = getLinkMarkdown(selectedText.trim(), "");
+            insertTextIntoField(
+                textAreaRef.current,
+                linkMarkdown,
+            );
+
+            textAreaRef.current.selectionStart = selectionStart + 1;
+            textAreaRef.current.selectionEnd =
+                textAreaRef.current.selectionStart;
+            return;
+        }
+
+        insertTextIntoField(
+            textAreaRef.current,
+            getLinkMarkdown("", selectedText),
+        );
+
+        textAreaRef.current.selectionStart = selectionStart +
+            selectedText.length + 3;
+        textAreaRef.current.selectionEnd = textAreaRef.current.selectionStart;
     };
 
-    const handleInsertImage = (selectedText: string) => {
+    const handleInsertImage = (
+        selectedText: string,
+        selectionStart: number,
+    ) => {
         if (!textAreaRef.current) {
             return;
         }
 
-        if (selectedText) {
+        if (!selectedText) {
             insertTextIntoField(
                 textAreaRef.current,
                 getImageMarkdown(selectedText, ""),
             );
-        } else {
+            return;
+        }
+
+        if (linkStartRegex.test(selectedText)) {
             insertTextIntoField(
                 textAreaRef.current,
-                getImageMarkdown("", ""),
+                getImageMarkdown(selectedText.trim(), ""),
             );
+
+            textAreaRef.current.selectionStart = selectionStart + 2;
+            textAreaRef.current.selectionEnd =
+                textAreaRef.current.selectionStart;
+
+            return;
         }
+
+        insertTextIntoField(
+            textAreaRef.current,
+            getImageMarkdown("", selectedText),
+        );
+
+        textAreaRef.current.selectionStart = selectionStart + 4 +
+            selectedText.length;
+        textAreaRef.current.selectionEnd = textAreaRef.current.selectionStart;
     };
 
     const handleIndentRight = () => {
@@ -276,10 +317,10 @@ export const useTextareaShortcuts = ({
                 handleItalicText(selectedText);
                 break;
             case "insertLink":
-                handleInsertLink(selectedText);
+                handleInsertLink(selectedText, selectionStart);
                 break;
             case "insertImage":
-                handleInsertImage(selectedText);
+                handleInsertImage(selectedText, selectionStart);
                 break;
             case "insertHorizontalRule":
                 insertTextIntoField(textAreaRef.current, "\n---\n");

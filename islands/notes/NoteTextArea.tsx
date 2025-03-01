@@ -43,13 +43,15 @@ export const noteTextAreaHotkeySet: HotkeySet<
             identifier: "insertLink",
             metaKeys: ["ctrl"],
             key: "k",
-            description: "Insert link template",
+            description:
+                "Insert link template. If selected text is a URL, it will be used as the link target otherwise it will be used as the link text",
         },
         {
             identifier: "insertImage",
             metaKeys: ["ctrl"],
             key: "p",
-            description: "Insert image template",
+            description:
+                "Insert image template. If selected text is a URL, it will be used as the image source otherwise it will be used as the image alt text",
         },
         {
             identifier: "insertHorizontalRule",
