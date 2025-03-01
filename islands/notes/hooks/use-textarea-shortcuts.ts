@@ -8,6 +8,8 @@ import {
 
 const listItemLineRegex = /^(\s*)(-|\*|\d+\.)\s+(\[[x ]\]\s)?/;
 
+const shouldRemoveLineRegex = /^(\s*)(-|\*|\d+\.)\s+(\[[x ]\]\s)?$/;
+
 const tabIndent = "    ";
 
 const linkStartRegex = /\s*(\w+:\/\/|\/file\/)/;
@@ -111,7 +113,7 @@ export const useTextareaShortcuts = ({
 
         const toInsert = ` ${hasCheckbox ? "[ ] " : ""}`;
 
-        if (line.trim() === listChar) {
+        if (line.match(shouldRemoveLineRegex)) {
             setFieldText(
                 textAreaRef.current,
                 text.value.slice(0, lineStart) + text.value.slice(lineEnd),
