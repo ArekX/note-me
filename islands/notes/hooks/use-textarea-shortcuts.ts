@@ -75,11 +75,17 @@ export const useTextareaShortcuts = ({
         if (listLine) {
             const { lineStart } = listLine;
 
+            const selectionStart = textAreaRef.current.selectionStart;
+            const selectionEnd = textAreaRef.current.selectionEnd;
+
             setFieldText(
                 textAreaRef.current,
                 text.value.slice(0, lineStart) + tabIndent +
                     text.value.slice(lineStart),
             );
+            textAreaRef.current.selectionStart = selectionStart +
+                tabIndent.length;
+            textAreaRef.current.selectionEnd = selectionEnd + tabIndent.length;
             e.preventDefault();
             return;
         }
