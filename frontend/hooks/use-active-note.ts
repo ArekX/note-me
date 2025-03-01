@@ -9,17 +9,11 @@ interface ActiveNoteEffectOptions {
 }
 
 export const useActiveNoteEffect = (
-    { noteId, historyMode }: ActiveNoteEffectOptions,
+    noteId: number | null,
 ) => {
     useEffect(() => {
-        if (historyMode) {
-            return;
-        }
-
         activeNoteId.value = noteId;
-    }, [noteId, historyMode]);
+    }, [noteId]);
 
-    useEffect(() => {
-        return historyMode ? undefined : () => activeNoteId.value = null;
-    }, [historyMode]);
+    useEffect(() => () => activeNoteId.value = null, []);
 };

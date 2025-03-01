@@ -44,10 +44,9 @@ export default function ViewNote(
 
     const query = useResponsiveQuery();
 
-    useActiveNoteEffect({
-        noteId: recordData.value.id,
-        historyMode,
-    });
+    const noteId = historyMode ? null : recordData.value.id;
+
+    useActiveNoteEffect(noteId);
 
     useEffect(() => {
         recordData.value = {

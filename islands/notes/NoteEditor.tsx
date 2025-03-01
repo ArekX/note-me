@@ -120,10 +120,7 @@ export default function NoteEditor({
         },
     });
 
-    useActiveNoteEffect({
-        noteId: noteId.value,
-        historyMode: false,
-    });
+    useActiveNoteEffect(noteId.value);
 
     useEffect(() => {
         name.value = note.title;
