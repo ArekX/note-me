@@ -183,7 +183,7 @@ export default function NoteTextArea({
 
     useEffect(() => {
         text.value = initialText;
-    }, [initialText]);
+    }, []);
 
     return (
         <div class="flex-grow block basis-auto">
