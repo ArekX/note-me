@@ -1,6 +1,6 @@
 import {
+    decodeBase64,
     PublicKeyCredentialCreationOptionsJSON,
-    VerifiedRegistrationResponse,
 } from "$backend/deps.ts";
 import { db } from "$backend/database.ts";
 import { getCurrentUnixTimestamp } from "$lib/time/unix.ts";
@@ -8,12 +8,12 @@ import { RecordId, UserPasskeyTable } from "$types";
 import { Paged, pageResults } from "$lib/kysely-sqlite-dialect/pagination.ts";
 import { sql } from "$lib/kysely-sqlite-dialect/deps.ts";
 
-export type PasskeyRegistrationInfo = Pick<
-    NonNullable<
-        VerifiedRegistrationResponse["registrationInfo"]
-    >,
-    "credentialID" | "credentialPublicKey" | "counter" | "credentialBackedUp"
->;
+export type PasskeyRegistrationInfo = {
+    credentialID: string;
+    credentialBackedUp: boolean;
+    counter: number;
+    credentialPublicKey: string;
+};
 
 interface RegisterPassKeyOptions {
     noteme_user_id: number;
@@ -36,7 +36,7 @@ export const registerPassKey = async ({
             user_id: noteme_user_id,
             webauthn_user_identifier: webauthn_user.id,
             credential_identifier: registration_info.credentialID,
-            public_key: registration_info.credentialPublicKey,
+            public_key: decodeBase64(registration_info.credentialPublicKey),
             counter: registration_info.counter,
             transports: transports.join(","),
             is_backed_up: registration_info.credentialBackedUp,

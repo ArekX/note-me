@@ -155,7 +155,9 @@ export default function UserPasskeys() {
                 expect: "getPasskeyRegistrationOptionsResponse",
             });
 
-            const credential = await startRegistration(options.options);
+            const credential = await startRegistration({
+                optionsJSON: options.options,
+            });
 
             const result = await sendMessage<
                 VerifyPasskeyRegistrationMessage,

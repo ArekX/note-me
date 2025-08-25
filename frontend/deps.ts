@@ -11,4 +11,4 @@ export {
     browserSupportsWebAuthn,
     startAuthentication,
     startRegistration,
-} from "npm:@simplewebauthn/browser@10.0.0";
+} from "npm:@simplewebauthn/browser@13.1.2";

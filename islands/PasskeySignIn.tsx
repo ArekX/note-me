@@ -28,7 +28,9 @@ export default function PasskeySignIn({
 
     const handleSignIn = passkeyLoader.wrap(async () => {
         try {
-            passkeyResult.value = await startAuthentication(options);
+            passkeyResult.value = await startAuthentication({
+                optionsJSON: options,
+            });
         } catch (e: Error | unknown) {
             passkeyResult.value = null;
 

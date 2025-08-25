@@ -125,7 +125,7 @@ export const finalizePasskeyRegistration = async (
 
         if (
             await repository.passkey.passkeyExists(
-                verification.registrationInfo.credentialID,
+                verification.registrationInfo.credential.id,
             )
         ) {
             return {
@@ -142,9 +142,12 @@ export const finalizePasskeyRegistration = async (
             ),
             webauthn_user: options.user,
             registration_info: {
-                ...verification.registrationInfo,
+                credentialID: verification.registrationInfo.credential.id,
+                credentialBackedUp:
+                    verification.registrationInfo.credentialBackedUp,
+                counter: verification.registrationInfo.credential.counter,
                 credentialPublicKey: encodeBase64(
-                    verification.registrationInfo.credentialPublicKey,
+                    verification.registrationInfo.credential.publicKey,
                 ),
             },
             transports: registrationResponse.response.transports ?? [],
@@ -241,17 +244,14 @@ export const finalizePasskeyAuthentication = async (
 
         const result = await verifyAuthenticationResponse({
             response,
+            credential: {
+                id: passkey.credential_identifier,
+                counter: passkey.counter,
+                publicKey: decodeBase64(passkey.public_key),
+            },
             expectedChallenge: data.challenge,
             expectedOrigin: getRelyingPartyOrigin(),
             expectedRPID: getRelyingPartyId(),
-            authenticator: {
-                credentialID: passkey.credential_identifier,
-                credentialPublicKey: decodeBase64(passkey.public_key),
-                counter: passkey.counter,
-                transports: passkey.transports.split(
-                    ",",
-                ) as unknown as AuthenticatorTransportFuture[],
-            },
         });
 
         if (result.verified) {

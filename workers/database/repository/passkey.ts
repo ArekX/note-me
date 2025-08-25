@@ -15,7 +15,7 @@ import { UserPasskeyRecord } from "../query/passkey-repository.ts";
 import { DbHandlerMap, DbRequest } from "$workers/database/message.ts";
 import { PublicKeyCredentialCreationOptionsJSON } from "$backend/deps.ts";
 import { UserPasskeyTable } from "$types";
-import { decodeBase64, encodeBase64 } from "$std/encoding/base64.ts";
+import { encodeBase64 } from "$std/encoding/base64.ts";
 
 type PasskeyRequest<Key extends string, Request, Response> = DbRequest<
     "passkey",
@@ -99,12 +99,7 @@ export const passkey: DbHandlerMap<PasskeyRepository> = {
             noteme_user_id,
             name,
             webauthn_user,
-            registration_info: {
-                ...registration_info,
-                credentialPublicKey: decodeBase64(
-                    registration_info.credentialPublicKey,
-                ),
-            },
+            registration_info,
             transports,
         });
     },
