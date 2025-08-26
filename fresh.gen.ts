@@ -102,6 +102,8 @@ import * as $markdown_nodes_CodeBlock from "./islands/markdown/nodes/CodeBlock.t
 import * as $markdown_nodes_Extension from "./islands/markdown/nodes/Extension.tsx";
 import * as $markdown_nodes_Heading from "./islands/markdown/nodes/Heading.tsx";
 import * as $markdown_nodes_Link from "./islands/markdown/nodes/Link.tsx";
+import * as $markdown_nodes_blocks_HighlightedCode from "./islands/markdown/nodes/blocks/HighlightedCode.tsx";
+import * as $markdown_nodes_blocks_MermaidDiagram from "./islands/markdown/nodes/blocks/MermaidDiagram.tsx";
 import * as $notes_DetailsLine from "./islands/notes/DetailsLine.tsx";
 import * as $notes_InsertDialog from "./islands/notes/InsertDialog.tsx";
 import * as $notes_MoreMenu from "./islands/notes/MoreMenu.tsx";
@@ -321,6 +323,10 @@ const manifest = {
         "./islands/markdown/nodes/Extension.tsx": $markdown_nodes_Extension,
         "./islands/markdown/nodes/Heading.tsx": $markdown_nodes_Heading,
         "./islands/markdown/nodes/Link.tsx": $markdown_nodes_Link,
+        "./islands/markdown/nodes/blocks/HighlightedCode.tsx":
+            $markdown_nodes_blocks_HighlightedCode,
+        "./islands/markdown/nodes/blocks/MermaidDiagram.tsx":
+            $markdown_nodes_blocks_MermaidDiagram,
         "./islands/notes/DetailsLine.tsx": $notes_DetailsLine,
         "./islands/notes/InsertDialog.tsx": $notes_InsertDialog,
         "./islands/notes/MoreMenu.tsx": $notes_MoreMenu,

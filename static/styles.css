@@ -473,3 +473,19 @@ select.select-input {
     @apply fixed top-0 left-0 w-full h-full bg-gray-900 z-50 text-white flex
         items-center justify-center;
 }
+
+.mermaid-diagram span {
+    font-size: 0.8em;
+}
+
+.mermaid-diagram {
+    text-align: center;
+}
+
+.mermaid-diagram > svg {
+    display: inline-block;
+}
+
+.mermaid-diagram .text-inner-tspan {
+    fill: #fff !important;
+}

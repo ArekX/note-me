@@ -14,13 +14,17 @@ import {
     NotificationFrontendResponse,
 } from "$workers/websocket/api/notifications/messages.ts";
 import { addMessage } from "$frontend/toast-message.ts";
-import { getNotificationMessageText } from "$islands/notifications/notification-message-text.ts";
+import {
+    getNotificationMessageText,
+    getNotificationMessageTitle,
+} from "$islands/notifications/notification-message-text.ts";
 import { useEffect } from "preact/hooks";
 import { useResponsiveQuery } from "$frontend/hooks/use-responsive-query.ts";
 import NotificationListView from "$islands/notifications/NotificationListView.tsx";
 import Dialog from "$islands/Dialog.tsx";
 import Button from "$components/Button.tsx";
 import { useWindowResize } from "$frontend/hooks/use-window-resize.ts";
+import { redirectTo } from "$frontend/redirection-manager.ts";
 
 interface NotificationsProps {
     initialNotifications: NotificationRecord[];
@@ -31,6 +35,8 @@ export default function Notifications(props: NotificationsProps) {
         props.initialNotifications,
     );
     const query = useResponsiveQuery();
+
+    const sendBrowserNotification = useSignal<boolean>(false);
 
     const { dispatchMessage } = useWebsocketService<
         NotificationFrontendResponse
@@ -75,6 +81,31 @@ export default function Notifications(props: NotificationsProps) {
                         ...notifications.value,
                     ];
 
+                    if (sendBrowserNotification.value) {
+                        const notification = new Notification(
+                            getNotificationMessageTitle(data.record),
+                            {
+                                body: getNotificationMessageText(data.record),
+                                icon: "/noteme.png",
+                                silent: false,
+                            },
+                        );
+
+                        notification.onclick = () => {
+                            globalThis.focus();
+                            notification.close();
+
+                            if (
+                                data.record.data.type === "reminder-received" ||
+                                data.record.data.type == "note-shared"
+                            ) {
+                                redirectTo.viewNote({
+                                    noteId: data.record.data.payload.id,
+                                });
+                            }
+                        };
+                    }
+
                     addMessage({
                         type: "info",
                         text: getNotificationMessageText(data.record),
@@ -89,6 +120,23 @@ export default function Notifications(props: NotificationsProps) {
             "notifications",
             "getMyNotifications",
         );
+
+        if (
+            !("Notification" in globalThis) ||
+            Notification.permission === "denied"
+        ) {
+            return;
+        }
+
+        if (Notification.permission !== "granted") {
+            Notification.requestPermission().then((p) => {
+                if (p === "granted") {
+                    sendBrowserNotification.value = true;
+                }
+            });
+        } else {
+            sendBrowserNotification.value = true;
+        }
     }, []);
 
     const handleDeleteSingle = (notification: NotificationRecord) =>

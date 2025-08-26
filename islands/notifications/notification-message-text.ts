@@ -8,3 +8,12 @@ export const getNotificationMessageText = (record: NotificationRecord) => {
             return `Note "${record.data.payload.title}" has been shared with you by ${record.data.payload.user_name}`;
     }
 };
+
+export const getNotificationMessageTitle = (record: NotificationRecord) => {
+    switch (record.data.type) {
+        case "reminder-received":
+            return `Reminder`;
+        case "note-shared":
+            return `Note shared with you`;
+    }
+};

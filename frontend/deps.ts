@@ -12,3 +12,5 @@ export {
     startAuthentication,
     startRegistration,
 } from "npm:@simplewebauthn/browser@13.1.2";
+
+export { default as mermaid } from "npm:mermaid@11.10.1";

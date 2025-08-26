@@ -1,33 +1,17 @@
-import { useEffect, useRef } from "preact/hooks";
-import { highlightJs } from "$frontend/deps.ts";
 import { NodeProps } from "$islands/markdown/NodeItem.tsx";
+import HighlightedCode from "$islands/markdown/nodes/blocks/HighlightedCode.tsx";
+import MermaidDiagram from "$islands/markdown/nodes/blocks/MermaidDiagram.tsx";
 
 export default function CodeBlock(
     { node, children }: NodeProps<"codeBlock">,
 ) {
-    const viewerRef = useRef<HTMLPreElement>(null);
-
-    useEffect(() => {
-        if (!viewerRef.current) {
-            return;
-        }
-
-        if (!node.data.language) {
-            return;
-        }
-
-        const code = viewerRef.current.textContent ?? "";
-
-        viewerRef.current.innerHTML = highlightJs.highlight(
-            code,
-            { language: node.data.language },
-        ).value;
-    }, [viewerRef]);
+    if (node.data.language === "mermaid") {
+        return <MermaidDiagram>{children}</MermaidDiagram>;
+    }
 
     return (
-        <pre
-            ref={viewerRef}
-            class={`lang-${node.data.language} overflow-auto`}
-        >{children}</pre>
+        <HighlightedCode language={node.data.language}>
+            {children}
+        </HighlightedCode>
     );
 }
