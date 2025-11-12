@@ -5,7 +5,6 @@
         "cache": "deno cache -r --lock deno.lock --allow-scripts=npm:fsevents main.ts cli/mod.ts frontend/deps.ts",
         "cache-ci": "deno cache --lock deno.lock --allow-scripts=npm:fsevents main.ts cli/mod.ts frontend/deps.ts",
         "check": "deno fmt --check && deno lint && deno run -A check.ts",
-        "fresh-cli": "echo \"import '\\$fresh/src/dev/cli.ts'\" | deno run --unstable -A -",
         "manifest": "deno task fresh-cli manifest $(pwd)",
         "dev": "deno run -A --watch=static/,routes/ --check dev.ts",
         "update": "deno run -A -r https://fresh.deno.dev/update .",
@@ -20,9 +19,7 @@
     "lint": {
         "rules": {
             "tags": ["fresh", "recommended"],
-            "exclude": [
-                "jsx-curly-braces"
-            ]
+            "exclude": ["jsx-curly-braces"]
         }
     },
     "exclude": ["**/_fresh/*"],

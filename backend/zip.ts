@@ -18,7 +18,10 @@ export const createZip = async (location: string) => {
         if (isClosed) {
             return;
         }
-        await writer.add(name, new BlobReader(new Blob([content])));
+        await writer.add(
+            name,
+            new BlobReader(new Blob([content as unknown as ArrayBuffer])),
+        );
     };
 
     const finalize = async () => {

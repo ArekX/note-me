@@ -18,7 +18,7 @@ const deriveCipherKey = async (
     return crypto.subtle.deriveKey(
         {
             name: "PBKDF2",
-            salt,
+            salt: salt as unknown as ArrayBuffer,
             iterations: PBKDF2_ITERATIONS,
             hash: "SHA-256",
         },
@@ -77,7 +77,7 @@ const encryptBinary = async (
             iv: iv,
         },
         key,
-        data,
+        data as unknown as ArrayBuffer,
     );
 
     return combineIntoCipherData(salt, iv, new Uint8Array(encrypted));
@@ -94,10 +94,10 @@ const decryptBinary = async (
     const decrypted = await crypto.subtle.decrypt(
         {
             name: "AES-GCM",
-            iv: iv,
+            iv: iv as unknown as ArrayBuffer,
         },
         key,
-        encrypted,
+        encrypted as unknown as ArrayBuffer,
     );
 
     return decrypted;

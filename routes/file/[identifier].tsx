@@ -61,7 +61,7 @@ export const handler = async (_req: Request, ctx: FreshContext<AppState>) => {
 
     const byteData = decodeBase64(file.data);
 
-    return new Response(byteData, {
+    return new Response(byteData as unknown as ArrayBuffer, {
         headers: {
             "Content-Type": mimeType,
             "Content-Disposition": `${disposition}; filename="${file.name}"`,
