@@ -23,6 +23,7 @@ export default function IslandInitializer(props: ScriptsProps) {
     const initializeLibraries = () => {
         mermaid.initialize({
             startOnLoad: false,
+            securityLevel: "strict",
             theme: "dark",
             themeVariables: {
                 // Background colors

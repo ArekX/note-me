@@ -13,6 +13,29 @@ const ipLoginAttempts: {
 const MAX_ATTEMPTS = 30;
 const COOLDOWN_SECONDS = 60;
 const LOCKOUT_SECONDS = 900;
+const CLEANUP_INTERVAL_SECONDS = 3600;
+
+let lastCleanup = 0;
+
+const cleanupExpiredEntries = (now: number) => {
+    if (now - lastCleanup < CLEANUP_INTERVAL_SECONDS) {
+        return;
+    }
+
+    lastCleanup = now;
+    const expiryThreshold = now - LOCKOUT_SECONDS - COOLDOWN_SECONDS;
+
+    for (const ip of Object.keys(ipLoginAttempts)) {
+        const entry = ipLoginAttempts[ip];
+        const isLockExpired = !entry.locked_until ||
+            entry.locked_until <= now;
+        const isAttemptExpired = entry.last_attempt_at < expiryThreshold;
+
+        if (isLockExpired && isAttemptExpired) {
+            delete ipLoginAttempts[ip];
+        }
+    }
+};
 
 export const checkLoginAttempt = (
     req: Request,
@@ -27,12 +50,14 @@ export const checkLoginAttempt = (
         throw new Error("Invalid request");
     }
 
+    const now = getCurrentUnixTimestamp();
+
+    cleanupExpiredEntries(now);
+
     const attempts = ipLoginAttempts?.[requestIp] ?? {
         attempts: 0,
         last_attempt_at: 0,
     };
-
-    const now = getCurrentUnixTimestamp();
 
     if (attempts.locked_until && attempts.locked_until > now) {
         attempts.locked_until = now + LOCKOUT_SECONDS;

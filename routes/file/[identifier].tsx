@@ -64,7 +64,8 @@ export const handler = async (_req: Request, ctx: FreshContext<AppState>) => {
     return new Response(byteData as unknown as ArrayBuffer, {
         headers: {
             "Content-Type": mimeType,
-            "Content-Disposition": `${disposition}; filename="${file.name}"`,
+            "Content-Disposition":
+                `${disposition}; filename="${file.name.replace(/["\\]/g, "_")}"`,
             "Content-Length": file.size.toString(),
             "Cache-Control": "public, max-age=604800, immutable", // 1 week
             "ETag": identifier,

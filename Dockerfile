@@ -8,6 +8,9 @@ COPY . /app
 WORKDIR /app
 RUN export SKIP_ENV=1 && deno task cache && deno task build-assets
 
+RUN chown -R deno:deno /app
+USER deno
+
 STOPSIGNAL SIGINT
 
 CMD ["task", "production"]

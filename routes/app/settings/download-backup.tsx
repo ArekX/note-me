@@ -37,7 +37,7 @@ export const handler = async (req: Request, ctx: FreshContext<AppState>) => {
         headers: {
             "Content-Type": "application/octet-stream",
             "Content-Disposition":
-                `attachment; filename="${params.identifier}"`,
+                `attachment; filename="${params.identifier.replace(/["\\]/g, "_")}"`,
             "Content-Length": streamData.size.toString(),
             "Cache-Control": "no-cache",
         },

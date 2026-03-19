@@ -42,8 +42,8 @@ for await (const entry of Deno.readDir(".")) {
 
         for (const variation of variations) {
             promises.push((async () => {
-                const command = new Deno.Command("sh", {
-                    args: ["-c", `deno check ${entry.name}${variation}`],
+                const command = new Deno.Command("deno", {
+                    args: ["check", `${entry.name}${variation}`],
                     stdin: "inherit",
                     stdout: "piped",
                     stderr: "piped",
