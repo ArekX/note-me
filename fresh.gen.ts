@@ -115,6 +115,7 @@ import * as $notes_ViewNote from "./islands/notes/ViewNote.tsx";
 import * as $notes_blocks_NoteLink from "./islands/notes/blocks/NoteLink.tsx";
 import * as $notes_blocks_NoteList from "./islands/notes/blocks/NoteList.tsx";
 import * as $notes_blocks_TableOfContents from "./islands/notes/blocks/TableOfContents.tsx";
+import * as $notes_codemirror_code_backgrounds from "./islands/notes/codemirror/code-backgrounds.ts";
 import * as $notes_codemirror_extension_autocomplete from "./islands/notes/codemirror/extension-autocomplete.ts";
 import * as $notes_codemirror_list_continuation from "./islands/notes/codemirror/list-continuation.ts";
 import * as $notes_codemirror_markdown_commands from "./islands/notes/codemirror/markdown-commands.ts";
@@ -343,6 +344,8 @@ const manifest = {
         "./islands/notes/blocks/NoteList.tsx": $notes_blocks_NoteList,
         "./islands/notes/blocks/TableOfContents.tsx":
             $notes_blocks_TableOfContents,
+        "./islands/notes/codemirror/code-backgrounds.ts":
+            $notes_codemirror_code_backgrounds,
         "./islands/notes/codemirror/extension-autocomplete.ts":
             $notes_codemirror_extension_autocomplete,
         "./islands/notes/codemirror/list-continuation.ts":

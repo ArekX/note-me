@@ -17,11 +17,7 @@ const markdownHighlight = HighlightStyle.define([
     { tag: t.strikethrough, textDecoration: "line-through", color: "#9ca3af" },
     { tag: t.link, color: "#60a5fa" },
     { tag: t.url, color: "#93c5fd", textDecoration: "underline" },
-    {
-        tag: t.monospace,
-        color: "#86efac",
-        backgroundColor: "rgba(134, 239, 172, 0.08)",
-    },
+    { tag: t.monospace, color: "#86efac" },
     { tag: t.quote, color: "#a5b4fc", fontStyle: "italic" },
     { tag: t.list, color: "#fcd34d" },
     { tag: t.meta, color: "#9ca3af" },
@@ -61,6 +57,13 @@ const noteEditorTheme = EditorView.theme(
         },
         ".cm-line": {
             padding: "0 4px",
+        },
+        ".cm-code-block-line": {
+            backgroundColor: "rgba(134, 239, 172, 0.08)",
+        },
+        ".cm-inline-code": {
+            backgroundColor: "rgba(134, 239, 172, 0.08)",
+            borderRadius: "3px",
         },
         ".cm-tooltip": {
             backgroundColor: "#1f2937",

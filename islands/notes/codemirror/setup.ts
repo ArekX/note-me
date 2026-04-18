@@ -35,6 +35,7 @@ import {
     toggleItalic,
 } from "./markdown-commands.ts";
 import { noteEditorStyling } from "./theme.ts";
+import { codeBackgrounds } from "./code-backgrounds.ts";
 
 type HotkeyCommand = (view: EditorView) => boolean;
 
@@ -97,6 +98,7 @@ export const createNoteEditorExtensions = ({
         EditorView.lineWrapping,
         markdown({ base: markdownLanguage, codeLanguages: [] }),
         noteEditorStyling,
+        codeBackgrounds,
         indentUnit.of("    "),
         indentOnInput(),
         bracketMatching(),

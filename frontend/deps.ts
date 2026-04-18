@@ -24,6 +24,8 @@ export {
     Transaction,
 } from "npm:@codemirror/state@6.5.0";
 export {
+    Decoration,
+    type DecorationSet,
     drawSelection,
     EditorView,
     highlightActiveLine,
@@ -31,6 +33,7 @@ export {
     keymap,
     placeholder as cmPlaceholder,
     rectangularSelection,
+    ViewPlugin,
     type ViewUpdate,
 } from "npm:@codemirror/view@6.35.3";
 export {
@@ -46,6 +49,7 @@ export {
     indentOnInput,
     indentUnit,
     syntaxHighlighting,
+    syntaxTree,
 } from "npm:@codemirror/language@6.10.6";
 export {
     acceptCompletion,

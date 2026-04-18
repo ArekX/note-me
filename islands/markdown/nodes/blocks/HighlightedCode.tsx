@@ -16,13 +16,12 @@ export default function HighlightedCode(
         if (!viewerRef.current) {
             return;
         }
+        if (!language || !highlightJs.getLanguage(language)) {
+            return;
+        }
         const code = viewerRef.current.textContent ?? "";
-
-        const result = language && highlightJs.getLanguage(language)
-            ? highlightJs.highlight(code, { language })
-            : highlightJs.highlightAuto(code);
-
-        viewerRef.current.innerHTML = result.value;
+        viewerRef.current.innerHTML =
+            highlightJs.highlight(code, { language }).value;
     }, [viewerRef]);
 
     return (
