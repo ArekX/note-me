@@ -21,6 +21,7 @@ import { canRole, roleRequire } from "$backend/rbac/authorizer.ts";
 import { SessionState } from "$backend/session/mod.ts";
 import { parseQueryParams } from "$backend/parse-query-params.ts";
 import { waitUntilChannelReady } from "$workers/websocket/channel.ts";
+import { getAppUrl } from "$backend/env.ts";
 
 const clients: SocketClientMap = {};
 
@@ -35,10 +36,22 @@ const validateCsrfToken = (
         csrfToken: { type: "string" },
     });
 
-    if (params.csrfToken != storedToken) {
+    if (!storedToken || params.csrfToken != storedToken) {
         return new Response("Invalid or missing CSRF token", {
             status: 403,
         });
+    }
+};
+
+const validateOrigin = (request: Request) => {
+    const origin = request.headers.get("origin");
+    if (!origin) {
+        return new Response("Missing Origin header", { status: 403 });
+    }
+
+    const expectedOrigin = getAppUrl().origin;
+    if (origin !== expectedOrigin) {
+        return new Response("Invalid Origin", { status: 403 });
     }
 };
 
@@ -47,6 +60,9 @@ const handleConnectionRequest = async (request: Request): Promise<Response> => {
         return new Response(null, { status: 501 });
     }
 
+    const originError = validateOrigin(request);
+    if (originError) return originError;
+
     const cookies = resolveCookies(request);
     const session = await loadSessionState<AppSessionData>(cookies.session);
 
@@ -54,7 +70,8 @@ const handleConnectionRequest = async (request: Request): Promise<Response> => {
         return new Response(null, { status: 401 });
     }
 
-    validateCsrfToken(request, session);
+    const csrfError = validateCsrfToken(request, session);
+    if (csrfError) return csrfError;
 
     const { socket, response } = Deno.upgradeWebSocket(request);
 

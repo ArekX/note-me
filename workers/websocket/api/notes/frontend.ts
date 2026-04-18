@@ -345,7 +345,7 @@ const handleRemovePublicShare: ListenerFn<RemovePublicShareMessage> = async (
         throw new Error("Note does not exist.");
     }
 
-    await repository.noteShare.removePublicShare(id);
+    await repository.noteShare.removePublicShare({ id, note_id });
 
     respond<RemovePublicShareResponse>({
         type: "removePublicShareResponse",

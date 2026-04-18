@@ -185,7 +185,21 @@ const handleUpdateProfile: ListenerFn<UpdateProfileMessage> = async (
 const handleFindPickUsers: ListenerFn<FindPickUsersMessage> = async (
     { message: { filters, page }, respond },
 ) => {
-    const records = await repository.user.findPickerUsers({ filters, page });
+    const name = (filters?.name ?? "").trim();
+    const username = (filters?.username ?? "").trim();
+
+    if (name.length < 2 && username.length < 2) {
+        respond<FindPickUsersResponse>({
+            type: "findPickUsersResponse",
+            records: { results: [], total: 0, page: 1, per_page: 5 },
+        });
+        return;
+    }
+
+    const records = await repository.user.findPickerUsers({
+        filters: { ...filters, name, username },
+        page,
+    });
 
     respond<FindPickUsersResponse>({
         type: "findPickUsersResponse",
@@ -267,6 +281,8 @@ const handleDecryptText: ListenerFn<DecryptTextMessage> = async (
     });
 };
 
+const jobOwners = new Map<string, number>();
+
 const handleExportOwnData: ListenerFn<ExportOwnDataMessage> = async (
     { message: { user_password }, sourceClient, respond },
 ) => {
@@ -278,6 +294,8 @@ const handleExportOwnData: ListenerFn<ExportOwnDataMessage> = async (
         export_id: result.exportId,
     });
 
+    jobOwners.set(jobId, sourceClient!.userId);
+
     respond<ExportOwnDataResponse>({
         type: "exportOwnDataResponse",
         export_id: result.exportId,
@@ -286,9 +304,18 @@ const handleExportOwnData: ListenerFn<ExportOwnDataMessage> = async (
 };
 
 const handleCancelExportOwnData: ListenerFn<CancelExportOwnDataMessage> = (
-    { message: { job_id }, respond },
+    { message: { job_id }, sourceClient, respond },
 ) => {
+    const ownerId = jobOwners.get(job_id);
+
+    if (ownerId !== sourceClient!.userId) {
+        throw new Deno.errors.PermissionDenied(
+            "You do not own this export job.",
+        );
+    }
+
     sendAbortRequest(job_id);
+    jobOwners.delete(job_id);
 
     respond<CancelExportOwnDataResponse>({
         type: "cancelExportOwnDataResponse",

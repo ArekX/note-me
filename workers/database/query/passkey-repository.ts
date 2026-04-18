@@ -76,6 +76,7 @@ export type PasskeyByIdRecord = Pick<
     | "counter"
     | "transports"
     | "user_id"
+    | "webauthn_user_identifier"
 >;
 
 export const getPasskeyById = async (
@@ -89,6 +90,7 @@ export const getPasskeyById = async (
             "counter",
             "transports",
             "user_id",
+            "webauthn_user_identifier",
         ])
         .executeTakeFirst();
 };
@@ -96,6 +98,19 @@ export const getPasskeyById = async (
 export const updatePasskeyLastUsedAt = async (passkeyId: string) => {
     await db.updateTable("user_passkey")
         .set("last_used_at", getCurrentUnixTimestamp())
+        .where("credential_identifier", "=", passkeyId)
+        .execute();
+};
+
+export const updatePasskeyAfterUse = async (
+    passkeyId: string,
+    counter: number,
+) => {
+    await db.updateTable("user_passkey")
+        .set({
+            last_used_at: getCurrentUnixTimestamp(),
+            counter,
+        })
         .where("credential_identifier", "=", passkeyId)
         .execute();
 };

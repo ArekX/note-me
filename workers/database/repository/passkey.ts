@@ -8,6 +8,7 @@ import {
     PasskeyRegistrationInfo,
     registerPassKey,
     updatePasskey,
+    updatePasskeyAfterUse,
     updatePasskeyLastUsedAt,
 } from "../query/passkey-repository.ts";
 import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
@@ -46,9 +47,11 @@ type GetRegisteredUserPasskeys = PasskeyRequest<
 
 type PasskeyExists = PasskeyRequest<"passkeyExists", string, boolean>;
 
-type PasskeyIdRecordTransfer = Omit<PasskeyByIdRecord, "public_key"> & {
-    public_key: string;
-};
+export type PasskeyIdRecordTransfer =
+    & Omit<PasskeyByIdRecord, "public_key">
+    & {
+        public_key: string;
+    };
 type GetPasskeyById = PasskeyRequest<
     "getPasskeyById",
     string,
@@ -58,6 +61,12 @@ type GetPasskeyById = PasskeyRequest<
 type UpdatePasskeyLastUsedAt = PasskeyRequest<
     "updatePasskeyLastUsedAt",
     string,
+    void
+>;
+
+type UpdatePasskeyAfterUse = PasskeyRequest<
+    "updatePasskeyAfterUse",
+    { passkey_id: string; counter: number },
     void
 >;
 
@@ -83,6 +92,7 @@ export type PasskeyRepository =
     | PasskeyExists
     | GetPasskeyById
     | UpdatePasskeyLastUsedAt
+    | UpdatePasskeyAfterUse
     | UpdatePasskey
     | FindUserPasskeys
     | DeletePasskey;
@@ -116,6 +126,8 @@ export const passkey: DbHandlerMap<PasskeyRepository> = {
         };
     },
     updatePasskeyLastUsedAt,
+    updatePasskeyAfterUse: ({ passkey_id, counter }) =>
+        updatePasskeyAfterUse(passkey_id, counter),
     updatePasskey: ({ id, user_id, name }) => updatePasskey(id, user_id, name),
     findUserPasskeys: ({ user_id, page }) => findUserPasskeys(user_id, page),
     deletePasskey: ({ user_id, passkey_id }) =>

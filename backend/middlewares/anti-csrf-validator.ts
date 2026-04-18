@@ -1,10 +1,5 @@
 import { FreshContext } from "$fresh/server.ts";
 import { AppState } from "$types";
-import { parseQueryParams } from "$backend/parse-query-params.ts";
-
-interface AntiCsrfToken {
-    csrf: string;
-}
 
 const validatedMethods = ["POST", "PUT", "DELETE"];
 
@@ -15,11 +10,9 @@ export const antiCsrfTokenValidator = (
     const storedToken = ctx.state.session?.data.storedCsrfToken;
 
     if (validatedMethods.includes(req.method)) {
-        const params = parseQueryParams<AntiCsrfToken>(req.url, {
-            csrf: { type: "string" },
-        });
+        const headerToken = req.headers.get("X-CSRF-Token");
 
-        if (params.csrf != storedToken) {
+        if (!storedToken || headerToken !== storedToken) {
             return new Response("Invalid or missing CSRF token", {
                 status: 403,
             });

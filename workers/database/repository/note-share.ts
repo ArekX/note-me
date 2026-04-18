@@ -39,7 +39,11 @@ type CreatePublicShare = NoteShareRequest<
     { note_id: number; expires_at: number | null },
     PublicNoteShareRecord
 >;
-type RemovePublicShare = NoteShareRequest<"removePublicShare", number, void>;
+type RemovePublicShare = NoteShareRequest<
+    "removePublicShare",
+    { id: number; note_id: number },
+    void
+>;
 type SetUserShare = NoteShareRequest<
     "setUserShare",
     { note_id: number; user_ids: number[] },
@@ -83,7 +87,7 @@ export const noteShare: DbHandlerMap<NoteShareRepository> = {
         getUserShareNote(note_id, user_id),
     createPublicShare: ({ note_id, expires_at }) =>
         createPublicShare({ note_id, expires_at }),
-    removePublicShare,
+    removePublicShare: ({ id, note_id }) => removePublicShare(id, note_id),
     setUserShare: ({ note_id, user_ids }) =>
         setUserShare({ note_id, user_ids }),
     getNoteShareData,

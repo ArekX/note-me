@@ -254,10 +254,19 @@ export const finalizePasskeyAuthentication = async (
             expectedRPID: getRelyingPartyId(),
         });
 
+        if (
+            response.response.userHandle &&
+            passkey.webauthn_user_identifier &&
+            response.response.userHandle !== passkey.webauthn_user_identifier
+        ) {
+            return { user_id: null, verified: false };
+        }
+
         if (result.verified) {
-            await repository.passkey.updatePasskeyLastUsedAt(
-                passkey.credential_identifier,
-            );
+            await repository.passkey.updatePasskeyAfterUse({
+                passkey_id: passkey.credential_identifier,
+                counter: result.authenticationInfo.newCounter,
+            });
         }
 
         return {

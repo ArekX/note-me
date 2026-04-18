@@ -29,7 +29,8 @@ export const createSessionCookie = (
             headers.get("Host")?.split(":")?.[0] ??
             "localhost",
         path: "/",
-        secure: (Deno.env.get("COOKIE_MAX_AGE_SECONDS") ?? "0") == "1",
+        httpOnly: true,
+        secure: (Deno.env.get("COOKIE_SECURE") ?? "true") !== "false",
     };
 };
 

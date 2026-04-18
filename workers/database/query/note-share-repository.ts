@@ -115,9 +115,11 @@ export const createPublicShare = async ({
 
 export const removePublicShare = async (
     id: number,
+    note_id: number,
 ): Promise<void> => {
     await db.deleteFrom("note_share_link")
         .where("id", "=", id)
+        .where("note_id", "=", note_id)
         .execute();
 };
 
