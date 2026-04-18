@@ -449,6 +449,7 @@ export const restoreDeletedNote = async (
 ): Promise<boolean> => {
     await db.deleteFrom("group_note")
         .where("note_id", "=", note_id)
+        .where("user_id", "=", user_id)
         .where("group_id", "is not", null)
         .execute();
 
