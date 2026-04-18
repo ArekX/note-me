@@ -115,9 +115,13 @@ import * as $notes_ViewNote from "./islands/notes/ViewNote.tsx";
 import * as $notes_blocks_NoteLink from "./islands/notes/blocks/NoteLink.tsx";
 import * as $notes_blocks_NoteList from "./islands/notes/blocks/NoteList.tsx";
 import * as $notes_blocks_TableOfContents from "./islands/notes/blocks/TableOfContents.tsx";
+import * as $notes_codemirror_extension_autocomplete from "./islands/notes/codemirror/extension-autocomplete.ts";
+import * as $notes_codemirror_list_continuation from "./islands/notes/codemirror/list-continuation.ts";
+import * as $notes_codemirror_markdown_commands from "./islands/notes/codemirror/markdown-commands.ts";
+import * as $notes_codemirror_setup from "./islands/notes/codemirror/setup.ts";
+import * as $notes_codemirror_theme from "./islands/notes/codemirror/theme.ts";
 import * as $notes_helpers_markdown from "./islands/notes/helpers/markdown.ts";
 import * as $notes_hooks_use_note_websocket from "./islands/notes/hooks/use-note-websocket.ts";
-import * as $notes_hooks_use_textarea_shortcuts from "./islands/notes/hooks/use-textarea-shortcuts.ts";
 import * as $notes_insert_components_InsertFile from "./islands/notes/insert-components/InsertFile.tsx";
 import * as $notes_insert_components_InsertHeading from "./islands/notes/insert-components/InsertHeading.tsx";
 import * as $notes_insert_components_InsertImage from "./islands/notes/insert-components/InsertImage.tsx";
@@ -339,11 +343,17 @@ const manifest = {
         "./islands/notes/blocks/NoteList.tsx": $notes_blocks_NoteList,
         "./islands/notes/blocks/TableOfContents.tsx":
             $notes_blocks_TableOfContents,
+        "./islands/notes/codemirror/extension-autocomplete.ts":
+            $notes_codemirror_extension_autocomplete,
+        "./islands/notes/codemirror/list-continuation.ts":
+            $notes_codemirror_list_continuation,
+        "./islands/notes/codemirror/markdown-commands.ts":
+            $notes_codemirror_markdown_commands,
+        "./islands/notes/codemirror/setup.ts": $notes_codemirror_setup,
+        "./islands/notes/codemirror/theme.ts": $notes_codemirror_theme,
         "./islands/notes/helpers/markdown.ts": $notes_helpers_markdown,
         "./islands/notes/hooks/use-note-websocket.ts":
             $notes_hooks_use_note_websocket,
-        "./islands/notes/hooks/use-textarea-shortcuts.ts":
-            $notes_hooks_use_textarea_shortcuts,
         "./islands/notes/insert-components/InsertFile.tsx":
             $notes_insert_components_InsertFile,
         "./islands/notes/insert-components/InsertHeading.tsx":

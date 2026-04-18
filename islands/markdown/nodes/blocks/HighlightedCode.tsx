@@ -18,10 +18,11 @@ export default function HighlightedCode(
         }
         const code = viewerRef.current.textContent ?? "";
 
-        viewerRef.current.innerHTML = highlightJs.highlight(
-            code,
-            { language: language },
-        ).value;
+        const result = language && highlightJs.getLanguage(language)
+            ? highlightJs.highlight(code, { language })
+            : highlightJs.highlightAuto(code);
+
+        viewerRef.current.innerHTML = result.value;
     }, [viewerRef]);
 
     return (

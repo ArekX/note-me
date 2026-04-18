@@ -1,7 +1,6 @@
 import { useSignal } from "@preact/signals";
-import { createRef } from "preact";
-import { useEffect } from "preact/hooks";
-import { autosize } from "$frontend/deps.ts";
+import { useEffect, useRef } from "preact/hooks";
+import { Compartment, EditorState, EditorView } from "$frontend/deps.ts";
 import InsertDialog from "$islands/notes/InsertDialog.tsx";
 import { useFileUploader } from "$islands/files/hooks/use-file-uploader.ts";
 import { UploadProgressDialog } from "$islands/files/UploadProgressDialog.tsx";
@@ -13,7 +12,17 @@ import {
 } from "$islands/notes/helpers/markdown.ts";
 import { FileDropWrapper } from "$islands/files/FileDropWrapper.tsx";
 import { HotkeySet } from "$frontend/hotkeys.ts";
-import { useTextareaShortcuts } from "$islands/notes/hooks/use-textarea-shortcuts.ts";
+import { useWebsocketService } from "$frontend/hooks/use-websocket-service.ts";
+import {
+    SearchNoteMessage,
+    SearchNoteResponse,
+} from "$workers/websocket/api/notes/messages.ts";
+import {
+    GetTreeMessage,
+    GetTreeResponse,
+} from "$workers/websocket/api/tree/messages.ts";
+import { createNoteEditorExtensions } from "./codemirror/setup.ts";
+import { createExtensionCompletion } from "./codemirror/extension-autocomplete.ts";
 
 export const noteTextAreaHotkeySet: HotkeySet<
     "noteTextArea",
@@ -85,68 +94,32 @@ export default function NoteTextArea({
     initialText,
     onChange,
 }: NoteInputProps) {
-    const text = useSignal(initialText);
-    const lastCursorPosition = useSignal(0);
-    const textAreaRef = createRef<HTMLTextAreaElement>();
+    const containerRef = useRef<HTMLDivElement>(null);
+    const viewRef = useRef<EditorView | null>(null);
+    const editableCompartmentRef = useRef(new Compartment());
+    const currentText = useSignal(initialText);
+
+    const onChangeRef = useRef(onChange);
+    onChangeRef.current = onChange;
+
     const fileUploader = useFileUploader();
+    const { sendMessage } = useWebsocketService();
 
-    const { keyDownHandler } = useTextareaShortcuts({
-        textAreaRef,
-        lastCursorPosition,
-        text,
-    });
-
-    const handleTextInput = (event: Event) => {
-        text.value = (event.target as HTMLInputElement).value;
-        onChange(text.value);
-    };
-
-    const recordLastCursorPosition = () => {
-        if (!textAreaRef.current) {
-            return;
-        }
-
-        lastCursorPosition.value = textAreaRef.current.selectionStart || 0;
-    };
-
-    const handleDialogInsert = (insertedText: string) => {
-        const textValue = text.value;
-        const cursorPosition = lastCursorPosition.value;
-
-        text.value = `${textValue.slice(0, cursorPosition)}${insertedText}${
-            textValue.slice(cursorPosition)
-        }`;
-
-        onChange(text.value);
-    };
-
-    const handlePaste = async (e: ClipboardEvent) => {
-        if (!e.clipboardData) {
-            return;
-        }
-
-        const clipboardItems = Array.from(e.clipboardData.items);
-
-        const files = [];
-
-        for (const item of clipboardItems) {
-            const file = item.getAsFile();
-
-            if (file) {
-                files.push(file);
-            }
-        }
-
-        if (files.length === 0) {
-            return;
-        }
-
-        await uploadAndInsertFiles(files);
+    const insertAtCursor = (text: string) => {
+        const view = viewRef.current;
+        if (!view) return;
+        const { from, to } = view.state.selection.main;
+        view.dispatch({
+            changes: { from, to, insert: text },
+            selection: { anchor: from + text.length },
+            userEvent: "input.paste",
+        });
+        view.focus();
     };
 
     const uploadAndInsertFiles = async (files: File[]) => {
         const results = await fileUploader.uploadFiles(files);
-        const toInsert = [];
+        const toInsert: string[] = [];
 
         for (const result of results) {
             if (result.file.type.startsWith("image/")) {
@@ -166,24 +139,83 @@ export default function NoteTextArea({
             }
         }
 
-        handleDialogInsert(toInsert.join("\n"));
+        insertAtCursor(toInsert.join("\n"));
     };
 
-    useEffect(() => {
-        if (!textAreaRef.current) {
-            return;
-        }
+    const uploadRef = useRef(uploadAndInsertFiles);
+    uploadRef.current = uploadAndInsertFiles;
 
-        autosize(textAreaRef.current);
+    useEffect(() => {
+        if (!containerRef.current || viewRef.current) return;
+
+        const completion = createExtensionCompletion({
+            searchNotes: async (query: string) => {
+                const response = await sendMessage<
+                    SearchNoteMessage,
+                    SearchNoteResponse
+                >("notes", "searchNote", {
+                    data: {
+                        filters: {
+                            type: "general",
+                            query,
+                        },
+                    },
+                    expect: "searchNoteResponse",
+                });
+                return response.results;
+            },
+            loadGroups: async () => {
+                const response = await sendMessage<
+                    GetTreeMessage,
+                    GetTreeResponse
+                >("tree", "getTree", {
+                    data: { item_type: "group" },
+                    expect: "getTreeResponse",
+                });
+                return response.records;
+            },
+        });
+
+        const extensions = createNoteEditorExtensions({
+            hotkeySet: noteTextAreaHotkeySet,
+            completion,
+            onChange: (text) => {
+                currentText.value = text;
+                onChangeRef.current(text);
+            },
+            onPasteFiles: (files) => {
+                uploadRef.current(files);
+            },
+            tabIndex: 3,
+            editableCompartment: editableCompartmentRef.current,
+            initialEditable: !isSaving,
+        });
+
+        const view = new EditorView({
+            state: EditorState.create({
+                doc: initialText,
+                extensions,
+            }),
+            parent: containerRef.current,
+        });
+
+        viewRef.current = view;
 
         return () => {
-            autosize.destroy(textAreaRef.current);
+            view.destroy();
+            viewRef.current = null;
         };
-    }, [textAreaRef]);
+    }, []);
 
     useEffect(() => {
-        text.value = initialText;
-    }, []);
+        const view = viewRef.current;
+        if (!view) return;
+        view.dispatch({
+            effects: editableCompartmentRef.current.reconfigure(
+                EditorView.editable.of(!isSaving),
+            ),
+        });
+    }, [isSaving]);
 
     return (
         <div class="flex-grow block basis-auto">
@@ -191,24 +223,15 @@ export default function NoteTextArea({
                 wrapperClass="w-full block"
                 onFilesDropped={uploadAndInsertFiles}
             >
-                <textarea
-                    ref={textAreaRef}
+                <div
+                    ref={containerRef}
                     class="text-editor block w-full"
-                    placeholder="Write your note here"
-                    tabIndex={3}
-                    disabled={isSaving}
-                    onMouseUp={recordLastCursorPosition}
-                    onKeyDown={keyDownHandler}
-                    onKeyUp={recordLastCursorPosition}
-                    onInput={handleTextInput}
-                    onPaste={handlePaste}
-                    value={text}
                 />
             </FileDropWrapper>
             <UploadProgressDialog uploader={fileUploader} />
             <InsertDialog
-                noteText={text.value}
-                onInsert={handleDialogInsert}
+                noteText={currentText.value}
+                onInsert={insertAtCursor}
             />
         </div>
     );
