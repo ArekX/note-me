@@ -1,3 +1,5 @@
+
+
 # NoteMe
 
 NoteMe is a simple, note-taking app with powerful features which help you to
@@ -7,7 +9,7 @@ keep the ownership of your notes and keep them organized however you see fit.
 
 - **Markdown support**. Notes are written and shown using markdown. All standard
   markdown syntax is supported with additional flavors like task lists,
-  footnotes, tables and extensions special to NoteMe like showing dynamic table
+  footnotes, tables, Mermaid diagrams, and extensions special to NoteMe like showing dynamic table
   of contents, note links and listing notes from a specific group.
 - **Organize your notes**. You can tag your notes, store them in any kind of
   groups or subgroups making it easy to create an exact structure you want.
