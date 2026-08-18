@@ -3,12 +3,21 @@
 NoteMe is a simple, note-taking app with powerful features which help you to
 keep the ownership of your notes and keep them organized however you see fit.
 
+![Login page](.github/screenshot-1.jpg)
+
+![Dashboard](.github/screenshot-2.jpg)
+
+![Note view](.github/screenshot-3.jpg)
+
 ## Features
 
 - **Markdown support**. Notes are written and shown using markdown. All standard
   markdown syntax is supported with additional flavors like task lists,
   footnotes, tables and extensions special to NoteMe like showing dynamic table
   of contents, note links and listing notes from a specific group.
+- **Mermaid diagrams**. Code blocks marked with the `mermaid` language are
+  rendered as [Mermaid](https://mermaid.js.org/) diagrams, letting you embed
+  flowcharts, sequence diagrams, class diagrams and more directly in your notes.
 - **Organize your notes**. You can tag your notes, store them in any kind of
   groups or subgroups making it easy to create an exact structure you want.
 - **Multiple users welcome**. NoteMe supports multiple users with different
@@ -75,6 +84,48 @@ backend websocket connection at `http://localhost:8080`.
 
 On first run, administrator user will be created with username `admin` and
 password `admin`.
+
+## Run with Docker Compose
+
+For a production server setup behind an HTTPS reverse proxy, an example compose
+file is provided in [docker-compose.example.yml](docker-compose.example.yml).
+
+1. Copy `docker-compose.example.yml` to `docker-compose.yml` on your server.
+2. Replace `noteme.example.com` with your own domain in `APP_URL`,
+   `SOCKET_HOSTNAME` and `COOKIE_DOMAIN`.
+3. Run `docker compose up -d`
+
+The compose setup persists the SQLite database in the `./data` directory and
+mounts `./backup` into the container so a "local" backup target pointed at
+`/app/backup` stores backups on the host. Both ports are bound to `127.0.0.1` so
+the application is only reachable through the reverse proxy.
+
+## Reverse proxy
+
+The application serves the webserver on port `8000` and the websocket on port
+`8080`. The reverse proxy must forward regular traffic to the webserver and the
+path configured in `SOCKET_HOSTNAME` (for example `/websocket-server`) to the
+websocket server, including the websocket upgrade headers. Example nginx
+configuration:
+
+```nginx
+location / {
+    proxy_pass http://localhost:8000;
+    proxy_buffering off;
+    # Application allows uploads up to 50MB by default.
+    client_max_body_size 50m;
+}
+
+location /websocket-server {
+    proxy_pass http://localhost:8080;
+    proxy_buffering off;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    # Keep idle websocket connections alive.
+    proxy_read_timeout 1h;
+}
+```
 
 # Run manually
 

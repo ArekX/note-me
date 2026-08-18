@@ -1,0 +1,60 @@
+# Example production setup behind an HTTPS reverse proxy.
+# Copy to docker-compose.yml and replace noteme.example.com with your domain.
+services:
+    note-me:
+        image: arekxv/note-me:latest
+        container_name: note-me
+        restart: unless-stopped
+        ports:
+            # Bound to localhost only — expose through your reverse proxy.
+            # Drop the "127.0.0.1:" prefix if the proxy runs on another host.
+            - "127.0.0.1:8000:8000" # webserver
+            - "127.0.0.1:8080:8080" # websocket
+        environment:
+            # Must bind to 0.0.0.0 inside the container, otherwise ports are unreachable.
+            SERVER_ADDRESS: 0.0.0.0
+            WEBSERVER_PORT: 8000
+            WEBSOCKET_PORT: 8080
+
+            # Persist the database outside the container (see volumes below).
+            SQLITE_DATABASE_LOCATION: /app/data/database.sqlite
+
+            # SOCKET_HOSTNAME is the URL the browser connects to for the
+            # websocket — the reverse proxy must forward /websocket-server
+            # to port 8080 (the websocket server ignores the path).
+            APP_URL: https://noteme.example.com
+            SOCKET_HOSTNAME: wss://noteme.example.com/websocket-server
+            COOKIE_DOMAIN: noteme.example.com
+
+            # Requires HTTPS; set to 0 only when serving over plain HTTP.
+            COOKIE_SECURE: 1
+            COOKIE_MAX_AGE_SECONDS: 2592000
+
+            LOGGING_LEVEL: INFO
+            SHOW_LOG_COLORS: 0
+            RUN_MIGRATIONS_ON_STARTUP: 1
+            DISABLE_SERVICE_PERIODIC_TASKS: 0
+
+            # 50MB upload limit
+            MAX_FILE_SIZE: 52428800
+
+            # Daily backups to keep, 0 disables backups.
+            MAX_ALLOWED_BACKUP_COUNT: 5
+        volumes:
+            # SQLite database (notes and uploaded files live here).
+            - ./data:/app/data
+            # Local backup target location. When adding a "local" backup target
+            # in the app, point it at /app/backup to have backups land here.
+            - ./backup:/app/backup
+        healthcheck:
+            test:
+                [
+                    "CMD",
+                    "deno",
+                    "eval",
+                    "const r = await fetch('http://localhost:8000'); Deno.exit(r.ok ? 0 : 1);",
+                ]
+            interval: 30s
+            timeout: 10s
+            retries: 3
+            start_period: 15s
