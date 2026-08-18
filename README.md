@@ -3,11 +3,11 @@
 NoteMe is a simple, note-taking app with powerful features which help you to
 keep the ownership of your notes and keep them organized however you see fit.
 
-![Login page](.github/screenshot-1.jpg)
-
-![Dashboard](.github/screenshot-2.jpg)
-
-![Note view](.github/screenshot-3.jpg)
+<p>
+  <img src=".github/screenshot-1.jpg" alt="Login page" width="32%" />
+  <img src=".github/screenshot-2.jpg" alt="Dashboard" width="32%" />
+  <img src=".github/screenshot-3.jpg" alt="Note view" width="32%" />
+</p>
 
 ## Features
 
