@@ -82,10 +82,20 @@ export default function NoteWindow({
                 expect: "getNoteDetailsResponse",
             });
 
-            noteRecord.value = {
-                text: response.record.note,
-                is_encrypted: response.record.is_encrypted,
-            };
+            if (type === "delete" && response.record.is_encrypted) {
+                // Deleting a note must not force unlocking it. The text is
+                // only used to detect uploaded files, which is not possible
+                // for protected notes without unlocking them first.
+                noteRecord.value = {
+                    text: "",
+                    is_encrypted: false,
+                };
+            } else {
+                noteRecord.value = {
+                    text: response.record.note,
+                    is_encrypted: response.record.is_encrypted,
+                };
+            }
         } catch (e) {
             addSystemErrorMessage(e as SystemErrorMessage);
         }
@@ -106,9 +116,7 @@ export default function NoteWindow({
                 is_encrypted: false,
             };
         } else {
-            if (type !== "delete") {
-                loadInputData();
-            }
+            loadInputData();
         }
     }, [existingNoteText, noteId]);
 

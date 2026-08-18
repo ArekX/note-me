@@ -1,5 +1,5 @@
 import Logo from "../components/Logo.tsx";
-import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
+import { FreshContext, page, PageProps } from "fresh";
 import {
     createSessionState,
     writeSessionCookie,
@@ -17,6 +17,7 @@ import {
     initializePasskeyAuthentication,
     PasskeyAuthenticationRequestData,
 } from "$backend/passkeys.ts";
+import { Handlers } from "fresh/compat";
 
 interface LoginResult {
     username: string;
@@ -25,11 +26,10 @@ interface LoginResult {
 }
 
 const renderSignIn = async (
-    ctx: FreshContext<AppState, LoginResult>,
     message: string = "",
     username: string = "",
 ) => {
-    return ctx.render({
+    return page({
         username,
         message,
         passkey_request: await initializePasskeyAuthentication(),
@@ -37,7 +37,7 @@ const renderSignIn = async (
 };
 
 export const handler: Handlers<LoginResult> = {
-    async GET(_req, ctx: FreshContext<AppState, LoginResult>) {
+    async GET(ctx: FreshContext<AppState>) {
         if (ctx.state.session?.data) {
             return new Response("", {
                 status: 302,
@@ -45,9 +45,11 @@ export const handler: Handlers<LoginResult> = {
             });
         }
 
-        return await renderSignIn(ctx);
+        return await renderSignIn();
     },
-    async POST(req, ctx: FreshContext<AppState, LoginResult>) {
+    async POST(ctx: FreshContext<AppState>) {
+        const req = ctx.req;
+
         checkLoginAttempt(req, ctx);
 
         const form = await req.formData();
@@ -58,7 +60,7 @@ export const handler: Handlers<LoginResult> = {
             const passkeyRequestId = form.get("passkey_request_id")?.toString();
 
             if (!passkeyRequestId) {
-                return await renderSignIn(ctx, "Invalid passkey request.");
+                return await renderSignIn("Invalid passkey request.");
             }
 
             const authenticationData: AuthenticationResponseJSON = JSON.parse(
@@ -72,7 +74,6 @@ export const handler: Handlers<LoginResult> = {
 
             if (!result.verified) {
                 return await renderSignIn(
-                    ctx,
                     "Could not verify your passkey, make sure it is registered to your account.",
                 );
             }
@@ -87,7 +88,6 @@ export const handler: Handlers<LoginResult> = {
 
         if (!user) {
             return await renderSignIn(
-                ctx,
                 "Invalid username or password.",
                 form.get("username")?.toString() ?? "",
             );

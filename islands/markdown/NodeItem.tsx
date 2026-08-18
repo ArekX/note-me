@@ -91,8 +91,24 @@ export default function NodeItem({
                     {items}
                 </Heading>
             );
-        case "table":
-            return <table>{items}</table>;
+        case "table": {
+            // Rows must be wrapped in <tbody>: the browser inserts one
+            // implicitly when parsing server-rendered HTML, so rendering
+            // <tr> directly under <table> makes the client vnode tree
+            // disagree with the hydrated DOM.
+            const head = items?.filter((_, index) =>
+                node.children[index].type === "tableHead"
+            );
+            const rows = items?.filter((_, index) =>
+                node.children[index].type !== "tableHead"
+            );
+            return (
+                <table>
+                    {head}
+                    <tbody>{rows}</tbody>
+                </table>
+            );
+        }
         case "tableCell":
             return <td>{items}</td>;
         case "tableHead":

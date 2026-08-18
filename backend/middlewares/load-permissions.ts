@@ -1,10 +1,9 @@
-import { FreshContext } from "$fresh/server.ts";
+import { FreshContext } from "fresh";
 import { AppState } from "$types";
 import { roleDefinitions } from "$backend/rbac/role-definitions.ts";
 import { AppPermissions } from "$backend/rbac/permissions.ts";
 
 export const loadPermissions = (
-    _req: Request,
     ctx: FreshContext<AppState>,
 ) => {
     if (!ctx.state.session?.data?.user) {

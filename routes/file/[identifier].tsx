@@ -1,4 +1,4 @@
-import { FreshContext } from "$fresh/server.ts";
+import { FreshContext } from "fresh";
 import { AppState } from "$types";
 import { CanManageFiles } from "$backend/rbac/permissions.ts";
 import { hasPermission } from "$backend/rbac/authorizer.ts";
@@ -24,7 +24,7 @@ const ALLOWED_RENDER_MIME_TYPES = [
     "video/webm",
 ];
 
-export const handler = async (_req: Request, ctx: FreshContext<AppState>) => {
+export const handler = async (ctx: FreshContext<AppState>) => {
     const identifier: string = ctx.params.identifier ?? "";
 
     const userId = ctx.state.session?.getUserId()!;

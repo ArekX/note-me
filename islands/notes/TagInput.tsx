@@ -255,7 +255,7 @@ export default function TagInput({
         <div ref={tagInputRef}>
             <input
                 ref={inputRef}
-                class={`outline-none block ${
+                class={`outline-hidden block ${
                     noTransparentBackground ? "" : "bg-transparent"
                 } mt-2 w-full tag-editor ${addClass}`}
                 type="text"
@@ -271,7 +271,7 @@ export default function TagInput({
             {isOpen && (
                 <div
                     ref={dropdownRef}
-                    class="z-40 fixed top-full left-0 bg-gray-800 border border-b-0 border-gray-600/50 shadow-black/80 shadow-sm text-white max-h-52 overflow-auto rounded-md"
+                    class="z-40 fixed top-full left-0 bg-gray-800 border border-b-0 border-gray-600/50 shadow-black/80 shadow-xs text-white max-h-52 overflow-auto rounded-md"
                 >
                     {isSearching.running && (
                         <div class="p-4">

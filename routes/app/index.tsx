@@ -1,8 +1,9 @@
-import { FreshContext, Handlers } from "$fresh/server.ts";
+import { FreshContext } from "fresh";
 import { AppState } from "$types";
+import { Handlers } from "fresh/compat";
 
 export const handler: Handlers<string> = {
-    GET(_req, _ctx: FreshContext<AppState>) {
+    GET(_ctx: FreshContext<AppState>) {
         return new Response("", {
             status: 302,
             headers: { Location: "/app/note" },

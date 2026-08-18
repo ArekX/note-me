@@ -1,4 +1,4 @@
-import { FreshContext } from "$fresh/server.ts";
+import { FreshContext } from "fresh";
 import { AppState } from "$types";
 import { getCurrentUnixTimestamp } from "$lib/time/unix.ts";
 
@@ -18,9 +18,10 @@ export const checkLoginAttempt = (
     req: Request,
     ctx: FreshContext<AppState>,
 ) => {
+    const remoteAddr = ctx.info.remoteAddr;
     const requestIp = req.headers.get("x-forwarded-for") ||
         req.headers.get("cf-connecting-ip") ||
-        ctx.remoteAddr.hostname ||
+        ("hostname" in remoteAddr ? remoteAddr.hostname : null) ||
         null;
 
     if (!requestIp) {

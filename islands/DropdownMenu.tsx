@@ -60,7 +60,7 @@ const MenuItems = (
         <div
             ref={menuRef}
             class={`text-white absolute ${inlineDirectionClass} text-md mt-1 z-50 drop-shadow-lg 
-                    bg-gray-800 border-gray-700 border border-b-0 rounded-lg shadow-black/80 shadow-sm 
+                    bg-gray-800 border-gray-700 border border-b-0 rounded-lg shadow-black/80 shadow-xs 
                     whitespace-nowrap break-keep overscroll-none`}
         >
             {items.map((item, index) => (

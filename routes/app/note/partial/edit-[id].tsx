@@ -1,6 +1,6 @@
-import { PageProps, RouteConfig } from "$fresh/server.ts";
+import { PageProps, RouteConfig } from "fresh";
 import EditPage from "../edit-[id].tsx";
-import { Partial } from "$fresh/runtime.ts";
+import { Partial } from "fresh/runtime";
 import NoteLayout from "$components/NoteLayout.tsx";
 
 export const config: RouteConfig = {
@@ -14,7 +14,7 @@ export default function Page(props: PageProps) {
     return (
         <Partial name="body">
             <NoteLayout>
-                <EditPage {...props} />
+                <EditPage {...props as Parameters<typeof EditPage>[0]} />
             </NoteLayout>
         </Partial>
     );

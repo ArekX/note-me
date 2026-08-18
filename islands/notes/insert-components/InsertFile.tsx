@@ -37,7 +37,7 @@ const Component = ({
                 or a download link.
             </div>
             <div>
-                <div class="flex-grow">
+                <div class="grow">
                     {selectedFiles.value.length > 0 && (
                         <div>
                             To be inserted:{" "}

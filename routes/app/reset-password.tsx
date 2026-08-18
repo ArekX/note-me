@@ -1,14 +1,15 @@
-import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
+import { FreshContext, page, PageProps } from "fresh";
 import { AppState } from "$types";
 import { UserLoginRecord } from "$db";
 import ResetUserPassword from "$islands/profile/ResetUserPassword.tsx";
+import { Handlers } from "fresh/compat";
 
 interface PasswordResetData {
     user: UserLoginRecord;
 }
 
 export const handler: Handlers<PasswordResetData> = {
-    GET(_req, ctx: FreshContext<AppState, PasswordResetData>) {
+    GET(ctx: FreshContext<AppState>) {
         if (!ctx.state.session?.data.user?.is_password_reset_required) {
             return new Response("", {
                 status: 302,
@@ -16,7 +17,7 @@ export const handler: Handlers<PasswordResetData> = {
             });
         }
 
-        return ctx.render({
+        return page({
             user: ctx.state.session.data.user,
         });
     },

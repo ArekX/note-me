@@ -1,7 +1,7 @@
-import { defineLayout } from "$fresh/server.ts";
 import NoteLayout from "$components/NoteLayout.tsx";
+import { defineLayout } from "fresh/compat";
 
-export default defineLayout((_, ctx) => {
+export default defineLayout((ctx) => {
     return (
         <NoteLayout>
             <ctx.Component />

@@ -196,7 +196,6 @@ export default function ExportMyData() {
                         <progress
                             class="w-full"
                             max={100}
-                            min="0"
                             value={processingProgress.value}
                         />
                     </p>

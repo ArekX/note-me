@@ -1,5 +1,7 @@
 import { logger } from "$backend/logger.ts";
 import { hostWaitForWokerReady } from "$workers/services/worker-helper.ts";
+import { resolve } from "$std/path/resolve.ts";
+import { toFileUrl } from "$std/path/to_file_url.ts";
 
 interface BackgroundServiceOptions {
     required: boolean;
@@ -39,10 +41,12 @@ export class BackgroundService {
             return;
         }
 
+        // Resolve from the project root rather than import.meta.url so that
+        // the path stays correct when this module is bundled into
+        // _fresh/server.js for production.
         this.#worker = new Worker(
-            new URL(
-                `../${this.name}/worker.ts`,
-                import.meta.url,
+            toFileUrl(
+                resolve(Deno.cwd(), "workers", this.name, "worker.ts"),
             ).href,
             {
                 type: "module",

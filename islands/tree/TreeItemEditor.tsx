@@ -63,7 +63,7 @@ export default function TreeItemEditor(
             <input
                 ref={(el) => el?.focus()}
                 type="text"
-                class="outline-none border-1 pl-9 pr-14 border-gray-900 bg-gray-700 p-2 w-full"
+                class="outline-hidden border-1 pl-9 pr-14 border-gray-900 bg-gray-700 p-2 w-full"
                 placeholder="Enter group name..."
                 disabled={container.is_processing}
                 value={name.value}

@@ -221,7 +221,7 @@ export default function Notifications(props: NotificationsProps) {
                 ? (
                     <div
                         ref={menuRef}
-                        class="notification-container hidden fixed top-10 left-0 w-96 bg-gray-800 pt-2 z-50 shadow-black/80 shadow-sm text-white text-left rounded-lg border border-b-0 border-gray-600/50"
+                        class="notification-container hidden fixed top-10 left-0 w-96 bg-gray-800 pt-2 z-50 shadow-black/80 shadow-xs text-white text-left rounded-lg border border-b-0 border-gray-600/50"
                     >
                         <NotificationListView
                             notifications={notifications.value}

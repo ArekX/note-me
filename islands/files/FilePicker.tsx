@@ -252,7 +252,7 @@ export default function FilePicker({
             onFilesDropped={handleFilesDropped}
         >
             <div class="w-full flex mb-2 items-end pb-4">
-                <div class="mr-2 flex-grow">
+                <div class="mr-2 grow">
                     <Input
                         icon="search"
                         label="Search"

@@ -52,7 +52,7 @@ const textEncoder = new TextEncoder();
 const createBinaryMessage = <T extends BinaryMessage>(
     request: Omit<T, "binaryData">,
     data: Uint8Array,
-): Uint8Array => {
+): Uint8Array<ArrayBuffer> => {
     const headers = JSON.stringify({
         ...request,
     });

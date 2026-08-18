@@ -54,7 +54,7 @@ export default function ReminderItem(
             class={`${itemClass} cursor-pointer items-center flex group ${addClass}`}
             onClick={handleOpenNote}
         >
-            <div class="flex-grow p-2">
+            <div class="grow p-2">
                 <TreeItemIcon
                     container={fromTreeRecord({
                         type: "note",

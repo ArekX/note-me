@@ -18,18 +18,20 @@ export const diffText = (a: string, b: string): DiffLine[] => {
     const lines = aLines.length > bLines.length ? aLines : bLines;
 
     return lines.map((value, i) => {
-        const diffLine = diffLines.find((x) => x.p[0] === i);
+        const diffLine = diffLines.find((x) => x.path[0] === i);
 
-        if (diffLine?.t === 2) {
+        if (diffLine?.type === 2) {
             return {
                 type: "changed",
                 from: value,
-                to: diffLine.v! as string,
+                to: diffLine.value! as string,
             };
         }
 
         return {
-            type: diffLine ? (diffLine.t === 0 ? "removed" : "added") : "same",
+            type: diffLine
+                ? (diffLine.type === 0 ? "removed" : "added")
+                : "same",
             value,
         };
     });

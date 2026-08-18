@@ -1,10 +1,10 @@
 import { JSX } from "preact";
 import { useLoader } from "$frontend/hooks/use-loader.ts";
 import { useSignal } from "@preact/signals";
-import { useEffect } from "preact/hooks";
+import { useEffect, useRef } from "preact/hooks";
 import Loader from "$islands/Loader.tsx";
 import { useContentEncryption } from "$frontend/hooks/use-content-encryption.ts";
-import { IS_BROWSER } from "$fresh/runtime.ts";
+import { IS_BROWSER } from "fresh/runtime";
 import Dialog from "$islands/Dialog.tsx";
 import { useProtectionLock } from "$frontend/hooks/use-protection-lock.ts";
 import Button from "$components/Button.tsx";
@@ -64,6 +64,7 @@ export default function LockedContentWrapper<T extends object>({
     const loader = useLoader(hasProtectedInputRecords());
     const contentEncryption = useContentEncryption();
     const protectionLock = useProtectionLock();
+    const unlockingRecords = useRef<T[] | null>(null);
     const recordsUnlocked = useSignal<boolean>(
         !hasProtectedInputRecords(),
     );
@@ -73,6 +74,20 @@ export default function LockedContentWrapper<T extends object>({
     );
 
     const unlockRecords = async (inputRecords: T[]) => {
+        if (
+            unlockingRecords.current !== null &&
+            inputRecords.every((record) =>
+                unlockingRecords.current!.includes(record)
+            )
+        ) {
+            // An unlock for these exact records is already waiting for the
+            // password. Re-triggering it on every re-render would pile up
+            // pending unlock requests and spin rendering into an infinite
+            // loop while the protection lock is closed.
+            return;
+        }
+
+        unlockingRecords.current = inputRecords;
         loader.start();
         const propagationTicket = createPropagationTicket();
         const results = [];
@@ -104,6 +119,7 @@ export default function LockedContentWrapper<T extends object>({
             onUnlockFail?.(failReason.value ?? "Unknown error.");
             return;
         } finally {
+            unlockingRecords.current = null;
             await consumePropagationTicket(propagationTicket);
         }
 

@@ -108,7 +108,6 @@ export default function ImportNotes() {
                             <progress
                                 class="w-full"
                                 max={totalFiles.value}
-                                min="0"
                                 value={doneFiles.value}
                             />
                         </div>

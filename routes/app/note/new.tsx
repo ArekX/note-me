@@ -1,8 +1,9 @@
-import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
+import { FreshContext, page, PageProps } from "fresh";
 import { AppState } from "$types";
 import { parseQueryParams } from "$backend/parse-query-params.ts";
 import { GroupRecord, repository } from "$db";
 import EditNotePage from "$islands/notes/pages/EditNotePage.tsx";
+import { Handlers } from "fresh/compat";
 
 interface PageData {
     group: GroupRecord | null;
@@ -13,7 +14,8 @@ interface QueryParams {
 }
 
 export const handler: Handlers<PageData> = {
-    async GET(req, ctx: FreshContext<AppState, PageData>) {
+    async GET(ctx: FreshContext<AppState>) {
+        const req = ctx.req;
         const noteParams = parseQueryParams<QueryParams>(req.url, {
             group_id: { type: "number", optional: true },
         });
@@ -27,7 +29,7 @@ export const handler: Handlers<PageData> = {
             throw new Deno.errors.NotFound("Requested group not found.");
         }
 
-        return ctx.render({
+        return page({
             group,
         });
     },

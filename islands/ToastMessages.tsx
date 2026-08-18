@@ -18,7 +18,7 @@ export default function ToastMessages() {
                         typeColorMap[message.type]
                     } border p-5 max-md:py-1 max-md:px-2 flex items-center text-white rounded-xl mt-5 shadow-gray-900 shadow-md`}
                 >
-                    <div class="flex-grow">
+                    <div class="grow">
                         {message.text}
                     </div>
 

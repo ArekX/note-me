@@ -28,7 +28,7 @@ export default function KeyboardShortcuts() {
             <h2 class="text-lg font-bold">
                 Keyboard Shortcuts
             </h2>
-            <p class="pt-2">
+            <div class="pt-2">
                 {hotkeys.map((context) => (
                     <div class="py-2">
                         <h1 class="text-lg">{hotkeyMap[context].name}</h1>
@@ -62,7 +62,7 @@ export default function KeyboardShortcuts() {
                         </table>
                     </div>
                 ))}
-            </p>
+            </div>
         </div>
     );
 }

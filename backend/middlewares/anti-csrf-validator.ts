@@ -1,12 +1,12 @@
-import { FreshContext } from "$fresh/server.ts";
+import { FreshContext } from "fresh";
 import { AppState } from "$types";
 
 const validatedMethods = ["POST", "PUT", "DELETE"];
 
 export const antiCsrfTokenValidator = (
-    req: Request,
     ctx: FreshContext<AppState>,
 ) => {
+    const req = ctx.req;
     const storedToken = ctx.state.session?.data.storedCsrfToken;
 
     if (validatedMethods.includes(req.method)) {

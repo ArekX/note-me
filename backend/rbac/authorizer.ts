@@ -1,15 +1,16 @@
 import { AppState } from "$types";
 import { AppPermissions } from "$backend/rbac/permissions.ts";
-import { FreshContext, Handler } from "$fresh/server.ts";
+import { FreshContext } from "fresh";
 import { roleDefinitions, Roles } from "$backend/rbac/role-definitions.ts";
+import { Handler } from "fresh/compat";
 
 export const guardHandler = <T>(
     requiredPermission: AppPermissions,
     handler: Handler<T, AppState>,
 ) =>
-(request: Request, ctx: FreshContext<AppState>) => {
+(ctx: FreshContext<AppState>) => {
     requirePemission(requiredPermission, ctx.state);
-    return handler(request, ctx);
+    return handler(ctx);
 };
 
 export const requirePemission = (

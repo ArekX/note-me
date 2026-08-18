@@ -35,7 +35,7 @@ export default function SidebarMenuTop(
             </div>
             <a
                 onClick={() => redirectTo.root()}
-                class="block flex-grow text-center pt-1 cursor-pointer"
+                class="block grow text-center pt-1 cursor-pointer"
             >
                 <Logo
                     white

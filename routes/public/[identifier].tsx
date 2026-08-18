@@ -1,9 +1,9 @@
-import { FreshContext, PageProps } from "$fresh/server.ts";
+import { FreshContext, page, PageProps } from "fresh";
 import { PublicSharedNote, repository } from "$db";
 import { AppState } from "$types";
 import ViewNote from "$islands/notes/ViewNote.tsx";
 
-export const handler = async (_req: Request, ctx: FreshContext<AppState>) => {
+export const handler = async (ctx: FreshContext<AppState>) => {
     const identifier: string = ctx.params.identifier ?? "";
 
     const sharedNote = await repository.noteShare.getPublicShareNote(
@@ -20,7 +20,7 @@ export const handler = async (_req: Request, ctx: FreshContext<AppState>) => {
         );
     }
 
-    return ctx.render({
+    return page({
         pageTitle: sharedNote.title,
         note: sharedNote,
     });

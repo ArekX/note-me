@@ -1,9 +1,10 @@
-import { FreshContext, Handlers } from "$fresh/server.ts";
+import { FreshContext } from "fresh";
 import { destroySession } from "$backend/session/mod.ts";
 import { AppState } from "$types";
+import { Handlers } from "fresh/compat";
 
 export const handler: Handlers<string> = {
-    async GET(_req, ctx: FreshContext<AppState>) {
+    async GET(ctx: FreshContext<AppState>) {
         if (ctx.state.session) {
             await destroySession(ctx.state.session.getUserId());
         }

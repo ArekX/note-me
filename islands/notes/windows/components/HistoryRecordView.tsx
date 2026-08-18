@@ -151,7 +151,7 @@ export default function HistoryRecordView(
     return (
         <>
             <div class="flex h-full flex-col flex-nowrap justify-start items-stretch">
-                <div class="flex-shrink flex w-full pb-2">
+                <div class="shrink flex w-full pb-2">
                     <div class="basis-2/5 md:max-lg:basis-3/5 max-md:basis-1/4">
                         {query.min("md")
                             ? (
@@ -208,7 +208,7 @@ export default function HistoryRecordView(
                                 </>
                             )}
                     </div>
-                    <div class="max-md:flex-grow max-md:block hidden"></div>
+                    <div class="max-md:grow max-md:block hidden"></div>
                     <div class="basis-3/5 md:max-lg:basis-2/5 max-md:basis-1/4 text-right px-2 max-md:pr-0">
                         <Button
                             color="warning"
@@ -241,7 +241,7 @@ export default function HistoryRecordView(
                     </div>
                 </div>
 
-                <div class="pt-2 bg-gray-900 basis-full flex-grow overflow-auto border border-gray-700 border-b-0 rounded-lg">
+                <div class="pt-2 bg-gray-900 basis-full grow overflow-auto border border-gray-700 border-b-0 rounded-lg">
                     <div class="p-5">
                         <LockedContentWrapper
                             inputRecords={[historyRecord.value]}

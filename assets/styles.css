@@ -1,8 +1,24 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-html, body {
+/* Classes generated dynamically at runtime (e.g. markdown heading sizes)
+   which the source scanner cannot detect. */
+@source inline("{text-sm,text-lg,text-xl,text-2xl,text-3xl,text-4xl,text-5xl}");
+
+/* Tailwind v3 compatibility: v4 changed the default border color from
+   gray-200 to currentColor. Restore the v3 default for bare `border`
+   utilities used without an explicit color. */
+@layer base {
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentColor);
+    }
+}
+
+html,
+body {
     height: 100%;
     min-width: 300px;
     margin: 0;
@@ -100,9 +116,12 @@ dialog {
     opacity: 0;
     outline: none;
     display: block;
+    /* Tailwind v4 preflight resets margins on all elements, which removes
+       the user-agent margin that centers native dialogs. */
+    margin: auto;
     padding: 2em;
     @apply rounded-lg bg-gray-800 text-white border-gray-700 border border-b-0
-        shadow-black/80 shadow-sm;
+        shadow-black/80 shadow-xs;
 }
 dialog[open] {
     opacity: 1;
@@ -120,11 +139,13 @@ table {
     border-spacing: 0;
 }
 
-table th, table thead td {
+table th,
+table thead td {
     @apply bg-gray-700/50 text-gray-300;
 }
 
-table td, table th {
+table td,
+table th {
     @apply border-gray-700 border p-2 border-r-0 border-b-0;
 }
 
@@ -136,11 +157,13 @@ table tr td:last-child {
     @apply border-gray-700 border-r;
 }
 
-table th:first-child, table thead :not(.filters) td:first-child {
+table th:first-child,
+table thead :not(.filters) td:first-child {
     @apply rounded-tl-lg;
 }
 
-table th:last-child, table thead :not(.filters) td:last-child {
+table th:last-child,
+table thead :not(.filters) td:last-child {
     @apply rounded-tr-lg;
 }
 
@@ -171,7 +194,8 @@ table :not(thead) tr:hover {
     align-items: normal;
 }
 
-.note-editor input, .note-editor textarea {
+.note-editor input,
+.note-editor textarea {
     outline: none;
 }
 
@@ -215,7 +239,8 @@ table :not(thead) tr:hover {
     font-weight: bold;
 }
 
-.view-note .tag, .note-editor .tag-editor {
+.view-note .tag,
+.note-editor .tag-editor {
     font-size: 1.2em;
     font-weight: 600;
     transition: all 0.3s;
@@ -325,7 +350,8 @@ table :not(thead) tr:hover {
     }
 }
 
-.markdown-viewer ul, .markdown-viewer ol {
+.markdown-viewer ul,
+.markdown-viewer ol {
     padding-left: 1.5em;
 }
 
@@ -370,7 +396,7 @@ table :not(thead) tr:hover {
     @apply bg-gray-950;
     @apply pr-1;
     @apply pl-1;
-    @apply rounded-sm;
+    @apply rounded-xs;
     @apply text-sm;
     @apply text-gray-300;
     display: inline-block;
@@ -439,7 +465,8 @@ table :not(thead) tr:hover {
     color: #000;
 }
 
-code, pre {
+code,
+pre {
     font-family: monospace;
 }
 

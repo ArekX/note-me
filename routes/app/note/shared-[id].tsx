@@ -1,11 +1,12 @@
-import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
+import { FreshContext, page, PageProps } from "fresh";
 import { AppState } from "$types";
 import ViewNote from "$islands/notes/ViewNote.tsx";
 import { PublicSharedNote } from "$db";
 import { repository } from "$db";
+import { Handlers } from "fresh/compat";
 
 export const handler: Handlers<PageData> = {
-    async GET(_req, ctx: FreshContext<AppState, PageData>) {
+    async GET(ctx: FreshContext<AppState>) {
         const noteId = +ctx.params.id;
 
         const note = await repository.noteShare.getUserShareNote({
@@ -23,7 +24,7 @@ export const handler: Handlers<PageData> = {
             );
         }
 
-        return ctx.render({
+        return page({
             note,
         });
     },

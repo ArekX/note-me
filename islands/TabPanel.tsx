@@ -30,7 +30,7 @@ export default function TabPanel(
                     }}
                 />
             </div>
-            <div class="flex-grow">
+            <div class="grow">
                 <Panel>
                     {children}
                 </Panel>

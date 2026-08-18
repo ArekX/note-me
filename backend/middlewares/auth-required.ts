@@ -1,8 +1,7 @@
-import { FreshContext } from "$fresh/server.ts";
+import { FreshContext } from "fresh";
 import { AppState } from "$types";
 
 export const authRequired = (
-    _req: Request,
     ctx: FreshContext<AppState>,
 ) => {
     if (!ctx.state.session?.data?.user) {

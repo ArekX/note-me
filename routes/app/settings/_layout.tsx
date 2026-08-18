@@ -1,4 +1,4 @@
-import { PageProps } from "$fresh/server.ts";
+import { PageProps } from "fresh";
 import TabPanel, { TabLink } from "../../../islands/TabPanel.tsx";
 import { AppState } from "$types";
 import {
@@ -39,7 +39,7 @@ export default function Layout(
     return (
         <TabPanel
             links={settings}
-            activeLink={route}
+            activeLink={route ?? ""}
         >
             <Component />
         </TabPanel>

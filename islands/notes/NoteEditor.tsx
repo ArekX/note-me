@@ -398,7 +398,7 @@ export default function NoteEditor({
                 </div>
             </div>
 
-            <div class="flex-grow">
+            <div class="grow">
                 <TagInput
                     isSaving={isSaving.running}
                     onChange={(newTags) => withTagsDataChange(newTags)}

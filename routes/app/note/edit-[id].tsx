@@ -1,14 +1,15 @@
-import { FreshContext, Handlers, PageProps } from "$fresh/server.ts";
+import { FreshContext, page, PageProps } from "fresh";
 import { AppState } from "$types";
 import { repository, ViewNoteRecord } from "$db";
 import EditNotePage from "$islands/notes/pages/EditNotePage.tsx";
+import { Handlers } from "fresh/compat";
 
 interface PageData {
     note: ViewNoteRecord;
 }
 
 export const handler: Handlers<PageData> = {
-    async GET(_, ctx: FreshContext<AppState, PageData>) {
+    async GET(ctx: FreshContext<AppState>) {
         const userId = ctx.state.session?.getUserId() ?? 0;
 
         const note = await repository.note.getNote({
@@ -20,7 +21,7 @@ export const handler: Handlers<PageData> = {
             throw new Deno.errors.NotFound("Requested note not found.");
         }
 
-        return ctx.render({
+        return page({
             note,
         });
     },

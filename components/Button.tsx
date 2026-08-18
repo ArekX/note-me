@@ -19,12 +19,12 @@ interface ButtonProps {
 }
 
 const buttonColors = {
-    primary: "bg-gray-600 hover:bg-gray-500 border-gray-500/50 text-white",
+    primary: "bg-gray-600/50 hover:bg-gray-500 border-gray-500/50 text-white",
     warning:
-        "bg-yellow-700 hover:bg-yellow-600 border-yellow-600/50 text-white",
-    success: "bg-sky-900 hover:bg-sky-600 border-sky-600/50 text-white",
-    successDisabled: "bg-sky-600 border-sky-600/50 text-white",
-    danger: "bg-red-500 hover:bg-red-600 border-red-600/50 text-white",
+        "bg-yellow-700/50 hover:bg-yellow-600 border-yellow-600/50 text-white",
+    success: "bg-sky-900/50 hover:bg-sky-600 border-sky-600/50 text-white",
+    successDisabled: "bg-sky-600/50 border-sky-600/50 text-white",
+    danger: "bg-red-500/50 hover:bg-red-600 border-red-600/50 text-white",
     transparent: "bg-transparent border-gray-700/50 hover:bg-gray-700/25",
 };
 
@@ -68,13 +68,13 @@ export default function Button(
         <button
             type={type}
             title={title}
-            default={setAsDefault}
+            {...(setAsDefault ? { default: true } : {})}
             disabled={disabled}
             name={name}
             tabIndex={tabIndex}
             onClick={(e) => !disabled && onClick?.(e)}
             onKeyDown={onKeyDown}
-            class={`${borderClass} bg-opacity-50 hover:bg-opacity-100 border-solid ${
+            class={`${borderClass} border-solid ${
                 addPadding ? sizeTypes[size] : ""
             } ${buttonColors[color]} ${roundedClass} transition-colors ${
                 addClass ?? ""

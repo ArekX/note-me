@@ -1,14 +1,11 @@
-/// <reference no-default-lib="true" />
-/// <reference lib="dom" />
-/// <reference lib="dom.iterable" />
-/// <reference lib="dom.asynciterable" />
-/// <reference lib="deno.ns" />
-
-import { start } from "$fresh/server.ts";
-import manifest from "./fresh.gen.ts";
-import config from "./fresh.config.ts";
+import { App, staticFiles } from "fresh";
 import { bootstrap } from "./bootstrap.ts";
+import type { AppState } from "$types";
 
 await bootstrap();
 
-await start(manifest, config);
+export const app = new App<AppState>();
+
+app.use(staticFiles());
+
+app.fsRoutes();

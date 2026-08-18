@@ -1,4 +1,4 @@
-import { FreshContext } from "$fresh/server.ts";
+import { FreshContext } from "fresh";
 import { AppState } from "$types";
 import { requirePemission } from "$backend/rbac/authorizer.ts";
 import { CanManageBackups } from "$backend/rbac/permissions.ts";
@@ -8,7 +8,8 @@ import { backupNameSchema } from "$schemas/settings.ts";
 import { createBackupHandler } from "$lib/backup-handler/mod.ts";
 import { repository } from "$db";
 
-export const handler = async (req: Request, ctx: FreshContext<AppState>) => {
+export const handler = async (ctx: FreshContext<AppState>) => {
+    const req = ctx.req;
     requirePemission(CanManageBackups.Update, ctx.state);
 
     const params = parseQueryParams<{ identifier: string; target_id: number }>(

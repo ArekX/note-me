@@ -1,7 +1,7 @@
 import BackupManagement from "../../../islands/backups/BackupManagement.tsx";
 import { requirePemission } from "$backend/rbac/authorizer.ts";
 import { CanManageBackups } from "$backend/rbac/permissions.ts";
-import { FreshContext, PageProps } from "$fresh/server.ts";
+import { FreshContext, page, PageProps } from "fresh";
 import { AppState } from "$types";
 
 interface BackupManagementProps {
@@ -9,14 +9,13 @@ interface BackupManagementProps {
 }
 
 export const handler = (
-    _req: Request,
-    ctx: FreshContext<AppState, BackupManagementProps>,
+    ctx: FreshContext<AppState>,
 ) => {
     requirePemission(CanManageBackups.Update, ctx.state);
 
     const maxBackupCount = +(Deno.env.get("MAX_ALLOWED_BACKUP_COUNT") ?? 5);
 
-    return ctx.render({
+    return page({
         maxBackupCount,
     });
 };

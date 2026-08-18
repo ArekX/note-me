@@ -1,5 +1,5 @@
 import Icon from "$components/Icon.tsx";
-import { IS_BROWSER } from "$fresh/runtime.ts";
+import { IS_BROWSER } from "fresh/runtime";
 
 interface InputProps {
     type?:
@@ -64,7 +64,7 @@ export default function Input(
                 tabIndex={tabIndex}
                 autoComplete={disableAutocomplete ? "off" : undefined}
                 min={min}
-                class={`outline-none border-1 ${
+                class={`outline-hidden border-1 ${
                     icon ? "pl-9" : ""
                 } border-gray-600/50 bg-gray-700/60 hover:bg-gray-700 focus:border-gray-600 border border-b-0 p-2 w-full rounded-md`}
                 placeholder={placeholder}

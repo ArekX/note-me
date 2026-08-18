@@ -1,9 +1,9 @@
-import { FreshContext } from "$fresh/server.ts";
+import { FreshContext } from "fresh";
 import { AppState } from "$types";
 import { getExportLocation } from "$backend/export-generator.ts";
 import { exists } from "$std/fs/exists.ts";
 
-export const handler = async (_req: Request, ctx: FreshContext<AppState>) => {
+export const handler = async (ctx: FreshContext<AppState>) => {
     const location = getExportLocation(
         ctx.params.identifier,
         ctx.state.session?.getUserId()!,

@@ -1,5 +1,6 @@
 import { signal, useSignal } from "@preact/signals";
-import { Ref, useEffect, useMemo } from "preact/hooks";
+import type { RefObject } from "preact";
+import { useEffect, useMemo } from "preact/hooks";
 
 export type PopoverId = `${string}-${number}`;
 
@@ -15,7 +16,7 @@ export const closeAllPopovers = () => {
 
 export const useSinglePopover = <T extends Node>(
     identifier: PopoverId,
-    menuRef: Ref<T>,
+    menuRef: RefObject<T>,
     onOpened?: () => void,
     onClosed?: () => void,
 ) => {

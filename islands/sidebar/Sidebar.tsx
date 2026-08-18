@@ -6,7 +6,7 @@ import { useResponsiveQuery } from "$frontend/hooks/use-responsive-query.ts";
 import { useSignal } from "@preact/signals";
 import { useMobileMenu } from "$frontend/hooks/use-mobile-menu.ts";
 import SidebarMenuTop from "$islands/sidebar/SidebarMenuTop.tsx";
-import { IS_BROWSER } from "$fresh/runtime.ts";
+import { IS_BROWSER } from "fresh/runtime";
 
 export interface SidebarProps {
     showSettings: boolean;
@@ -33,7 +33,7 @@ export default function Sidebar(
     return (
         <div
             class={`w-1/5 sidebar-panel max-md:w-full h-full max-md:absolute max-md:left-0 max-md:right-0
-                  bg-gray-800 text-white bg-opacity-90 bg-blend-multiply bg-cover bg-center z-10`}
+                  bg-gray-800/90 text-white bg-blend-multiply bg-cover bg-center z-10`}
             style={{
                 "background-image": `url(${wallpaper})`,
             }}

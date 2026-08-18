@@ -30,7 +30,6 @@ export function UploadProgressDialog({
             <progress
                 class="w-full"
                 max={uploader.totalSizeToUpload.value}
-                min="0"
                 value={uploader.uploadedSize.value}
             />
 

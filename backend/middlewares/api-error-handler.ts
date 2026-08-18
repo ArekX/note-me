@@ -1,8 +1,7 @@
-import { FreshContext } from "$fresh/server.ts";
+import { FreshContext } from "fresh";
 import { AppState } from "$types";
 
 export const apiErrorHandler = async (
-    _req: Request,
     ctx: FreshContext<AppState>,
 ) => {
     try {

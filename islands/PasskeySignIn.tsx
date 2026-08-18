@@ -9,7 +9,7 @@ import {
 import { useSignal } from "@preact/signals";
 import Button from "$components/Button.tsx";
 import Icon from "$components/Icon.tsx";
-import { IS_BROWSER } from "$fresh/runtime.ts";
+import { IS_BROWSER } from "fresh/runtime";
 import { useLoader } from "$frontend/hooks/use-loader.ts";
 import Loader from "$islands/Loader.tsx";
 import { addMessage } from "$frontend/toast-message.ts";

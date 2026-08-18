@@ -1,15 +1,22 @@
-import { type PageProps } from "$fresh/server.ts";
+import { type PageProps } from "fresh";
 import { getCurrentMonthWallpaper } from "$frontend/wallpaper.ts";
 import ToastMessages from "$islands/ToastMessages.tsx";
 import { getAppUrl, getAssetUrl } from "$backend/env.ts";
 
-export default function App({ Component, route, data }: PageProps) {
+interface AppData {
+    disableWallpaper?: boolean;
+    pageTitle?: string;
+}
+
+export default function App(
+    { Component, route, data }: PageProps<AppData | undefined>,
+) {
     const allowWallpaper = data?.disableWallpaper !== true;
     const wallpaper = allowWallpaper && route === "/"
         ? getCurrentMonthWallpaper()
         : null;
 
-    const allowScrolling = route.startsWith("/public");
+    const allowScrolling = route?.startsWith("/public") ?? false;
     const subTitle = data?.pageTitle ? `- ${data.pageTitle}` : "";
 
     return (
@@ -40,7 +47,6 @@ export default function App({ Component, route, data }: PageProps) {
                     rel="stylesheet"
                     href="/highlightjs.min.css"
                 />
-                <link rel="stylesheet" href="/styles.css" />
                 <link rel="icon" href="/logo-white.svg"></link>
             </head>
             <body

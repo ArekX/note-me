@@ -62,7 +62,7 @@ const DesktopSidebarMenu = (
     const logoSize = query.max("md") ? 20 : 25;
     return (
         <div class="flex items-center justify-center p-2">
-            <div class="flex-grow text-left hidden lg:block">
+            <div class="grow text-left hidden lg:block">
                 <a onClick={() => redirectTo.root()} class="cursor-pointer">
                     <Logo
                         white

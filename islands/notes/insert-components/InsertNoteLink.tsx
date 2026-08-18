@@ -99,7 +99,7 @@ const Component = ({
                 />
             </div>
 
-            <div class="border-solid border-gray-700 border rounded-lg mt-2 flex-grow overflow-auto">
+            <div class="border-solid border-gray-700 border rounded-lg mt-2 grow overflow-auto">
                 {loader.running && (
                     <div class="text-center p-5">
                         <Loader color="white" />

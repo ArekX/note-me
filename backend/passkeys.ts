@@ -247,7 +247,7 @@ export const finalizePasskeyAuthentication = async (
             credential: {
                 id: passkey.credential_identifier,
                 counter: passkey.counter,
-                publicKey: decodeBase64(passkey.public_key),
+                publicKey: new Uint8Array(decodeBase64(passkey.public_key)),
             },
             expectedChallenge: data.challenge,
             expectedOrigin: getRelyingPartyOrigin(),

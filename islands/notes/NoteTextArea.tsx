@@ -218,7 +218,7 @@ export default function NoteTextArea({
     }, [isSaving]);
 
     return (
-        <div class="flex-grow block basis-auto">
+        <div class="grow block basis-auto">
             <FileDropWrapper
                 wrapperClass="w-full block"
                 onFilesDropped={uploadAndInsertFiles}

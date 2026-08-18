@@ -1,7 +1,7 @@
 import { signal, useComputed } from "@preact/signals";
 import { decodeBase64, encodeBase64 } from "$frontend/deps.ts";
 import { restore, store } from "$frontend/session-storage.ts";
-import { IS_BROWSER } from "$fresh/runtime.ts";
+import { IS_BROWSER } from "fresh/runtime";
 import { addMessage } from "$frontend/toast-message.ts";
 
 const ADD_LOCK_TIMEOUT = 1000 * 60 * 5;
