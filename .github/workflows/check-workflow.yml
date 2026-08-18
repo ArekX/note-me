@@ -36,10 +36,12 @@ jobs:
                   deno-version: v2.9.5
 
             - name: Cache Deno dependencies
-              uses: actions/cache@v3
+              uses: actions/cache@v4
               with:
                   path: ${{ env.DENO_DIR }}
-                  key: ${{ hashFiles('deno.lock') }}
+                  key: ${{ runner.os }}-deno-${{ hashFiles('deno.lock') }}
+                  restore-keys: |
+                      ${{ runner.os }}-deno-
 
             - name: Run checks and tests
               run: |
