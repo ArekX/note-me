@@ -3,7 +3,7 @@ import { AppState } from "$types";
 import { CanManageFiles } from "$backend/rbac/permissions.ts";
 import { hasPermission } from "$backend/rbac/authorizer.ts";
 import { repository } from "$db";
-import { decodeBase64 } from "$std/encoding/base64.ts";
+import { decodeBase64 } from "@std/encoding/base64";
 
 const ALLOWED_RENDER_MIME_TYPES = [
     "text/plain",

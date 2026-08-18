@@ -4,7 +4,7 @@ const fileSchema = zod.object({
     id: zod.number(),
     identifier: zod.string(),
     name: zod.string({
-        required_error: "Name is required",
+        error: "Name is required",
     }).min(1, "Name must be at least 1 character long").regex(
         /^[a-zA-Z0-9_ .-]+$/,
         "Name must only contain letters, numbers, dots, spaces, hyphens, and underscores.",

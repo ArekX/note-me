@@ -26,6 +26,7 @@ export const defaultFileSystem: MigratorFileSystem = {
         Deno.writeFileSync(path, new TextEncoder().encode(data));
     },
     join(...path: string[]): string {
-        return join(...path);
+        const [first = ".", ...rest] = path;
+        return join(first, ...rest);
     },
 };

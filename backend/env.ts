@@ -1,13 +1,21 @@
-import { loadSync } from "$std/dotenv/mod.ts";
+import { loadSync } from "@std/dotenv";
 
 export const loadEnvironment = () => {
     if (Deno.env.get("SKIP_ENV") == "1") {
         return;
     }
 
+    // Variables that are already set always win; loadSync never overrides
+    // existing environment variables. @std/dotenv removed the defaultsPath
+    // option, so .env.defaults is loaded explicitly after .env to fill in
+    // anything that is still missing.
     loadSync({
         export: true,
-        allowEmptyValues: true,
+    });
+
+    loadSync({
+        envPath: ".env.defaults",
+        export: true,
     });
 };
 

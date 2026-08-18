@@ -1,4 +1,4 @@
-import { Cookie, getCookies, setCookie } from "$std/http/cookie.ts";
+import { Cookie, getCookies, setCookie } from "@std/http/cookie";
 
 const monthInSeconds = 2592000;
 

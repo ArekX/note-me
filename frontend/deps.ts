@@ -1,12 +1,12 @@
-export { default as highlightJs } from "npm:highlight.js@11.9.0";
+export { default as highlightJs } from "highlight.js";
 export { type Token, tokens } from "$lib/rusty-markdown/mod.ts";
-export { diff } from "jsr:@opentf/obj-diff";
-export { decodeBase64, encodeBase64 } from "$std/encoding/base64.ts";
+export { diff } from "@opentf/obj-diff";
+export { decodeBase64, encodeBase64 } from "@std/encoding/base64";
 export {
     browserSupportsWebAuthn,
     startAuthentication,
     startRegistration,
-} from "npm:@simplewebauthn/browser@13.1.2";
+} from "@simplewebauthn/browser";
 
 export { default as mermaid } from "mermaid";
 
@@ -19,7 +19,7 @@ export {
     StateEffect,
     StateField,
     Transaction,
-} from "npm:@codemirror/state@^6.7.1";
+} from "@codemirror/state";
 export {
     Decoration,
     type DecorationSet,
@@ -32,14 +32,14 @@ export {
     rectangularSelection,
     ViewPlugin,
     type ViewUpdate,
-} from "npm:@codemirror/view@^6.43.9";
+} from "@codemirror/view";
 export {
     defaultKeymap,
     history,
     historyKeymap,
     indentWithTab,
     standardKeymap,
-} from "npm:@codemirror/commands@^6.7.1";
+} from "@codemirror/commands";
 export {
     bracketMatching,
     HighlightStyle,
@@ -47,7 +47,7 @@ export {
     indentUnit,
     syntaxHighlighting,
     syntaxTree,
-} from "npm:@codemirror/language@^6.10.6";
+} from "@codemirror/language";
 export {
     acceptCompletion,
     autocompletion,
@@ -56,9 +56,6 @@ export {
     completionKeymap,
     type CompletionResult,
     type CompletionSource,
-} from "npm:@codemirror/autocomplete@^6.18.3";
-export {
-    markdown,
-    markdownLanguage,
-} from "npm:@codemirror/lang-markdown@^6.3.2";
-export { tags as highlightTags } from "npm:@lezer/highlight@1.2.1";
+} from "@codemirror/autocomplete";
+export { markdown, markdownLanguage } from "@codemirror/lang-markdown";
+export { tags as highlightTags } from "@lezer/highlight";

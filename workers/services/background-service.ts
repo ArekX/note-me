@@ -1,7 +1,7 @@
 import { logger } from "$backend/logger.ts";
 import { hostWaitForWokerReady } from "$workers/services/worker-helper.ts";
-import { resolve } from "$std/path/resolve.ts";
-import { toFileUrl } from "$std/path/to_file_url.ts";
+import { resolve } from "@std/path/resolve";
+import { toFileUrl } from "@std/path/to-file-url";
 
 interface BackgroundServiceOptions {
     required: boolean;

@@ -33,7 +33,7 @@ import {
 } from "$schemas/file.ts";
 import { CanManageFiles } from "$backend/rbac/permissions.ts";
 import { repository } from "$db";
-import { encodeBase64 } from "$std/encoding/base64.ts";
+import { encodeBase64 } from "@std/encoding/base64";
 
 const MAX_FILE_SIZE = +(Deno.env.get("MAX_FILE_SIZE") ?? "52428800");
 

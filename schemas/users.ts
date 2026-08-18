@@ -10,13 +10,17 @@ const userSchema = zod.object({
     timezone: zod.enum(supportedTimezones as [string, ...string[]]),
 });
 
-const addPasswordRefinement = <V extends zod.AnyZodObject>(schema: V) => {
+const addPasswordRefinement = <V extends zod.ZodObject>(schema: V) => {
     const refineCheck = (data: zod.infer<V>) => {
         const {
             old_password = "",
             new_password = "",
             confirm_password = "",
-        } = data;
+        } = data as {
+            old_password?: string;
+            new_password?: string;
+            confirm_password?: string;
+        };
 
         if (!old_password) {
             return true;

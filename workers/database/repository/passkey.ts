@@ -16,7 +16,7 @@ import { UserPasskeyRecord } from "../query/passkey-repository.ts";
 import { DbHandlerMap, DbRequest } from "$workers/database/message.ts";
 import { PublicKeyCredentialCreationOptionsJSON } from "$backend/deps.ts";
 import { UserPasskeyTable } from "$types";
-import { encodeBase64 } from "$std/encoding/base64.ts";
+import { encodeBase64 } from "@std/encoding/base64";
 
 type PasskeyRequest<Key extends string, Request, Response> = DbRequest<
     "passkey",

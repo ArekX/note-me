@@ -1,7 +1,7 @@
 import { JobHandler } from "$workers/processor/jobs/mod.ts";
 import { createZip, ZipFile } from "$backend/zip.ts";
 import { decryptNote } from "$backend/encryption.ts";
-import { extname } from "$std/path/mod.ts";
+import { extname } from "@std/path";
 import { sendMessageToWebsocket } from "../../websocket/host.ts";
 import {
     NotifyUserExportFailedMessage,
@@ -10,7 +10,7 @@ import {
 } from "$workers/websocket/api/users/messages.ts";
 import { getExportLocation } from "$backend/export-generator.ts";
 import { repository } from "$db";
-import { decodeBase64 } from "$std/encoding/base64.ts";
+import { decodeBase64 } from "@std/encoding/base64";
 
 export interface CreateDataExportJob {
     user_id: number;

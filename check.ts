@@ -1,4 +1,4 @@
-import { dirname } from "$std/path/dirname.ts";
+import { dirname } from "@std/path/dirname";
 
 const ignore = [
     "_fresh",

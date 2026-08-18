@@ -1,4 +1,4 @@
-import { resolve } from "$std/path/resolve.ts";
+import { resolve } from "@std/path/resolve";
 
 // Resolved from the project root rather than import.meta.url so that the
 // path stays correct when this module is bundled into _fresh/server.js.

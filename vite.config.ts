@@ -38,8 +38,11 @@ export default defineConfig({
                 rollupOptions: {
                     // Keep the AWS SDK (S3 backups) out of the server
                     // bundle; its CJS/ESM mix does not bundle cleanly.
-                    // Deno resolves the npm: specifiers at runtime.
-                    external: (id) => id.startsWith("npm:@aws-sdk/"),
+                    // Deno resolves the specifiers at runtime (the bare
+                    // form is mapped to npm: in the deno.json imports).
+                    external: (id) =>
+                        id.startsWith("npm:@aws-sdk/") ||
+                        id.startsWith("@aws-sdk/"),
                 },
             },
         },

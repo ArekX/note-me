@@ -23,8 +23,8 @@ export {
     type StringReference,
     Transaction,
     type TransactionSettings,
-} from "npm:kysely@0.27.4";
+} from "kysely";
 
-export { Semaphore } from "https://deno.land/x/semaphore@v1.1.1/mod.ts";
+export { Semaphore } from "semaphore";
 
-export { Database, type RestBindParameters } from "jsr:@db/sqlite@0.11";
+export { Database, type RestBindParameters } from "@db/sqlite";

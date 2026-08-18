@@ -3,11 +3,11 @@ import { zod } from "./deps.ts";
 const groupSchema = zod.object({
     id: zod.number(),
     name: zod.string({
-        required_error: "Name is required",
+        error: "Name is required",
     }).min(1, "Group name must be at least 1 character long")
         .max(255, "Group name must be at most 255 characters long"),
     parent_id: zod.number({
-        required_error: "Parent ID is required",
+        error: "Parent ID is required",
     }).nullable(),
 });
 

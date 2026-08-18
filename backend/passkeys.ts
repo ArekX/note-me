@@ -14,7 +14,7 @@ import { loadSessionStateByUserId } from "$backend/session/session.ts";
 import { AppSessionData } from "$types";
 import { getAppUrl } from "$backend/env.ts";
 import { logger } from "$backend/logger.ts";
-import { encodeBase64 } from "$std/encoding/base64.ts";
+import { encodeBase64 } from "@std/encoding/base64";
 import { repository } from "$workers/database/lib.ts";
 
 export const getRelyingPartyId = () => getAppUrl().hostname;

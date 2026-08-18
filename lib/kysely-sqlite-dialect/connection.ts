@@ -1,4 +1,4 @@
-import { RestBindParameters } from "jsr:@db/sqlite@0.11";
+import { RestBindParameters } from "@db/sqlite";
 import {
     CompiledQuery,
     Database,

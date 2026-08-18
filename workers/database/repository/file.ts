@@ -19,7 +19,7 @@ import {
     UpdateMultipleFilesData,
 } from "../query/file-repository.ts";
 import { Paged } from "$lib/kysely-sqlite-dialect/pagination.ts";
-import { decodeBase64, encodeBase64 } from "$std/encoding/base64.ts";
+import { decodeBase64, encodeBase64 } from "@std/encoding/base64";
 
 type FileRequest<Key extends string, Request, Response> = DbRequest<
     "file",
