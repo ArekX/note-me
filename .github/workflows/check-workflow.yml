@@ -4,21 +4,14 @@ permissions:
     contents: read
 
 env:
-    DENO_VERSION: "2.9.5"
-    DENO_DIR: /home/runner/.deno-cache
-    SQLITE_DATABASE_LOCATION: ":memory:"
-    COOKIE_DOMAIN: localhost
+    DATABASE_DSN: "sqlite://:memory:"
     SERVER_ADDRESS: 0.0.0.0
     COOKIE_SECURE: 1
     COOKIE_MAX_AGE_SECONDS: 43200
-    DISABLE_SERVICE_PERIODIC_TASKS: 0
-    WEBSOCKET_PORT: 8080
     WEBSERVER_PORT: 8000
     LOGGING_LEVEL: INFO
     SHOW_LOG_COLORS: 1
     MAX_FILE_SIZE: 52428800
-    RUN_MIGRATIONS_ON_STARTUP: 0
-    SOCKET_HOSTNAME: ws://localhost:8080
     MAX_ALLOWED_BACKUP_COUNT: 5
     APP_URL: http://localhost:8000
 
@@ -31,20 +24,24 @@ jobs:
               with:
                   ref: ${{ github.ref }}
 
-            - uses: denoland/setup-deno@v1
+            - name: Set up Go
+              uses: actions/setup-go@v5
               with:
-                  deno-version: v2.9.5
+                  go-version-file: go.mod
+                  cache: true
 
-            - name: Cache Deno dependencies
-              uses: actions/cache@v4
+            - name: Set up Node
+              uses: actions/setup-node@v4
               with:
-                  path: ${{ env.DENO_DIR }}
-                  key: ${{ runner.os }}-deno-${{ hashFiles('deno.lock') }}
-                  restore-keys: |
-                      ${{ runner.os }}-deno-
+                  node-version-file: .tool-versions
+                  cache: npm
+                  cache-dependency-path: frontend/package-lock.json
+
+            - name: Install frontend dependencies
+              run: make deps-frontend
+
+            - name: Build frontend
+              run: make build-frontend
 
             - name: Run checks and tests
-              run: |
-                  set -e
-                  deno task cache-ci
-                  deno task check
+              run: make check test

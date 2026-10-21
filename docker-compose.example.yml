@@ -2,29 +2,28 @@
 # Copy to docker-compose.yml and replace noteme.example.com with your domain.
 services:
     note-me:
-        image: arekxv/note-me:latest
+        image: arekxv/note-me-go:latest
         container_name: note-me
         restart: unless-stopped
         ports:
             # Bound to localhost only — expose through your reverse proxy.
             # Drop the "127.0.0.1:" prefix if the proxy runs on another host.
             - "127.0.0.1:8000:8000" # webserver
-            - "127.0.0.1:8080:8080" # websocket
         environment:
             # Must bind to 0.0.0.0 inside the container, otherwise ports are unreachable.
             SERVER_ADDRESS: 0.0.0.0
             WEBSERVER_PORT: 8000
-            WEBSOCKET_PORT: 8080
 
             # Persist the database outside the container (see volumes below).
-            SQLITE_DATABASE_LOCATION: /app/data/database.sqlite
+            DATABASE_DSN: sqlite:///app/data/database.sqlite
 
-            # SOCKET_HOSTNAME is the URL the browser connects to for the
-            # websocket — the reverse proxy must forward /websocket-server
-            # to port 8080 (the websocket server ignores the path).
+            # The websocket is served on /ws of the webserver, so the proxy
+            # must forward websocket upgrades to port 8000.
             APP_URL: https://noteme.example.com
-            SOCKET_HOSTNAME: wss://noteme.example.com/websocket-server
-            COOKIE_DOMAIN: noteme.example.com
+
+            # Address of the reverse proxy, so the login rate limit sees the
+            # real client address from X-Forwarded-For.
+            # TRUSTED_PROXIES: 172.16.0.0/12
 
             # Requires HTTPS; set to 0 only when serving over plain HTTP.
             COOKIE_SECURE: 1
@@ -32,28 +31,35 @@ services:
 
             LOGGING_LEVEL: INFO
             SHOW_LOG_COLORS: 0
-            RUN_MIGRATIONS_ON_STARTUP: 1
-            DISABLE_SERVICE_PERIODIC_TASKS: 0
 
             # 50MB upload limit
             MAX_FILE_SIZE: 52428800
 
             # Daily backups to keep, 0 disables backups.
             MAX_ALLOWED_BACKUP_COUNT: 5
+
+            # Every backup is encrypted with this secret; the server does not
+            # start without it and a backup cannot be restored without it.
+            BACKUP_ENCRYPTION_KEY: change-me
+
+            # AI provider API keys are stored encrypted with this secret; the
+            # server does not start without it.
+            AI_ENCRYPTION_KEY: change-me-too
+
+            # Root of every "local" backup target (see volumes below).
+            LOCAL_BACKUP_ROOT_LOCATION: /app/backup
         volumes:
-            # SQLite database (notes and uploaded files live here).
+            # SQLite database.
             - ./data:/app/data
-            # Local backup target location. When adding a "local" backup target
-            # in the app, point it at /app/backup to have backups land here.
+            # Uploaded files (FILES_LOCATION, /app/files by default).
+            - ./files:/app/files
+            # Root of the "local" backup targets: a target whose location is
+            # "nightly" writes to ./backup/nightly on the host.
             - ./backup:/app/backup
         healthcheck:
-            test:
-                [
-                    "CMD",
-                    "deno",
-                    "eval",
-                    "const r = await fetch('http://localhost:8000'); Deno.exit(r.ok ? 0 : 1);",
-                ]
+            # noteme-cli ships its own health check so the distroless image
+            # does not need curl or a shell.
+            test: ["CMD", "/app/noteme-cli", "healthcheck"]
             interval: 30s
             timeout: 10s
             retries: 3

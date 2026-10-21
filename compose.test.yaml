@@ -1,0 +1,35 @@
+# Databases for `make test-databases`; data lives in tmpfs and is gone after
+# `docker compose -f compose.test.yaml down`.
+name: noteme-test
+
+services:
+    postgres:
+        image: postgres:18-alpine
+        environment:
+            POSTGRES_USER: noteme
+            POSTGRES_PASSWORD: noteme
+            POSTGRES_DB: noteme
+        ports:
+            - "127.0.0.1:55432:5432"
+        tmpfs:
+            - /var/lib/postgresql
+        healthcheck:
+            test: ["CMD", "pg_isready", "-U", "noteme", "-d", "noteme"]
+            interval: 1s
+            timeout: 5s
+            retries: 60
+
+    mysql:
+        image: mysql:8.4
+        environment:
+            MYSQL_ROOT_PASSWORD: noteme
+            MYSQL_DATABASE: noteme
+        ports:
+            - "127.0.0.1:53306:3306"
+        tmpfs:
+            - /var/lib/mysql
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-pnoteme"]
+            interval: 1s
+            timeout: 5s
+            retries: 120

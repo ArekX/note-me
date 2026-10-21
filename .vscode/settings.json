@@ -1,29 +1,28 @@
 {
-    "deno.enable": true,
-    "deno.lint": true,
-    "files.watcherExclude": {
-        "fresh.gen.ts": true
+    "go.useLanguageServer": true,
+    "go.lintOnSave": "package",
+    "go.testFlags": ["-race", "-count=1"],
+    "editor.formatOnSave": true,
+    "[go]": {
+        "editor.defaultFormatter": "golang.go"
     },
-    "editor.defaultFormatter": "denoland.vscode-deno",
-    "[typescriptreact]": {
-        "editor.defaultFormatter": "denoland.vscode-deno"
+    "[vue]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "[typescript]": {
-        "editor.defaultFormatter": "denoland.vscode-deno"
-    },
-    "[javascriptreact]": {
-        "editor.defaultFormatter": "denoland.vscode-deno"
-    },
-    "[javascript]": {
-        "editor.defaultFormatter": "denoland.vscode-deno"
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "[json]": {
-        "editor.defaultFormatter": "denoland.vscode-deno"
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "files.associations": {
         "*.css": "tailwindcss"
     },
-    "css.customData": [
-        ".vscode/tailwind.json"
-    ]
+    "files.watcherExclude": {
+        "**/frontend/dist/**": true,
+        "**/frontend/node_modules/**": true,
+        "**/bin/**": true,
+        "**/temp/**": true
+    },
+    "tailwindCSS.experimental.configFile": "frontend/src/assets/styles.css"
 }

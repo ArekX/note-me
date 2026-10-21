@@ -1,0 +1,6 @@
+#!/bin/sh
+# Full test run (backend with race detector + frontend) before every push.
+set -e
+cd "$(git rev-parse --show-toplevel)"
+echo "pre-push: make test"
+make test

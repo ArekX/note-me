@@ -7,12 +7,29 @@
 
 .DS_Store
 
-# Fresh build directory
-_fresh/
-# npm dependencies
+# Build output
+/bin/
+/dist/
+frontend/dist/
+frontend/dist/*
+!frontend/dist/.gitkeep
+frontend/node_modules/
+frontend/coverage/
 node_modules/
+
+# Runtime data
 database.sqlite
-database2.sqlite
-temp
+database.sqlite-journal
+database.sqlite-wal
+database.sqlite-shm
+*.sqlite
+temp/
 app.log
 /backup
+/data
+
+# Go
+*.test
+*.out
+coverage.*
+/files

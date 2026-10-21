@@ -1,0 +1,31 @@
+{
+    "id": "/app",
+    "name": "NoteMe",
+    "short_name": "NoteMe",
+    "description": "NoteMe is a simple and powerful note app to own your notes and have them organized.",
+    "start_url": "/app",
+    "scope": "/",
+    "display": "standalone",
+    "background_color": "#040613",
+    "theme_color": "#040613",
+    "icons": [
+        {
+            "src": "/icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/icons/icon-maskable-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+}

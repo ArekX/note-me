@@ -1,0 +1,656 @@
+.note-editor {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: normal;
+    align-items: normal;
+}
+
+.note-editor input,
+.note-editor textarea,
+.note-editor input:focus-visible,
+.note-editor .cm-editor :focus-visible {
+    outline: none;
+}
+
+.note-editor .title-editor {
+    font-size: 2rem;
+    display: block;
+    width: 100%;
+    font-weight: 600;
+    background: transparent;
+    transition: all 0.3s;
+}
+
+.note-editor .text-editor {
+    font-family: monospace;
+    font-size: 14px;
+    line-height: 1.5em;
+    font-weight: 400;
+    min-height: max(20rem, calc(100dvh - 24rem));
+    overflow: hidden;
+    resize: none !important;
+    background: transparent;
+}
+
+.note-editor .text-editor .cm-editor {
+    min-height: max(20rem, calc(100dvh - 24rem));
+    height: auto;
+    background: transparent;
+}
+
+.note-editor .text-editor .cm-scroller {
+    overflow: visible;
+}
+
+.note-editor .text-editor .cm-content {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.note-normal-width {
+    width: 100%;
+    max-width: 68rem;
+    margin-inline: auto;
+}
+
+.view-note .title {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+}
+
+.note-editor .tag-add-input {
+    margin-top: 0;
+    height: 1.75rem;
+    font-size: 0.875rem;
+}
+
+.view-note .tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.125rem 0.5rem;
+    margin: 0 0.375rem 0.375rem 0;
+    border-radius: 6px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--color-muted);
+    background: var(--color-surface-2);
+    transition:
+        color 0.15s,
+        background-color 0.15s;
+}
+
+.view-note .tag:hover {
+    color: var(--color-fg);
+    background: var(--color-line-strong);
+}
+
+/* A note link reads as a small card inside the text. */
+.note-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    max-width: 100%;
+    margin: 0.125rem 0;
+    padding: 0.125rem 0.625rem 0.125rem 0.5rem;
+    vertical-align: middle;
+    font: inherit;
+    font-size: 0.9375em;
+    line-height: 1.6;
+    color: var(--color-fg);
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-line);
+    border-radius: 8px;
+    box-shadow: var(--shadow-card);
+    cursor: pointer;
+    transition:
+        background-color 0.15s,
+        border-color 0.15s;
+}
+
+.note-link:hover {
+    border-color: var(--color-line-strong);
+    background: var(--color-line);
+}
+
+.note-link .bx {
+    color: var(--color-accent);
+}
+
+.note-link-title {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.note-link-missing,
+.note-link-missing:hover {
+    color: var(--color-danger);
+    background: var(--color-danger-soft);
+    border-color: color-mix(in oklch, var(--color-danger) 40%, transparent);
+    box-shadow: none;
+    cursor: default;
+}
+
+.note-link-missing .bx {
+    color: var(--color-danger);
+}
+
+.note-link-deleted {
+    color: var(--color-muted);
+    border-style: dashed;
+    box-shadow: none;
+}
+
+.note-link-deleted .note-link-title {
+    text-decoration: line-through;
+}
+
+.note-link-deleted .bx {
+    color: var(--color-muted);
+}
+
+.note-link-state {
+    flex-shrink: 0;
+    padding: 0 0.375rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    background: var(--color-line);
+}
+
+.markdown-viewer {
+    all: initial;
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.7;
+    display: block;
+    text-wrap: pretty;
+}
+
+.markdown-viewer table {
+    margin: 1rem 0;
+    border: 1px solid var(--color-line);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.markdown-viewer table thead tr td {
+    font-weight: 600;
+    color: var(--color-fg);
+}
+
+.markdown-viewer p {
+    margin: 0.75rem 0;
+}
+
+.markdown-viewer h1,
+.markdown-viewer h2,
+.markdown-viewer h3,
+.markdown-viewer h4,
+.markdown-viewer h5,
+.markdown-viewer h6 {
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+    margin: 1.75rem 0 0.5rem;
+}
+
+.markdown-viewer h1 {
+    font-size: 2rem;
+
+    @media (max-width: 768px) {
+        font-size: 1.625rem;
+    }
+}
+
+.markdown-viewer h2 {
+    font-size: 1.5rem;
+
+    @media (max-width: 768px) {
+        font-size: 1.3rem;
+    }
+}
+
+.markdown-viewer h3 {
+    font-size: 1.25rem;
+
+    @media (max-width: 768px) {
+        font-size: 1.15rem;
+    }
+}
+
+.markdown-viewer h4 {
+    font-size: 1.125rem;
+}
+
+.markdown-viewer h5 {
+    font-size: 1rem;
+}
+
+.markdown-viewer h6 {
+    font-size: 0.9375rem;
+    color: var(--color-muted);
+}
+
+.markdown-viewer ul,
+.markdown-viewer ol {
+    padding-left: 1.25em;
+    margin: 0.75rem 0;
+}
+
+.markdown-viewer ul {
+    list-style-type: disc;
+}
+
+.markdown-viewer li {
+    padding: 0.125em 0;
+}
+
+.markdown-viewer li::marker {
+    color: var(--color-accent);
+}
+
+.markdown-viewer ol {
+    list-style-type: decimal;
+}
+
+.markdown-viewer blockquote {
+    margin: 1rem 0;
+    padding: 0.25rem 0 0.25rem 1rem;
+    border-left: 3px solid var(--color-accent);
+    color: var(--color-muted);
+    font-style: italic;
+}
+
+.markdown-viewer pre {
+    margin: 1rem 0;
+    padding: 1rem;
+    overflow-x: auto;
+    border: 1px solid var(--color-line);
+    border-radius: 6px;
+    background: var(--color-field);
+}
+
+.markdown-viewer a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-decoration-color: oklch(0.76 0.13 225 / 0.4);
+    text-underline-offset: 0.2em;
+}
+
+.markdown-viewer a:hover {
+    text-decoration-color: currentColor;
+}
+
+.markdown-viewer code {
+    padding: 0.1em 0.35em;
+    border-radius: 6px;
+    font-size: 0.85em;
+    background: var(--color-surface-2);
+}
+
+.markdown-viewer pre code {
+    padding: 0;
+    background: none;
+}
+
+.markdown-viewer .footnote-ref {
+    cursor: pointer;
+    @apply pr-2;
+}
+
+.markdown-viewer .footnote-def > .footnote-number {
+    @apply pr-2 inline-block;
+}
+
+.markdown-viewer .footnote-def * {
+    display: inline;
+}
+
+.diff-viewer {
+    display: block;
+    margin-bottom: 5em;
+    padding-bottom: 5em;
+}
+
+.diff-viewer div {
+    display: block;
+    padding-bottom: 0.5em;
+}
+
+.diff-viewer .legend {
+    display: inline-block;
+    padding: 0.5em;
+    margin-right: 0.5em;
+    font-size: 0.8em;
+}
+
+.diff-viewer .legend-added {
+    background-color: #335c67;
+}
+
+.diff-viewer .diff-added {
+    background-color: #335c67;
+    color: #fff;
+}
+
+.diff-viewer .legend-removed {
+    background-color: #7d1300;
+}
+
+.diff-viewer .diff-removed {
+    background-color: #7d1300;
+    color: #fff;
+}
+
+.diff-viewer .legend-changed {
+    background-color: #ffcc00;
+}
+
+.diff-viewer .diff-changed {
+    background-color: #ffcc00;
+    color: #000;
+}
+
+.diff-viewer .diff-changed .diff-added {
+    background-color: #ffcc00;
+    color: #000;
+}
+
+code,
+.mermaid-diagram span {
+    font-size: 0.8em;
+}
+
+.note-editor .rich-editor .ProseMirror {
+    min-height: max(20rem, calc(100dvh - 24rem));
+    margin: 0;
+    padding: 0 0.25rem 5em;
+    white-space: pre-wrap;
+    word-break: break-word;
+    outline: none;
+}
+
+.rich-editor .ProseMirror > :first-child {
+    margin-top: 0;
+}
+
+.rich-editor li > p {
+    margin: 0;
+}
+
+.rich-editor ul[data-type="taskList"] {
+    list-style: none;
+    padding-left: 0;
+}
+
+.rich-editor ul[data-type="taskList"] li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.rich-editor ul[data-type="taskList"] li > label {
+    flex: none;
+    padding-top: 0.15em;
+}
+
+.rich-editor ul[data-type="taskList"] li > div {
+    flex: 1;
+    min-width: 0;
+}
+
+.rich-editor ul[data-type="taskList"] input[type="checkbox"] {
+    accent-color: var(--color-accent);
+}
+
+.rich-editor table td,
+.rich-editor table th {
+    position: relative;
+    min-width: 4rem;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--color-line);
+    vertical-align: top;
+}
+
+.rich-editor table th {
+    font-weight: 600;
+    background: var(--color-surface-2);
+}
+
+.rich-editor table p {
+    margin: 0;
+}
+
+.rich-editor .selectedCell::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: var(--color-accent-soft);
+}
+
+.rich-editor img {
+    display: inline-block;
+    max-width: 100%;
+}
+
+.rich-editor img.ProseMirror-selectednode,
+.rich-editor .is-selected {
+    outline: 2px solid var(--color-accent);
+    border-radius: 6px;
+}
+
+.rich-editor .rich-extension {
+    display: inline-block;
+    max-width: 100%;
+    vertical-align: middle;
+}
+
+.rich-editor .rich-extension-media {
+    display: block;
+    max-width: 40rem;
+    margin: 0.75rem 0;
+    padding: 0.75rem 1rem 1rem;
+    font-style: normal;
+}
+
+.rich-editor .rich-extension-media.align-center {
+    margin-inline: auto;
+}
+
+.rich-editor .rich-extension-media.align-right {
+    margin-left: auto;
+    margin-right: 0;
+}
+
+.rich-editor .rich-extension-image {
+    display: flex;
+    width: 100%;
+    margin: 0.5rem 0;
+}
+
+.rich-editor .rich-extension-image.align-center {
+    justify-content: center;
+}
+
+.rich-editor .rich-extension-image.align-right {
+    justify-content: flex-end;
+}
+
+.rich-editor .rich-align-toolbar {
+    position: absolute;
+    z-index: 10;
+    display: flex;
+    gap: 0.125rem;
+    padding: 0.25rem;
+    border: 1px solid var(--color-line-strong);
+    border-radius: 8px;
+    background: var(--color-menu);
+    box-shadow: var(--shadow-float);
+    transform: translate(-50%, calc(-100% - 0.5rem));
+}
+
+.rich-editor .rich-align-toolbar button {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 6px;
+    color: var(--color-muted);
+    cursor: pointer;
+}
+
+.rich-editor .rich-align-toolbar button:hover,
+.rich-editor .rich-align-toolbar button.is-active {
+    background: var(--color-surface-2);
+    color: var(--color-fg);
+}
+
+.rich-editor .rich-extension-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    max-width: 100%;
+    padding: 0.125rem 0.5rem;
+    border: 1px solid var(--color-line-strong);
+    border-radius: 6px;
+    background: var(--color-surface-2);
+    font-size: 0.875rem;
+    font-style: normal;
+    color: var(--color-fg);
+    cursor: pointer;
+}
+
+.rich-editor .rich-code-block {
+    margin: 1rem 0;
+    padding: 0.5rem 0.75rem 0.75rem;
+}
+
+.rich-editor .rich-code-block pre {
+    margin: 0;
+}
+
+.rich-editor .rich-code-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.rich-editor .rich-code-header select {
+    max-width: 14rem;
+    padding: 0.125rem 0.5rem;
+    border: 1px solid var(--color-line);
+    border-radius: 6px;
+    background: var(--color-field);
+    font-size: 0.8125rem;
+    color: var(--color-fg);
+    cursor: pointer;
+}
+
+.rich-editor .rich-code-header select option {
+    background: var(--color-menu);
+}
+
+.rich-editor .rich-footnote-def {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.rich-editor .rich-footnote-def::before {
+    content: "[" attr(data-footnote-def) "]:";
+    grid-column: 1;
+    grid-row: 1;
+    margin: 0.75rem 0;
+    color: var(--color-muted);
+}
+
+.rich-editor .rich-footnote-def > * {
+    grid-column: 2;
+}
+
+.rich-editor .footnote-ref {
+    font-size: 0.75em;
+    color: var(--color-accent);
+}
+
+/* highlight.js token classes, in the viewer and in the rich editor. */
+.markdown-viewer
+    pre
+    :is(
+        .hljs-keyword,
+        .hljs-selector-tag,
+        .hljs-literal,
+        .hljs-doctag,
+        .hljs-section
+    ) {
+    color: var(--color-code-keyword);
+}
+
+.markdown-viewer pre :is(.hljs-string, .hljs-addition, .hljs-template-tag) {
+    color: var(--color-code-string);
+}
+
+.markdown-viewer pre :is(.hljs-number, .hljs-bullet) {
+    color: var(--color-code-number);
+}
+
+.markdown-viewer pre :is(.hljs-comment, .hljs-quote) {
+    color: var(--color-code-comment);
+    font-style: italic;
+}
+
+.markdown-viewer pre :is(.hljs-title, .hljs-name) {
+    color: var(--color-code-function);
+}
+
+.markdown-viewer pre :is(.hljs-built_in, .hljs-type, .hljs-title.class_) {
+    color: var(--color-code-type);
+}
+
+.markdown-viewer
+    pre
+    :is(
+        .hljs-attr,
+        .hljs-attribute,
+        .hljs-variable,
+        .hljs-property,
+        .hljs-template-variable,
+        .hljs-params
+    ) {
+    color: var(--color-code-attribute);
+}
+
+.markdown-viewer
+    pre
+    :is(
+        .hljs-meta,
+        .hljs-symbol,
+        .hljs-regexp,
+        .hljs-link,
+        .hljs-tag,
+        .hljs-selector-class,
+        .hljs-selector-id
+    ) {
+    color: var(--color-code-meta);
+}
+
+.markdown-viewer pre .hljs-deletion {
+    color: var(--color-danger);
+}
+
+.markdown-viewer pre .hljs-emphasis {
+    font-style: italic;
+}
+
+.markdown-viewer pre .hljs-strong {
+    font-weight: 700;
+}

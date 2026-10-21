@@ -24,8 +24,10 @@ jobs:
               uses: docker/build-push-action@v6
               with:
                   push: true
+                  platforms: linux/amd64,linux/arm64
                   build-args: |
                       BUILD_ID=${{ github.run_id }}-${{ github.run_attempt }}
+                      VERSION=${{ github.event.release.tag_name }}
                   tags: |
-                      arekxv/note-me:${{ github.event.release.tag_name}}
-                      arekxv/note-me:latest
+                      arekxv/note-me-go:${{ github.event.release.tag_name }}
+                      arekxv/note-me-go:latest

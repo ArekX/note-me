@@ -1,0 +1,539 @@
+@import "tailwindcss";
+@import "./notes.css";
+
+@source "../";
+
+/* Classes generated dynamically at runtime (e.g. markdown heading sizes)
+   which the source scanner cannot detect. */
+@source inline("{text-sm,text-lg,text-xl,text-2xl,text-3xl,text-4xl,text-5xl}");
+
+@font-face {
+    font-family: "Plus Jakarta Sans";
+    font-style: normal;
+    font-weight: 200 800;
+    font-display: swap;
+    src: url("/fonts/plus-jakarta-sans-latin.woff2") format("woff2");
+    unicode-range:
+        U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+        U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+        U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: "Plus Jakarta Sans";
+    font-style: normal;
+    font-weight: 200 800;
+    font-display: swap;
+    src: url("/fonts/plus-jakarta-sans-latin-ext.woff2") format("woff2");
+    unicode-range:
+        U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+        U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
+        U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+    font-family: "Plus Jakarta Sans";
+    font-style: italic;
+    font-weight: 200 800;
+    font-display: swap;
+    src: url("/fonts/plus-jakarta-sans-italic-latin.woff2") format("woff2");
+    unicode-range:
+        U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+        U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+        U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: "Plus Jakarta Sans";
+    font-style: italic;
+    font-weight: 200 800;
+    font-display: swap;
+    src: url("/fonts/plus-jakarta-sans-italic-latin-ext.woff2") format("woff2");
+    unicode-range:
+        U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+        U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
+        U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* Aurora night (decision 0.65). */
+@theme {
+    --font-sans:
+        "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif,
+        "Apple Color Emoji", "Segoe UI Emoji";
+    --color-night: oklch(0.13 0.03 272);
+    --color-overlay: oklch(0.13 0.03 272 / 0.85);
+    --color-rail: oklch(0.11 0.03 272 / 0.55);
+    --color-bar: oklch(0.11 0.03 272 / 0.35);
+    --color-surface: oklch(0.11 0.03 272 / 0.35);
+    --color-surface-2: oklch(1 0 0 / 0.09);
+    --color-menu: oklch(0.2 0.03 270);
+    --color-menu-glass: oklch(0.2 0.03 270 / 0.78);
+    --color-field: oklch(0 0 0 / 0.28);
+    --color-line: oklch(1 0 0 / 0.1);
+    --color-line-strong: oklch(1 0 0 / 0.2);
+    --color-fg: oklch(0.97 0.01 260);
+    --color-muted: oklch(0.8 0.02 260);
+    --color-accent: oklch(0.76 0.13 225);
+    --color-accent-ink: oklch(0.18 0.04 260);
+    --color-accent-soft: oklch(0.76 0.13 225 / 0.18);
+    --color-danger: oklch(0.64 0.2 18);
+    --color-danger-soft: oklch(0.64 0.2 18 / 0.18);
+    --color-success: oklch(0.8 0.15 160);
+    --color-success-soft: oklch(0.8 0.15 160 / 0.15);
+    --color-warning: oklch(0.8 0.15 80);
+    --color-warning-soft: oklch(0.8 0.15 80 / 0.14);
+    --color-code-keyword: oklch(0.76 0.14 305);
+    --color-code-string: oklch(0.8 0.13 150);
+    --color-code-number: oklch(0.82 0.12 65);
+    --color-code-comment: oklch(0.66 0.03 260);
+    --color-code-function: oklch(0.78 0.12 230);
+    --color-code-type: oklch(0.82 0.1 190);
+    --color-code-attribute: oklch(0.8 0.12 35);
+    --color-code-meta: oklch(0.76 0.12 350);
+    --shadow-card:
+        0 10px 30px -12px oklch(0 0 0 / 0.55), inset 0 1px 0 oklch(1 0 0 / 0.08);
+    --shadow-float:
+        0 24px 60px -16px oklch(0 0 0 / 0.7), inset 0 1px 0 oklch(1 0 0 / 0.1);
+}
+
+/* Tailwind v4 changed the default border color to currentColor; bare
+   `border` utilities use the theme line color instead. */
+@layer base {
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-line, currentColor);
+    }
+}
+
+html,
+body {
+    height: 100%;
+    min-width: 300px;
+    margin: 0;
+    overflow: hidden;
+    overscroll-behavior: none;
+    background-color: var(--color-night);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+}
+
+.app-backdrop {
+    background:
+        linear-gradient(var(--color-overlay), var(--color-overlay)),
+        var(--wallpaper) center / cover;
+}
+
+.glass {
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+}
+
+.glass-card {
+    border: 1px solid var(--color-line);
+    border-radius: 12px;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-card);
+    backdrop-filter: blur(24px) saturate(170%);
+    -webkit-backdrop-filter: blur(24px) saturate(170%);
+}
+
+.popup-menu {
+    border: 1px solid var(--color-line-strong);
+    background: var(--color-menu);
+    box-shadow: var(--shadow-float);
+}
+
+.glass-menu {
+    border: 1px solid var(--color-line-strong);
+    background: var(--color-menu-glass);
+    box-shadow: var(--shadow-float);
+    backdrop-filter: blur(24px) saturate(170%);
+    -webkit-backdrop-filter: blur(24px) saturate(170%);
+}
+
+/* Chromium and Safari use the ::-webkit-scrollbar rules only when
+   scrollbar-color is unset, so the standard properties are Firefox only. */
+@supports (-moz-appearance: none) {
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: oklch(1 0 0 / 0.16) transparent;
+    }
+
+    *:hover {
+        scrollbar-color: oklch(1 0 0 / 0.28) transparent;
+    }
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+::-webkit-scrollbar-button {
+    display: none;
+}
+
+::-webkit-scrollbar-thumb {
+    border: 3px solid transparent;
+    border-radius: 6px;
+    background: oklch(1 0 0 / 0.16) padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: oklch(1 0 0 / 0.28) padding-box;
+}
+
+.fade-edges {
+    mask-image: linear-gradient(
+        transparent,
+        #000 1rem,
+        #000 calc(100% - 1rem),
+        transparent
+    );
+}
+
+:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
+.content-sidebar {
+    padding-bottom: 20vh;
+}
+
+body.allow-scrolling {
+    overflow: auto;
+}
+
+.group-item {
+    height: 2.5rem;
+}
+
+.group-item i {
+    line-height: 2.5rem;
+    margin-top: -3px;
+}
+
+.group-item .name-text {
+    position: relative;
+    top: 1.5px;
+}
+
+.group-item-children {
+    padding-left: 1rem;
+}
+
+.group-item .group-item-name {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0.3rem;
+    top: 0.1rem;
+}
+
+.group-item .group-item-actions {
+    visibility: hidden;
+    padding-top: 0.12rem;
+}
+
+.group-item:hover .group-item-name {
+    right: 3.5rem;
+    padding-right: 0 !important;
+}
+
+.group-item:hover .group-item-actions,
+.group-item.opened-menu .group-item-actions {
+    visibility: visible;
+}
+
+dialog {
+    pointer-events: none;
+    opacity: 0;
+    outline: none;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    /* Tailwind v4 preflight resets margins on all elements, which removes
+       the user-agent margin that centers native dialogs. */
+    margin: auto;
+    max-width: min(100vw - 2rem, 64rem);
+    max-height: 85vh;
+    padding: 1rem 1.5rem 0.75rem;
+    border-radius: 14px;
+    border: 1px solid var(--color-line-strong);
+    background: var(--color-menu);
+    color: var(--color-fg);
+    box-shadow: var(--shadow-float);
+}
+dialog .dialog-body {
+    min-height: 0;
+    overflow: auto;
+    margin: 0 -0.5rem;
+    padding: 0.75rem 0.5rem;
+}
+
+@media (min-width: 768px) {
+    dialog.dialog-wide {
+        width: 80vw;
+        max-width: calc(100vw - 2rem);
+    }
+
+    dialog.dialog-fit {
+        max-width: 80vw;
+    }
+}
+
+dialog .dialog-footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin: 0 -1.5rem -0.75rem;
+    padding: 0.875rem 1.5rem;
+    border-top: 1px solid var(--color-line);
+}
+
+@media (max-width: 767px) {
+    dialog .dialog-footer {
+        flex-direction: column-reverse;
+    }
+
+    dialog .dialog-footer > * {
+        width: 100%;
+    }
+}
+
+dialog[open] {
+    opacity: 1;
+    pointer-events: inherit;
+    transition: opacity 0.15s;
+    outline: none;
+}
+dialog::backdrop {
+    background: oklch(0.08 0.02 270 / 0.6);
+    backdrop-filter: blur(3px);
+}
+
+@media (max-width: 767px) {
+    dialog {
+        width: 100%;
+        max-width: 100%;
+        max-height: 90vh;
+        margin: auto 0 0;
+        border-bottom: 0;
+        border-radius: 0.75rem 0.75rem 0 0;
+        padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+    }
+}
+
+table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+table th,
+table thead td {
+    color: var(--color-muted);
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-align: left;
+}
+
+table td,
+table th {
+    padding: 0.625rem 1rem;
+    border-bottom: 1px solid var(--color-line);
+}
+
+table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+table tbody tr:hover td {
+    background: var(--color-surface-2);
+}
+
+.file-picker {
+    min-height: 20em;
+}
+
+pre {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+progress {
+    appearance: none;
+    height: 6px;
+    border: 0;
+    border-radius: 999px;
+    overflow: hidden;
+    background: var(--color-surface-2);
+}
+
+progress::-webkit-progress-bar {
+    background: var(--color-surface-2);
+}
+
+progress::-webkit-progress-value {
+    background: var(--color-accent);
+}
+
+progress::-moz-progress-bar {
+    background: var(--color-accent);
+}
+
+.link-form-expiration {
+    min-height: 2.5em;
+}
+
+/* In a layer so padding utilities on the field win. */
+@layer components {
+    .form-field {
+        width: 100%;
+        height: 2.5rem;
+        padding: 0 0.75rem;
+        border: 1px solid var(--color-line);
+        border-radius: 8px;
+        background: var(--color-field);
+        color: var(--color-fg);
+        outline: none;
+        transition:
+            border-color 0.15s,
+            box-shadow 0.15s;
+    }
+
+    .form-field::placeholder {
+        color: oklch(0.8 0.02 260 / 0.7);
+    }
+
+    .form-field:hover:not(:disabled) {
+        border-color: var(--color-line-strong);
+    }
+
+    .form-field:focus {
+        border-color: var(--color-accent);
+        box-shadow: 0 0 0 3px var(--color-accent-soft);
+    }
+
+    .form-field:disabled {
+        opacity: 0.55;
+    }
+
+    textarea.form-field {
+        height: auto;
+        padding: 0.5rem 0.75rem;
+    }
+
+    select.select-input {
+        appearance: none;
+        padding-right: 2rem;
+        background-image:
+            linear-gradient(45deg, transparent 50%, currentColor 50%),
+            linear-gradient(135deg, currentColor 50%, transparent 50%);
+        background-position:
+            calc(100% - 1.1rem) 55%,
+            calc(100% - 0.8rem) 55%;
+        background-size: 0.3rem 0.3rem;
+        background-repeat: no-repeat;
+    }
+
+    select.select-input option {
+        background: var(--color-menu);
+    }
+}
+
+.group-picker {
+    max-height: 200px;
+    overflow: auto;
+}
+
+.note-link-result-view {
+    max-height: 200px;
+}
+
+.onboarding-contents h1 {
+    @apply text-lg font-semibold py-4;
+}
+
+.onboarding-contents p {
+    @apply py-2 block;
+}
+
+.onboarding-contents a {
+    @apply underline text-accent;
+}
+
+.onboarding-contents .link {
+    @apply underline text-accent cursor-pointer;
+}
+
+.island-initalizer {
+    @apply fixed top-0 left-0 w-full h-full bg-night z-50 text-white flex
+        items-center justify-center;
+}
+
+.mermaid-diagram {
+    text-align: center;
+}
+
+.mermaid-diagram > svg {
+    display: inline-block;
+}
+
+.mermaid-diagram .text-inner-tspan {
+    fill: #fff !important;
+}
+
+.draggable-source--is-dragging {
+    opacity: 0.4;
+}
+
+.draggable-mirror {
+    z-index: 100;
+    opacity: 0.9;
+    @apply bg-menu text-white rounded-md border border-line-strong shadow-float;
+}
+
+.skeleton {
+    display: block;
+    border-radius: 6px;
+    background: linear-gradient(
+            90deg,
+            transparent 30%,
+            oklch(1 0 0 / 0.07) 50%,
+            transparent 70%
+        )
+        var(--color-surface-2);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+    from {
+        background-position: 150% 0;
+    }
+    to {
+        background-position: -50% 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .skeleton {
+        animation: none;
+    }
+}

@@ -1,0 +1,48 @@
+import type { Message } from "./base";
+import type { FindTagFilters, Paged, TagRecord } from "../records";
+import type { AddTagRequest, UpdateTagRequest } from "@/schemas/tags";
+
+type TagMessage<Type extends string, Data = unknown> = Message<
+    "tags",
+    Type,
+    Data
+>;
+
+export type CreateTagMessage = TagMessage<"createTag", { data: AddTagRequest }>;
+export type CreateTagResponse = TagMessage<
+    "createTagResponse",
+    { record: TagRecord }
+>;
+
+export type UpdateTagMessage = TagMessage<
+    "updateTag",
+    { id: number; data: UpdateTagRequest }
+>;
+export type UpdateTagResponse = TagMessage<
+    "updateTagResponse",
+    { updated_id: number; updated_data: UpdateTagRequest }
+>;
+
+export type DeleteTagMessage = TagMessage<"deleteTag", { id: number }>;
+export type DeleteTagResponse = TagMessage<
+    "deleteTagResponse",
+    { deleted_id: number }
+>;
+
+export type FindTagsMessage = TagMessage<
+    "findTags",
+    { filters: FindTagFilters; page: number }
+>;
+export type FindTagsResponse = TagMessage<
+    "findTagsResponse",
+    { records: Paged<TagRecord> }
+>;
+
+export type TagFrontendMessage =
+    CreateTagMessage | UpdateTagMessage | DeleteTagMessage | FindTagsMessage;
+
+export type TagFrontendResponse =
+    | CreateTagResponse
+    | UpdateTagResponse
+    | DeleteTagResponse
+    | FindTagsResponse;

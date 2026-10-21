@@ -1,0 +1,42 @@
+import { zod } from "./index";
+
+const groupSchema = zod.object({
+    id: zod.number(),
+    name: zod
+        .string({
+            error: "Name is required",
+        })
+        .min(1, "Group name must be at least 1 character long")
+        .max(255, "Group name must be at most 255 characters long"),
+    parent_id: zod
+        .number({
+            error: "Parent ID is required",
+        })
+        .nullable(),
+});
+
+export const addGroupRequestSchema = zod
+    .object({
+        name: groupSchema.shape.name,
+        parent_id: groupSchema.shape.parent_id,
+    })
+    .strict();
+
+export type AddGroupRequest = zod.infer<typeof addGroupRequestSchema>;
+
+export const deleteRequestSchema = zod
+    .object({
+        id: groupSchema.shape.id,
+    })
+    .strict();
+
+export type DeleteGroupRequest = zod.infer<typeof deleteRequestSchema>;
+
+export const updateGroupRequestSchema = zod
+    .object({
+        name: addGroupRequestSchema.shape.name.optional(),
+        parent_id: addGroupRequestSchema.shape.parent_id.optional(),
+    })
+    .strict();
+
+export type UpdateGroupRequest = zod.infer<typeof updateGroupRequestSchema>;
