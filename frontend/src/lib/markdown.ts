@@ -47,10 +47,10 @@ export type AstNodeOf<T extends AstNode["type"]> = Extract<
 >;
 
 const extensionLimits: Record<string, number> = {
-    "note-list": 10,
-    "note-link": 20,
-    audio: 20,
-    video: 20,
+    "note-list": 100,
+    "note-link": 200,
+    audio: 200,
+    video: 200,
 };
 
 const extensionPattern = /^\{:([a-zA-Z0-9-]+)((?:\|[^}\n]+)*)\}/;

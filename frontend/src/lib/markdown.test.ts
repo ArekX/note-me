@@ -139,9 +139,9 @@ describe("parseMarkdown", () => {
             ],
         ]);
 
-        const lists = parse("{:note-list|1}".repeat(11));
+        const lists = parse("{:note-list|1}".repeat(101));
         expect((lists[0] as string[]).at(-1)).toBe(
-            "ext:over-limit(note-list,11,10)",
+            "ext:over-limit(note-list,101,100)",
         );
     });
 });

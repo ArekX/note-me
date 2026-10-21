@@ -125,11 +125,11 @@ describe("Viewer extensions", () => {
 
     it("explains over-limit, unknown and escaped extensions", () => {
         const text = renderExtensions(
-            "{:note-list|1} ".repeat(11) + "{:foo|a|b} \\{:note-link|1}",
+            "{:note-list|1} ".repeat(101) + "{:foo|a|b} \\{:note-link|1}",
         ).text();
 
         expect(text).toContain(
-            'Could not render "note-list" extension #11. Too many extensions of this type in this text. Maximum allowed is 10.',
+            'Could not render "note-list" extension #101. Too many extensions of this type in this text. Maximum allowed is 100.',
         );
         expect(text).toContain('Unknown extension: "foo", parameters: (a, b)');
         expect(text).toContain("{:note-link|1}");

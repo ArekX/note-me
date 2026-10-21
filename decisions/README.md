@@ -101,3 +101,4 @@ so in both files; old files are not deleted.
 | 0.88 | [One file browser with grid and list views](0.88-file-views.md) |
 | 0.89 | [Profile picture](0.89-profile-picture.md) |
 | 0.90 | [Assistant data export and running a periodic task now](0.90-ai-export-and-run-task-now.md) |
+| 0.91 | [Higher markdown extension limits](0.91-higher-extension-limits.md) |
