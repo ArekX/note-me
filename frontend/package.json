@@ -44,7 +44,7 @@
         "pinia": "^4.0.3",
         "vue": "^3.5.43",
         "vue-router": "^5.4.0",
-        "zod": "^4.6.5"
+        "zod": "^4.6.6"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.3.3",
@@ -65,5 +65,10 @@
         "vite": "^8.3.4",
         "vitest": "^5.0.3",
         "vue-tsc": "^3.3.12"
+    },
+    "overrides": {
+        "glob": "^14.0.2",
+        "katex": "^0.18.2",
+        "minimatch": "^11.0.1"
     }
 }
