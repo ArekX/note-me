@@ -4,57 +4,91 @@ NoteMe is a simple, note-taking app with powerful features which help you to
 keep the ownership of your notes and keep them organized however you see fit.
 
 <p>
-  <img src=".github/screenshot-1.jpg" alt="Login page" width="32%" />
-  <img src=".github/screenshot-2.jpg" alt="Dashboard" width="32%" />
-  <img src=".github/screenshot-3.jpg" alt="Note view" width="32%" />
+  <img src=".github/screenshot-1.jpg" alt="Sign in page" width="49%" />
+  <img src=".github/screenshot-2.jpg" alt="Dashboard with recent notes, reminders and notes shared with you" width="49%" />
+  <img src=".github/screenshot-3.jpg" alt="Note with a Mermaid diagram and a table, next to an AI assistant conversation" width="49%" />
+  <img src=".github/screenshot-4.jpg" alt="Rich text editor with the formatting toolbar" width="49%" />
 </p>
 
 ## Features
 
-- **Markdown support**. Notes are written and shown using markdown. All standard
-  markdown syntax is supported with additional flavors like task lists,
-  footnotes, tables and extensions special to NoteMe like showing dynamic table
-  of contents, note links and listing notes from a specific group.
+### Writing
+
+- **Rich text or markdown, your choice**. Write in a rich text editor with a
+  formatting toolbar, switch to the markdown source editor with syntax
+  highlighting, or preview the result, all on the same note. Notes are always
+  stored as plain markdown, and each user picks which editor opens first.
+- **Markdown with extras**. Everything standard markdown has, plus task lists,
+  tables, footnotes and highlighted code blocks. NoteMe adds its own blocks: a
+  live table of contents, links to other notes, a list of the notes in a
+  folder, aligned images and audio and video players.
 - **Mermaid diagrams**. Code blocks marked with the `mermaid` language are
-  rendered as [Mermaid](https://mermaid.js.org/) diagrams, letting you embed
-  flowcharts, sequence diagrams, class diagrams and more directly in your notes.
-- **Organize your notes**. You can tag your notes, store them in any kind of
-  groups or subgroups making it easy to create an exact structure you want.
-- **Multiple users welcome**. NoteMe supports multiple users with different
-  roles, each user has its own space for notes so that everyone on the same
-  NoteMe server can have their own folder structure.
-- **Sharing notes**. Notes created can be shared internally between users or to
-  everyone outside by creating a share link.
-- **Remind yourself of important notes**. You can set one-time or recurring
-  reminders for your own notes or the notes shared with you so that you never
-  forget an important task.
-- **History of changes**. Every saved change to your note is recorded in the
-  history so that you can easily compare changes or go back and forward in time.
-- **Note files**. You can upload any kind of file into NoteMe and use it in your
-  notes as an image or make it downloadable. Files can be made private or public
-  so that you can control who has access to them.
-- **Protect your notes**. Notes can be protected with your password meaning they
-  will be encrypted at rest in the database so that nobody except you can see
-  their contents, not even administrators, not even by anyone accessing the
-  database directly.
-- **Backup support**. Daily backups can be created by NoteMe and stored on the
-  server location or on AWS S3. You can specify multiple backup targets so that
-  you can backup to more than one place.
-- **Easy login with Passkeys**. You can setup a login into your notes by only
-  using secure Passkey standard without even needing to enter a password.
-- **Import/Export your data**. You can import all of your existing notes into
-  NoteMe or create a full export of all of your notes and files.
-- **AI assistant**. Administrators connect Ollama, OpenAI (or a compatible
-  server) or Claude, and users chat with an assistant that works on their notes,
-  folders, reminders and sharing with their own permissions. Actions that cannot
-  be undone wait for the user to allow them, and protected notes are only read
-  after the user agrees.
-- **Recycled Notes**. Deleted notes are kept in recycle bin for 30 days and can
-  be retrieved by you at any time or fully deleted.
+  drawn as [Mermaid](https://mermaid.js.org/) diagrams, so flowcharts,
+  sequence diagrams, timelines and more live right in your notes.
+- **History of changes**. Every saved change is kept as a version. Compare
+  any version with the current note line by line and restore it with one
+  click.
+- **Files in your notes**. Upload any file and show it in a note as an image
+  or a player, or make it downloadable. Browse files in a grid or a list and
+  mark each one private or public.
+
+### Organizing
+
+- **Folders and tags**. Put notes in folders and subfolders, rearrange them
+  by drag and drop, and tag them however you like.
+- **Search**. Find notes by title and content, narrowed down to a folder or a
+  set of tags.
+- **Dashboard**. See recently opened notes, upcoming and passed reminders and
+  notes others shared with you as soon as you sign in.
+- **Reminders**. Set one-time or recurring reminders on your own notes or the
+  ones shared with you and get a notification when they are due.
+- **Recycle bin**. Deleted notes stay in the recycle bin for 30 days, so you
+  can restore them or delete them for good.
+
+### Working together
+
+- **Multiple users**. Every user has their own notes and folders. Roles
+  decide who can manage users, files, backups and server settings.
+- **Sharing**. Share a note with other users, or with anyone through a public
+  link that can expire.
+- **Live updates**. Changes show up immediately in every open tab and for
+  everyone a note is shared with, without reloading.
+
+### AI
+
+- **AI assistant**. Administrators connect Ollama, OpenAI (or any compatible
+  server) or Claude, and users chat with an assistant that searches, reads,
+  writes and organizes their notes, folders, reminders and shares with the
+  user's own permissions. Actions that cannot be undone wait for the user to
+  allow them, and protected notes are only read after the user agrees.
+- **MCP server**. Connect your own AI tool, such as Claude, ChatGPT or Cursor,
+  to your notes over the Model Context Protocol with a personal token or
+  OAuth. Each connection can be limited to read only access.
+
+### Security and privacy
+
+- **Protected notes**. Protect a note with your password and it is encrypted
+  in the database, so nobody but you can read it: not other users, not
+  administrators and not anyone with direct access to the database.
+- **Passkeys**. Sign in with a passkey instead of a password.
+- **Hardened sign in**. Passwords are hashed with Argon2id, repeated failed
+  sign ins are rate limited, and administrators can review security events in
+  the audit log.
+- **Encrypted backups**. Nightly backups go to a folder on the server or to
+  AWS S3, to as many targets as you like, and every backup is encrypted.
+- **Your data, portable**. Import existing markdown or text files as notes,
+  or export all of your notes and files as one ZIP archive.
+
+### Hosting
+
 - **Easily hostable**. NoteMe is a single static binary with no runtime
-  dependencies (the database drivers are pure Go), or you can run it as a
-  docker container using one of the prebuilt container images. Data is kept in
-  SQLite, PostgreSQL or MySQL.
+  dependencies that runs on Linux, macOS and Windows, or a ready-made
+  container image. Keep your data in SQLite, PostgreSQL or MySQL, and move
+  between them by restoring a backup.
+- **Installable app**. Add NoteMe to your phone's home screen or your desktop
+  as a progressive web app.
+- **Built-in help**. Help pages and first-time introductions explain every
+  part of the app, including the administrator settings.
 
 # Development and Contributing
 
@@ -109,7 +143,7 @@ Requirements: [Docker](https://docs.docker.com/engine/install/) or
 1. Create `.env` file (use the one from this [repository](.env.example)) and
    set `BACKUP_ENCRYPTION_KEY` and `AI_ENCRYPTION_KEY` to secrets of your
    own; the server does not start without them
-2. Run `docker run -p 8000:8000 --env-file ./.env arekxv/note-me-go`
+2. Run `docker run -p 8000:8000 --env-file ./.env arekxv/note-me`
 
 By default application will be on `http://localhost:8000`.
 
@@ -204,6 +238,13 @@ always win.
 A value that cannot be parsed stops the server with an error instead of
 falling back to the default.
 
+# Upgrading from NoteMe v1
+
+NoteMe v2 is a rewrite in Go. Existing v1 data comes along, but the database
+must be converted once with `noteme-upgrade`, which asks for each user's
+password, and a few settings and the reverse proxy setup change. Follow the
+step by step guide in [docs/upgrading-from-v1.md](docs/upgrading-from-v1.md).
+
 # Building
 
 ## Build using Make
@@ -247,23 +288,7 @@ it, so a backup restores into SQLite, PostgreSQL or MySQL. Restoring into
 PostgreSQL or MySQL replaces every row of the configured database; this is
 also how to move from one database to another.
 
-## Upgrading from NoteMe v1
-
-Stop NoteMe v1, back up its database and run `noteme-upgrade` with
-`DATABASE_DSN` pointing at it and `FILES_LOCATION` set to the folder for
-uploaded files. It moves uploaded files out of the database into
-`FILES_LOCATION`, brings the database to the current structure and
-re-encrypts protected notes into the new format. Passkeys cannot be carried
-over and are removed; users register them again under Profile → Passkeys.
-
-Password hashes and protected notes can only be converted with each user's
-password, so the upgrade asks for every user's password (the input is
-visible; leave it empty to skip a user). A skipped user can no longer sign
-in until an administrator sets a new password for them in Settings → Users,
-and their protected notes are lost with the old password. Users that were
-deleted in v1 are removed together with their data. Running the upgrade
-again is safe. NoteMe refuses to start on a database that still needs the
-upgrade.
+## Audit log and server log
 
 Administrators can see security events (sign-ins, lockouts, password
 changes, user and backup management) under Settings → Audit log, kept for a
@@ -277,7 +302,7 @@ Steps:
 
 1. Run `make docker-build`
 2. After docker image is built run
-   `docker run -p 8000:8000 --env-file ./.env arekxv/note-me-go:<VERSION>`,
+   `docker run -p 8000:8000 --env-file ./.env arekxv/note-me:<VERSION>`,
    replace `<VERSION>` with the version you see from the output of the build
 
 ## Build using Podman
@@ -288,7 +313,7 @@ Steps:
 
 1. Run `make podman-build`
 2. After image is built run
-   `podman run -p 8000:8000 --env-file ./.env localhost/arekxv/note-me-go`
+   `podman run -p 8000:8000 --env-file ./.env localhost/arekxv/note-me`
 
 # License
 

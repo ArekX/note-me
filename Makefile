@@ -11,7 +11,7 @@ APP_NAME      := noteme
 CLI_NAME      := noteme-cli
 UPGRADE_NAME  := noteme-upgrade
 MODULE        := noteme
-IMAGE         := arekxv/note-me-go
+IMAGE         := arekxv/note-me
 VERSION       ?= $(shell git describe --tags --abbrev=0 2>/dev/null || echo dev)
 BUILD_ID      ?= $(shell date +%s)
 GIT_SHA       ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo unknown)

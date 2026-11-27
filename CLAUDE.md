@@ -276,6 +276,7 @@ cmd/noteme/           server entrypoint: starts the app, no subcommands
 cmd/noteme-cli/       CLI entrypoint: migrate-up, migrate-down, new-migration, add-user, restore-backup, healthcheck, version
 cmd/noteme-upgrade/   upgrade of an original (Deno) or earlier Go sqlite database: files, migration table, passkeys, unique indexes, soft-deleted users, bcrypt passwords and note encryption
 decisions/            decision records (see Process)
+docs/                 user guides (upgrading from v1)
 internal/app          wiring: config, logger, db + migrations, http, websocket, workers
 internal/config       env loading via godotenv (.env then .env.defaults; process env wins) and typed config
 internal/logger       slog

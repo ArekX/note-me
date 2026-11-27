@@ -2,7 +2,7 @@
 # Copy to docker-compose.yml and replace noteme.example.com with your domain.
 services:
     note-me:
-        image: arekxv/note-me-go:latest
+        image: arekxv/note-me:latest
         container_name: note-me
         restart: unless-stopped
         ports:
