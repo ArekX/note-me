@@ -2,7 +2,7 @@
 
 Every decision about the rewrite, made by the user or by Claude, gets one
 file here: `<number>-<slug>.md`, numbered in order (next free number after
-the highest one). Items in `TODO.md` cite decisions by number (`0.9.d`).
+the highest one).
 
 Each file starts with the title, who decided (user, Claude, or both and which
 part) and the date, followed by the decision, the reason when it is not
